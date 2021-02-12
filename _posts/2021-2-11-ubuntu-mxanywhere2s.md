@@ -3,6 +3,7 @@ title: Logitech MX anywhere 2s 우분투에서 제스쳐 사용하기
 categories:
  - linux
 tags:
+ - logitech
 ---
 
 Logitech 마우스는 options 라는 소프트웨어를 기본적으로 제공하여 키맵변경 logitech flow 등 많은 기능을 사용할 수 있다. 그러나 options 가 mac과 windows에서만 제공하는 바람에 9만원이나 하는 마우스가 그냥 돌덩이가 되어버렸다. 그러나 역시 리눅스에서 사용할 수 있는 방법이 있었다.  
@@ -26,7 +27,7 @@ ButtonPress event, serial 40, synthetic NO, window 0x7800001,root 0x1c9, subw 0x
 
 위 처럼나올껀데 버튼의 상태값과 버튼의 값이 중요하다.
 아래는 버튼 값이다. 우리는 버튼클릭만을 이용할 것이기에 0x10만 사용하면 된다.
-![](../assets/images/mx-anywhere-2s-1.png)
+![](/assets/images/mx-anywhere-2s.png)
 
 ~/.xbindkeysrc 을 편집한다. 아래는 글쓴이의 코드이다.
 ```
