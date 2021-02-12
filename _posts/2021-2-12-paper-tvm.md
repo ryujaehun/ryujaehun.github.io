@@ -6,7 +6,7 @@ categories:
  - paper-review
 tags:
 ---
-![](/assets/image/tvm1.jpg)
+![](/assets/image/tvm1.png)
 # 제목
 TVM: An Automated End-to-End Optimizing Compiler for Deep Learning
 
