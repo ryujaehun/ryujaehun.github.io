@@ -1,6 +1,5 @@
 ---
 title: KV Cache Compression, But What Must We Give in Return? A Comprehensive Benchmark of Long Context Capable Approaches
-Fusion
 categories:
  - paper-review
  - with-gpt

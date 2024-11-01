@@ -1,6 +1,5 @@
 ---
 title: Teola Towards End-to-End Optimization of LLM-based Applications
-Fusion
 categories:
  - paper-review
  - with-gpt

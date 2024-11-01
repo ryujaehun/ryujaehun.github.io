@@ -1,6 +1,5 @@
 ---
-title: What Matters in Transformers? Not All Attention is Needed
-Fusion
+title: What Matters in Transformers? Not All Attention is Needed Fusion
 categories:
  - paper-review
  - with-gpt

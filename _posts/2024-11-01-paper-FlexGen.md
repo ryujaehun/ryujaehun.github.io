@@ -1,5 +1,5 @@
 ---
-title: FlexGen: High-Throughput Generative Inference of Large Language Models with a Single GPU
+title: FlexGen High-Throughput Generative Inference of Large Language Models with a Single GPU
 categories:
  - paper-review
  - with-gpt
