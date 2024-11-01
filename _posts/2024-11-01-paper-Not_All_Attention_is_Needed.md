@@ -9,7 +9,7 @@ tags:
 
 논문 : https://arxiv.org/abs/2406.15786v1
 
-개인의견 : 내가 잘 이해를 한건지는 모르겠지만 결국 입력/출력의 cosine similarity를 보고 attention layer를 pruning 하겠다는것 같은데 이게 데이터셋의 분포 혹은 성향이 달라졌을때 잘 동작할지.. 
+개인의견 : 내가 잘 이해를 한건지는 모르겠지만 결국 입력/출력의 cosine similarity를 보고 attention layer를 pruning 하겠다는것 같은데 이게 데이터셋의 분포 혹은 성향이 달라졌을때 잘 동작할지는 납득이 쉽게 되지 았았다. 하지만 최근LLM의 크기가 점점 커져가고 있는 가운데 이렇게 실제로 필요하지 않은 layer들이 있을 수 있다는 시사점을 주는 논문이라고 이해를 하였다.
 
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
