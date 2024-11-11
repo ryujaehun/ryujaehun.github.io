@@ -1,6 +1,5 @@
 ---
-title: Enabling Tensor Language Model to Assist in Generating
-High-Performance Tensor Programs for Deep Learning
+title: Enabling Tensor Language Model to Assist in Generating High-Performance Tensor Programs for Deep Learning
 categories:
  - paper-review
  - with-gpt
