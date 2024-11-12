@@ -15,6 +15,7 @@ tags:
 # Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
 # A : 
+
 The paper titled **"ELICIT: LLM Augmentation via External In-Context Capability"** introduces a novel framework aimed at enhancing the adaptive capabilities of large language models (LLMs) through a modular and externalized approach to in-context learning. The following provides a summary of its strengths, originality, core algorithm with an illustrative example, and its limitations.
 
 ### 강점과 독창적인 지점
@@ -52,6 +53,7 @@ ELICIT의 핵심 알고리즘은 **능력 라이브러리 구축**과 **동적 �
 # Q: 능력 라이브러리 구축하는 방법과 동적 능력 호출하는 알고리즘에 대해서 예시를 들어 아주 구체적으로 설명해줄 수 있니?
 
 # A : 
+
 물론입니다. ELICIT 프레임워크에서 능력 라이브러리를 구축하는 방법과 동적 능력 호출 알고리즘을 구체적으로 설명하겠습니다. 
 
 ### 1. 능력 라이브러리 구축하기
@@ -115,6 +117,7 @@ ELICIT의 능력 라이브러리 구축과 동적 호출 알고리즘은 각각 
 # Q : 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될지 예시를 들어서 아주 자세하게 설명해줘
 
 # A : 
+
 ELICIT 프레임워크에서 효과적인 학습을 위해서는 **다양한 태스크에 대한 데이터셋**과 **In-Context Learning (ICL) 프롬프트**가 필요합니다. 이 프레임워크는 각 태스크에 맞춘 **태스크 벡터**를 생성하고, 이를 통해 모델이 새로운 쿼리에 적응할 수 있도록 설계되었습니다. 
 
 따라서, ELICIT을 학습하는 과정에는 (1) 다중 태스크 데이터셋 구성, (2) ICL 프롬프트 작성, (3) 태스크 벡터 추출 및 최적 레이어 선택, (4) 유사도 기반 필터링 모델 학습 등의 단계가 포함됩니다.
@@ -220,6 +223,7 @@ ELICIT 학습에는 다양한 작업에 대한 데이터셋이 필요합니다. 
 # Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처에 대해서도 설명해줘
 
 # A : 
+
 네, ELICIT 논문에서 제안하는 입력 데이터와 추론 과정, 그리고 모델 아키텍처에 대해 자세히 설명해 드리겠습니다. 
 
 ---

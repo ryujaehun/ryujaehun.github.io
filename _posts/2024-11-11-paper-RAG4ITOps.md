@@ -15,6 +15,7 @@ tags:
 # Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
 # A : 
+
 이 논문 **"RAG4ITOps: A Supervised Fine-Tunable and Comprehensive RAG Framework for IT Operations and Maintenance"**는 IT 운영 및 유지보수를 위한 질의응답(QA) 시스템을 개선하기 위한 **Retrieval-Augmented Generation (RAG)** 프레임워크인 RAG4ITOps를 제안합니다. 다음은 논문의 강점, 독창성, 핵심 알고리즘 예시, 그리고 한계점에 대한 설명입니다.
 
 ### 강점과 독창성

@@ -15,6 +15,7 @@ tags:
 # Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
 # A : 
+
 **논문 분석: "Scientific Beta Multi-Beta Multi-Strategy Indices: Implementing Multi-Factor Equity Portfolios with Smart Factor Indices"**
 
 ### 1. 강점 및 독창적인 지점
@@ -55,6 +56,7 @@ tags:
 # Q : 이 논문의 결과가 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
 
 # A : 
+
 **논문 "Scientific Beta Multi-Beta Multi-Strategy Indices"의 결과 분석 및 차별화 요소**
 
 ### 1. 다른 방법론에 비해 특출난 점
@@ -222,6 +224,7 @@ print(f"Equal Risk Contribution Portfolio Return: {erc_return:.4f}, Volatility: 
 
 
 # A : 
+
 논문 "Scientific Beta Multi-Beta Multi-Strategy Indices"에서 제시한 한계를 극복하기 위한 다양한 연구 흐름이 존재합니다. 팩터 투자 전략의 주기성, 성과 저하 가능성, 유동성 문제와 같은 제한 요소를 보완하기 위해 여러 접근법이 개발되고 있으며, 아래에 각 연구 흐름을 상세히 설명합니다.
 
 ### 1. 동적 팩터 타이밍(Dynamic Factor Timing) 연구

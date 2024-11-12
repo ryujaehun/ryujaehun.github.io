@@ -41,6 +41,7 @@ TOVA는 어텐션 점수가 낮은 토큰을 주기적으로 캐시에서 삭제
 
 
 # A : 
+
 네, **Transformers와 RNN의 연계성**에 대해 자세히 설명드리겠습니다.
 
 ### Transformer와 RNN의 기본 차이점

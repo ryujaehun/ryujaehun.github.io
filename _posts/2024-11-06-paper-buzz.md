@@ -63,6 +63,7 @@ BUZZ는 중간 내용(토큰 101~200)을 작은 섹션으로 나눠서 중요 �
 # Q : 이 방법이 32K이상이 되는 long sequence에서 결과의 질에 대하여 얼마만큼의 영향을 미칠까? 그리고 7B정도 되는 llama2와 비슷한 아키텍처라고 할때 얼마만큼의 memory gain과 throughput gain을 얻을 수 있을까?
 
 # A : 
+
 BUZZ 알고리즘을 32K 이상의 긴 시퀀스에 적용했을 때 결과의 질, 메모리 절감(Memory Gain), 처리량 향상(Throughput Gain)에 미치는 영향을 Llama2-7B와 유사한 아키텍처를 기준으로 설명드리겠습니다. 
 
 ### 1. **결과의 질 (Quality Impact)**
