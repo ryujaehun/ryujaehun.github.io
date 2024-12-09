@@ -4,6 +4,7 @@ date: 2024-12-08
 categories:
  - paper-review
  - with-gpt
+ - LLM
 ---
 
 [논문 링크](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)
