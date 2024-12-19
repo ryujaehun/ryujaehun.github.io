@@ -1,3 +1,4 @@
 Gemfile.lock
 papers/*
 _site/*
+log*.txt
