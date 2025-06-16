@@ -1,5 +1,5 @@
 ---
-title: "SOLA: OPTIMIZING SLO ATTAINMENT FOR LARGE LANGUAGE MODEL SERVING WITH STATE-AWARE SCHEDULING"
+title: "SOLA: Optimizing SLO Attainment for Large Language Model Serving with State-Aware Scheduling"
 date: 2025-06-05
 categories:
  - paper-review

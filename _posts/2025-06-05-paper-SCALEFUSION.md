@@ -1,5 +1,5 @@
 ---
-title: "SCALEFUSION: SCALABLE INFERENCE OF SPATIAL-TEMPORAL DIFFUSION TRANSFORMERS FOR HIGH-RESOLUTION LONG VIDEO GENERATION"
+title: "ScaleFusion: Scalable Inference of Spatial-Temporal Diffusion Transformers for High-Resolution Long Video Generation"
 date: 2025-06-05
 categories:
  - paper-review
