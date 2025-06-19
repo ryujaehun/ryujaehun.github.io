@@ -27,7 +27,7 @@ tags:
 
 # Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
-# A : 
+ 
 EOF
     echo "생성된 파일: $FILENAME"
 done

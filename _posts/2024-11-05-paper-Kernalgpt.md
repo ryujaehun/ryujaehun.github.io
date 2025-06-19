@@ -58,7 +58,7 @@ KernelGPT는 Syzkaller 퍼징의 커버리지를 높이고, 자동화된 사양 
 
 # Q : LLM을 통한 접근 방법이 LLM에 많은것을 의존하는것 같은데 예를 들어 이 논문에서 얻은 인사이트를 가지고 deep learning compiler TVM의 IR인 TIR에 대하여 fuzzing을 진행한다고 할때 어떤 insight를 얻을 수 있을까?
 
-# A : 
+ 
 
 이 논문에서 제안하는 **LLM 기반의 자동화된 사양 생성과 검증 방법**을 TVM의 중간 표현(Intermediate Representation, IR)인 TIR에 대한 퍼징에 적용하면, 다음과 같은 인사이트를 얻을 수 있습니다.
 

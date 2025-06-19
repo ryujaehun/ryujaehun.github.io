@@ -14,7 +14,7 @@ tags:
 
 # Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
-# A : 
+ 
 
 **논문 분석: "Scientific Beta Multi-Beta Multi-Strategy Indices: Implementing Multi-Factor Equity Portfolios with Smart Factor Indices"**
 
@@ -55,7 +55,7 @@ tags:
 
 # Q : 이 논문의 결과가 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
 
-# A : 
+ 
 
 **논문 "Scientific Beta Multi-Beta Multi-Strategy Indices"의 결과 분석 및 차별화 요소**
 
@@ -92,7 +92,7 @@ tags:
 
 # Q : 동일 위험 기여(ERC) 및 동일 가중(EW) 에 대해서 아주 자세하게 예시를 들어 설명해주고 이 방법을 파이썬으로 구현하면 어떻게 될지 코드로 작성해 줘
 
-# A : 
+ 
 
 ### **1. 동일 위험 기여(ERC, Equal Risk Contribution)와 동일 가중(EW, Equal Weight) 전략에 대한 자세한 설명**
 
@@ -223,7 +223,7 @@ print(f"Equal Risk Contribution Portfolio Return: {erc_return:.4f}, Volatility: 
 # Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
 
 
-# A : 
+ 
 
 논문 "Scientific Beta Multi-Beta Multi-Strategy Indices"에서 제시한 한계를 극복하기 위한 다양한 연구 흐름이 존재합니다. 팩터 투자 전략의 주기성, 성과 저하 가능성, 유동성 문제와 같은 제한 요소를 보완하기 위해 여러 접근법이 개발되고 있으며, 아래에 각 연구 흐름을 상세히 설명합니다.
 

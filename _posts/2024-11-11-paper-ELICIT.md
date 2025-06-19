@@ -14,7 +14,7 @@ tags:
 
 # Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
-# A : 
+ 
 
 The paper titled **"ELICIT: LLM Augmentation via External In-Context Capability"** introduces a novel framework aimed at enhancing the adaptive capabilities of large language models (LLMs) through a modular and externalized approach to in-context learning. The following provides a summary of its strengths, originality, core algorithm with an illustrative example, and its limitations.
 
@@ -52,7 +52,7 @@ ELICIT의 핵심 알고리즘은 **능력 라이브러리 구축**과 **동적 �
 
 # Q: 능력 라이브러리 구축하는 방법과 동적 능력 호출하는 알고리즘에 대해서 예시를 들어 아주 구체적으로 설명해줄 수 있니?
 
-# A : 
+ 
 
 물론입니다. ELICIT 프레임워크에서 능력 라이브러리를 구축하는 방법과 동적 능력 호출 알고리즘을 구체적으로 설명하겠습니다. 
 
@@ -116,7 +116,7 @@ ELICIT의 능력 라이브러리 구축과 동적 호출 알고리즘은 각각 
 
 # Q : 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될지 예시를 들어서 아주 자세하게 설명해줘
 
-# A : 
+ 
 
 ELICIT 프레임워크에서 효과적인 학습을 위해서는 **다양한 태스크에 대한 데이터셋**과 **In-Context Learning (ICL) 프롬프트**가 필요합니다. 이 프레임워크는 각 태스크에 맞춘 **태스크 벡터**를 생성하고, 이를 통해 모델이 새로운 쿼리에 적응할 수 있도록 설계되었습니다. 
 
@@ -189,7 +189,7 @@ ELICIT 학습에는 다양한 작업에 대한 데이터셋이 필요합니다. 
 
 # Q : 이 논문의 결과가 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
 
-# A : 
+ 
 
 이 논문에서 제안하는 ELICIT 프레임워크는 기존 방법론에 비해 특출난 성능을 보이는 몇 가지 중요한 강점이 있습니다. 특히, **효율적인 능력 호출**과 **모듈화된 태스크 벡터**를 통한 **능력 확장성**이 핵심적입니다. 
 
@@ -222,7 +222,7 @@ ELICIT 학습에는 다양한 작업에 대한 데이터셋이 필요합니다. 
 
 # Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처에 대해서도 설명해줘
 
-# A : 
+ 
 
 네, ELICIT 논문에서 제안하는 입력 데이터와 추론 과정, 그리고 모델 아키텍처에 대해 자세히 설명해 드리겠습니다. 
 
@@ -293,7 +293,7 @@ ELICIT 프레임워크는 사용자가 입력한 쿼리에 맞춰 **능력 라�
 
 # Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
 
-# A : 
+ 
 
 ELICIT 논문에서 제시한 한계를 극복하기 위한 연구 흐름은, **태스크 벡터 최적화**와 **모듈화된 능력 저장 방식의 효율성 개선**, **확장성 강화**의 측면에서 논의될 수 있습니다. 주요 흐름을 다음과 같이 설명하겠습니다.
 

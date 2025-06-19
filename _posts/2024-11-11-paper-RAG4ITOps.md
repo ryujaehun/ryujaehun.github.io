@@ -14,7 +14,7 @@ tags:
 
 # Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
-# A : 
+ 
 
 이 논문 **"RAG4ITOps: A Supervised Fine-Tunable and Comprehensive RAG Framework for IT Operations and Maintenance"**는 IT 운영 및 유지보수를 위한 질의응답(QA) 시스템을 개선하기 위한 **Retrieval-Augmented Generation (RAG)** 프레임워크인 RAG4ITOps를 제안합니다. 다음은 논문의 강점, 독창성, 핵심 알고리즘 예시, 그리고 한계점에 대한 설명입니다.
 
@@ -50,7 +50,7 @@ RAG4ITOps는 우수한 성능을 보이지만, 다음과 같은 한계점이 있
 
 # Q : Homogeneous In-Batch Negative Sampling (HIS) 및 Auxiliary Hard Negative Sampling (AHNS) 전략 에 대해서 예시를 추가해서 아주 자세하게 설명해줘
 
-# A : 
+ 
 
 **Homogeneous In-Batch Negative Sampling (HIS)**와 **Auxiliary Hard Negative Sampling (AHNS)**는 RAG4ITOps에서 **도메인 전용 임베딩 모델의 성능을 향상시키기 위해 사용되는 대조 학습 기법**입니다. 이 두 전략은 학습 데이터에서 의미 있는 '부정 예시(negative samples)'를 효과적으로 구성하여, 모델이 문맥과 의미적 차이를 더 잘 학습할 수 있도록 돕습니다. 각 전략을 예시와 함께 자세히 설명드리겠습니다.
 
@@ -131,7 +131,7 @@ RAG4ITOps는 모델 자체를 재훈련할 필요 없이 **벡터 데이터베�
 
 # Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
 
-# A : 
+ 
 
 RAG4ITOps 논문은 IT 운영 및 유지보수 분야에서 우수한 성능을 발휘하지만, 몇 가지 한계도 있습니다. 이러한 한계를 극복하기 위한 연구 흐름을 정리하여 자세히 설명하겠습니다.
 
