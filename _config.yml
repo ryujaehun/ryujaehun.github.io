@@ -78,7 +78,7 @@ plugins:
 favicon: /assets/favicon.ico
 
 # Set default keywords (Use a comma to separate)
-keywords: "Jekyll, NexT"
+keywords: "Jaehun, Ryu, Jaehun Ryu, Jaehun's Blog, Jaehun's Homepage, Jaehun's Website, Jaehun's Portfolio, AI, Artificial Intelligence, Machine Learning, Deep Learning, Computer Vision, Robotics"
 
 # Set rss to false to disable feed link.
 # Leave rss as empty to use site's feed link.
@@ -104,7 +104,7 @@ copyright: true
 canonical: true
 
 # Change headers hierarchy on site-subtitle (will be main site description) and on all post/pages titles for better SEO-optimization.
-seo: false
+seo: true
 
 # If true, will add site-subtitle to index page, added in jekyll config.
 # subtitle: Subtitle
@@ -244,7 +244,7 @@ toc:
   enable: true
 
   # Automatically add list number to toc.
-  number: false
+  number: true
 
   # If true, all words will placed on next lines if header width longer then sidebar width.
   wrap: false
