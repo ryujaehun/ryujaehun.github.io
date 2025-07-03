@@ -69,7 +69,6 @@ plugins:
 # - jemoji
  - jekyll-sitemap
  - jekyll-feed
- - jekyll-seo-tag
 
 # ---------------------------------------------------------------
 # Site Information Settings
@@ -248,7 +247,7 @@ toc:
   number: true
 
   # If true, all words will placed on next lines if header width longer then sidebar width.
-  wrap: true
+  wrap: false
 
 
 # Creative Commons 4.0 International License.
@@ -278,10 +277,10 @@ sidebar:
   offset_float: 0
 
   # Back to top in sidebar
-  b2t: true
+  b2t: false
 
   # Scroll percent label in b2t button
-  scrollpercent: true
+  scrollpercent: false
 
 
 # Blog rolls
@@ -300,7 +299,7 @@ sidebar:
 scroll_to_more: true
 
 # Automatically saving scroll position on each post/page in cookies.
-save_scroll: true
+save_scroll: false
 
 # Automatically excerpt description in homepage as preamble text.
 excerpt_description: true
@@ -315,7 +314,7 @@ auto_excerpt:
 post_meta:
   item_text: true
   created_at: true
-  updated_at: true
+  updated_at: false
   categories: true
 
 # Post wordcount display settings
@@ -368,7 +367,6 @@ highlight_theme: normal
 mathjax:
   enable: true
   per_page: false
-  # cdn: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
   cdn: //cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML
 
 # Han Support docs: https://hanzi.pro/
@@ -559,7 +557,7 @@ local_search:
   enable: true
   # if auto, trigger search by changing input
   # if manual, trigger search by pressing enter key or search button
-  trigger: manual
+  trigger: auto
   # show top n results per article, show all results by setting to -1
   top_n_per_article: 1
 
