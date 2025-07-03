@@ -69,6 +69,9 @@ tags:
  - 
 ---
 
+{% capture time %}{{ content | reading_time }}{% endcapture %}
+   <p>이 포스트를 읽는데 약 {{ time }} {% if time == '1' %}분{% else %}분{% endif %} 이 소요될 수 있습니다.</p>
+
 [논문 링크](https://arxiv.org/abs/{arxiv_id})
 
 # 공통질문
