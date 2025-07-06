@@ -91,6 +91,9 @@ pre {
     padding-left: 10px;
     padding-right: 10px;
     background-color: $highlight-background;
+    white-space: pre-wrap;   // 줄바꿈 허용
+    overflow-x: auto;        // 긴 줄은 가로 스크롤
+    word-break: break-word;  // 단어 단위로 잘림 방지
   }
 
   .line { height: 20px; }
