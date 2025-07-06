@@ -70,7 +70,14 @@ plugins:
  - jekyll-sitemap
  - jekyll-feed
  - jekyll-seo-tag
-
+ - jekyll-og-image
+og_image:
+  # 글별 썸네일 기본 템플릿 옵션
+  background:   "/assets/og-template.png"   # 빈 캔버스
+  title_font:   "/assets/fonts/Inter-Bold.ttf"
+  subtitle_font: "/assets/fonts/Inter-Regular.ttf"
+  font_size:    72
+  margin:       64
 # ---------------------------------------------------------------
 # Site Information Settings
 # ---------------------------------------------------------------
