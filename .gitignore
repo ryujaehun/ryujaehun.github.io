@@ -3,3 +3,5 @@ papers/*
 _site/*
 log*.txt
 translate.py
+.jekyll-metadata
+create_post_templete.py
