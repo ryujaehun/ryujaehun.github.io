@@ -17,7 +17,7 @@ tags:
 ## 한 줄 요약 (TL;DR)
 
 > **Sparse-MoE + Slice-Elastic TPU 학습 + Flash Distillation** 덕분에, Gemini 2.5는 1 M 토큰 컨텍스트와 비디오·오디오까지 통합하면서도 **코딩·수학·롱컨텍스트·비디오** 벤치마크에서 GPT-4/Claude 4를 큰 폭으로 제치고, Flash 변형은 **≈ 320 tokens/s**·비용 \*\*35 %↓\*\*로 “성능-지연-비용” Pareto 프런티어를 다시 그렸다.
-
+<!--more-->
 ---
 
 ## 핵심 아이디어

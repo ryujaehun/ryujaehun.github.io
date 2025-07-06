@@ -35,7 +35,7 @@ paginate: 10
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md", "Gemfile", "Gemfile.lock", "README_en.md"]
 
 # Separator
-#excerpt_separator: <!-- more -->
+excerpt_separator: <!--more-->
 
 # Code Highlighter
 ## 'pygments' is unsupported on GitHub Pages now.
@@ -70,8 +70,6 @@ plugins:
  - jekyll-sitemap
  - jekyll-feed
  - jekyll-seo-tag
- - jekyll-subscription
- - jekyll-toc
 
 # ---------------------------------------------------------------
 # Site Information Settings
@@ -88,8 +86,10 @@ keywords: "Jaehun, Ryu, Jaehun Ryu, Jaehun's Blog, Jaehun's Homepage, Jaehun's W
 # Set rss to specific value if you have burned your feed already.
 rss:
 
+
+
 # Specify the date when the site was setup
-#since: 2015
+since: 2020
 
 # icon between year and author @Footer
 authoricon: heart
