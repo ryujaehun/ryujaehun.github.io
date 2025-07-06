@@ -5,3 +5,4 @@ log*.txt
 translate.py
 .jekyll-metadata
 create_post_templete.py
+create_post_templete.sh
