@@ -39,43 +39,42 @@ layout: layout
   data-theme="preferred_color_scheme" data-lang="ko" data-loading="lazy" crossorigin="anonymous" async>
   </script>
 
-<!-- 
 <div class="Related Posts">
 
-<h4>Related Posts</h4> 
-    
-{% assign maxRelated = 4 %}
-{% assign minCommonTags =  1 %}
-{% assign maxRelatedCounter = 0 %}
+  <h4>Related Posts</h4>
 
-{% for post in site.posts %}
+  {% assign maxRelated = 4 %}
+  {% assign minCommonTags = 1 %}
+  {% assign maxRelatedCounter = 0 %}
 
-    {% assign sameTagCount = 0 %}
-    {% assign commonTags = '' %}
+  {% for post in site.posts %}
 
-    {% for category in post.categories %}
-        {% if post.url != page.url %}
-        {% if page.categories contains category %}
-            {% assign sameTagCount = sameTagCount | plus: 1 %}
-            {% capture tagmarkup %} <span class="label label-default"></span> {% endcapture %}
-            {% assign commonTags = commonTags | append: tagmarkup %}
-        {% endif %}
-        {% endif %}
-    {% endfor %}
+  {% assign sameTagCount = 0 %}
+  {% assign commonTags = '' %}
 
-    {% if sameTagCount >= minCommonTags %}
-        <div>
-        <h5><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}{{ commonTags }}</a></h5>
-        </div>
-        {% assign maxRelatedCounter = maxRelatedCounter | plus: 1 %}
-        {% if maxRelatedCounter >= maxRelated %}
-        {% break %}
-        {% endif %}
-    {% endif %}
+  {% for category in post.categories %}
+  {% if post.url != page.url %}
+  {% if page.categories contains category %}
+  {% assign sameTagCount = sameTagCount | plus: 1 %}
+  {% capture tagmarkup %} <span class="label label-default"></span> {% endcapture %}
+  {% assign commonTags = commonTags | append: tagmarkup %}
+  {% endif %}
+  {% endif %}
+  {% endfor %}
 
-    {% endfor %}
+  {% if sameTagCount >= minCommonTags %}
+  <div>
+    <h5><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}{{ commonTags }}</a></h5>
+  </div>
+  {% assign maxRelatedCounter = maxRelatedCounter | plus: 1 %}
+  {% if maxRelatedCounter >= maxRelated %}
+  {% break %}
+  {% endif %}
+  {% endif %}
 
-</div> -->
+  {% endfor %}
+
+</div>
 
 <!-- {% if page.comments %}
 <div id="disqus_thread"></div>
