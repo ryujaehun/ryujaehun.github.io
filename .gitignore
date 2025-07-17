@@ -37,3 +37,4 @@ ehthumbs_vista.db
 .vscode/
 # JetBrains IDEs (WebStorm, GoLand 등)
 .idea/
+create_post_templete.py

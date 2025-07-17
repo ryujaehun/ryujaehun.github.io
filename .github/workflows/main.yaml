@@ -1,0 +1,80 @@
+name: Deploy Hugo site to Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HUGO_ENVIRONMENT: production
+      TZ: America/Los_Angeles # 시간대 설정은 그대로 유지
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      # ⬇️ 수정된 부분: Hugo 및 Sass 설치
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "0.148.0" # 버전 고정 또는 latest 사용
+          extended: true
+
+      - name: Setup Dart Sass
+        uses: sass/setup-dart-sass@v2
+
+      # ⬇️ 수정된 부분: 캐시 설정
+      - name: Cache Hugo resources
+        uses: actions/cache@v4
+        with:
+          path: ./resources # Hugo 0.125.0 이상부터는 --cacheDir 보다 프로젝트 내 resources 디렉토리 사용이 권장됩니다.
+          key: ${{ runner.os }}-hugo-resources-${{ hashFiles('**/go.sum', '**/package-lock.json') }}-${{ github.ref == 'refs/heads/main' && github.sha || '' }}
+          restore-keys: |
+            ${{ runner.os }}-hugo-resources-${{ hashFiles('**/go.sum', '**/package-lock.json') }}-
+            ${{ runner.os }}-hugo-resources-
+
+      - name: Install Node.js dependencies
+        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
+
+      # ⬇️ 수정된 부분: Hugo 빌드 명령어
+      - name: Build with Hugo
+        run: |
+          hugo \
+            --gc \
+            --minify \
+            --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
