@@ -1,0 +1,3671 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Supply-Chain Attacks in Machine Learning Frameworks | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 AI..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/Supply-Chain-Attacks-in-Machine-Learning-Frameworks/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/Supply-Chain-Attacks-in-Machine-Learning-Frameworks/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="Supply-Chain Attacks in Machine Learning Frameworks">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 AI 모델 공급망 공격에 대한 연구 논문 심층 분석 사용자께서 제공하신 “Supply-Chain Attacks in Machine Learning Frameworks” 논문은 머신러닝(ML) 시스템이 직면한 새로운 유형의 공급망 공격을 심도 있게 분석하고, ML 커뮤니티의 보안 인식 수준을 평가한 중요한 연구입니다. 아래에 논문의 핵심 내용, 강점, 독창성, 핵심 공격 기법, 그리고 한계점을 상세히 설명해 드리겠습니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-06-10T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-06-10T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="Supply-Chain Attacks in Machine Learning Frameworks">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 AI 모델 공급망 공격에 대한 연구 논문 심층 분석 사용자께서 제공하신 “Supply-Chain Attacks in Machine Learning Frameworks” 논문은 머신러닝(ML) 시스템이 직면한 새로운 유형의 공급망 공격을 심도 있게 분석하고, ML 커뮤니티의 보안 인식 수준을 평가한 중요한 연구입니다. 아래에 논문의 핵심 내용, 강점, 독창성, 핵심 공격 기법, 그리고 한계점을 상세히 설명해 드리겠습니다.">
+
+
+  <meta itemprop="name" content="Supply-Chain Attacks in Machine Learning Frameworks">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 AI 모델 공급망 공격에 대한 연구 논문 심층 분석 사용자께서 제공하신 “Supply-Chain Attacks in Machine Learning Frameworks” 논문은 머신러닝(ML) 시스템이 직면한 새로운 유형의 공급망 공격을 심도 있게 분석하고, ML 커뮤니티의 보안 인식 수준을 평가한 중요한 연구입니다. 아래에 논문의 핵심 내용, 강점, 독창성, 핵심 공격 기법, 그리고 한계점을 상세히 설명해 드리겠습니다.">
+  <meta itemprop="datePublished" content="2025-06-10T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-06-10T00:00:00+00:00">
+  <meta itemprop="wordCount" content="13268">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gemini-2.5-Pro(preview),MLSYS2025">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">Supply-Chain Attacks in Machine Learning Frameworks</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    Supply-Chain Attacks in Machine Learning Frameworks
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2025-06-10">
+          2025년 06월 10일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >27 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>13268 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gemini-2.5-propreview/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gemini-2.5-pro(preview)
+                </a>
+              
+                <a
+                  href="/categories/MLSYS2025/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  MLSYS2025
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://openreview.net/pdf?id=EH5PZW6aCr">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h2 id="ai-모델-공급망-공격에-대한-연구-논문-심층-분석">AI 모델 공급망 공격에 대한 연구 논문 심층 분석</h2>
+<p>사용자께서 제공하신 &ldquo;Supply-Chain Attacks in Machine Learning Frameworks&rdquo; 논문은 머신러닝(ML) 시스템이 직면한 새로운 유형의 공급망 공격을 심도 있게 분석하고, ML 커뮤니티의 보안 인식 수준을 평가한 중요한 연구입니다. 아래에 논문의 핵심 내용, 강점, 독창성, 핵심 공격 기법, 그리고 한계점을 상세히 설명해 드리겠습니다.</p>
+<h3 id="논문의-강점-및-독창성">논문의 강점 및 독창성</h3>
+<p>이 논문은 다음과 같은 측면에서 매우 독창적이고 강력한 기여를 합니다.</p>
+<ol>
+<li>[cite_start]<strong>새로운 공격 패러다임 제시</strong>: 기존의 공급망 공격 연구는 악성 코드가 시스템 호출이나 의심스러운 네트워크 트래픽을 유발하는 등 전통적인 보안 위협에 초점을 맞추었습니다[cite: 80]. [cite_start]반면, 이 논문은 이러한 전통적인 탐지 기법을 우회하는 **&lsquo;ML 특화 공급망 공격(ML-specific supply-chain attacks)&rsquo;**이라는 새로운 패러다임을 제시합니다[cite: 3, 76, 82]. [cite_start]이 공격은 겉보기에는 무해한 코드를 주입하여 시스템이 아닌 ML 모델의 강건성(robustness) 자체를 약화시키는 방식입니다[cite: 4, 33, 84].</li>
+<li>[cite_start]<strong>&lsquo;소프트웨어&rsquo;와 &lsquo;알고리즘&rsquo; 취약점의 결합</strong>: 이 연구의 가장 큰 독창성은 지금까지 분리되어 다루어졌던 <strong>소프트웨어 공급망 보안</strong>과 **적대적 ML(Adversarial ML)**이라는 두 분야를 성공적으로 결합했다는 점입니다[cite: 72, 77]. [cite_start]파이썬(Python)이라는 프로그래밍 언어의 구조적 취약점을 이용해 ML 모델의 알고리즘 수준(예: 데이터 처리 파이프라인, 모델의 판단 로직)을 교묘하게 조작하는 공격 경로를 구체적으로 증명했습니다[cite: 32, 77].</li>
+<li>[cite_start]<strong>실증적 데이터 기반의 커뮤니티 분석</strong>: 이론적인 공격 모델 제시에 그치지 않고, GitHub의 상위 50개 ML 프로젝트와 50개 비-ML(리눅스) 프로젝트의 이슈 및 풀 리퀘스트(PR) 85만여 개를 LLM을 이용해 분석했습니다[cite: 5, 182, 229]. [cite_start]이를 통해 ML 커뮤니티가 더 큰 공격 표면을 가졌음에도 불구하고 [cite: 22, 25][cite_start], 보안 인식 수준은 비-ML 커뮤니티와 유사하다는 충격적인 사실을 데이터로 입증했습니다[cite: 6, 41, 231].</li>
+<li>[cite_start]<strong>구체적이고 현실적인 공격 시나리오</strong>: 논문은 파이썬의 동적 특성을 이용해 다른 패키지의 변수나 함수를 런타임에 덮어쓰는 매우 구체적인 코드 예제들을 제시합니다[cite: 108, 121, 124, 147]. 이는 막연한 위협이 아니라, 당장이라도 발생할 수 있는 현실적인 공격임을 명확히 보여줍니다.</li>
+</ol>
+<h3 id="핵심-공격-기법-다운스트림-변수-덮어쓰기-overwriting-downstream-variables">핵심 공격 기법: 다운스트림 변수 덮어쓰기 (Overwriting Downstream Variables)</h3>
+<p>이 논문이 제시하는 핵심 공격 기법의 근원은 <strong>파이썬의 동적 런타임 환경</strong>입니다. [cite_start]파이썬에서는 일단 임포트된 모든 패키지들이 동일한 메모리 공간을 공유하므로, 악의적으로 조작된 의존성 패키지(업스트림)가 이를 사용하는 최종 애플리케이션(다운스트림)의 변수나 함수를 실시간으로 조작할 수 있습니다[cite: 18, 99, 100].</p>
+<p>공격은 크게 두 가지 방식으로 이루어집니다.</p>
+<ul>
+<li>[cite_start]<strong>전역 변수 덮어쓰기 (Global Variables)</strong>: 공격자가 제어하는 패키지가 ML 프레임워크(예: PyTorch, TensorFlow)를 먼저 임포트한 뒤, 그 내부의 전역 변수, 함수, 클래스 등을 다른 값으로 바꿔치기합니다[cite: 105, 106]. [cite_start]이후 ML 서비스가 해당 프레임워크를 임포트하더라도 이미 변경된 값이 유지됩니다[cite: 107].</li>
+<li>[cite_start]<strong>지역 변수 덮어쓰기 (Local Variables)</strong>: 더 교묘한 방식으로, 공격 코드가 담긴 함수가 호출되었을 때 <code>inspect</code> 모듈을 사용해 자신을 호출한 다운스트림 함수의 콜 스택(call stack)에 접근합니다[cite: 118]. [cite_start]이를 통해 호출한 함수의 지역 변수까지 찾아내어 값을 변경할 수 있습니다[cite: 119].</li>
+</ul>
+<hr>
+<h3 id="예시-입력을-통한-전체-과정-설명"><strong>예시 입력을 통한 전체 과정 설명</strong></h3>
+<p>[cite_start]논문에서 제시된 여러 공격 중, 가장 교묘하고 탐지가 어려운 <strong>&lsquo;취약한 파이프라인(Vulnerable Pipeline)&rsquo; 공격</strong>을 예시로 설명하겠습니다[cite: 143].</p>
+<p><strong>상황 설정:</strong>
+어떤 ML 서비스가 외부 이미지를 입력받아 분류하는 모델을 운영하고 있습니다. [cite_start]이 서비스는 &lsquo;이미지 스케일링 공격&rsquo;을 방어하기 위해, 이미지 크기를 조절할 때 안전하다고 알려진 <code>area interpolation</code> 방식을 사용하도록 코드에 명시했습니다[cite: 146]. 공격자는 이 서비스를 공격하여 안전하지 않은 <code>nearest neighbor</code> 보간법을 사용하게 만들어 모델을 취약하게 만들고자 합니다.</p>
+<p><strong>전체 과정:</strong></p>
+<ol>
+<li>
+<p><strong>Step 1: 공격 벡터 선택</strong>
+공격자는 해당 ML 서비스가 사용하는 수많은 파이썬 의존성 패키지 중 하나(예: <code>awesome-package</code>)에 악성 코드를 기여하는 데 성공합니다. 이 패키지는 겉보기에는 이미지 처리와 전혀 관련이 없을 수 있습니다.</p>
+</li>
+<li>
+<p><strong>Step 2: 악성 코드 주입 (예시 입력)</strong>
+공격자는 <code>awesome-package</code>의 초기화 파일(<code>__init__.py</code>)에 다음과 같은 단 세 줄의 코드를 추가합니다. 이 코드가 <strong>핵심적인 입력</strong>입니다.</p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PYTHON
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-0"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-0"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-0">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># in awesome-package/__init__.py</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="kn">import</span> <span class="nn">torchvision.transforms.functional</span> <span class="k">as</span> <span class="nn">F</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="c1"># 토치비전(torchvision)의 AREA 보간법 열거형(enum)을</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="c1"># NEAREST 보간법으로 덮어쓴다.</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="n">F</span><span class="o">.</span><span class="n">InterpolationMode</span><span class="o">.</span><span class="n">AREA</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">InterpolationMode</span><span class="o">.</span><span class="n">NEAREST</span></span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-0';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<p>[cite_start][cite: 147, 148]</p>
+<ul>
+<li><strong>설명</strong>: 이 코드는 시스템에 직접적인 해를 가하거나, 파일을 훔치거나, 네트워크 통신을 하지 않습니다. 단순히 파이썬 객체의 참조를 바꾸는, 지극히 정상적으로 보일 수 있는 코드입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Step 3: ML 서비스 실행</strong>
+ML 서비스가 시작되면, 의존성 목록에 있는 <code>awesome-package</code>를 임포트합니다. 이때 <strong>Step 2</strong>에서 주입된 코드가 실행됩니다. 이 시점부터 해당 파이썬 프로세스 내에서 <code>torchvision</code>의 <code>InterpolationMode.AREA</code>는 사실상 <code>InterpolationMode.NEAREST</code>와 동일한 객체를 가리키게 됩니다.</p>
+</li>
+<li>
+<p><strong>Step 4: 공격 발동</strong>
+사용자가 이미지를 업로드하면, ML 서비스는 코드에 명시된 대로 안전한 <code>area</code> 보간법을 사용해 이미지 크기를 조절하려고 시도합니다.</p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PYTHON
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-1"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-1"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-1">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># in ml_service/preprocessing.py</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="kn">from</span> <span class="nn">torchvision.transforms</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="k">def</span> <span class="nf">resize_image</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="c1"># 개발자는 &#39;AREA&#39;를 사용한다고 믿고 있다.</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">    <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">F</span><span class="o">.</span><span class="n">InterpolationMode</span><span class="o">.</span><span class="n">AREA</span><span class="p">)</span></span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-1';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+</li>
+<li>
+<p><strong>Step 5: 결과</strong>
+서비스 코드에는 분명 <code>F.InterpolationMode.AREA</code>라고 쓰여 있지만, 이 변수는 <strong>Step 3</strong>에서 이미 <code>NEAREST</code>로 덮어쓰기 되었습니다. [cite_start]따라서 실제로는 안전하지 않은 <code>nearest neighbor</code> 보간법으로 이미지 크기 조절이 수행됩니다[cite: 149]. 결과적으로, 이 ML 서비스는 자신도 모르는 사이에 &lsquo;이미지 스케일링 공격&rsquo;에 취약한 상태가 됩니다.</p>
+</li>
+</ol>
+<p>이 공격은 ML 서비스의 소스 코드를 아무리 분석해도 문제를 찾을 수 없고, 전통적인 보안 솔루션으로는 탐지가 거의 불가능하다는 점에서 매우 치명적입니다.</p>
+<h3 id="논문의-한계점">논문의 한계점</h3>
+<p>논문 저자들도 인정했듯이, 이 연구는 다음과 같은 한계점을 가집니다.</p>
+<ol>
+<li>[cite_start]<strong>분석 대상의 한계</strong>: 보안 인식에 대한 분석이 GitHub의 특정 토픽(Deep Learning)에 속한 상위 50개 프로젝트에 국한되었습니다[cite: 273]. [cite_start]이는 매우 대중적인 커뮤니티를 대표하지만, 더 엄격한 보안 가이드라인을 가진 기업 내부의 ML 커뮤니티나 다른 오픈소스 생태계의 상황을 일반화하기는 어렵습니다[cite: 274].</li>
+<li>[cite_start]<strong>보안 인식 측정 방식의 한계</strong>: &lsquo;보안에 대한 논의가 포함된 이슈/PR의 비율&rsquo;을 보안 인식의 대리 지표(proxy)로 사용했습니다[cite: 275]. 이는 기여자들의 인식을 파악하는 합리적인 접근이지만, 보안 인식을 측정할 수 있는 유일하거나 가장 완벽한 방법은 아닐 수 있습니다.</li>
+<li>[cite_start]<strong>대응 방안의 현실적 어려움</strong>: 논문은 대응 방안으로 모든 의존성 패키지의 소스 코드를 분석하여 변수 덮어쓰기 시도를 탐지해야 한다고 제안합니다[cite: 256]. [cite_start]하지만 코드가 난독화되거나 [cite: 260][cite_start], 탐지 로직 자체를 우회하도록 악성 코드가 설계될 수 있어 [cite: 265] 현실적으로 완벽한 방어는 매우 어려운 과제입니다.</li>
+<li>[cite_start]<strong>언어 종속성</strong>: 제시된 공격 기법들은 파이썬과 같이 동적이고 유연한 런타임 환경을 가진 언어의 특성에 크게 의존합니다[cite: 267, 271]. Rust나 C++처럼 컴파일 시점에 타입과 메모리 사용이 엄격하게 결정되는 언어에서는 동일한 방식의 공격이 훨씬 더 어렵거나 불가능할 수 있습니다.</li>
+</ol>
+<p>종합적으로 이 논문은 ML 생태계가 직면한 심각하고 새로운 보안 위협을 명확히 규명하고, 실제 데이터를 통해 커뮤니티의 안일한 인식을 지적한 선구적인 연구라 할 수 있습니다. ML 시스템을 개발하고 운영하는 모든 이들에게 반드시 필요한 경각심을 일깨워주는 중요한 자료입니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<h2 id="논문의-핵심-공격-기법-다운스트림-변수-덮어쓰기-예시-취약한-파이프라인-공격">논문의 핵심 공격 기법: 다운스트림 변수 덮어쓰기 (예시: 취약한 파이프라인 공격)</h2>
+<p>이 논문이 제시하는 핵심 공격 기법은 단일 알고리즘이라기보다, <strong>파이썬(Python)의 동적 런타임 환경의 허점을 이용한 공격 패러다임</strong>입니다. [cite_start]핵심 원리는 **&lsquo;다운스트림 변수 덮어쓰기(Overwriting Downstream Variables)&rsquo;**로, 악의적으로 조작된 의존성 패키지(업스트림)가 이를 사용하는 최종 ML 서비스(다운스트림)의 메모리 공간에 직접 접근하여 변수나 함수를 실시간으로 조작하는 것입니다[cite: 99, 100, 101].</p>
+<p>가장 교묘하고 탐지가 어려운 <strong>&lsquo;취약한 파이프라인(Vulnerable Pipeline)&rsquo;</strong> 공격을 예시로 전체 과정을 상세히 설명하겠습니다.</p>
+<hr>
+<h3 id="상황-설정"><strong>상황 설정</strong></h3>
+<ul>
+<li><strong>방어자 (ML 서비스):</strong> 이미지 분류 모델을 운영하는 서비스. [cite_start]악의적인 &lsquo;이미지 스케일링 공격&rsquo;을 막기 위해, 이미지 크기를 조절할 때 안전하다고 알려진 <code>area</code> 보간법을 사용하도록 소스 코드에 명시했습니다[cite: 146].</li>
+<li>[cite_start]<strong>공격자:</strong> ML 서비스가 사용하는 수많은 의존성 패키지 중 하나에 대한 제어 권한을 획득했습니다[cite: 96]. [cite_start]공격 목표는 서비스가 자신도 모르게 안전하지 않은 <code>nearest neighbor</code> 보간법을 사용하게 만들어 모델을 취약하게 만드는 것입니다[cite: 145, 149].</li>
+</ul>
+<h3 id="공격-과정-상세-설명"><strong>공격 과정 상세 설명</strong></h3>
+<h4 id="step-1-공격-벡터-확보"><strong>Step 1: 공격 벡터 확보</strong></h4>
+<p>공격자는 ML 서비스가 직접 또는 간접적으로 의존하는 <code>compromised_dependency</code>라는 패키지에 코드 기여(또는 탈취)를 통해 제어 권한을 확보합니다.</p>
+<h4 id="step-2-악성-코드-주입-payload-injection"><strong>Step 2: 악성 코드 주입 (Payload Injection)</strong></h4>
+<p>공격자는 <code>compromised_dependency</code> 패키지의 초기화 파일(<code>__init__.py</code>)에 아래와 같이 단 몇 줄의, 겉보기에는 전혀 해로워 보이지 않는 코드를 삽입합니다.</p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PYTHON
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-2"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-2"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-2">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># file: compromised_dependency/__init__.py</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1"># 토치비전(torchvision) 프레임워크를 임포트</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="kn">import</span> <span class="nn">torchvision.transforms.functional</span> <span class="k">as</span> <span class="nn">F</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="c1"># &#34;우리 패키지에서는 이게 더 낫다&#34;는 식의 주석으로 위장 가능</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="c1"># 토치비전의 AREA 보간법을 NEAREST 보간법으로 덮어쓴다.</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="n">F</span><span class="o">.</span><span class="n">InterpolationMode</span><span class="o">.</span><span class="n">AREA</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">InterpolationMode</span><span class="o">.</span><span class="n">NEAREST</span></span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-2';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<p>[cite_start][cite: 147, 148]</p>
+<ul>
+<li>[cite_start]<strong>핵심:</strong> 이 코드는 시스템 파일을 삭제하거나 외부로 정보를 유출하는 등의 전형적인 악성 행위를 하지 않습니다[cite: 80, 157]. [cite_start]단순히 파이썬 객체의 참조(reference)를 다른 객체로 바꾸는, 정상적인 코딩 과정에서도 충분히 일어날 수 있는 행위처럼 보입니다[cite: 158].</li>
+</ul>
+<h4 id="step-3-실행-및-메모리-오염"><strong>Step 3: 실행 및 메모리 오염</strong></h4>
+<p>ML 서비스가 시작되면서 의존성 패키지인 <code>compromised_dependency</code>를 임포트합니다. 이때 <strong>Step 2</strong>에서 주입된 코드가 실행됩니다. 이 순간부터 해당 파이썬 프로세스 전체에서 <code>torchvision.transforms.functional.InterpolationMode.AREA</code>라는 이름표는 <code>NEAREST</code> 객체를 가리키게 됩니다.</p>
+<h4 id="step-4-의도와-다른-동작-수행"><strong>Step 4: 의도와 다른 동작 수행</strong></h4>
+<p>ML 서비스는 이미지 전처리 과정에서 아래와 같이 <strong>분명히 <code>AREA</code> 보간법을 사용하도록</strong> 코딩된 함수를 호출합니다.</p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PYTHON
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-3"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-3"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-3">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># file: ml_service/image_processor.py</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="kn">from</span> <span class="nn">torchvision.transforms</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="k">def</span> <span class="nf">process_image</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">  <span class="c1"># 개발자의 의도는 &#39;AREA&#39; 보간법을 사용하는 것이다.</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">  <span class="n">resized_img</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">F</span><span class="o">.</span><span class="n">InterpolationMode</span><span class="o">.</span><span class="n">AREA</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">  <span class="k">return</span> <span class="n">resized_img</span></span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-3';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<p>[cite_start][cite: 149]</p>
+<p>하지만 <strong>Step 3</strong>에서 이미 <code>F.InterpolationMode.AREA</code>의 참조가 <code>F.InterpolationMode.NEAREST</code>로 변경되었기 때문에, 이 코드는 실제로는 아래 코드와 동일하게 동작합니다.</p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PYTHON
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-4"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-4"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-4">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># 실제 동작 코드</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="n">resized_img</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">F</span><span class="o">.</span><span class="n">InterpolationMode</span><span class="o">.</span><span class="n">NEAREST</span><span class="p">)</span></span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-4';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<h4 id="step-5-공격-성공"><strong>Step 5: 공격 성공</strong></h4>
+<p>[cite_start]결과적으로 ML 서비스는 자신의 소스 코드에는 아무런 변경이 없었음에도 불구하고, 의도와는 다르게 취약한 <code>nearest neighbor</code> 보간법을 사용하게 됩니다[cite: 149]. 이로써 서비스는 이미지 스케일링 공격에 완전히 노출됩니다.</p>
+<hr>
+<h3 id="핵심-요약"><strong>핵심 요약</strong></h3>
+<ol>
+<li>[cite_start]<strong>공격의 근원:</strong> 파이썬의 모든 임포트된 모듈이 <strong>단일 메모리 공간을 공유</strong>하고 서로를 신뢰하는 구조적 특성을 악용합니다[cite: 100, 173].</li>
+<li>[cite_start]<strong>은밀함 (Stealth):</strong> 공격 코드는 민감한 시스템 호출이나 의심스러운 네트워크 트래픽을 발생시키지 않아 전통적인 보안 솔루션으로는 <strong>탐지가 거의 불가능</strong>합니다[cite: 80, 157].</li>
+<li>[cite_start]<strong>런타임 조작:</strong> 컴파일 시점이 아닌, 코드가 실행되는 <strong>런타임에 동적으로</strong> 프레임워크의 동작 방식을 변경합니다[cite: 100].</li>
+<li>[cite_start]<strong>탐지의 어려움:</strong> 취약점의 원인이 ML 서비스 자체의 코드가 아닌, 수많은 의존성 패키지 중 하나에 존재하므로, 서비스 코드만 분석해서는 <strong>문제를 절대로 찾을 수 없습니다</strong>[cite: 159].</li>
+</ol>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<p>이 논문의 결과는 ML 생태계가 겉보기에는 무해한 코드 조작을 통해 심각한 공급망 공격에 매우 취약하며, 이러한 높은 위험에도 불구하고 커뮤니티의 보안 인식은 위험이 덜한 다른 분야와 별반 다르지 않다는 점을 보여줍니다. 공격 기법은 파이썬의 동적 런타임 허점을 이용하며, 커뮤니티 분석은 대규모 데이터셋을 LLM으로 분석하는 방식을 사용했습니다.</p>
+<hr>
+<h3 id="-논문이-제시하는-상세-결과">## 논문이 제시하는 상세 결과</h3>
+<p>논문은 크게 **&lsquo;ML 커뮤니티의 보안 인식 수준&rsquo;**과 **&lsquo;공격 기법의 유효성&rsquo;**이라는 두 가지 측면에서 구체적인 결과를 제시합니다.</p>
+<h4 id="커뮤니티-보안-인식-분석-결과"><strong>커뮤니티 보안 인식 분석 결과</strong></h4>
+<ul>
+<li>[cite_start]<strong>ML 생태계의 더 큰 공격 표면:</strong> ML 프로젝트는 일반적인 소프트웨어 프로젝트보다 훨씬 많은 수의 의존성을 가집니다[cite: 23, 70]. [cite_start]예를 들어, <code>transformers</code> 패키지는 305개의 의존성을 가져, 일반적인 <code>requests</code> 패키지(14개)보다 20배 이상 많은 잠재적 공격 진입점을 가집니다[cite: 24, 25].</li>
+<li>[cite_start]<strong>기대 이하의 보안 인식 수준:</strong> ML 커뮤니티는 더 높은 수준의 보안이 요구됨에도 불구하고, 비-ML(리눅스) 커뮤니티와 보안 관련 논의 비율 분포가 매우 유사한 것으로 나타났습니다[cite: 6, 41, 231]. [cite_start]이는 ML 커뮤니티가 자신들의 고유한 위험을 충분히 인지하고 대비하지 못하고 있음을 시사합니다[cite: 233].</li>
+<li>[cite_start]<strong>핵심 프레임워크의 보안 인식 부족:</strong> TensorFlow, PyTorch, Keras와 같은 핵심 ML 프레임워크들은 오히려 이를 활용하는 다운스트림 애플리케이션들보다 보안 관련 논의의 비율이 낮게 나타났습니다[cite: 38, 217].</li>
+<li>[cite_start]<strong>수동적인 보안 조치:</strong> 버전 피닝(Version Pinning)이나 미사용 의존성 제거와 같은 널리 논의되는 보안 조치들은, 공급망 공격을 막기 위한 명시적인 목적보다는 빌드의 재현성이나 코드 품질 향상을 위한 부산물로 논의되는 경우가 많았습니다[cite: 221, 222, 223]. [cite_start]반면 코드 격리나 기여자 검증 프로세스 같은 효과적인 방어책에 대한 논의는 거의 없었습니다[cite: 225].</li>
+<li>[cite_start]<strong>보안 기여에 대한 저항:</strong> 일부 핵심 프로젝트(예: PyTorch)에서는 보안 위험 감소를 위해 제안된 PR(Pull Request)이 &ldquo;실질적인 가치가 부족하다&quot;는 이유로 거절되는 사례가 발견되었습니다[cite: 248, 251, 252]. 이는 보안 강화에 대한 커뮤니티의 저항이 존재함을 보여줍니다.</li>
+</ul>
+<hr>
+<h3 id="-다른-방법론과-비교한-특출난-점">## 다른 방법론과 비교한 특출난 점</h3>
+<p>이 논문의 방법론은 기존 연구들과 비교하여 다음과 같은 뚜렷한 차별점을 가집니다.</p>
+<ol>
+<li>
+<p>[cite_start]<strong>&lsquo;소프트웨어 공학&rsquo;과 &lsquo;적대적 ML&rsquo;의 융합:</strong> 🧠 기존 연구들은 소프트웨어 공급망 공격(예: 악성 패키지 배포)과 ML 모델 자체를 공격하는 적대적 공격(예: 데이터 포이즈닝)을 별개의 문제로 다루었습니다[cite: 72]. [cite_start]이 논문은 두 분야를 최초로 융합하여, <strong>소프트웨어의 취약점을 이용해 ML 모델의 알고리즘적 무결성을 파괴하는</strong> 새로운 공격 벡터를 제시했다는 점에서 매우 독창적입니다[cite: 77, 83].</p>
+</li>
+<li>
+<p>[cite_start]<strong>&lsquo;탐지 회피&rsquo;에 특화된 공격 방식:</strong> 전통적인 공급망 공격은 악성 시스템 호출, 의심스러운 네트워크 트래픽 등 탐지 가능한 흔적을 남기는 경우가 많습니다[cite: 80]. [cite_start]하지만 이 논문이 제시하는 공격은 단순히 파이썬 변수의 참조를 바꾸는 방식으로 동작하여 <strong>전통적인 보안 솔루션으로는 탐지가 거의 불가능합니다</strong>[cite: 97, 157, 176].</p>
+</li>
+<li>
+<p>[cite_start]<strong>공격 목표의 전환:</strong> 기존 공격의 목표가 주로 정보 탈취나 시스템 파괴였다면, 이 공격의 목표는 <strong>ML 모델의 신뢰도를 미묘하게 저하시키거나, 특정 조건에서 오작동을 유발하거나, 방어 메커니즘을 무력화</strong>하는 것입니다[cite: 4, 34, 84]. 이는 훨씬 더 교묘하고 알아차리기 어려운 피해를 유발할 수 있습니다.</p>
+</li>
+</ol>
+<hr>
+<h3 id="-결과-도출-방법-논문의-관점">## 결과 도출 방법 (논문의 관점)</h3>
+<p>논문은 위와 같은 결과를 도출하기 위해 두 가지 핵심적인 방법을 사용했습니다.</p>
+<ul>
+<li>
+<p><strong>공격 증명: 파이썬 런타임 조작 (Python Runtime Manipulation)</strong> ⚙️
+[cite_start]논문은 파이썬이 모든 임포트된 패키지에 <strong>동일한 메모리 공간을 공유</strong>하고, 다른 패키지의 변수나 함수를 런타임에 수정할 수 있는 동적 언어라는 점을 핵심적인 이유로 꼽습니다[cite: 18, 100, 173]. [cite_start]공격자는 이 특성을 이용해 <code>compromised_dependency</code> 패키지 안에서 <code>torch</code>와 같은 다른 패키지의 전역 변수를 직접 덮어쓰거나(<code>torch.pi = 3.0</code>) [cite: 108][cite_start], <code>inspect</code> 모듈과 <code>ctypes</code> 라이브러리를 사용해 자신을 호출한 함수의 지역 변수까지 조작하는 구체적인 코드를 통해 공격의 실효성을 증명했습니다[cite: 118, 123].</p>
+</li>
+<li>
+<p><strong>커뮤니티 분석: LLM 기반 대규모 데이터 분석 (LLM-Assisted Analysis)</strong> 📊
+GitHub에 존재하는 수십만 개의 이슈와 PR을 사람이 직접 분석하는 것은 불가능에 가깝습니다. [cite_start]이 연구는 이 문제를 해결하기 위해 <strong>LLM(대규모 언어 모델)을 활용한 분석 파이프라인</strong>을 설계했습니다[cite: 5, 183].</p>
+<ol>
+<li>[cite_start]<strong>1단계 (GPT-3.5):</strong> 상대적으로 비용이 저렴한 GPT-3.5를 사용해 보안과 관련 있을 가능성이 있는 모든 게시물을 넓게 걸러냅니다 (높은 재현율)[cite: 185, 195].</li>
+<li>[cite_start]<strong>2단계 (GPT-4):</strong> 1단계에서 걸러진 게시물들을 더 성능이 좋은 GPT-4로 정밀 분석하여, 실제로 어떤 보안 조치에 대한 논의인지 분류합니다 (높은 정밀도)[cite: 194, 197].
+이러한 자동화된 접근 방식을 통해 방대한 양의 텍스트 데이터를 일관된 기준으로 빠르게 분석하여 통계적 유의미성을 확보할 수 있었습니다.</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="-종합적인-평가-나의-생각">## 종합적인 평가 (나의 생각)</h3>
+<p>이 논문은 ML 생태계에 대한 **&lsquo;불편한 진실&rsquo;**을 드러낸 매우 시의적절하고 중요한 연구입니다.</p>
+<p>가장 인상적인 점은 ML 커뮤니티가 &ldquo;빠른 혁신과 쉬운 사용성&quot;을 위해 채택한 파이썬 중심의 개방형 생태계가 실제로는 <strong>심각한 보안 부채</strong>를 만들어내고 있었다는 사실을 명확히 지적한 것입니다. ML 모델이 사회 전반에 막대한 영향을 끼치기 시작한 지금, 이러한 구조적 취약점은 단순한 기술적 문제를 넘어 사회적 위험으로 번질 수 있습니다.</p>
+<p>[cite_start]특히 &ldquo;가치가 부족하다&quot;며 보안 관련 기여를 거절한 사례 [cite: 251, 252]는 이 문제가 단순히 기술의 부재가 아니라 <strong>커뮤니티의 문화와 우선순위 문제</strong>임을 보여줍니다. 개발 속도와 편의성이 보안보다 중시되는 문화가 바뀌지 않는 한, 제2, 제3의 공급망 공격은 언제든 발생할 수 있습니다.</p>
+<p>결론적으로, 이 연구는 ML 보안(MLSec) 분야의 논의를 한 단계 발전시켰다고 평가할 수 있습니다. 이제 ML 보안은 모델의 알고리즘적 방어뿐만 아니라, 모델이 개발되고 실행되는 <strong>소프트웨어 공급망 전체의 무결성을 확보</strong>하는 방향으로 확장되어야 함을 강력하게 역설하고 있습니다. 이는 앞으로 ML 시스템을 설계하고 운영하는 모든 이들에게 중요한 지침이 될 것입니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>네, 이 논문의 한계를 극복하기 위한 최신 연구 흐름은 크게 <strong>방어 기술의 고도화</strong>와 <strong>분석 방법론의 확장</strong>이라는 두 가지 방향으로 정리할 수 있습니다. 각 한계점과 이를 해결하기 위한 구체적인 연구들을 자세히 설명해 드리겠습니다.</p>
+<hr>
+<h3 id="-한계점-1-방어-기술의-한계-극복">## 한계점 1: 방어 기술의 한계 극복</h3>
+<p>[cite_start]논문에서 제안한 방어책(소스 코드 정적/동적 분석)은 우회가 가능하다는 한계가 있습니다[cite: 260, 262]. 이를 극복하기 위한 연구는 애플리케이션이 스스로를 보호하는 능동적 방어 기술에 초점을 맞춥니다.</p>
+<h4 id="1-런타임-애플리케이션-자가-보호-rasp-runtime-application-self-protection"><strong>1. 런타임 애플리케이션 자가 보호 (RASP, Runtime Application Self-Protection)</strong></h4>
+<p>이 기술은 외부 보안 솔루션이 아닌, 애플리케이션 내부에 보안 기능을 통합하여 스스로를 실시간으로 방어하는 방식입니다. 이 논문에서 제시된 공격을 막기 위해 다음과 같이 적용될 수 있습니다.</p>
+<ul>
+<li><strong>핵심 객체 불변성(Immutability) 강화:</strong> ML 프레임워크의 핵심 함수나 설정 값(예: <code>torchvision.transforms.functional.InterpolationMode.AREA</code>)이 초기화된 후에는 <strong>변경이 불가능하도록</strong> 런타임에서 동결(freeze)합니다. 의존성 패키지가 이를 수정하려고 시도하면, RASP 에이전트가 이를 탐지하고 즉시 실행을 차단하거나 보안 경고를 발생시킵니다.</li>
+<li><strong>행위 기반 이상 탐지:</strong> 정상적인 상태에서 애플리케이션의 행위(함수 호출 순서, 메모리 접근 패턴 등)를 프로파일링합니다. 이후, <code>inspect</code> 모듈을 이용해 상위 스택 프레임의 지역 변수를 수정하려는 것과 같은 <strong>이례적인 행위가 발생하면</strong> 이를 이상 징후로 판단하고 차단하는 연구가 진행되고 있습니다. 이는 난독화된 공격 코드도 행위 패턴을 기반으로 탐지할 수 있게 합니다.</li>
+</ul>
+<h4 id="2-보안-엔클레이브-secure-enclaves-및-기밀-컴퓨팅-confidential-computing"><strong>2. 보안 엔클레이브 (Secure Enclaves) 및 기밀 컴퓨팅 (Confidential Computing)</strong></h4>
+<p>하드웨어 기반의 보안 기술을 활용하여, 파이썬 런타임 자체의 취약점을 원천적으로 무력화하는 연구입니다.</p>
+<ul>
+<li><strong>실행 환경의 완전 격리:</strong> 인텔 SGX나 AMD SEV 같은 보안 엔클레이브 기술을 사용해, 모델의 추론 코드와 핵심 데이터 처리 로직을 <strong>운영체제(OS)나 다른 파이썬 패키지로부터 완벽하게 격리된 메모리 공간</strong>에서 실행합니다. 이렇게 하면, 설령 악성 의존성 패키지가 임포트되더라도 격리된 메모리 영역에는 접근 자체가 불가능하므로 논문에서 제시된 변수 덮어쓰기 공격이 원천적으로 차단됩니다.</li>
+</ul>
+<hr>
+<h3 id="-한계점-2-분석-대상-및-방법론의-한계-극복">## 한계점 2: 분석 대상 및 방법론의 한계 극복</h3>
+<p>[cite_start]논문의 분석이 특정 GitHub 프로젝트에 국한되고 [cite: 273][cite_start], 보안 인식을 측정하는 방식이 간접적이라는 한계를 [cite: 275] 극복하기 위한 연구들입니다.</p>
+<h4 id="1-다중-생태계-교차-분석-연구"><strong>1. 다중 생태계 교차 분석 연구</strong></h4>
+<p>GitHub의 특정 토픽을 넘어, 다양한 개발 환경과 커뮤니티를 분석하여 연구 결과의 일반성을 확보하려는 흐름입니다.</p>
+<ul>
+<li><strong>기업 내부(In-House) 리포지토리 분석:</strong> 실제 기업과 협력하여, 공개되지 않은 내부 소스 코드 관리 시스템과 개발 문화를 분석합니다. 이를 통해 오픈소스 생태계와는 다른 기업 환경의 고유한 보안 문제와 인식 수준을 파악할 수 있습니다.</li>
+<li><strong>다양한 패키지 관리자 생태계 연구:</strong> 파이썬의 PyPI뿐만 아니라, 자바스크립트의 npm, 자바의 Maven 등 <strong>다른 프로그래밍 언어의 생태계</strong>에서도 ML 프로젝트의 의존성 구조와 보안 논의 수준을 비교 분석하여, 문제가 파이썬 생태계에 국한된 것인지 아니면 더 넓은 현상인지 규명합니다.</li>
+</ul>
+<h4 id="2-정교한-보안-인식-및-문화-측정-지표-개발"><strong>2. 정교한 보안 인식 및 문화 측정 지표 개발</strong></h4>
+<p>이슈/PR의 비율이라는 간접적인 지표를 넘어, 개발자들의 보안 인식을 더 직접적이고 다각적으로 측정하려는 연구입니다.</p>
+<ul>
+<li><strong>보안 도구 도입률 분석:</strong> 소스 코드 분석 도구(SAST), 취약점 스캐너(SCA) 등이 CI/CD 파이프라인에 얼마나 통합되어 활발히 사용되는지를 정량적으로 측정합니다.</li>
+<li><strong>&lsquo;보안 부채(Security Debt)&rsquo; 추적:</strong> 발견된 보안 취약점(CVE)이 보고된 후, 실제로 패치가 적용되기까지 걸리는 시간을 추적하여 프로젝트가 보안 문제를 얼마나 신속하게 처리하는지를 지표로 삼습니다.</li>
+<li>[cite_start]<strong>정성적 연구(설문 및 인터뷰):</strong> 논문에서도 인용한 다른 연구들처럼[cite: 48], 개발자들을 직접 설문하거나 심층 인터뷰하여 보안을 어떻게 인식하고 있으며, 보안 조치를 취할 때 겪는 어려움이 무엇인지 질적으로 분석하여 수치 뒤에 숨겨진 맥락을 파악합니다.</li>
+</ul>
+<p>이러한 연구들은 논문이 제기한 문제의 심각성을 바탕으로, 더 견고하고 실질적인 방어 기술을 개발하고, ML 생태계의 보안 문화를 근본적으로 개선하려는 방향으로 나아가고 있습니다.</p>
+<h1 id="q--이-논문이-제시하는-ml-특화-공급망-공격은-기존의-공급망-공격과-근본적으로-무엇이-다르며-왜-이-공격-방식이-전통적인-보안-솔루션으로는-탐지하기-어려운가">Q : 이 논문이 제시하는 &lsquo;ML 특화 공급망 공격&rsquo;은 기존의 공급망 공격과 근본적으로 무엇이 다르며, 왜 이 공격 방식이 전통적인 보안 솔루션으로는 탐지하기 어려운가?</h1>
+<p>이 논문이 제시하는 &lsquo;ML 특화 공급망 공격&rsquo;은 공격의 <strong>목표</strong>와 <strong>방식</strong>에서 기존 공격과 근본적으로 다릅니다. 전통적인 공격이 운영체제나 사용자 보안을 직접 겨냥하는 반면, 이 새로운 공격은 겉보기에는 정상적인 코드를 이용해 ML 모델의 성능과 신뢰도를 은밀하게 저해합니다.</p>
+<hr>
+<h3 id="-근본적인-차이점-fundamental-differences">## 근본적인 차이점 (Fundamental Differences)</h3>
+<ul>
+<li>
+<p>[cite_start]<strong>공격 목표:</strong> 전통적인 공격은 악성 코드 실행이나 데이터 탈취를 통해 사용자의 시스템 보안과 개인정보를 직접적으로 침해하는 것을 목표로 합니다[cite: 79]. [cite_start]반면, ML 특화 공격은 운영체제가 아닌 <strong>ML 모델의 강건성(robustness), 무결성(integrity), 기밀성(confidentiality)을 훼손</strong>하는 것을 목표로 합니다[cite: 4, 84, 98].</p>
+</li>
+<li>
+<p>[cite_start]<strong>공격 방식:</strong> 전통적인 공격은 민감한 시스템 함수를 호출하거나 의심스러운 네트워크 트래픽을 유발하는 코드를 사용합니다[cite: 80]. [cite_start]하지만 ML 특화 공격은 이러한 행위 없이, <strong>겉보기에는 전혀 해가 없는(innocuous-looking) 코드</strong>를 주입합니다[cite: 4, 84]. [cite_start]이 코드는 파이썬 런타임 환경에서 다른 패키지의 변수나 함수를 조작하여 모델의 동작 방식을 교묘하게 변경합니다[cite: 158].</p>
+</li>
+<li>
+<p>[cite_start]<strong>활용하는 취약점:</strong> 전통적인 공격은 주로 소프트웨어 자체의 취약점을 이용하지만, ML 특화 공격은 소프트웨어 공급망의 취약점과 <strong>ML 모델 고유의 알고리즘적 취약점(적대적 예제, 모델 탈취 등)을 동시에 악용</strong>합니다[cite: 29, 77].</p>
+</li>
+</ul>
+<hr>
+<h3 id="-탐지가-어려운-이유-why-detection-is-difficult">## 탐지가 어려운 이유 (Why Detection is Difficult)</h3>
+<ul>
+<li>
+<p>[cite_start]<strong>전통적인 탐지 지표의 부재:</strong> 이 공격은 민감한 시스템 호출이나 비정상적인 네트워크 접속과 같은 <strong>전형적인 악성 행위 지표를 남기지 않습니다</strong>[cite: 97, 157]. [cite_start]따라서 기존의 공급망 공격 탐지 도구들은 이러한 활동을 탐지 기준으로 삼기 때문에 공격을 발견하기 어렵습니다[cite: 157, 176].</p>
+</li>
+<li>
+<p>[cite_start]<strong>코드의 외견상 정상성:</strong> 공격에 사용되는 코드는 단순히 다른 패키지의 변수 값을 바꾸거나 함수를 재정의하는 형태를 띱니다[cite: 158]. [cite_start]이는 일반적인 프로그래밍에서도 사용되는 기법이므로, 악의적인 의도를 파악하기가 매우 힘듭니다[cite: 84].</p>
+</li>
+<li>
+<p>[cite_start]<strong>기존 방어 체계의 한계:</strong> 기존의 보안 방어 체계는 운영체제 수준의 위협을 막는 데 초점이 맞춰져 있어, ML 모델의 고유한 위험을 고려하지 못합니다[cite: 35, 81]. [cite_start]이 공격은 바로 그 허점을 파고들어 기존 방어 체계를 우회합니다[cite: 85].</p>
+</li>
+</ul>
+<h1 id="q--ml-커뮤니티는-더-큰-공격-표면과-고유한-위험에-직면해-있음에도-불구하고-왜-비-ml-커뮤니티와-유사한-수준의-보안-인식을-보이며-이러한-인식-격차에-기여하는-문화적-또는-현실적인-요인은-무엇이라고-생각하는가">Q : ML 커뮤니티는 더 큰 공격 표면과 고유한 위험에 직면해 있음에도 불구하고, 왜 비-ML 커뮤니티와 유사한 수준의 보안 인식을 보이며, 이러한 인식 격차에 기여하는 문화적 또는 현실적인 요인은 무엇이라고 생각하는가?</h1>
+<p>이 논문에 따르면, ML 커뮤니티가 더 큰 위험에도 불구하고 비-ML 커뮤니티와 비슷한 수준의 보안 인식을 보이는 이유는 <strong>빠른 혁신과 개발 편의성을 보안보다 우선시하는 문화적, 현실적 요인</strong>들이 복합적으로 작용하기 때문입니다.</p>
+<hr>
+<h3 id="-문화적-요인-cultural-factors">### 문화적 요인 (Cultural Factors)</h3>
+<ul>
+<li>
+<p>[cite_start]<strong>보안에 대한 낮은 우선순위:</strong> ML 커뮤니티에서는 보안 강화 조치가 실질적인 &ldquo;가치&quot;를 제공하지 않는다고 판단되면 받아들여지지 않는 경향이 있습니다[cite: 251, 252]. [cite_start]논문에서 분석한 PyTorch의 사례처럼, 공급망 공격의 위험을 줄이기 위한 의존성 제거 제안이 &ldquo;큰 가치가 없다&quot;는 이유로 거절되기도 했습니다[cite: 252]. 이는 기능 추가나 성능 최적화에 비해 보안의 우선순위가 낮게 책정되는 문화를 보여줍니다.</p>
+</li>
+<li>
+<p>[cite_start]<strong>위험한 관행의 정상화 (Normalization of Insecure Practices):</strong> ML 공급망에서는 위험성이 큰 프로그래밍 관행들이 일상적으로 사용되고 있습니다[cite: 26]. [cite_start]대표적인 예로, Hugging Face의 <code>trust_remote_code=True</code> 플래그는 외부 코드를 무조건 신뢰하고 실행하도록 하는데, 이것이 기본값처럼 사용되는 경우가 많습니다[cite: 27]. 이는 보안 위험을 감수하더라도 사용 편의성을 극대화하려는 문화가 자리 잡고 있음을 의미합니다.</p>
+</li>
+<li>
+<p>[cite_start]<strong>잘못된 안도감 (False Sense of Security):</strong> 많은 기여자들이 ML 프레임워크도 다른 오픈소스 소프트웨어와 마찬가지이며, 기존의 보안 방어책으로 충분히 보호될 수 있다는 잘못된 안도감을 가지고 있습니다[cite: 75, 81]. 이로 인해, 시스템 호출이나 네트워크 트래픽 같은 전통적인 악성 행위가 없는 새로운 유형의 공격에 대해서는 심각하게 인지하지 못하는 경향이 있습니다.</p>
+</li>
+</ul>
+<hr>
+<h3 id="-현실적인실용적-요인-practicalrealistic-factors">### 현실적인/실용적 요인 (Practical/Realistic Factors)</h3>
+<ul>
+<li>
+<p>[cite_start]<strong>신속한 혁신을 위한 생태계 선택:</strong> ML 커뮤니-&ldquo;는 빠른 혁신과 규모 확장을 위해 파이썬(Python)을 중심으로 한 오픈소스 생태계에 크게 의존합니다[cite: 9]. [cite_start]파이썬은 개발 속도가 빠르다는 장점이 있지만, 타입 안정성이나 메모리 분리 같은 보안 기능이 부족한 언어입니다[cite: 19]. 즉, 생태계 자체가 보안보다는 개발의 속도와 편의성에 맞춰져 있습니다.</p>
+</li>
+<li>
+<p>[cite_start]<strong>기여자의 보안 전문성 부족:</strong> 오픈소스 프로젝트에 기여하는 개발자나 유지보수 담당자들이 반드시 높은 수준의 보안 전문성을 갖추고 있을 것이라고 기대하기 어렵습니다[cite: 90]. 대부분은 ML 모델 개발이나 연구에 전문성을 가진 이들이며, 공급망 보안에 대한 깊은 이해가 부족할 수 있습니다.</p>
+</li>
+<li>
+<p>[cite_start]<strong>방대한 의존성 관리의 복잡성:</strong> ML 프로젝트는 다른 분야에 비해 월등히 많은 수의 직접 및 전이 의존성을 가집니다[cite: 22, 23, 25]. [cite_start]예를 들어, <code>transformers</code> 패키지는 305개의 의존성을 가지는데[cite: 25], 이 모든 패키지의 안전성을 개별 프로젝트팀이 일일이 검증하는 것은 현실적으로 거의 불가능에 가깝습니다.</p>
+</li>
+</ul>
+<h1 id="q--이-공격의-근본-원인이-파이썬의-동적-런타임-환경에-있다면-ml-생태계에서-개발의-편의성과-속도-그리고-보안-사이에는-어떠한-근본적인-상충-관계trade-off가-있으며-이-위험을-완화하기-위한-가장-현실적인-장기적-해결책은-무엇일까">Q : 이 공격의 근본 원인이 파이썬의 동적 런타임 환경에 있다면, ML 생태계에서 개발의 편의성과 속도, 그리고 보안 사이에는 어떠한 근본적인 상충 관계(trade-off)가 있으며, 이 위험을 완화하기 위한 가장 현실적인 장기적 해결책은 무엇일까?</h1>
+<p>이 공격의 근본 원인이 파이썬의 동적 런타임 환경에 있다는 점은 ML 생태계가 <strong>개발 속도와 보안</strong> 사이의 근본적인 상충 관계(trade-off) 위에 세워져 있음을 의미합니다.</p>
+<hr>
+<h3 id="-근본적인-상충-관계-the-fundamental-trade-off">## 근본적인 상충 관계 (The Fundamental Trade-off)</h3>
+<ul>
+<li>
+<p>[cite_start]<strong>개발 편의성과 속도 (The Gain) 🚀:</strong> ML 커뮤니티는 빠른 혁신과 규모 확장을 위해 파이썬 생태계에 크게 의존합니다[cite: 9]. 파이썬의 동적 런타임 환경은 복잡한 선언 없이도 코드를 빠르게 작성하고 테스트할 수 있게 하여, 아이디어를 신속하게 프로토타입으로 만들고 실험하는 데 최적화되어 있습니다. 이는 빠르게 변화하는 ML 분야에서 강력한 장점입니다.</p>
+</li>
+<li>
+<p><strong>보안 (The Cost) 🛡️:</strong> 이 편의성의 대가는 <strong>보안 취약성</strong>입니다. [cite_start]파이썬에서는 모든 패키지가 동일한 메모리 공간을 공유하며, 다른 패키지의 변수나 함수에 접근하여 수정하는 것이 가능합니다[cite: 18, 173]. [cite_start]이는 마치 모든 집에 같은 마스터키가 존재하는 것과 같아서, 하나의 의존성 패키지만 손상되어도 전체 애플리케이션의 동작을 은밀하게 조작할 수 있는 심각한 위험을 내포합니다[cite: 20, 173]. 즉, 개발의 유연성과 편의성을 위해 패키지 간의 격리라는 보안의 기본 원칙이 희생된 것입니다.</p>
+</li>
+</ul>
+<hr>
+<h3 id="-현실적인-장기적-해결책-realistic-long-term-solutions">## 현실적인 장기적 해결책 (Realistic Long-Term Solutions)</h3>
+<p>이 위험을 완화하기 위해 논문에서 제시 및 암시하는 가장 현실적인 장기적 해결책은 다음과 같습니다.</p>
+<ol>
+<li>
+<p>[cite_start]<strong>소스 코드 분석 강화 및 전문가 개입:</strong> 단기적으로는 모든 직접 및 전이 의존성 패키지의 소스 코드를 분석하여, 다른 패키지의 변수를 덮어쓰려는 시도와 같은 위험한 코드를 탐지하는 방어 전략을 도입해야 합니다[cite: 256]. [cite_start]이 과정은 미묘한 ML 취약점을 이해할 수 있는 <strong>보안 전문가와 ML 전문가의 협업</strong>이 반드시 필요합니다[cite: 257, 258].</p>
+</li>
+<li>
+<p>[cite_start]<strong>보안 중심 언어로의 점진적 이전:</strong> 가장 근본적인 해결책은 보안이 중요한 ML 애플리케이션이나 프레임워크의 핵심 부분을 <strong>컴파일 언어(Compiled Language)로 점진적으로 이전</strong>하는 것입니다[cite: 272]. Rust나 C++와 같이 메모리 안전성(memory safety)과 강력한 타입 시스템을 제공하는 언어는 파이썬의 동적 런타임이 가진 구조적 문제를 원천적으로 방지할 수 있습니다. 전체를 바꾸는 것은 비현실적이므로, 데이터 처리 파이프라인이나 모델 추론 엔진과 같이 보안에 민감한 핵심 모듈부터 전환하는 것이 현실적인 접근법입니다.</p>
+</li>
+</ol>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/Supply-Chain-Attacks-in-Machine-Learning-Frameworks/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/Supply-Chain-Attacks-in-Machine-Learning-Frameworks/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Accelerating-MoE-Model-Inference-with-Expert-Sharding/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                Accelerating MoE Model Inference with Expert Sharding
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2025-06-05">
+                06月05日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Rubick-Exploiting-Job-Reconfigurability-for-Deep-Learning-Cluster-Scheduling/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Rubick: Exploiting Job Reconfigurability for Deep Learning Cluster Scheduling
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2025-06-10">
+                06月10日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#ai-모델-공급망-공격에-대한-연구-논문-심층-분석">AI 모델 공급망 공격에 대한 연구 논문 심층 분석</a>
+      <ul>
+        <li><a href="#논문의-강점-및-독창성">논문의 강점 및 독창성</a></li>
+        <li><a href="#핵심-공격-기법-다운스트림-변수-덮어쓰기-overwriting-downstream-variables">핵심 공격 기법: 다운스트림 변수 덮어쓰기 (Overwriting Downstream Variables)</a></li>
+        <li><a href="#예시-입력을-통한-전체-과정-설명"><strong>예시 입력을 통한 전체 과정 설명</strong></a></li>
+        <li><a href="#논문의-한계점">논문의 한계점</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#논문의-핵심-공격-기법-다운스트림-변수-덮어쓰기-예시-취약한-파이프라인-공격">논문의 핵심 공격 기법: 다운스트림 변수 덮어쓰기 (예시: 취약한 파이프라인 공격)</a>
+      <ul>
+        <li><a href="#상황-설정"><strong>상황 설정</strong></a></li>
+        <li><a href="#공격-과정-상세-설명"><strong>공격 과정 상세 설명</strong></a>
+          <ul>
+            <li><a href="#step-1-공격-벡터-확보"><strong>Step 1: 공격 벡터 확보</strong></a></li>
+            <li><a href="#step-2-악성-코드-주입-payload-injection"><strong>Step 2: 악성 코드 주입 (Payload Injection)</strong></a></li>
+            <li><a href="#step-3-실행-및-메모리-오염"><strong>Step 3: 실행 및 메모리 오염</strong></a></li>
+            <li><a href="#step-4-의도와-다른-동작-수행"><strong>Step 4: 의도와 다른 동작 수행</strong></a></li>
+            <li><a href="#step-5-공격-성공"><strong>Step 5: 공격 성공</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#핵심-요약"><strong>핵심 요약</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#-논문이-제시하는-상세-결과">## 논문이 제시하는 상세 결과</a>
+          <ul>
+            <li><a href="#커뮤니티-보안-인식-분석-결과"><strong>커뮤니티 보안 인식 분석 결과</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#-다른-방법론과-비교한-특출난-점">## 다른 방법론과 비교한 특출난 점</a></li>
+        <li><a href="#-결과-도출-방법-논문의-관점">## 결과 도출 방법 (논문의 관점)</a></li>
+        <li><a href="#-종합적인-평가-나의-생각">## 종합적인 평가 (나의 생각)</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#-한계점-1-방어-기술의-한계-극복">## 한계점 1: 방어 기술의 한계 극복</a>
+          <ul>
+            <li><a href="#1-런타임-애플리케이션-자가-보호-rasp-runtime-application-self-protection"><strong>1. 런타임 애플리케이션 자가 보호 (RASP, Runtime Application Self-Protection)</strong></a></li>
+            <li><a href="#2-보안-엔클레이브-secure-enclaves-및-기밀-컴퓨팅-confidential-computing"><strong>2. 보안 엔클레이브 (Secure Enclaves) 및 기밀 컴퓨팅 (Confidential Computing)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#-한계점-2-분석-대상-및-방법론의-한계-극복">## 한계점 2: 분석 대상 및 방법론의 한계 극복</a>
+          <ul>
+            <li><a href="#1-다중-생태계-교차-분석-연구"><strong>1. 다중 생태계 교차 분석 연구</strong></a></li>
+            <li><a href="#2-정교한-보안-인식-및-문화-측정-지표-개발"><strong>2. 정교한 보안 인식 및 문화 측정 지표 개발</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#-근본적인-차이점-fundamental-differences">## 근본적인 차이점 (Fundamental Differences)</a></li>
+        <li><a href="#-탐지가-어려운-이유-why-detection-is-difficult">## 탐지가 어려운 이유 (Why Detection is Difficult)</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#-문화적-요인-cultural-factors">### 문화적 요인 (Cultural Factors)</a></li>
+        <li><a href="#-현실적인실용적-요인-practicalrealistic-factors">### 현실적인/실용적 요인 (Practical/Realistic Factors)</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#-근본적인-상충-관계-the-fundamental-trade-off">## 근본적인 상충 관계 (The Fundamental Trade-off)</a></li>
+        <li><a href="#-현실적인-장기적-해결책-realistic-long-term-solutions">## 현실적인 장기적 해결책 (Realistic Long-Term Solutions)</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

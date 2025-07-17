@@ -1,0 +1,4869 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Improving Language Understanding by Generative Pre-Training | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 **&ldquo;Improving Language..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/Improving-Language-Understanding-by-Generative-Pre-Training/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/Improving-Language-Understanding-by-Generative-Pre-Training/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="Improving Language Understanding by Generative Pre-Training">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 **“Improving Language Understanding by Generative Pre-Training”**의 주요 내용을 자세히 정리하고, 강점과 독창성, 알고리즘의 예제 과정을 설명한 뒤, 한계점도 다루겠습니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-12-08T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-12-08T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="Improving Language Understanding by Generative Pre-Training">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 **“Improving Language Understanding by Generative Pre-Training”**의 주요 내용을 자세히 정리하고, 강점과 독창성, 알고리즘의 예제 과정을 설명한 뒤, 한계점도 다루겠습니다.">
+
+
+  <meta itemprop="name" content="Improving Language Understanding by Generative Pre-Training">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 **“Improving Language Understanding by Generative Pre-Training”**의 주요 내용을 자세히 정리하고, 강점과 독창성, 알고리즘의 예제 과정을 설명한 뒤, 한계점도 다루겠습니다.">
+  <meta itemprop="datePublished" content="2024-12-08T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-12-08T00:00:00+00:00">
+  <meta itemprop="wordCount" content="8903">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt,LLM">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">Improving Language Understanding by Generative Pre-Training</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    Improving Language Understanding by Generative Pre-Training
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-12-08">
+          2024년 12월 08일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >18 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>8903 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+                <a
+                  href="/categories/LLM/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  LLM
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<p>논문 **&ldquo;Improving Language Understanding by Generative Pre-Training&rdquo;**의 주요 내용을 자세히 정리하고, 강점과 독창성, 알고리즘의 예제 과정을 설명한 뒤, 한계점도 다루겠습니다.</p>
+<hr>
+<h3 id="논문의-주요-내용"><strong>논문의 주요 내용</strong></h3>
+<ol>
+<li>
+<p><strong>목적</strong>:</p>
+<ul>
+<li>대규모 비지도 학습(Generative Pre-Training, GPT)을 통해 자연어 이해를 향상시키고, 이후 특정 과제에서의 지도 학습(Supervised Fine-Tuning)으로 성능을 극대화하는 프레임워크를 제안했습니다.</li>
+<li>모델 아키텍처는 Transformer를 사용하며, 다양한 NLP 과제에서 일관된 성능 향상을 보여줍니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>핵심 아이디어</strong>:</p>
+<ul>
+<li><strong>비지도 사전 학습</strong>:
+<ul>
+<li>대규모 텍스트 데이터에 대해 언어 모델링(objective)을 활용하여 초기 모델 파라미터를 학습.</li>
+<li>모델이 긴 문맥 정보를 학습하도록 Transformer 아키텍처 채택.</li>
+</ul>
+</li>
+<li><strong>지도 미세 조정</strong>:
+<ul>
+<li>각 과제에 적합한 데이터셋으로 모델을 추가 학습. 이를 통해 사전 학습된 언어 모델을 특정 과제로 전이.</li>
+</ul>
+</li>
+<li><strong>입력 변환</strong>:
+<ul>
+<li>다양한 NLP 과제를 통합적으로 처리하기 위해, 모든 입력 데이터를 연속된 텍스트 형식으로 변환.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>성능</strong>:</p>
+<ul>
+<li>GLUE 벤치마크를 포함한 12개의 과제에서 테스트하며, 9개 과제에서 최첨단 성능을 달성.</li>
+<li>특히, Story Cloze Test에서 8.9%, RACE에서 5.7%의 절대 성능 향상을 기록.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="논문의-강점"><strong>논문의 강점</strong></h3>
+<ol>
+<li>
+<p><strong>범용성</strong>:</p>
+<ul>
+<li>단일 모델이 다수의 NLP 과제를 처리할 수 있도록 설계되어, 과제별 아키텍처 수정 없이도 높은 성능을 발휘.</li>
+</ul>
+</li>
+<li>
+<p><strong>Transformer 활용</strong>:</p>
+<ul>
+<li>긴 문맥 정보 처리가 용이하며, 기존 LSTM 기반 접근법보다 효율적.</li>
+<li>Multi-head self-attention을 통해 문맥적 의미를 더 깊이 학습 가능.</li>
+</ul>
+</li>
+<li>
+<p><strong>효율적인 전이 학습</strong>:</p>
+<ul>
+<li>Task-specific input transformation으로 추가적인 모델 구조 변경 없이 간단한 토큰 추가 및 변환만으로 전이 가능.</li>
+</ul>
+</li>
+<li>
+<p><strong>데이터 효율성</strong>:</p>
+<ul>
+<li>대규모 비지도 데이터로 학습 후 소규모 지도 데이터로도 강력한 성능을 발휘.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="독창적인-지점"><strong>독창적인 지점</strong></h3>
+<ol>
+<li>
+<p><strong>단일 모델 아키텍처</strong>:</p>
+<ul>
+<li>다양한 NLP 과제를 하나의 아키텍처로 처리.</li>
+<li>기존의 task-specific 모델(예: BERT 이전)과 차별화된 접근법.</li>
+</ul>
+</li>
+<li>
+<p><strong>Generative Pre-Training의 활용</strong>:</p>
+<ul>
+<li>비지도 학습 단계에서 축적된 언어적 지식을 각 과제로 성공적으로 전이.</li>
+<li>이는 당시 NLP에서 지도 학습 의존도를 줄이려는 새로운 방향을 제시.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="핵심-알고리즘-설명-예제-포함"><strong>핵심 알고리즘 설명 (예제 포함)</strong></h3>
+<h4 id="1-사전-학습generative-pre-training">1. <strong>사전 학습(Generative Pre-Training)</strong>:</h4>
+<ul>
+<li>입력: 비지도 데이터 ( U = {u_1, u_2, &hellip;, u_n} )</li>
+<li>목표:
+[
+\max \sum_{i} \log P(u_i | u_{i-k}, &hellip;, u_{i-1}; \Theta)
+]
+여기서 ( k )는 문맥 창 크기.</li>
+<li><strong>과정</strong>:
+<ul>
+<li>모델은 Transformer의 다중 레이어 구조를 사용하여, 이전 단어들의 문맥에 기반한 다음 단어 확률을 계산.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-미세-조정supervised-fine-tuning">2. <strong>미세 조정(Supervised Fine-Tuning)</strong>:</h4>
+<ul>
+<li>입력: 과제 데이터셋 ( C = {(x, y)} )</li>
+<li>목표:
+[
+\max \sum_{(x, y) \in C} \log P(y | x; \Theta)
+]</li>
+<li><strong>과정</strong>:
+<ul>
+<li>비지도 학습으로 학습된 파라미터를 초기화 값으로 사용.</li>
+<li>새로 추가된 과제별 선형 계층 ( W_y )로 입력 데이터를 태스크에 맞게 매핑.</li>
+</ul>
+</li>
+</ul>
+<h4 id="예제">예제:</h4>
+<ul>
+<li><strong>텍스트 분류</strong>:
+입력 문장: &ldquo;This movie is fantastic!&rdquo;
+<ul>
+<li>사전 학습된 모델이 문장의 컨텍스트를 분석해 임베딩 생성.</li>
+<li>미세 조정 단계에서 &ldquo;긍정&rdquo; 또는 &ldquo;부정&quot;으로 분류하도록 학습.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="한계점"><strong>한계점</strong></h3>
+<ol>
+<li>
+<p><strong>데이터 의존성</strong>:</p>
+<ul>
+<li>비지도 학습에 사용된 데이터셋의 품질과 다양성에 크게 의존. 예컨대, 특정 도메인의 데이터를 포함하지 않으면 성능이 저하될 수 있음.</li>
+</ul>
+</li>
+<li>
+<p><strong>계산 비용</strong>:</p>
+<ul>
+<li>Transformer 기반 아키텍처는 계산량이 많아 학습 비용이 큼.</li>
+</ul>
+</li>
+<li>
+<p><strong>작은 데이터셋에서의 한계</strong>:</p>
+<ul>
+<li>RTE와 같은 소규모 데이터셋에서는 상대적으로 낮은 성능을 보임.</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 크기</strong>:</p>
+<ul>
+<li>대규모 모델이므로 메모리와 저장 공간 요구량이 큼.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p>이 논문은 NLP 연구에 큰 영향을 미친 선구적인 연구로, GPT 시리즈의 기반을 제공합니다. 그러나 계산 효율성 문제와 데이터 의존성은 여전히 해결해야 할 과제로 남아 있습니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>논문의 핵심 알고리즘은 **Generative Pre-Training (GPT)**과 이를 기반으로 한 <strong>Supervised Fine-Tuning</strong>으로 구성됩니다. 이를 예제를 들어 상세히 설명하겠습니다.</p>
+<hr>
+<h2 id="1-generative-pre-training-gpt">1. <strong>Generative Pre-Training (GPT)</strong></h2>
+<h3 id="목적"><strong>목적</strong></h3>
+<p>비지도 학습 단계에서 언어 모델을 통해 긴 문맥적 정보와 일반적인 언어 구조를 학습하는 것입니다.</p>
+<h3 id="알고리즘-상세"><strong>알고리즘 상세</strong></h3>
+<h4 id="입력">입력</h4>
+<ul>
+<li>비지도 데이터 ( U = {u_1, u_2, \dots, u_n} )</li>
+<li>각 ( u_i )는 단어 또는 토큰을 나타냄.</li>
+</ul>
+<h4 id="최적화-목표">최적화 목표</h4>
+<ul>
+<li><strong>언어 모델링</strong>을 위한 조건부 확률을 최대화:
+[
+\mathcal{L}<em>1(U) = \sum</em>{i} \log P(u_i | u_{i-k}, \dots, u_{i-1}; \Theta)
+]
+여기서:
+<ul>
+<li>( k ): 문맥 창(window)의 크기 (이전 ( k )개의 단어를 고려).</li>
+<li>( \Theta ): 학습해야 할 모델 파라미터.</li>
+</ul>
+</li>
+</ul>
+<h4 id="모델-구조">모델 구조</h4>
+<ul>
+<li><strong>Transformer Decoder</strong>:
+<ul>
+<li>입력된 토큰 시퀀스에서 다중 헤드 self-attention을 통해 문맥적 의존성을 학습.</li>
+<li>각 토큰의 임베딩과 위치 정보를 활용해 다음 토큰의 확률 분포를 예측.</li>
+</ul>
+</li>
+</ul>
+<h4 id="학습-과정">학습 과정</h4>
+<ol>
+<li>
+<p>입력 문장을 토큰화:</p>
+<ul>
+<li>예: 문장 &ldquo;The cat sat on the mat&rdquo; → ([u_1, u_2, \dots, u_n])로 변환.</li>
+<li>토큰화 결과: ( u_1 = \text{&ldquo;The&rdquo;}, u_2 = \text{&ldquo;cat&rdquo;}, \dots ).</li>
+</ul>
+</li>
+<li>
+<p>이전 ( k )개의 토큰을 입력하여 다음 토큰 ( u_i )의 확률 ( P(u_i) )를 계산.</p>
+<ul>
+<li>예: ( u_3 = \text{&ldquo;sat&rdquo;} ) 예측 시, 입력은 ([&ldquo;The&rdquo;, &ldquo;cat&rdquo;]).</li>
+</ul>
+</li>
+<li>
+<p>모든 가능한 단어에 대해 softmax를 적용하여 확률 분포를 생성:
+[
+P(u_i) = \text{softmax}(h_i W_e^T)
+]</p>
+<ul>
+<li>( h_i ): Transformer의 최종 출력.</li>
+<li>( W_e ): 단어 임베딩 매트릭스.</li>
+</ul>
+</li>
+<li>
+<p>확률이 최대화되도록 ( \Theta )를 학습 (stochastic gradient descent 사용).</p>
+</li>
+</ol>
+<hr>
+<h2 id="2-supervised-fine-tuning">2. <strong>Supervised Fine-Tuning</strong></h2>
+<h3 id="목적-1"><strong>목적</strong></h3>
+<p>사전 학습된 모델을 특정 과제에 맞게 조정하여 높은 성능을 달성.</p>
+<h3 id="알고리즘-상세-1"><strong>알고리즘 상세</strong></h3>
+<h4 id="입력-1">입력</h4>
+<ul>
+<li>지도 데이터셋 ( C = {(x, y)} )
+<ul>
+<li>( x ): 입력 텍스트.</li>
+<li>( y ): 정답 레이블.</li>
+</ul>
+</li>
+</ul>
+<h4 id="최적화-목표-1">최적화 목표</h4>
+<ul>
+<li>각 입력 ( x )에 대해 정답 레이블 ( y )의 조건부 확률을 최대화:
+[
+\mathcal{L}<em>2(C) = \sum</em>{(x, y)} \log P(y | x; \Theta)
+]
+<ul>
+<li>( \Theta ): 사전 학습된 모델의 파라미터를 초기값으로 사용.</li>
+</ul>
+</li>
+</ul>
+<h4 id="입력-변환">입력 변환</h4>
+<ul>
+<li>입력 데이터를 Transformer가 처리할 수 있도록 변환.</li>
+<li>예: 질문-답변 과제의 경우, 입력 ( [문맥; 질문; 답변 후보] ) 형식으로 변환.</li>
+</ul>
+<h4 id="모델-구조-1">모델 구조</h4>
+<ol>
+<li>사전 학습된 Transformer를 초기화로 사용.</li>
+<li>새로운 태스크-specific 출력 레이어 추가:
+[
+P(y | x) = \text{softmax}(h_{\text{final}} W_y)
+]
+<ul>
+<li>( h_{\text{final}} ): Transformer의 마지막 출력.</li>
+<li>( W_y ): 태스크-specific 가중치 매트릭스.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="예시-질문-답변-과제"><strong>예시: 질문-답변 과제</strong></h3>
+<h4 id="데이터">데이터</h4>
+<ul>
+<li>문맥(Context): &ldquo;The cat is on the mat.&rdquo;</li>
+<li>질문(Question): &ldquo;Where is the cat?&rdquo;</li>
+<li>답변 후보(Answers): ([&ldquo;on the mat&rdquo;, &ldquo;under the table&rdquo;])</li>
+</ul>
+<h4 id="과정">과정</h4>
+<ol>
+<li>입력 변환:
+<ul>
+<li>( [\text{&ldquo;The cat is on the mat&rdquo;}; \text{&ldquo;Where is the cat?&rdquo;}; \text{&ldquo;on the mat&rdquo;}] )</li>
+<li>( [\text{&ldquo;The cat is on the mat&rdquo;}; \text{&ldquo;Where is the cat?&rdquo;}; \text{&ldquo;under the table&rdquo;}] )</li>
+</ul>
+</li>
+<li>각 변환된 입력에 대해 Transformer를 통해 임베딩 계산.</li>
+<li>각 임베딩에 softmax를 적용하여 각 답변의 확률 분포 계산:
+[
+P(\text{&ldquo;on the mat&rdquo;}), P(\text{&ldquo;under the table&rdquo;})
+]</li>
+<li>가장 높은 확률을 가진 답변 선택:
+<ul>
+<li>( \text{&ldquo;on the mat&rdquo;} )이 선택됨.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="정리"><strong>정리</strong></h3>
+<ol>
+<li>
+<p><strong>사전 학습 단계 (GPT)</strong>:</p>
+<ul>
+<li>대규모 비지도 데이터를 활용하여 일반적인 언어 구조를 학습.</li>
+<li>Transformer의 self-attention으로 긴 문맥 정보를 학습.</li>
+</ul>
+</li>
+<li>
+<p><strong>지도 미세 조정</strong>:</p>
+<ul>
+<li>사전 학습된 모델을 초기값으로 사용하여 특정 과제를 학습.</li>
+<li>입력 데이터를 태스크에 맞게 변환 후 처리.</li>
+</ul>
+</li>
+<li>
+<p><strong>주요 장점</strong>:</p>
+<ul>
+<li>다양한 태스크에서 동일한 모델 구조 사용 가능.</li>
+<li>비지도 데이터의 학습 효과를 지도 학습에서 극대화.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p>이 알고리즘은 다양한 NLP 과제에서 강력한 성능을 발휘하며, Transformer의 self-attention과 언어 모델링을 결합하여 긴 문맥을 다룰 수 있다는 점이 핵심입니다.</p>
+<h1 id="q--이-논문에서-사용하는-방법을-학습하기-위하여-어떤-데이터셋이-필요할까-그리고-어떻게-학습을-진행하면-될지-예시를-들어서-아주-자세하게-설명해줘">Q : 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될지 예시를 들어서 아주 자세하게 설명해줘</h1>
+<p>논문 **&ldquo;Improving Language Understanding by Generative Pre-Training&rdquo;**에서 사용하는 방법을 학습하기 위해 필요한 데이터셋과 학습 과정을 아래에 자세히 설명하겠습니다.</p>
+<hr>
+<h3 id="필요한-데이터셋"><strong>필요한 데이터셋</strong></h3>
+<ol>
+<li>
+<p><strong>비지도 학습용 데이터</strong>:</p>
+<ul>
+<li>사전 학습(Pre-training) 단계에서 사용됩니다.</li>
+<li>요구 조건:
+<ul>
+<li><strong>대규모 텍스트 데이터</strong>: 문맥적 정보를 학습하기 위해 방대한 양의 텍스트가 필요.</li>
+<li><strong>연속적 텍스트</strong>: 문서 단위의 연속적이고 자연스러운 텍스트가 중요.</li>
+</ul>
+</li>
+<li>예시:
+<ul>
+<li><strong>BooksCorpus</strong>:
+<ul>
+<li>약 7,000개의 책으로 구성된 데이터셋.</li>
+<li>다양한 장르(소설, 판타지, 로맨스 등)를 포함하여 풍부한 문맥 정보를 제공.</li>
+</ul>
+</li>
+<li><strong>Common Crawl, Wikipedia</strong>:
+<ul>
+<li>웹에서 크롤링된 대규모 텍스트.</li>
+<li>일반적이거나 특정 도메인 데이터를 포함 가능.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>지도 학습용 데이터</strong>:</p>
+<ul>
+<li>특정 NLP 과제를 해결하기 위해 사용.</li>
+<li>요구 조건:
+<ul>
+<li>레이블이 포함된 데이터셋.</li>
+<li>NLP 과제에 따라 데이터 형식이 다양함.</li>
+</ul>
+</li>
+<li>예시:
+<ul>
+<li><strong>질문-답변</strong>:
+<ul>
+<li><strong>RACE</strong>: 영어 시험 문제 데이터셋.</li>
+</ul>
+</li>
+<li><strong>텍스트 분류</strong>:
+<ul>
+<li><strong>SST-2</strong>: 영화 리뷰 데이터로, &ldquo;긍정&rdquo; 또는 &ldquo;부정&quot;으로 라벨링.</li>
+</ul>
+</li>
+<li><strong>문장 유사도</strong>:
+<ul>
+<li><strong>Quora Question Pairs</strong>: 두 질문이 동일한 의미인지 라벨링.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="학습-단계"><strong>학습 단계</strong></h3>
+<h4 id="1-비지도-학습-pre-training">1. <strong>비지도 학습 (Pre-training)</strong></h4>
+<p><strong>목표</strong>: 언어 모델이 긴 문맥적 의존성을 학습하도록 사전 학습.</p>
+<p><strong>구체적 과정</strong>:</p>
+<ol>
+<li>
+<p><strong>데이터 준비</strong>:</p>
+<ul>
+<li>BooksCorpus 데이터셋과 같은 대규모 텍스트 데이터 수집.</li>
+<li>데이터를 토큰화:
+<ul>
+<li>Byte Pair Encoding(BPE) 기법을 사용해 단어를 서브워드(subword) 단위로 분리.</li>
+<li>예: &ldquo;understanding&rdquo; → [&ldquo;under&rdquo;, &ldquo;stand&rdquo;, &ldquo;ing&rdquo;]</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 구성</strong>:</p>
+<ul>
+<li>Transformer 기반 언어 모델 설정:
+<ul>
+<li>( n )개의 레이어(예: 12층 Transformer).</li>
+<li>다중 헤드 Self-Attention.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>학습 절차</strong>:</p>
+<ul>
+<li>입력: ( k )-개의 이전 단어 ([u_1, u_2, \dots, u_k]).</li>
+<li>출력: 다음 단어 ( u_{k+1} )의 확률.</li>
+<li>손실 함수: 언어 모델링 손실.
+[
+\mathcal{L}<em>1(U) = \sum_i \log P(u_i | u</em>{i-k}, \dots, u_{i-1}; \Theta)
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>예시</strong>:</p>
+<ul>
+<li>입력 문장: &ldquo;The cat sat on&rdquo;</li>
+<li>모델 출력: 다음 단어 확률 분포:
+<ul>
+<li>( P(\text{&ldquo;the&rdquo;}) = 0.2 ), ( P(\text{&ldquo;a&rdquo;}) = 0.3 ), ( P(\text{&ldquo;mat&rdquo;}) = 0.5 )</li>
+<li>&ldquo;mat&rdquo; 선택.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>학습 설정</strong>:</p>
+<ul>
+<li>Optimizer: Adam(learning rate: 2.5e-4).</li>
+<li>배치 크기: 64.</li>
+<li>토큰 시퀀스 길이: 512.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="2-지도-학습-fine-tuning">2. <strong>지도 학습 (Fine-tuning)</strong></h4>
+<p><strong>목표</strong>: 특정 태스크(예: 질문-답변, 텍스트 분류)에 대해 모델을 미세 조정.</p>
+<p><strong>구체적 과정</strong>:</p>
+<ol>
+<li>
+<p><strong>데이터 준비</strong>:</p>
+<ul>
+<li>태스크별로 레이블링된 데이터셋 사용.</li>
+<li>입력 변환:
+<ul>
+<li>태스크에 따라 입력 형식 변환.</li>
+<li>예: 질문-답변 과제에서 입력을 ([문맥; 질문; 답변]) 형태로 변환.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 설정</strong>:</p>
+<ul>
+<li>사전 학습된 Transformer를 초기화 값으로 로드.</li>
+<li>태스크-specific 레이어 추가:
+<ul>
+<li>예: 텍스트 분류의 경우, 마지막 출력에 선형 레이어 추가.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>학습 절차</strong>:</p>
+<ul>
+<li>입력: 변환된 데이터셋 ([x_1, x_2, \dots, x_m]).</li>
+<li>출력: 레이블 ( y )의 확률 ( P(y | x) ).</li>
+<li>손실 함수:
+[
+\mathcal{L}<em>2(C) = \sum</em>{(x, y) \in C} \log P(y | x; \Theta)
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>예시</strong>:</p>
+<ul>
+<li>데이터:
+<ul>
+<li>문맥(Context): &ldquo;The cat is on the mat.&rdquo;</li>
+<li>질문(Question): &ldquo;Where is the cat?&rdquo;</li>
+<li>정답 후보(Answers): [&ldquo;on the mat&rdquo;, &ldquo;under the table&rdquo;].</li>
+</ul>
+</li>
+<li>입력 변환:
+<ul>
+<li>( [\text{&ldquo;The cat is on the mat&rdquo;}; \text{&ldquo;Where is the cat?&rdquo;}; \text{&ldquo;on the mat&rdquo;}] ).</li>
+</ul>
+</li>
+<li>모델 학습:
+<ul>
+<li>각 입력에 대해 정답 후보의 확률 계산.</li>
+<li>( P(\text{&ldquo;on the mat&rdquo;}) = 0.8, P(\text{&ldquo;under the table&rdquo;}) = 0.2 ).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="최종-학습-과정"><strong>최종 학습 과정</strong></h3>
+<ol>
+<li>
+<p><strong>데이터 준비</strong>:</p>
+<ul>
+<li>BooksCorpus 데이터로 비지도 학습.</li>
+<li>GLUE 벤치마크 또는 태스크-specific 데이터로 지도 학습.</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 학습</strong>:</p>
+<ul>
+<li>1단계: 언어 모델 학습 (BooksCorpus).</li>
+<li>2단계: 태스크-specific Fine-tuning (예: RACE, SST-2).</li>
+</ul>
+</li>
+<li>
+<p><strong>평가</strong>:</p>
+<ul>
+<li>비지도 학습 후 perplexity(언어 모델 정확도 지표) 측정.</li>
+<li>지도 학습 후 태스크별 정확도 평가.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="정리-1"><strong>정리</strong></h3>
+<ul>
+<li><strong>필요 데이터</strong>:
+<ul>
+<li>대규모 연속 텍스트(BooksCorpus).</li>
+<li>레이블링된 데이터셋(GLUE 벤치마크).</li>
+</ul>
+</li>
+<li><strong>학습 절차</strong>:
+<ul>
+<li>사전 학습: 언어 모델을 비지도 방식으로 학습.</li>
+<li>미세 조정: 특정 과제에 맞춰 모델을 조정.</li>
+</ul>
+</li>
+<li><strong>예제</strong>:
+<ul>
+<li>질문-답변 과제에서 입력 데이터를 변환하고, 각 답변의 확률을 계산하여 최종 예측.</li>
+</ul>
+</li>
+</ul>
+<p>이 과정은 모델이 일반적인 언어 구조를 학습한 후 특정 태스크에 적합하도록 전이학습을 수행합니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h3 id="논문-결과-및-특징-분석"><strong>논문 결과 및 특징 분석</strong></h3>
+<p>이 논문은 GPT(Generative Pre-Training)를 활용해 NLP의 다양한 과제에서 최첨단(SOTA) 성능을 달성했습니다. 주요 결과와 다른 방법론과의 비교, 이러한 성과를 도출한 이유, 그리고 추가적인 해석은 아래와 같습니다.</p>
+<hr>
+<h3 id="논문-결과-요약"><strong>논문 결과 요약</strong></h3>
+<ol>
+<li>
+<p><strong>성능 비교</strong>:</p>
+<ul>
+<li>다양한 데이터셋에서 기존 방법론 대비 뛰어난 성과를 보임.</li>
+<li>대표적인 결과:
+<ul>
+<li><strong>Story Cloze Test</strong>: 기존 최고 성능 대비 8.9% 절대 향상.</li>
+<li><strong>RACE</strong>: 5.7% 절대 향상.</li>
+<li><strong>GLUE 벤치마크</strong>: 72.8 점으로 기존 최고 점수 68.9 점 대비 큰 향상.</li>
+</ul>
+</li>
+<li>12개 테스트 중 9개에서 SOTA 성능 달성.</li>
+</ul>
+</li>
+<li>
+<p><strong>구체적인 데이터셋 성과</strong>:</p>
+<ul>
+<li><strong>텍스트 분류</strong>:
+<ul>
+<li>SST-2에서 91.3% 정확도(기존 최고와 동등하거나 더 우수).</li>
+</ul>
+</li>
+<li><strong>문장 유사도</strong>:
+<ul>
+<li>STS-B에서 Pearson correlation 82.0으로 1% 향상.</li>
+</ul>
+</li>
+<li><strong>질문-답변</strong>:
+<ul>
+<li>RACE에서 큰 개선(59.0% vs 기존 53.3%).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="특출난-점"><strong>특출난 점</strong></h3>
+<ol>
+<li>
+<p><strong>범용성</strong>:</p>
+<ul>
+<li>단일 모델 아키텍처(Transformer)를 기반으로 다양한 과제를 처리.</li>
+<li>이전의 task-specific 모델(BiLSTM, CNN 기반)과 달리, 구조 변경 없이 거의 모든 NLP 과제에서 적용 가능.</li>
+</ul>
+</li>
+<li>
+<p><strong>효율적인 전이 학습</strong>:</p>
+<ul>
+<li>Pre-training + Fine-tuning 전략으로, 사전 학습된 언어적 지식을 특정 과제로 성공적으로 전이.</li>
+<li>새로운 태스크에서 추가적인 데이터 라벨링 부담을 줄임.</li>
+</ul>
+</li>
+<li>
+<p><strong>문맥 정보 처리</strong>:</p>
+<ul>
+<li>Transformer의 self-attention 메커니즘 덕분에 긴 문맥 의존성을 효과적으로 처리.</li>
+<li>이는 RACE와 같은 길고 복잡한 문서 기반 질문-답변에서 큰 장점을 제공.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결과를-도출하게-한-핵심-방법"><strong>결과를 도출하게 한 핵심 방법</strong></h3>
+<h4 id="1-generative-pre-training-gpt-1">1. <strong>Generative Pre-Training (GPT)</strong></h4>
+<ul>
+<li>대규모 비지도 학습 데이터로 사전 학습하여 언어적 구조와 일반적인 지식을 모델에 내재화.</li>
+<li>Transformer 아키텍처를 활용해 긴 문맥 처리 능력을 획득.</li>
+<li>단순히 단어 수준이 아닌 문맥적이고 문장 단위의 언어 표현 학습.</li>
+</ul>
+<h4 id="2-fine-tuning">2. <strong>Fine-Tuning</strong>:</h4>
+<ul>
+<li>지도 학습을 통해 각 과제에 특화된 학습 진행.</li>
+<li>Task-specific input transformation으로 입력 데이터를 통합적인 형태로 변환.</li>
+<li>Auxiliary loss(언어 모델링 손실)와 태스크 손실을 결합해 일반화와 빠른 수렴 유도.</li>
+</ul>
+<h4 id="3-transformer-아키텍처">3. <strong>Transformer 아키텍처</strong>:</h4>
+<ul>
+<li>기존 LSTM, GRU 기반 접근법 대비 self-attention 메커니즘으로 더 깊은 문맥적 이해를 가능하게 함.</li>
+<li>병렬 연산이 가능해 대규모 데이터에서도 학습이 효율적.</li>
+</ul>
+<hr>
+<h3 id="논문에서-제시하는-이유"><strong>논문에서 제시하는 이유</strong></h3>
+<ol>
+<li>
+<p><strong>사전 학습의 효과</strong>:</p>
+<ul>
+<li>비지도 학습 단계에서 대규모 데이터로 모델이 기본적인 언어 지식을 학습하기 때문에, 특정 과제에서 성능 향상이 큼.</li>
+<li>학습된 일반적 표현은 다양한 NLP 과제에 쉽게 전이 가능.</li>
+</ul>
+</li>
+<li>
+<p><strong>Transformer의 구조적 장점</strong>:</p>
+<ul>
+<li>Self-attention으로 문맥 정보의 장거리 의존성 학습.</li>
+<li>Recurrent 구조(LSTM, GRU) 대비 더 깊고 복잡한 패턴을 학습 가능.</li>
+</ul>
+</li>
+<li>
+<p><strong>Task-specific Input Transformation</strong>:</p>
+<ul>
+<li>구조화된 입력 데이터를 연속적인 텍스트로 변환해 Transformer의 학습 방식과 조화를 이룸.</li>
+<li>별도의 태스크 특화 아키텍처 추가 없이 모델 활용 가능.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="내-생각-및-추가-해석"><strong>내 생각 및 추가 해석</strong></h3>
+<ol>
+<li>
+<p><strong>Transformer와 GPT의 조합이 강력한 이유</strong>:</p>
+<ul>
+<li>Transformer의 self-attention은 문맥적 의존성과 구조적 패턴을 매우 효과적으로 학습.</li>
+<li>GPT는 이 구조를 활용해 비지도 학습 단계에서 텍스트의 일반적 특징을 학습함으로써, Fine-tuning에서 최소한의 조정만으로도 뛰어난 성과를 냄.</li>
+</ul>
+</li>
+<li>
+<p><strong>Pre-training의 중요성</strong>:</p>
+<ul>
+<li>이 논문은 대규모 언어 데이터를 통한 사전 학습이 얼마나 강력한지를 보여줌.</li>
+<li>특히, 태스크-specific 데이터가 부족한 경우에도 사전 학습 덕분에 적은 데이터로 좋은 성능을 달성.</li>
+</ul>
+</li>
+<li>
+<p><strong>입력 변환(Input Transformation)의 독창성</strong>:</p>
+<ul>
+<li>입력 데이터를 하나의 연속적인 텍스트로 변환하는 전략은 매우 간단하면서도 강력함.</li>
+<li>복잡한 구조를 가진 NLP 과제를 단일 모델 아키텍처로 처리할 수 있게 함.</li>
+</ul>
+</li>
+<li>
+<p><strong>추가적으로 고려할 점</strong>:</p>
+<ul>
+<li>모델이 사용하는 비지도 학습 데이터가 과제와 관련성이 적거나, 데이터가 충분히 크지 않으면 성능이 저하될 가능성.</li>
+<li>계산 비용이 크다는 점도 한계로 작용.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론"><strong>결론</strong></h3>
+<p>이 논문은 GPT의 사전 학습 + 미세 조정 접근법으로 범용성과 성능 두 가지를 모두 잡았습니다. 주요한 성과는 Transformer의 강력한 문맥 처리 능력, 사전 학습의 일반화된 지식 학습, 그리고 태스크에 구애받지 않는 입력 변환 방식 덕분입니다. 이 접근법은 이후 BERT와 GPT 시리즈의 발전으로 이어지는 핵심적인 기여를 했습니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="논문의-입력-데이터와-추론-과정"><strong>논문의 입력 데이터와 추론 과정</strong></h3>
+<h4 id="1-입력-데이터"><strong>1. 입력 데이터</strong></h4>
+<p>논문에서는 **비지도 사전 학습(Pre-training)**과 **지도 미세 조정(Fine-tuning)**에서 입력 데이터를 다르게 처리합니다.</p>
+<h5 id="a-비지도-학습-단계"><strong>a. 비지도 학습 단계</strong>:</h5>
+<ul>
+<li>
+<p>입력 데이터는 연속된 텍스트 문서입니다.</p>
+</li>
+<li>
+<p>예를 들어, 문장:</p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-0"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-0"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-0">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">The cat sat on the mat.</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-0';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<ul>
+<li>이를 토큰화(BPE: Byte Pair Encoding)하면:
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-1"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-1"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-1">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">[&#34;The&#34;, &#34;cat&#34;, &#34;sat&#34;, &#34;on&#34;, &#34;the&#34;, &#34;mat&#34;, &#34;.&#34;]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-1';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+</li>
+<li>모델은 ( k )개의 이전 토큰을 보고 다음 토큰을 예측합니다.</li>
+</ul>
+</li>
+<li>
+<p>예:</p>
+<ul>
+<li>입력: [&ldquo;The&rdquo;, &ldquo;cat&rdquo;, &ldquo;sat&rdquo;, &ldquo;on&rdquo;]</li>
+<li>출력: [&ldquo;the&rdquo;]</li>
+</ul>
+</li>
+</ul>
+<h5 id="b-지도-학습-단계"><strong>b. 지도 학습 단계</strong>:</h5>
+<ul>
+<li>태스크별로 구조화된 데이터를 사용합니다.
+<ul>
+<li>예: 질문-답변 과제
+<ul>
+<li>문맥(Context): &ldquo;The cat sat on the mat.&rdquo;</li>
+<li>질문(Question): &ldquo;Where is the cat?&rdquo;</li>
+<li>답변 후보(Answers): [&ldquo;on the mat&rdquo;, &ldquo;under the table&rdquo;]</li>
+</ul>
+</li>
+<li>변환된 입력:
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-2"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-2"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-2">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">[Context; Question; Answer Candidate]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-2';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<ul>
+<li>예:
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-3"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-3"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-3">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">[&#34;The cat sat on the mat.&#34;, &#34;Where is the cat?&#34;, &#34;on the mat&#34;]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-3';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="2-추론-과정"><strong>2. 추론 과정</strong></h4>
+<h5 id="a-비지도-학습-단계-1"><strong>a. 비지도 학습 단계</strong>:</h5>
+<ol>
+<li>모델은 토큰 시퀀스를 입력으로 받아, 다음 토큰의 확률 분포를 계산합니다.</li>
+<li>Self-Attention 메커니즘을 통해 모든 이전 토큰 간의 관계를 계산하고, 다음 토큰의 확률을 생성.</li>
+<li>예:
+<ul>
+<li>입력: [&ldquo;The&rdquo;, &ldquo;cat&rdquo;, &ldquo;sat&rdquo;, &ldquo;on&rdquo;]</li>
+<li>출력: [&ldquo;the&rdquo;]</li>
+<li>확률 분포:
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-4"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-4"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-4">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">{&#34;the&#34;: 0.8, &#34;a&#34;: 0.1, &#34;mat&#34;: 0.1}</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-4';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+</li>
+</ul>
+</li>
+</ol>
+<h5 id="b-지도-학습-단계-1"><strong>b. 지도 학습 단계</strong>:</h5>
+<ol>
+<li>모델은 미세 조정된 가중치를 활용하여 특정 과제에서 레이블 예측.</li>
+<li>예: 질문-답변 과제
+<ul>
+<li>입력: [&ldquo;The cat sat on the mat.&rdquo;, &ldquo;Where is the cat?&rdquo;, &ldquo;on the mat&rdquo;]</li>
+<li>모델은 각 답변 후보에 대해 확률 분포를 계산:
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-5"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-5"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-5">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">{&#34;on the mat&#34;: 0.9, &#34;under the table&#34;: 0.1}</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-5';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+</li>
+<li>출력: 가장 높은 확률의 답변인 &ldquo;on the mat&rdquo;.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="모델-아키텍처의-구성"><strong>모델 아키텍처의 구성</strong></h3>
+<h4 id="1-transformer-기반-gpt"><strong>1. Transformer 기반 GPT</strong></h4>
+<ul>
+<li><strong>구성</strong>:
+<ul>
+<li><strong>입력 임베딩</strong>: 토큰과 위치 정보를 합쳐 임베딩으로 변환.</li>
+<li><strong>Self-Attention 레이어</strong>:
+<ul>
+<li>입력 토큰 간의 관계를 계산.</li>
+<li>( Q, K, V ) (Query, Key, Value) 행렬 연산을 사용:
+[
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+]</li>
+<li>다중 헤드(Multi-head)를 사용하여 정보를 병렬 처리.</li>
+</ul>
+</li>
+<li><strong>Feed-Forward 레이어</strong>:
+<ul>
+<li>Self-Attention의 출력을 비선형 변환(ReLU/GELU)으로 처리.</li>
+</ul>
+</li>
+<li><strong>출력 레이어</strong>:
+<ul>
+<li>다음 토큰의 확률 분포를 생성.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="2-모델-연산"><strong>2. 모델 연산</strong></h4>
+<ul>
+<li>
+<p><strong>Self-Attention 연산</strong>:</p>
+<ul>
+<li>계산 복잡도:
+[
+O(n^2 \cdot d)
+]
+<ul>
+<li>( n ): 입력 시퀀스 길이.</li>
+<li>( d ): 임베딩 차원.</li>
+</ul>
+</li>
+<li>메모리 사용량: ( O(n^2) ) (Attention 가중치 행렬 저장).</li>
+</ul>
+</li>
+<li>
+<p><strong>Feed-Forward 연산</strong>:</p>
+<ul>
+<li>계산 복잡도:
+[
+O(n \cdot d^2)
+]
+<ul>
+<li>( d ): 피드포워드 네트워크의 내부 차원(논문에서는 3072).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="모델의-메모리-및-컴퓨팅-요구량"><strong>모델의 메모리 및 컴퓨팅 요구량</strong></h3>
+<h4 id="1-메모리-요구량"><strong>1. 메모리 요구량</strong></h4>
+<ul>
+<li>
+<p><strong>입력 시퀀스 길이와 메모리</strong>:</p>
+<ul>
+<li>Self-Attention 연산은 입력 길이 ( n )에 따라 ( O(n^2) ) 메모리를 소모.</li>
+<li>예를 들어, 시퀀스 길이 ( n=512 ), 임베딩 차원 ( d=768 )일 때:
+<ul>
+<li>Attention 행렬 크기: ( 512 \times 512 ) (약 1MB).</li>
+<li>( 12 )개의 Attention 헤드 및 ( 12 )개의 레이어에서 약 12MB 메모리 필요.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 파라미터</strong>:</p>
+<ul>
+<li>GPT 모델(12 레이어, 768 차원)의 총 파라미터 수: 약 110M.</li>
+<li>대부분의 파라미터는 임베딩 및 가중치 행렬에 사용됨.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-컴퓨팅-요구량"><strong>2. 컴퓨팅 요구량</strong></h4>
+<ul>
+<li><strong>FLOPs (부동소수점 연산 수)</strong>:
+<ul>
+<li>Self-Attention 연산: ( O(n^2 \cdot d) )</li>
+<li>Feed-Forward 연산: ( O(n \cdot d^2) )</li>
+<li>예:
+<ul>
+<li>( n=512 ), ( d=768 ), ( \text{레이어 수}=12 ):
+<ul>
+<li>Self-Attention: 약 ( 10^9 ) FLOPs.</li>
+<li>Feed-Forward: 약 ( 2 \times 10^9 ) FLOPs.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-계산-비용-최적화"><strong>3. 계산 비용 최적화</strong></h4>
+<ul>
+<li><strong>메모리 최적화</strong>:
+<ul>
+<li>Gradient checkpointing: 메모리를 절약하기 위해 중간 계산 결과를 저장하지 않고 재계산.</li>
+</ul>
+</li>
+<li><strong>컴퓨팅 최적화</strong>:
+<ul>
+<li>Mixed precision 연산: 부동소수점 ( 32 )-비트 대신 ( 16 )-비트 연산 사용.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결론-1"><strong>결론</strong></h3>
+<ol>
+<li>
+<p><strong>입력 데이터와 추론 과정</strong>:</p>
+<ul>
+<li>입력 데이터는 간단한 텍스트 형식이며, 태스크에 따라 특정 구조로 변환.</li>
+<li>추론은 Self-Attention과 Feed-Forward 네트워크를 통해 다음 토큰 또는 특정 태스크의 출력을 생성.</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 구성 및 연산</strong>:</p>
+<ul>
+<li>GPT는 Self-Attention과 Feed-Forward 레이어의 조합으로 높은 문맥 의존성을 학습.</li>
+<li>계산 비용은 시퀀스 길이와 임베딩 차원에 따라 증가.</li>
+</ul>
+</li>
+<li>
+<p><strong>한계와 강점</strong>:</p>
+<ul>
+<li>메모리 사용량이 높고 계산 비용이 크지만, 범용성과 높은 성능으로 이를 상쇄.</li>
+<li>Transformer 기반 구조는 긴 문맥을 처리하는 데 매우 적합하며, 다양한 NLP 태스크에서 우수한 성과를 보임.</li>
+</ul>
+</li>
+</ol>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>논문 **&ldquo;Improving Language Understanding by Generative Pre-Training&rdquo;**의 한계는 계산 비용, 메모리 요구량, 데이터 의존성, 작은 데이터셋에서의 성능 제한 등으로 요약됩니다. 이를 극복하기 위한 연구 흐름은 여러 방향으로 발전하고 있으며, 아래에 이를 자세히 정리합니다.</p>
+<hr>
+<h3 id="1-계산-비용과-메모리-요구량-문제"><strong>1. 계산 비용과 메모리 요구량 문제</strong></h3>
+<h4 id="한계"><strong>한계</strong></h4>
+<ul>
+<li>Transformer의 Self-Attention은 (O(n^2))의 계산 복잡도와 메모리 요구량을 가지며, 긴 입력 시퀀스를 처리할 때 효율성이 떨어짐.</li>
+</ul>
+<h4 id="극복을-위한-연구-흐름"><strong>극복을 위한 연구 흐름</strong></h4>
+<ol>
+<li>
+<p><strong>효율적인 Attention 메커니즘 개발</strong>:</p>
+<ul>
+<li><strong>Sparse Attention</strong>:
+<ul>
+<li>입력 토큰의 일부만 집중적으로 처리하여 계산 비용을 줄임.</li>
+<li>예: <strong>Longformer</strong> (Beltagy et al., 2020): Local Window Attention과 Global Attention 결합으로 긴 문서를 효율적으로 처리.</li>
+</ul>
+</li>
+<li><strong>Linformer</strong>:
+<ul>
+<li>Attention 계산을 선형 시간 복잡도로 줄이는 방법.</li>
+<li>Low-rank Approximation을 활용하여 키-값 행렬을 축소.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 경량화</strong>:</p>
+<ul>
+<li><strong>Pruning</strong>:
+<ul>
+<li>모델의 중요하지 않은 파라미터를 제거하여 계산 효율성을 높임.</li>
+<li>예: <strong>LayerDrop</strong> (Fan et al., 2019).</li>
+</ul>
+</li>
+<li><strong>Knowledge Distillation</strong>:
+<ul>
+<li>큰 모델에서 학습된 지식을 작은 모델로 전달.</li>
+<li>예: DistilGPT, TinyBERT.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Mixed Precision Training</strong>:</p>
+<ul>
+<li>부동소수점 (32)-비트 대신 (16)-비트 연산을 사용해 메모리와 계산량 절감.</li>
+<li>NVIDIA의 AMP(Apex Mixed Precision) 기술 활용.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-데이터-의존성-문제"><strong>2. 데이터 의존성 문제</strong></h3>
+<h4 id="한계-1"><strong>한계</strong></h4>
+<ul>
+<li>사전 학습 단계에서 대규모 데이터셋에 대한 의존성이 높음.</li>
+<li>특정 도메인 데이터가 부족할 경우 성능이 저하될 가능성.</li>
+</ul>
+<h4 id="극복을-위한-연구-흐름-1"><strong>극복을 위한 연구 흐름</strong></h4>
+<ol>
+<li>
+<p><strong>Self-Supervised Learning 발전</strong>:</p>
+<ul>
+<li>더 많은 비지도 학습 목표(objective)를 도입하여 데이터 효율성 향상.</li>
+<li>예:
+<ul>
+<li><strong>BERT의 Masked Language Model (MLM)</strong>:
+<ul>
+<li>일부 단어를 마스킹하여 문맥적 정보를 학습.</li>
+</ul>
+</li>
+<li><strong>T5 (Text-to-Text Transfer Transformer)</strong>:
+<ul>
+<li>모든 NLP 태스크를 텍스트-텍스트 변환으로 학습.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Unsupervised Domain Adaptation</strong>:</p>
+<ul>
+<li>특정 도메인 데이터가 부족할 때 일반 도메인에서 학습된 모델을 조정.</li>
+<li>예: Adversarial Training을 사용하여 도메인 불일치 문제 해결.</li>
+</ul>
+</li>
+<li>
+<p><strong>Few-shot 및 Zero-shot 학습</strong>:</p>
+<ul>
+<li>GPT-3와 같은 대규모 모델은 특정 태스크 데이터 없이도 뛰어난 성능을 발휘.</li>
+<li>In-context Learning을 통해 새로운 태스크에 빠르게 적응 가능.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="3-작은-데이터셋에서의-성능-제한"><strong>3. 작은 데이터셋에서의 성능 제한</strong></h3>
+<h4 id="한계-2"><strong>한계</strong></h4>
+<ul>
+<li>RTE 등 소규모 데이터셋에서 GPT의 성능이 기존 모델보다 낮은 경우가 있음.</li>
+</ul>
+<h4 id="극복을-위한-연구-흐름-2"><strong>극복을 위한 연구 흐름</strong></h4>
+<ol>
+<li>
+<p><strong>Multi-task Learning</strong>:</p>
+<ul>
+<li>여러 태스크를 동시에 학습하여 작은 데이터셋에서의 일반화 능력을 향상.</li>
+<li>예: <strong>MT-DNN</strong> (Liu et al., 2019): Multi-task 학습을 통해 성능 향상.</li>
+</ul>
+</li>
+<li>
+<p><strong>Data Augmentation</strong>:</p>
+<ul>
+<li>가상 데이터를 생성하여 데이터셋 크기를 확장.</li>
+<li>예:
+<ul>
+<li>Back-translation: 텍스트를 다른 언어로 번역 후 다시 원래 언어로 번역.</li>
+<li>Paraphrasing: 원문의 의미를 유지하며 표현을 바꿈.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Transfer Learning 기반 소규모 학습</strong>:</p>
+<ul>
+<li>사전 학습된 대규모 모델을 소규모 데이터에 맞게 미세 조정.</li>
+<li>예: Fine-tuning 시 Early Stopping과 Regularization을 통해 과적합 방지.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="4-긴-문맥-처리-문제"><strong>4. 긴 문맥 처리 문제</strong></h3>
+<h4 id="한계-3"><strong>한계</strong></h4>
+<ul>
+<li>긴 문서를 처리할 때 Self-Attention의 계산량과 메모리 요구량이 급증.</li>
+</ul>
+<h4 id="극복을-위한-연구-흐름-3"><strong>극복을 위한 연구 흐름</strong></h4>
+<ol>
+<li>
+<p><strong>Hierarchical Models</strong>:</p>
+<ul>
+<li>문장을 클러스터로 묶어 문단 수준의 정보를 단계적으로 처리.</li>
+<li>예: <strong>Hierarchical Attention Networks (HAN)</strong>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Memory-efficient Transformers</strong>:</p>
+<ul>
+<li>메모리 사용량을 줄이기 위해 순차적 처리.</li>
+<li>예: <strong>Reformer</strong>:
+<ul>
+<li>Locality Sensitive Hashing(LSH)을 사용하여 Attention 계산 최적화.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="5-사전-학습-목적-및-입력-구조화"><strong>5. 사전 학습 목적 및 입력 구조화</strong></h3>
+<h4 id="한계-4"><strong>한계</strong></h4>
+<ul>
+<li>단순한 언어 모델링(다음 단어 예측)은 모든 NLP 과제에 적합하지 않을 수 있음.</li>
+</ul>
+<h4 id="극복을-위한-연구-흐름-4"><strong>극복을 위한 연구 흐름</strong></h4>
+<ol>
+<li>
+<p><strong>Task-specific Pre-training Objectives</strong>:</p>
+<ul>
+<li>예:
+<ul>
+<li><strong>Span-based Objectives</strong>: 문장의 일부를 예측.</li>
+<li><strong>Sentence Order Prediction (SOP)</strong>: 문장의 순서 예측.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>입력 변환 최적화</strong>:</p>
+<ul>
+<li>입력 데이터를 태스크에 최적화된 형식으로 변환.</li>
+<li>예: T5의 Unified Text-to-Text Framework.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-2"><strong>결론</strong></h3>
+<ul>
+<li><strong>한계</strong>:
+<ul>
+<li>높은 계산 및 메모리 비용.</li>
+<li>데이터 의존성.</li>
+<li>작은 데이터셋에서의 성능 저하.</li>
+<li>긴 문맥 처리의 비효율성.</li>
+</ul>
+</li>
+<li><strong>극복 흐름</strong>:
+<ul>
+<li>계산 효율성을 위한 Sparse Attention과 Pruning.</li>
+<li>데이터 부족을 극복하기 위한 Self-supervised Learning과 Data Augmentation.</li>
+<li>작은 데이터셋에서도 성능을 높이기 위한 Multi-task Learning과 Transfer Learning.</li>
+<li>긴 문맥 처리를 위한 Hierarchical Models와 Memory-efficient Transformers.</li>
+</ul>
+</li>
+</ul>
+<p>이러한 발전은 언어 모델이 더 효율적이고 강력하며 데이터 제약을 덜 받도록 돕는 데 기여하고 있습니다. GPT에서 출발한 연구는 BERT, T5, GPT-3 등으로 이어지며 NLP의 중요한 방향성을 제시하고 있습니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/Improving-Language-Understanding-by-Generative-Pre-Training/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/Improving-Language-Understanding-by-Generative-Pre-Training/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/PaLM-2-Technical-Report/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                PaLM 2 Technical Report
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-12-08">
+                12月08日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Abseil-Tip-90-Retired-Flags%EC%82%AC%EC%9A%A9-%EC%A4%91%EB%8B%A8%EB%90%9C-%ED%94%8C%EB%9E%98%EA%B7%B8/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Abseil Tip 90 Retired Flags(사용 중단된 플래그)
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-12-08">
+                12月08日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-주요-내용"><strong>논문의 주요 내용</strong></a></li>
+        <li><a href="#논문의-강점"><strong>논문의 강점</strong></a></li>
+        <li><a href="#독창적인-지점"><strong>독창적인 지점</strong></a></li>
+        <li><a href="#핵심-알고리즘-설명-예제-포함"><strong>핵심 알고리즘 설명 (예제 포함)</strong></a>
+          <ul>
+            <li><a href="#1-사전-학습generative-pre-training">1. <strong>사전 학습(Generative Pre-Training)</strong>:</a></li>
+            <li><a href="#2-미세-조정supervised-fine-tuning">2. <strong>미세 조정(Supervised Fine-Tuning)</strong>:</a></li>
+            <li><a href="#예제">예제:</a></li>
+          </ul>
+        </li>
+        <li><a href="#한계점"><strong>한계점</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#1-generative-pre-training-gpt">1. <strong>Generative Pre-Training (GPT)</strong></a>
+      <ul>
+        <li><a href="#목적"><strong>목적</strong></a></li>
+        <li><a href="#알고리즘-상세"><strong>알고리즘 상세</strong></a>
+          <ul>
+            <li><a href="#입력">입력</a></li>
+            <li><a href="#최적화-목표">최적화 목표</a></li>
+            <li><a href="#모델-구조">모델 구조</a></li>
+            <li><a href="#학습-과정">학습 과정</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#2-supervised-fine-tuning">2. <strong>Supervised Fine-Tuning</strong></a>
+      <ul>
+        <li><a href="#목적-1"><strong>목적</strong></a></li>
+        <li><a href="#알고리즘-상세-1"><strong>알고리즘 상세</strong></a>
+          <ul>
+            <li><a href="#입력-1">입력</a></li>
+            <li><a href="#최적화-목표-1">최적화 목표</a></li>
+            <li><a href="#입력-변환">입력 변환</a></li>
+            <li><a href="#모델-구조-1">모델 구조</a></li>
+          </ul>
+        </li>
+        <li><a href="#예시-질문-답변-과제"><strong>예시: 질문-답변 과제</strong></a>
+          <ul>
+            <li><a href="#데이터">데이터</a></li>
+            <li><a href="#과정">과정</a></li>
+          </ul>
+        </li>
+        <li><a href="#정리"><strong>정리</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#필요한-데이터셋"><strong>필요한 데이터셋</strong></a></li>
+        <li><a href="#학습-단계"><strong>학습 단계</strong></a>
+          <ul>
+            <li><a href="#1-비지도-학습-pre-training">1. <strong>비지도 학습 (Pre-training)</strong></a></li>
+            <li><a href="#2-지도-학습-fine-tuning">2. <strong>지도 학습 (Fine-tuning)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#최종-학습-과정"><strong>최종 학습 과정</strong></a></li>
+        <li><a href="#정리-1"><strong>정리</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문-결과-및-특징-분석"><strong>논문 결과 및 특징 분석</strong></a></li>
+        <li><a href="#논문-결과-요약"><strong>논문 결과 요약</strong></a></li>
+        <li><a href="#특출난-점"><strong>특출난 점</strong></a></li>
+        <li><a href="#결과를-도출하게-한-핵심-방법"><strong>결과를 도출하게 한 핵심 방법</strong></a>
+          <ul>
+            <li><a href="#1-generative-pre-training-gpt-1">1. <strong>Generative Pre-Training (GPT)</strong></a></li>
+            <li><a href="#2-fine-tuning">2. <strong>Fine-Tuning</strong>:</a></li>
+            <li><a href="#3-transformer-아키텍처">3. <strong>Transformer 아키텍처</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#논문에서-제시하는-이유"><strong>논문에서 제시하는 이유</strong></a></li>
+        <li><a href="#내-생각-및-추가-해석"><strong>내 생각 및 추가 해석</strong></a></li>
+        <li><a href="#결론"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-입력-데이터와-추론-과정"><strong>논문의 입력 데이터와 추론 과정</strong></a>
+          <ul>
+            <li><a href="#1-입력-데이터"><strong>1. 입력 데이터</strong></a></li>
+            <li><a href="#2-추론-과정"><strong>2. 추론 과정</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#모델-아키텍처의-구성"><strong>모델 아키텍처의 구성</strong></a>
+          <ul>
+            <li><a href="#1-transformer-기반-gpt"><strong>1. Transformer 기반 GPT</strong></a></li>
+            <li><a href="#2-모델-연산"><strong>2. 모델 연산</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#모델의-메모리-및-컴퓨팅-요구량"><strong>모델의 메모리 및 컴퓨팅 요구량</strong></a>
+          <ul>
+            <li><a href="#1-메모리-요구량"><strong>1. 메모리 요구량</strong></a></li>
+            <li><a href="#2-컴퓨팅-요구량"><strong>2. 컴퓨팅 요구량</strong></a></li>
+            <li><a href="#3-계산-비용-최적화"><strong>3. 계산 비용 최적화</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-1"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-계산-비용과-메모리-요구량-문제"><strong>1. 계산 비용과 메모리 요구량 문제</strong></a>
+          <ul>
+            <li><a href="#한계"><strong>한계</strong></a></li>
+            <li><a href="#극복을-위한-연구-흐름"><strong>극복을 위한 연구 흐름</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-데이터-의존성-문제"><strong>2. 데이터 의존성 문제</strong></a>
+          <ul>
+            <li><a href="#한계-1"><strong>한계</strong></a></li>
+            <li><a href="#극복을-위한-연구-흐름-1"><strong>극복을 위한 연구 흐름</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-작은-데이터셋에서의-성능-제한"><strong>3. 작은 데이터셋에서의 성능 제한</strong></a>
+          <ul>
+            <li><a href="#한계-2"><strong>한계</strong></a></li>
+            <li><a href="#극복을-위한-연구-흐름-2"><strong>극복을 위한 연구 흐름</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-긴-문맥-처리-문제"><strong>4. 긴 문맥 처리 문제</strong></a>
+          <ul>
+            <li><a href="#한계-3"><strong>한계</strong></a></li>
+            <li><a href="#극복을-위한-연구-흐름-3"><strong>극복을 위한 연구 흐름</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#5-사전-학습-목적-및-입력-구조화"><strong>5. 사전 학습 목적 및 입력 구조화</strong></a>
+          <ul>
+            <li><a href="#한계-4"><strong>한계</strong></a></li>
+            <li><a href="#극복을-위한-연구-흐름-4"><strong>극복을 위한 연구 흐름</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-2"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

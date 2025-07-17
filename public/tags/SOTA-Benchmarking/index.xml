@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SOTA Benchmarking on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/SOTA-Benchmarking/</link>
+    <description>Recent content in SOTA Benchmarking on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Sun, 06 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/SOTA-Benchmarking/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-R1-Incentivizing-Reasoning-Capability-in-LLMs-via-Reinforcement-Learning/</link>
+      <pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-R1-Incentivizing-Reasoning-Capability-in-LLMs-via-Reinforcement-Learning/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2501.12948v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;deepseek-r1-공개-rl-only-파이프라인으로-o1-급-추론을-재현하다&#34;&gt;DeepSeek-R1: 공개 RL-Only 파이프라인으로 &lt;em&gt;o1&lt;/em&gt; 급 추론을 재현하다&lt;/h1&gt;&#xA;&lt;h2 id=&#34;tldr&#34;&gt;TL;DR**&lt;/h2&gt;&#xA;&lt;p&gt;DeepSeek-R1은 &lt;em&gt;critic-less&lt;/em&gt; GRPO RL + 소량 Cold-Start SFT + 다단계 RL/SFT + 지식 증류 파이프라인으로, &lt;strong&gt;AIME-24 pass@1 79.8 %·MATH-500 97.3 %·Codeforces Elo 2029&lt;/strong&gt;를 달성해 공개 모델 최초로 OpenAI _o1-1217_과 동급 성능을 실증했다. 학습 비용은 기존 PPO RL의 절반 수준이며, 7 B–32 B 학생 모델로도 추론 능력을 이식해 “재현 가능한 SoTA”라는 연구 공백을 메웠다.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

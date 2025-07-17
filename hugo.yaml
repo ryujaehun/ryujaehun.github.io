@@ -1,0 +1,257 @@
+baseURL: https://jaehun.me
+disablePathToLower: true
+languageCode: ko-kr
+title: Jaehun's Blog
+theme: "hugo-narrow" # Theme name
+
+defaultContentLanguage: ko # Default content language, determines site display language
+defaultContentLanguageInSubdir: false # Whether default language uses subdirectory
+
+# 언어별 설정
+languages:
+  # 한국어 설정
+  ko:
+    languageCode: ko-kr
+    languageName: "한국어"
+    weight: 1
+    # 한국어 전용 파라미터
+    params:
+      description: "기술과 일상에 대한 생각을 기록하는 블로그입니다."
+      keywords:
+        - "개발"
+        - "컴파일러"
+        - "프로그래밍"
+        - "에세이"
+      author:
+        name: "류재훈"
+        title: "안녕하세요! 기술과 일상에 대한 생각을 기록하는 블로그입니다"
+        description: 리벨리온(Rebellions)에서 딥러닝 컴파일러를 개발하는 엔지니어입니다. AI 모델, 최근엔 LLM을 하드웨어에서 더 효율적으로 실행하기 위한 컴파일러 기술과 최적화에 대해서 공부하려고 만든 블로그입니다. 또한 취미와 투자에 대해서도 간간히 글을 올리려고 하고있습니다.
+
+  # 영어 설정
+  en:
+    languageCode: en-US
+    languageName: "English"
+    weight: 2
+    # 영어 전용 파라미터
+    params:
+      description: "A blog about technology, daily life, and thoughts."
+      keywords:
+        - "Development"
+        - "Compiler"
+        - "Programming"
+        - "Essay"
+      author:
+        name: "Jaehun Ryu"
+        title: "A blog about technology, daily life, and thoughts."
+        description: I am a deep learning compiler engineer at Rebellions. This blog was established for the purpose of studying compiler technologies and optimization methods required to execute AI models, particularly LLMs, with greater efficiency on hardware. Furthermore, I intend to publish articles concerning my hobbies and investments intermittently
+
+# Timezone setting
+timeZone: "Asia/Seoul" # Timezone setting
+
+# Content processing configuration
+hasCJKLanguage: true # Whether content includes CJK (Chinese, Japanese, Korean) characters
+enableEmoji: true # Enable emoji support
+
+# Pagination configuration
+pagination:
+  pagerSize: 6 # Number of pages shown in paginator
+
+# URL configuration
+permalinks:
+  posts: /posts/:slug/
+  pages: /:slug/
+
+# Taxonomy configuration (no need to modify)
+taxonomies:
+  category: categories # Categories
+  tag: tags # Tags
+
+params:
+  # Site information for SEO
+  shortName: "Jaehun's Blog" # PWA
+
+  logo:
+    image: "" # Relative path in static directory, leave empty to use site title's first letter with theme color
+    link: "/" # Click to visit site homepage
+
+  favicon:
+    svg: "/favicon.svg" # SVG format favicon
+
+  images:
+    - "/images/og-default.avif" # Default Open Graph image
+  stickyHeader: true # Sticky navigation bar
+  showThemeSwitch: true # Whether to show theme color switch button
+  showDarkModeSwitch: true # Whether to show dark mode switch button
+  showLanguageSwitch: true # Whether to show language switch button
+
+  author:
+    avatar: "/images/avatar.jpg"
+    social:
+      - name: GitHub
+        url: https://github.com/ryujaehun
+        weight: 10
+        params:
+          icon: github
+      - name: Linkedin
+        url: https://www.linkedin.com/in/jaehunryu/
+        weight: 10
+        params:
+          icon: linkedin
+      - name: Email
+        url: mailto:jaehunryu@icloud.com
+        weight: 20
+        params:
+          icon: email
+
+  home:
+    recentPostsCount: 5
+
+  colorScheme: "claude"
+
+  katex:
+    enabled: true
+    delimiters:
+      - left: "$$"
+        right: "$$"
+        display: true
+      - left: "$"
+        right: "$"
+        display: false # $...$ -> 인라인 수식
+
+  # Theme list
+  themes:
+    claude:
+      name: "Default"
+      order: 1
+    default:
+      name: "White"
+      order: 2
+    bumblebee:
+      name: "Bumblebee"
+      order: 3
+    emerald:
+      name: "Emerald"
+      order: 4
+    nord:
+      name: "Nord"
+      order: 5
+    sunset:
+      name: "Sunset"
+      order: 6
+    abyss:
+      name: "Abyss"
+      order: 7
+    dracula:
+      name: "Dracula"
+      order: 8
+    amethyst:
+      name: "Amethyst"
+      order: 9
+    slate:
+      name: "Slate"
+      order: 10
+    twitter:
+      name: "Twitter"
+      order: 11
+
+post:
+  showRelated: true # Related
+  relatedPostsCount: 3 # Related posts numbers
+
+  license:
+    show: true
+    author: "Jaehun Ryu" # 저작자 이름
+    name: "CC BY 4.0"
+    description: "이 저작물은 크리에이티브 커먼즈 저작자표시 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 밝히면 상업적 목적을 포함해 자유롭게 이용 가능합니다."
+    url: "https://creativecommons.org/licenses/by/4.0/"
+    displayName: "CC BY 4.0"
+outputs:
+  home: ["HTML", "RSS", "JSON", "WebAppManifest"]
+
+# WebManifest
+outputFormats:
+  WebAppManifest:
+    mediaType: "application/manifest+json"
+    baseName: "site"
+    isPlainText: true
+
+readingProgress:
+  enabled: true
+  height: 3
+  showOnHomepage: true
+  smoothScroll: true
+  hideOnComplete: false
+
+menus:
+  main:
+    - name: nav.posts
+      pageRef: /posts
+      weight: 20
+      params:
+        icon: posts
+    - name: nav.categories
+      pageRef: /categories
+      weight: 30
+      params:
+        icon: categories
+    - name: nav.tags
+      pageRef: /tags
+      weight: 40
+      params:
+        icon: tags
+    - name: nav.archives
+      pageRef: /archives
+      weight: 50
+      params:
+        icon: archive
+  footer:
+    - name: RSS Feed
+      url: /index.xml
+      weight: 30
+      params:
+        icon: rss
+  # footer social link
+  social:
+    - name: GitHub
+      url: https://github.com/ryujaehun
+      weight: 10
+      params:
+        icon: github
+    - name: Linkedin
+      url: https://www.linkedin.com/in/jaehunryu/
+      weight: 10
+      params:
+        icon: linkedin
+    - name: Email
+      url: mailto:jaehunryu@icloud.com
+      weight: 20
+      params:
+        icon: email
+markup:
+  tableOfContents:
+    startLevel: 2
+    endLevel: 4
+    ordered: false
+  goldmark:
+    renderer:
+      # KaTeX 렌더링을 활성화하기 위해 필요
+      unsafe: true
+  highlight:
+    codeFences: true # Enable code fences
+    guessSyntax: true # Auto-detect language
+    lineNos: true # Show line numbers
+    lineNumbersInTable: false # Use table-style line numbers, set to false for theme compatibility
+    noClasses: false # Use CSS classes instead of inline styles
+    style: "monokai" # Code highlighting theme (setting here has no effect, details below)
+    tabWidth: 4 # Tab width
+codeblock:
+  collapse:
+    enabled: true
+    defaultState: expanded # Default collapse behavior: expanded, collapsed
+    autoCollapseLines: 30 # Collapse when exceeding specified lines
+    autoCollapseHeight: 400 # Collapse when exceeding specified height
+    collapsedHeight: 120 # Height when collapsed
+module:
+  hugoVersion:
+    extended: true
+    min: 0.146.0

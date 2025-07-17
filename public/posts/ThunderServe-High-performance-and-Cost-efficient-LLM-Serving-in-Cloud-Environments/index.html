@@ -1,0 +1,3412 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>ThunderServe: High-performance and Cost-efficient LLM Serving in Cloud Environments | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 『ThunderServe: High-performance and..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/ThunderServe-High-performance-and-Cost-efficient-LLM-Serving-in-Cloud-Environments/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/ThunderServe-High-performance-and-Cost-efficient-LLM-Serving-in-Cloud-Environments/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="ThunderServe: High-performance and Cost-efficient LLM Serving in Cloud Environments">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 『ThunderServe: High-performance and Cost-efficient LLM Serving in Cloud Environments』를 상세히 분석하여 다음과 같은 내용을 압축적으로 정리하였다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-03-06T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-03-06T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="ThunderServe: High-performance and Cost-efficient LLM Serving in Cloud Environments">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 『ThunderServe: High-performance and Cost-efficient LLM Serving in Cloud Environments』를 상세히 분석하여 다음과 같은 내용을 압축적으로 정리하였다.">
+
+
+  <meta itemprop="name" content="ThunderServe: High-performance and Cost-efficient LLM Serving in Cloud Environments">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 『ThunderServe: High-performance and Cost-efficient LLM Serving in Cloud Environments』를 상세히 분석하여 다음과 같은 내용을 압축적으로 정리하였다.">
+  <meta itemprop="datePublished" content="2025-03-06T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-03-06T00:00:00+00:00">
+  <meta itemprop="wordCount" content="11654">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt,MLSYS2025">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">ThunderServe: High-performance and Cost-efficient LLM Serving in Cloud Environments</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    ThunderServe: High-performance and Cost-efficient LLM Serving in Cloud Environments
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2025-03-06">
+          2025년 03월 06일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >24 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>11654 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+                <a
+                  href="/categories/MLSYS2025/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  MLSYS2025
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2502.09334">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<p>논문 『ThunderServe: High-performance and Cost-efficient LLM Serving in Cloud Environments』를 상세히 분석하여 다음과 같은 내용을 압축적으로 정리하였다.</p>
+<hr>
+<h2 id="-논문의-결론-요약">📌 논문의 결론 요약</h2>
+<p>이 논문은 클라우드 환경에서 다양한 유형의 GPU를 사용하여 LLM(Large Language Model)을 효율적이고 경제적으로 서비스하기 위한 <strong>ThunderServe</strong>라는 시스템을 제안하였다. 기존의 균일한 GPU 클러스터 대비, ThunderServe는 클라우드 환경에서 최대 <strong>평균 1.7배의 처리량 증가와 평균 1.5배의 지연시간 감소</strong>를 보여준다.</p>
+<h2 id="-논문의-강점-및-독창성">📍 논문의 강점 및 독창성</h2>
+<ul>
+<li><strong>이질적인 GPU 리소스 활용</strong>: 기존 시스템들은 대개 동종 GPU 기반 환경에 국한되어 있으나, ThunderServe는 클라우드의 이질적인 GPU 자원을 활용하여 경제성을 향상시켰다.</li>
+<li><strong>Phase Splitting 기법의 최초 적용</strong>: LLM 서비스의 두 단계(Prefill, Decode)에 따라 적합한 GPU 자원을 구분하여 활용하는 최초의 연구이다.</li>
+<li><strong>최적화된 GPU 할당과 병렬화 전략</strong>: Tabu Search를 이용하여 최적화된 GPU 배치와 단계별 병렬 구성 전략을 결정함으로써, 처리량을 최대 2.1배, 평균 1.7배 향상시키고, 지연 시간은 최대 2.5배, 평균 1.5배 단축하였다.</li>
+<li><strong>경량화된 재스케줄링 메커니즘</strong>: 실시간 환경 변동(작업량 변화, GPU 장애 등)에 대응하여 서비스 중단 없이 몇 초 내로 계획을 조정할 수 있다.</li>
+</ul>
+<hr>
+<h2 id="-논문의-핵심-강점-및-독창적-지점">🔍 논문의 핵심 강점 및 독창적 지점</h2>
+<p>ThunderServe의 핵심적 강점 및 독창성은 다음과 같다:</p>
+<h3 id="1-이질적-gpu-환경의-체계적-활용">1. 이질적 GPU 환경의 체계적 활용</h3>
+<ul>
+<li>GPU별 특성 (연산 성능과 메모리 대역폭)을 Prefill과 Decode 단계에 최적화하여 배치.</li>
+<li>예시: Prefill 단계(연산 위주)는 A40 GPU (149.7 TFLOPS), Decode 단계(메모리 위주)는 3090Ti GPU (1008 GB/s 메모리 대역폭)에 배정함으로써 자원 효율성을 극대화하였다.</li>
+</ul>
+<h3 id="gpu-간-성능-비교-논문-table-1-기반">GPU 간 성능 비교 (논문 Table 1 기반)</h3>
+<table>
+  <thead>
+      <tr>
+          <th>GPU 종류</th>
+          <th>Memory Bandwidth</th>
+          <th>FP16 연산 성능</th>
+          <th>GPU 가격(시간당)</th>
+          <th>적합한 작업</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>A100</td>
+          <td>2 TB/s</td>
+          <td>312 TFLOPS</td>
+          <td>$1.753</td>
+          <td>범용(고성능)</td>
+      </tr>
+      <tr>
+          <td>A6000</td>
+          <td>768 GB/s</td>
+          <td>38.7 TFLOPS</td>
+          <td>$0.483</td>
+          <td>중간 연산 성능</td>
+      </tr>
+      <tr>
+          <td>A5000</td>
+          <td>626.8 GB/s</td>
+          <td>27.8 TFLOPS</td>
+          <td>$0.223</td>
+          <td>경제적 운영</td>
+      </tr>
+      <tr>
+          <td>A40</td>
+          <td>696 GB/s</td>
+          <td>149.7 TFLOPS</td>
+          <td>$0.403</td>
+          <td>연산 위주 (Prefill)</td>
+      </tr>
+      <tr>
+          <td>3090Ti</td>
+          <td>1008 GB/s</td>
+          <td>40 TFLOPS</td>
+          <td>$0.307</td>
+          <td>메모리 위주 (Decode)</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>연산 집중형 Prefill 단계는 A40, 메모리 접근이 많은 Decode 단계는 3090Ti가 유리함을 확인하였다.</li>
+</ul>
+<hr>
+<h1 id="-핵심-알고리즘-예시-입력-설명">📌 핵심 알고리즘 예시 입력 설명</h1>
+<p>ThunderServe의 핵심 알고리즘은 <strong>상하위 두 계층의 최적화 문제</strong>로 설계된다.</p>
+<p><strong>예시 입력:</strong></p>
+<ul>
+<li>클러스터 내 GPU 환경: <code>[4×A6000, 4×A5000, 8×A40, 4×3090Ti]</code></li>
+<li>입력 Prompt 길이: 1024토큰, 출력 토큰: 16개 (일반적인 coding 워크로드)</li>
+</ul>
+<p><strong>알고리즘 수행 단계:</strong></p>
+<ol>
+<li><strong>상위 수준 문제</strong> (탐색 알고리즘 - Tabu search)
+<ul>
+<li>GPU를 각 특성에 맞게 Prefill과 Decode 그룹으로 나누고 초기화.</li>
+<li>Tabu Search 알고리즘이 반복적으로 인접 해를 탐색하여 GPU의 최적 배치(그룹화 및 Prefill/Decode 지정)를 결정.</li>
+</ul>
+</li>
+</ol>
+<p><strong>예시 구성 결과(실험 사례 발췌)</strong>:</p>
+<table>
+  <thead>
+      <tr>
+          <th>GPU 구성</th>
+          <th>병렬 설정</th>
+          <th>복제본 개수</th>
+          <th>담당 단계</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>8×A40</td>
+          <td>TP=2, PP=1</td>
+          <td>4 Prefill</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>4×A5000</td>
+          <td>TP=4, PP=1</td>
+          <td>1 Prefill</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>4×A6000</td>
+          <td>TP=2, PP=1</td>
+          <td>2 Prefill</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>4×3090Ti</td>
+          <td>TP=2, PP=2</td>
+          <td>1 Decode</td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>연산 성능이 뛰어난 GPU를 Prefill에, 메모리 대역폭이 큰 GPU를 Decode에 배치하는 식으로 최적화.</li>
+</ul>
+<p><strong>예시로 전체 흐름:</strong></p>
+<ol>
+<li>요청(Request) → Prefill 그룹에서 KV 캐시 계산 → KV 캐시를 압축하여 Decode 그룹으로 전송 (KV Cache 압축: 16-bit→4-bit로 압축 후 전달, 통신량 감소)</li>
+<li>Decode 그룹에서 압축 해제 후 디코딩 단계 처리 → 결과 생성 → 결과 반환</li>
+</ol>
+<hr>
+<h2 id="-논문의-강점과-독창적-지점-요약">🎯 논문의 강점과 독창적 지점 요약</h2>
+<ul>
+<li><strong>GPU 자원의 경제적이고 성능 최적화된 사용</strong> (기존 대비 최대 2.1배 성능 향상, 최대 2.5배 비용 절약).</li>
+<li><strong>Phase Splitting을 최초로 이질적 GPU에 적용하여 서비스 성능 향상</strong>.</li>
+<li><strong>재스케줄링 메커니즘</strong>을 통해 실시간 적응성을 확보하여 기존 방식 대비 수 초 내로 서비스 변경을 가능케 함.</li>
+</ul>
+<hr>
+<h2 id="-한계점-및-향후-연구-과제">⚠️ 한계점 및 향후 연구 과제</h2>
+<ul>
+<li><strong>하드웨어 의존성</strong>: GPU 클러스터 간 통신 상황에 성능이 민감하며, 특히 KV 캐시 전송량이 클 경우 여전히 병목이 존재할 수 있음.</li>
+<li><strong>최적화 방법의 국지 최적성</strong>: Tabu search 기반 탐색은 지역 최적화에 빠질 가능성 있음.</li>
+<li><strong>다양한 실시간 워크로드 변화</strong>(복합적인 서비스 환경)에 대해 더 포괄적인 평가 필요.</li>
+<li><strong>GPU 리소스의 안정성과 비용 변동성</strong>: 클라우드 서비스의 비용 및 GPU 가용성 변동에 따른 민감도를 추가 고려할 필요.</li>
+</ul>
+<hr>
+<p>이 논문은 GPU의 하드웨어 이질성을 극복하여 비용 효율적이고 성능이 높은 LLM 서비스를 가능하게 하는 유의미한 기여를 하고 있으며, 이로써 클라우드 환경에서 효율적인 LLM 운영의 새로운 방향을 제시한다. 그러나 위의 한계점들을 보완하기 위한 추가적인 연구가 필요하다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>논문의 핵심 알고리즘은 크게 **상위 문제(Upper-level)**와 <strong>하위 문제(Lower-level)</strong> 두 단계의 계층적 최적화로 나뉜다. 이 두 계층을 활용해 GPU 클러스터에서 LLM 서비스를 최적화하는 <strong>Tabu Search 기반 스케줄링 알고리즘</strong>을 사용한다. 이 알고리즘의 전반적인 과정과 작동 원리를 예시 입력을 들어서 설명하겠다.</p>
+<hr>
+<h2 id="-핵심-알고리즘-개요">📌 핵심 알고리즘 개요</h2>
+<p>논문에서 제안한 <strong>ThunderServe의 핵심 알고리즘</strong>은 크게 <strong>상위문제</strong>(GPU의 그룹화 및 역할 지정)와 <strong>하위 문제</strong>(각 그룹의 병렬 설정 및 Prefill/Decode 오케스트레이션)로 나뉜다. 이 계층 구조는 다음과 같다:</p>
+<table>
+  <thead>
+      <tr>
+          <th>구분</th>
+          <th>내용</th>
+          <th>목적</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>상위 문제</td>
+          <td>GPU를 여러 개의 모델 그룹으로 나누고 각 그룹에 Prefill 또는 Decode 역할을 지정</td>
+          <td>전체적인 성능 최적화 (GPU 타입과 네트워크 상황 고려)</td>
+      </tr>
+      <tr>
+          <td>하위 문제</td>
+          <td>상위 문제에서 만들어진 각 GPU 그룹의 병렬화 전략(텐서 병렬, 파이프라인 병렬)과 오케스트레이션을 결정</td>
+          <td>개별 모델 그룹 내 세부 병렬 구성 최적화</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-핵심-알고리즘-예시-및-작동과정">🚀 핵심 알고리즘 예시 및 작동과정</h2>
+<p>아래 예시를 통해 ThunderServe 알고리즘의 전체 흐름을 이해할 수 있다.</p>
+<h3 id="-가정된-예시-환경">✅ 가정된 예시 환경</h3>
+<ul>
+<li>사용 가능한 GPU 환경:
+<ul>
+<li>A40 GPU: 8개 (연산 성능 뛰어남)</li>
+<li>A6000 GPU: 8개 (중간 성능)</li>
+<li>3090Ti GPU: 4개 (메모리 접근 효율 뛰어남)</li>
+</ul>
+</li>
+<li>모델: LLaMA-30B</li>
+<li>워크로드 특성:
+<ul>
+<li>Prompt 길이: 512 토큰 (Prefill 부담 증가)</li>
+<li>출력 토큰 길이: 128 토큰</li>
+</ul>
+</li>
+</ul>
+<h3 id="step-by-step-algorithm-flow">Step-by-Step Algorithm Flow</h3>
+<hr>
+<h3 id="-">🔹 <strong>[상위 문제 해결 과정]</strong></h3>
+<p>상위 문제는 사용 가능한 GPU들을 어떻게 나누고 Prefill과 Decode 단계로 어떻게 지정할지 결정한다.</p>
+<p>1️⃣ <strong>초기화</strong> (Hierarchical Clustering 사용)</p>
+<ul>
+<li>GPU 간 네트워크 대역폭을 기준으로 Hierarchical Clustering을 수행하여 초기 GPU 그룹을 생성.
+<ul>
+<li>ex) 두 개의 그룹으로 나눔:
+<ul>
+<li><code>Group1 (Prefill)</code>: 8×A40 GPU (계산 위주)</li>
+<li><code>Group2 (4×A6000 GPU)</code>와 <code>Group3 (4×A6000 GPU)</code>로 나눔 (초기 랜덤지정: Prefill과 Decode로 각기 다르게 배정)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>2️⃣ <strong>탐색과정 (Tabu Search)</strong></p>
+<p>이 초기 해를 출발점으로 인접해 탐색을 통해 성능을 반복적으로 향상시킴.</p>
+<ul>
+<li>주요 neighbor 연산 방법:
+<ul>
+<li>그룹의 역할 전환 (Prefill ⇄ Decode)</li>
+<li>GPU 그룹을 나누거나 합침</li>
+<li>GPU를 그룹 간 이동시키기</li>
+</ul>
+</li>
+</ul>
+<p><strong>예시</strong>:</p>
+<ul>
+<li>GPU 그룹1 (8×A40, Prefill)을 두 개의 그룹으로 나눠서 성능 개선 시도:
+<ul>
+<li>(4×A40, Prefill) + (4×A40, Decode)</li>
+</ul>
+</li>
+<li>GPU 그룹2 (4×A6000, Decode)를 Prefill로 변경하여 성능 개선 시도:
+<ul>
+<li>(4×A6000, Prefill)</li>
+</ul>
+</li>
+</ul>
+<p>이 과정을 여러 번 반복하여 가장 높은 성능을 얻는 GPU 배치를 찾는다.</p>
+<hr>
+<h3 id="--1">🔹 <strong>[하위 문제 해결 과정]</strong></h3>
+<p>상위 문제에서 나온 GPU 그룹 구성과 Prefill/Decode 지정이 결정되면, 각 그룹 내부의 최적 병렬 구성(Tensor Parallel, Pipeline Parallel)을 정하고 그룹들 간의 오케스트레이션 방식을 결정한다.</p>
+<p>3️⃣ <strong>병렬구성 최적화</strong></p>
+<ul>
+<li>Prefill 단계는 <strong>latency-optimal</strong>, Decode 단계는 <strong>throughput-optimal</strong> 구성으로 설정.</li>
+<li>병렬 구성 예시:</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>GPU 그룹</th>
+          <th>역할</th>
+          <th>Tensor Parallel (TP)</th>
+          <th>Pipeline Parallel (PP)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>4×A40</td>
+          <td>Prefill</td>
+          <td>TP=2, PP=1</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>4×A40</td>
+          <td>Decode</td>
+          <td>TP=1, PP=2</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>4×A6000</td>
+          <td>Prefill</td>
+          <td>TP=4, PP=1</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>4×A6000</td>
+          <td>Decode</td>
+          <td>TP=2, PP=2</td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>GPU 타입별 특성을 고려하여 결정:
+<ul>
+<li>Prefill: 연산성능 극대화 위한 TP 중시</li>
+<li>Decode: 메모리 bandwidth 활용 극대화를 위한 pipeline 병렬 최적화(PP)</li>
+</ul>
+</li>
+</ul>
+<p>4️⃣ <strong>Prefill/Decode 오케스트레이션</strong></p>
+<ul>
+<li>Prefill과 Decode 단계 간 KV Cache 전송 비용을 최소화하는 최적 경로를 찾기 위해 각 그룹 간 네트워크 비용 평가.</li>
+<li>KV 캐시 전송량이 많으므로 압축하여 (16-bit→4-bit) 통신량을 감소시킴.</li>
+<li>Linear programming을 활용한 최적의 오케스트레이션 경로 결정.</li>
+</ul>
+<p><strong>예시 KV 캐시 전송 시간 계산 예시</strong>:
+[
+T_{ij}^{(kvcomm)} = \alpha_{ij} + \frac{2b \times s \times h \times N_{bytes}}{\beta_{ij}}
+]</p>
+<ul>
+<li><code>b</code>: 배치 사이즈</li>
+<li><code>s</code>: 시퀀스 길이 (입력토큰)</li>
+<li><code>h</code>: Hidden size (Transformer)</li>
+<li><code>Nbytes</code>: 압축 후 4-bit → 0.5 Byte (기존 16-bit 대비 4배 압축)</li>
+<li><code>α</code>, <code>β</code>: 네트워크 Latency 및 Bandwidth</li>
+</ul>
+<p>예를 들어:</p>
+<p>| Prefill GPU | Decode GPU | Latency(α) | Bandwidth(β) | KV 캐시 통신시간 |
+| &mdash;&mdash;&mdash;&ndash; | &mdash;&mdash;&mdash;- | &mdash;&mdash;&mdash;- | &mdash;&mdash;&mdash;&mdash; |
+| A40 그룹    | A6000 그룹 | 0.1ms      | 40Gbps       |
+| A40 그룹    | A40 그룹   | 0.05ms     | 100Gbps      |</p>
+<p>→ 이 비용을 기반으로 최적 경로를 결정한다.</p>
+<hr>
+<h3 id="--2">🔹 <strong>[실시간 경량화된 재스케줄링 과정]</strong></h3>
+<ul>
+<li>GPU 장애나 workload 변화로 GPU 리소스나 요청이 바뀌었을 때, 서비스 중단 없이 단지 Prefill↔Decode 전환만을 수행하여 몇 초 내에 대응.</li>
+<li>예시로, GPU 4개가 갑자기 이용불가능해졌을 경우:
+<ul>
+<li>기존 Decode 2개 그룹이 중단 → 재스케줄링 수행</li>
+<li>일부 Prefill 그룹을 Decode로 재지정하여 새로운 최적 균형 유지.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="-핵심-알고리즘-정리-요약">📋 핵심 알고리즘 정리 (요약)</h2>
+<table>
+  <thead>
+      <tr>
+          <th>단계</th>
+          <th>핵심 내용</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>초기화</td>
+          <td>GPU 군집화 및 초기 phase 지정</td>
+      </tr>
+      <tr>
+          <td>상위문제</td>
+          <td>Tabu Search로 GPU 그룹 및 역할 (Prefill/Decode) 반복적 최적화</td>
+      </tr>
+      <tr>
+          <td>하위 문제</td>
+          <td>각 그룹별 최적 병렬구성(TP, PP) 선정 및 그룹 간 KV cache 오케스트레이션 최적화</td>
+      </tr>
+      <tr>
+          <td>실시간 대응</td>
+          <td>GPU/워크로드 변화 시 경량화된 재스케줄링 수행하여 빠르게 적응</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<p>이러한 과정을 통해 ThunderServe는 클라우드의 이질적인 GPU 자원을 적극적으로 활용하여, LLM 서비스의 성능과 비용 효율성을 크게 높이고, 변화하는 서비스 환경에도 효율적으로 대응할 수 있게 한다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<p>다음은 논문의 실험 결과와 이를 통해 타 방법론 대비 ThunderServe가 가진 특출난 성능 및 그 원인을 논문에 근거하여 분석한 뒤, 추가적인 나의 견해를 제시하였다.</p>
+<hr>
+<h2 id="-결론-요약">📌 결론 (요약)</h2>
+<p><strong>ThunderServe는 기존의 HexGen, DistServe, vLLM 같은 기존 LLM 서빙 시스템 대비 더 높은 성능과 비용 효율성을 보인다.</strong> 특히 클라우드 환경에서 평균적으로 <strong>1.7배 높은 Throughput</strong>, <strong>1.5배 짧은 Latency</strong>를 달성하였다. 이러한 성능은 다음과 같은 방법론 때문이었다:</p>
+<ul>
+<li><strong>GPU 하드웨어의 이질적 특성을 반영한 Tabu Search 기반의 스케줄링</strong></li>
+<li><strong>Prefill/Decode 단계 분리(Phase Splitting)와 GPU 특성에 따른 최적 병렬화</strong></li>
+<li><strong>KV cache 압축 및 최적화된 Prefill/Decode 오케스트레이션</strong></li>
+<li><strong>경량 재스케줄링</strong>을 통한 빠른 실시간 적응</li>
+</ul>
+<hr>
+<h2 id="-비교-실험-결과의-구체적-수치-정리">🔥 비교 실험 결과의 구체적 수치 정리</h2>
+<p>논문에서 ThunderServe는 다음과 같은 기준으로 다른 최신 방법론과 비교 평가하였다.</p>
+<h3 id="-비교-대상-시스템-및-환경-조건">⚙️ 비교 대상 시스템 및 환경 조건:</h3>
+<ul>
+<li><strong>ThunderServe</strong> (본 논문 제안 시스템, 이종 GPU 클라우드 환경)</li>
+<li><strong>HexGen</strong> (클라우드 환경, 이종 GPU 지원 시스템)</li>
+<li><strong>DistServe, vLLM</strong> (동종 GPU 환경)</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>비교 항목</th>
+          <th>환경</th>
+          <th>ThunderServe 대비 성능 향상 비율</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Throughput</td>
+          <td>Cloud (ThunderServe vs HexGen)</td>
+          <td>최대 <strong>2.1배</strong> (평균 <strong>1.7배</strong>)</td>
+      </tr>
+      <tr>
+          <td>Latency (E2E)</td>
+          <td>Cloud (ThunderServe vs HexGen)</td>
+          <td>최대 <strong>2.5배</strong> (평균 <strong>1.5배</strong>) 짧음</td>
+      </tr>
+      <tr>
+          <td>Throughput</td>
+          <td>Cloud (ThunderServe) vs In-house (DistServe, vLLM)</td>
+          <td>최대 <strong>2.3배</strong></td>
+      </tr>
+      <tr>
+          <td>Latency (E2E)</td>
+          <td>Cloud (ThunderServe vs DistServe/vLLM)</td>
+          <td>최대 <strong>2.5배</strong> (평균 <strong>1.8배</strong>)</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-thunderserve가-기존-방법론-대비-특출난-이유-및-논문이-제시한-근거-분석">🚀 ThunderServe가 기존 방법론 대비 특출난 이유 및 논문이 제시한 근거 분석</h2>
+<h3 id="-이질적-gpu-특성을-고려한-phase-splitting-최적화">① <strong>이질적 GPU 특성을 고려한 Phase Splitting 최적화</strong></h3>
+<ul>
+<li>기존 방법들은 주로 균일한 고성능 GPU 클러스터 (A100/H100) 활용에 초점.</li>
+<li>ThunderServe는 연산 및 메모리 대역폭 등 GPU 특성별로 Prefill(연산집중)과 Decode(메모리 접근 집중) 단계의 작업을 배분해 GPU 자원의 이용 효율을 높였다.</li>
+<li>예시:
+<ul>
+<li>Prefill (A40, 149.7 TFLOPS) → 연산 집중에 효율적</li>
+<li>Decode (3090Ti, 1008 GB/s) → 메모리 집중 작업에 효율적</li>
+</ul>
+</li>
+</ul>
+<h3 id="-kv-cache-압축-기법의-효율성">② <strong>KV cache 압축 기법의 효율성</strong></h3>
+<ul>
+<li>기존 방식은 고속 네트워크(NVLink, InfiniBand)에 의존했으나, 클라우드 환경에서는 통신 대역폭이 제한적이다.</li>
+<li>ThunderServe는 KV cache를 16-bit에서 4-bit로 압축 후 전송, 최대 30%였던 통신비용을 4~9%로 줄였으며, 압축/해제를 통한 품질 손실을 2% 이하로 제한하였다.</li>
+</ul>
+<h3 id="kv-cache-압축-전후-성능-비교-예시">KV Cache 압축 전/후 성능 비교 예시:</h3>
+<table>
+  <thead>
+      <tr>
+          <th>구분</th>
+          <th>Prefill</th>
+          <th>KV Cache 전송</th>
+          <th>Decode</th>
+          <th>총 Throughput</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>16-bit KV cache</td>
+          <td>684ms</td>
+          <td>584 ms</td>
+          <td>1108 ms</td>
+          <td>2450 token/s</td>
+      </tr>
+      <tr>
+          <td><strong>4-bit 압축 적용</strong></td>
+          <td>698 ms</td>
+          <td><strong>133 ms (약 77% 감소)</strong></td>
+          <td>1126 ms</td>
+          <td><strong>3292 token/s (+34%)</strong></td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="-1-내-생각">②-1. <strong>내 생각</strong>:</h3>
+<p>KV 캐시 압축 방식이 통신 오버헤드를 획기적으로 줄여 실제 시스템 성능 개선에 큰 영향을 준 것으로 보이며, 저속 네트워크 환경이 일반적인 클라우드 환경에 특히 잘 맞는 설계로 평가된다.</p>
+<hr>
+<h3 id="-tabu-search-기반의-최적화된-스케줄링-전략">③ <strong>Tabu Search 기반의 최적화된 스케줄링 전략</strong></h3>
+<ul>
+<li>논문은 이질적 GPU 클러스터의 스케줄링을 Job Shop Scheduling Problem(JSSP)로 보고 Tabu Search를 적용하여 최적의 GPU 그룹화와 Prefill/Decode 배치를 도출했다.</li>
+<li>Tabu Search는 글로벌 최적해에 근접한 결과를 빠르게 탐색할 수 있으며, 초기 Hierarchical Clustering 방법을 적용하여 저성능 네트워크 연결을 처음부터 피할 수 있었다.</li>
+</ul>
+<h3 id="-경량화된-재스케줄링-메커니즘의-높은-실시간-적응성">③ <strong>경량화된 재스케줄링 메커니즘의 높은 실시간 적응성</strong></h3>
+<ul>
+<li>GPU 장애 발생이나 워크로드 변화에 대응하여 Prefill과 Decode 단계의 그룹 지정만을 빠르게 바꾸는 재스케줄링 방식을 통해 수 초 내로 환경 변화에 대응할 수 있게 설계.</li>
+<li>이는 파라미터 재로딩이 필요했던 기존 방식(수 분 소요) 대비 큰 성능 저하 없이 빠른 적응 가능.</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>구분</th>
+          <th>재스케줄링</th>
+          <th>파라미터 로딩</th>
+          <th>전체 시간</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>전체 재스케줄링(기존 방식)</td>
+          <td>54초</td>
+          <td>103초</td>
+          <td>157초</td>
+      </tr>
+      <tr>
+          <td><strong>ThunderServe의 경량 재스케줄링</strong></td>
+          <td><strong>13초</strong></td>
+          <td><strong>0초 (재로딩 필요 없음)</strong></td>
+          <td><strong>13초 (약 92% 감소)</strong></td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="-2-내-생각">②-2. <strong>내 생각</strong>:</h3>
+<p>빠른 재스케줄링 방식은 클라우드 환경에서의 현실적인 요구 사항(자주 변하는 GPU 이용가능성, 워크로드 변화 등)을 매우 효과적으로 해결했다. 다른 방법론은 이 과정에서 상당한 추가 지연이 발생했는데, ThunderServe의 방법론은 실용적이고 혁신적이다.</p>
+<hr>
+<h2 id="-thunderserve의-한계-및-추가적-생각">🛠️ ThunderServe의 한계 및 추가적 생각</h2>
+<p>ThunderServe의 탁월한 성능에도 몇 가지 주의할 점은 존재한다.</p>
+<ul>
+<li>KV cache 압축/해제 오버헤드가 클 경우 성능 손실 발생 가능성 존재.</li>
+<li>Tabu Search는 지역 최적해에 빠질 가능성이 있으며, 최적성 보장에 대한 이론적 한계 존재.</li>
+<li>실시간으로 급변하는 대규모 상용 서비스 환경에서 추가적 평가 필요.</li>
+<li>GPU 비용 변동성과 같은 경제적 요소가 현실에서 얼마나 반영될 수 있는지 검증 필요.</li>
+</ul>
+<hr>
+<h2 id="-종합적인-내-평가-요약">📝 종합적인 내 평가 (요약)</h2>
+<p>ThunderServe는 이질적 클라우드 GPU 환경에 적합한 최적화된 스케줄링, Phase Splitting 기법, KV Cache 압축, 빠른 재스케줄링 등의 혁신적인 방법을 통합하여, 기존 방법론보다 탁월한 성능을 기록했다. 기존 방식이 가지던 이질적 GPU의 비효율성을 극복하는데 최초로 성공하였으며, 이를 통해 클라우드 기반 LLM 서빙의 실용성을 극대화하였다. 다만, 한계점을 보완할 추가적인 연구를 진행한다면 더욱 완성도 높은 시스템으로 발전할 수 있을 것이다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<p>다음은 논문의 입력 데이터 형태와 ThunderServe의 LLM 추론 과정을 실제 예시를 통해 상세히 설명하고, 추론 과정에서 사용하는 데이터와 리소스의 특징을 명확히 정리하였다.</p>
+<hr>
+<h2 id="-논문의-llm-추론과정-개요-prefill--decode">📝 논문의 LLM 추론과정 개요 (Prefill &amp; Decode)</h2>
+<p>논문에서 다룬 LLM(Large Language Model)의 추론 과정은 <strong>Prefill 단계와 Decode 단계</strong>로 구성된다.</p>
+<table>
+  <thead>
+      <tr>
+          <th>추론 단계</th>
+          <th>작업 내용</th>
+          <th>연산 특성</th>
+          <th>리소스 특징</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Prefill</td>
+          <td>Prompt를 한 번에 처리하여 KV cache 생성, 첫 번째 토큰 생성</td>
+          <td>연산(계산) 집중</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Decode</td>
+          <td>이전 토큰 및 KV cache를 입력으로 받아 토큰을 순차적으로 생성</td>
+          <td>메모리 접근 집중</td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-입력-데이터-예시-및-전체-추론-과정-설명">📌 입력 데이터 예시 및 전체 추론 과정 설명</h2>
+<p>다음과 같은 예시를 가정해보자:</p>
+<ul>
+<li>모델: <strong>LLaMA-30B</strong> (Transformer 기반)
+<ul>
+<li>Hidden size(h) = 7168</li>
+</ul>
+</li>
+<li>입력(prompt) 길이: <strong>1024개 토큰</strong></li>
+<li>출력 길이(모델이 생성할 토큰 수): <strong>128 토큰</strong></li>
+</ul>
+<h3 id="-입력-예시">▶️ 입력 예시:</h3>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        TEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-0"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-0"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-0">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="ln">1</span><span class="cl">&#34;Please generate Python code to sort a list of integers in ascending order.&#34;</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-0';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<p><em>(토큰화 후 총 입력 길이: 1024 tokens)</em></p>
+<h3 id="-1-prefill-단계-compute-intensive">✅ 1. Prefill 단계 (Compute-intensive)</h3>
+<ul>
+<li>
+<p>목적: 입력 prompt(1024 tokens)를 한 번에 처리하여 <strong>KV cache</strong> 생성 및 첫 번째 토큰을 출력.</p>
+</li>
+<li>
+<p>특징:</p>
+<ul>
+<li>입력 토큰 길이에 비례하여 GPU 연산 부하 증가.</li>
+<li>KV Cache(모델 hidden 상태)가 생성됨.</li>
+</ul>
+</li>
+<li>
+<p>리소스 사용 예시:</p>
+<ul>
+<li>GPU: <strong>A40 (높은 연산 능력: 149.7 TFLOPS)</strong> 사용</li>
+<li>Tensor Parallelism (TP): 연산을 여러 GPU에 분산</li>
+<li>Pipeline Parallelism (PP): 모델의 층(layer)을 여러 단계로 나누어 파이프라인 형태로 처리</li>
+</ul>
+</li>
+</ul>
+<h4 id="예시-결과">예시 결과:</h4>
+<ul>
+<li><strong>연산 소요 시간</strong>: 698ms (가정)</li>
+<li>출력: 첫 토큰 (예: <code>def</code>) + KV cache 생성 완료 (용량 큼, e.g. 128MB)</li>
+</ul>
+<hr>
+<h3 id="-2-kv-cache-전송-단계-prefill--decode">✅ 2. KV Cache 전송 단계 (Prefill → Decode)</h3>
+<ul>
+<li>Prefill 단계에서 생성된 KV cache를 Decode GPU 그룹에 전달.</li>
+<li>이 단계는 대역폭(bandwidth)이 성능에 직접적인 영향을 미친다.</li>
+<li>ThunderServe는 16-bit에서 <strong>4-bit로 압축하여</strong> 데이터를 전송한다.</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>KV cache 압축</th>
+          <th>통신 시간</th>
+          <th>통신 데이터량 예시</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>압축 전 (16-bit)</td>
+          <td>584ms</td>
+          <td>100MB</td>
+      </tr>
+      <tr>
+          <td><strong>압축 후 (4-bit)</strong></td>
+          <td><strong>133 ms (약 77% 감소)</strong></td>
+          <td>25MB</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="-2-decode-단계-memory-access-intensive">✅ 2. Decode 단계 (Memory-access intensive)</h3>
+<ul>
+<li>
+<p>목적: 앞서 Prefill 단계에서 생성된 KV cache와 이전 출력 토큰을 이용하여 <strong>한 토큰씩 순차적으로</strong> 최종 결과를 생성.</p>
+</li>
+<li>
+<p>특징: 한 번에 1개씩 처리하기 때문에 메모리 접근이 더 중요하다.</p>
+</li>
+<li>
+<p>GPU 자원: <strong>메모리 대역폭이 높은 3090Ti (1008 GB/s)</strong> 사용</p>
+</li>
+<li>
+<p>대규모 배치(batch)를 사용하여 메모리 대역폭 활용 효율을 극대화함.</p>
+</li>
+</ul>
+<h4 id="예시-결과-1">예시 결과:</h4>
+<ul>
+<li>Prompt에 대한 응답인 Python 코드 생성 (128 tokens)</li>
+</ul>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PYTHON
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-1"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-1"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-1">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">def</span> <span class="nf">sort_list</span><span class="p">(</span><span class="n">nums</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)):</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">            <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">nums</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">                <span class="n">nums</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">nums</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">nums</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">nums</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="k">return</span> <span class="n">nums</span></span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-1';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<hr>
+<h2 id="-추론-과정에서-데이터-흐름-및-리소스-활용-예시-요약">📊 추론 과정에서 데이터 흐름 및 리소스 활용 예시 요약</h2>
+<table>
+  <thead>
+      <tr>
+          <th>단계</th>
+          <th>입력 데이터</th>
+          <th>연산 특성</th>
+          <th>연산량/메모리 접근</th>
+          <th>GPU 선정</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Prefill</td>
+          <td>입력 프롬프트(1024토큰)</td>
+          <td>계산 집중 (Matrix Multiplication 등)</td>
+          <td>높은 FP16 FLOPS (예: A40 GPU)</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>KV cache 전송</td>
+          <td>Prefill 생성 KV cache (16-bit → 4-bit 압축)</td>
+          <td>네트워크 집중 (대역폭 중요)</td>
+          <td>데이터 압축으로 대역폭 효율화</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Decode</td>
+          <td>이전 토큰 + KV cache (압축 해제 후 사용)</td>
+          <td>메모리 접근 집중 (KV-cache access 빈번)</td>
+          <td>높은 Memory Bandwidth GPU (예: 3090Ti GPU)</td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-thunderserve가-특출난-성능을-낸-이유와-논문의-설명">⚙️ ThunderServe가 특출난 성능을 낸 이유와 논문의 설명</h2>
+<ol>
+<li>
+<p><strong>Prefill &amp; Decode 단계 분리 및 GPU 특성 최적 활용</strong></p>
+<ul>
+<li>계산 집중 작업을 연산에 최적화된 GPU(A40), 메모리 집중 작업을 메모리 bandwidth가 높은 GPU(3090Ti)에 맡김으로써 GPU 자원을 효율적으로 활용하였다.</li>
+</ul>
+</li>
+<li>
+<p><strong>KV cache 압축기법의 활용</strong></p>
+<ul>
+<li>KV cache 데이터 압축(4-bit)을 통해 통신 비용을 큰 폭으로 절감하였다.</li>
+</ul>
+</li>
+<li>
+<p><strong>동적 병렬 전략과 오케스트레이션</strong></p>
+<ul>
+<li>Tensor parallelism과 pipeline parallelism의 혼합 전략을 통해 GPU 자원을 더 효율적으로 사용.</li>
+<li>Prefill과 Decode 간의 효율적인 오케스트레이션으로 통신 비용 최소화.</li>
+</ul>
+</li>
+<li>
+<p><strong>빠른 경량 재스케줄링</strong></p>
+<ul>
+<li>환경 변화(워크로드 변화, GPU 고장 등)에 빠르게 대응 가능.</li>
+<li>이로 인해 서비스 안정성을 극대화하고 중단시간 최소화.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="-나의-추가적-의견-한-줄-정리">🔍 나의 추가적 의견 (한 줄 정리)</h2>
+<p>이 논문은 ThunderServe를 통해 기존의 GPU 균일 환경에서 벗어나 다양한 클라우드 GPU의 특성을 최대한 살린 최적의 분산 배치와 경량화된 데이터 압축을 통해 클라우드 환경에서 LLM 추론의 병목 현상을 성공적으로 해결했다. 추후 네트워크 조건이나 클라우드 서비스 비용의 변동성을 실험적으로 더 다양하게 다루면 더욱 완성도 높은 실무적 솔루션이 될 것이다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>이 논문의 강점과 더불어 명시적으로 드러난 한계점들을 기반으로, 향후 이를 극복하거나 보완할 수 있는 연구방향을 정리하여 제시하면 다음과 같다.</p>
+<hr>
+<h1 id="-논문의-주요-한계점-정리-및-관련-연구-방향">📌 논문의 주요 한계점 정리 및 관련 연구 방향</h1>
+<p>논문에서 드러난 주요 한계점은 다음 4가지로 요약된다:</p>
+<table>
+  <thead>
+      <tr>
+          <th>번호</th>
+          <th>한계점</th>
+          <th>구체적 내용</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>①</td>
+          <td><strong>KV Cache 통신병목 현상</strong></td>
+          <td>저대역폭 환경에서 KV Cache 전송 시 병목 발생 가능성</td>
+      </tr>
+      <tr>
+          <td>②</td>
+          <td><strong>탐색 알고리즘(Tabusearch)의 국소 최적성(Local Optima)</strong></td>
+          <td>Tabu search가 지역 최적에 갇힐 위험</td>
+      </tr>
+      <tr>
+          <td>③</td>
+          <td><strong>워크로드 변화에 제한적인 대응</strong></td>
+          <td>제한된 실험 시나리오로 다양한 실시간 워크로드 변화에 대한 범용성 부족</td>
+      </tr>
+      <tr>
+          <td>④</td>
+          <td><strong>GPU 리소스의 안정성과 경제성 고려 부족</strong></td>
+          <td>클라우드의 자원 비용 변동 및 장애 대응에 대한 추가적 연구 필요</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-각-한계점에-따른-연구-방향-및-개선방안">🚧 <strong>각 한계점에 따른 연구 방향 및 개선방안</strong></h2>
+<h2 id="-1-kv-cache-전송-병목-현상의-극복">📌 (1) KV Cache 전송 병목 현상의 극복</h2>
+<h3 id="한계점">한계점:</h3>
+<p>ThunderServe는 Prefill과 Decode 단계 분리로 인해 KV cache를 전송하는 데 의존도가 높아, <strong>대역폭이 낮은 환경에서는 KV Cache 전송이 병목</strong>이 될 수 있다.</p>
+<h3 id="해결-연구방향">해결 연구방향:</h3>
+<table>
+  <thead>
+      <tr>
+          <th>연구 접근법</th>
+          <th>설명 및 세부 연구방향</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>KV Cache 압축 및 효율적 전송 최적화</strong></td>
+          <td>4-bit보다 낮은 비트수 사용(2-bit, ternary 등)이나, 추가적인 압축 기법 개발(예: Lossless compression, Differential encoding 등)을 통한 추가적인 전송량 최소화</td>
+      </tr>
+      <tr>
+          <td><strong>KV Cache 교환 최소화 기법</strong></td>
+          <td>KV cache 일부만 전달하거나, 점진적/부분적 업데이트 기법 개발(Delta updates 등)</td>
+      </tr>
+      <tr>
+          <td><strong>KV cache 분산 저장 및 관리</strong></td>
+          <td>모든 GPU에 복제하지 않고, 메모리 계층(Hierarchical Memory) 또는 공유 메모리/스토리지를 이용한 저장 최적화</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="관련-최신-연구-흐름-예시">관련 최신 연구 흐름 예시:</h3>
+<ul>
+<li><strong>KIVI (2024)</strong>: KV cache를 2-bit 양자화를 통해 전송량 추가 절감 시도 (Liu et al., 2024).</li>
+<li><strong>Mooncake (2024)</strong>: KV cache 중심 아키텍처를 통해 KV cache 전송량 자체를 줄이는 구조적 개선 제안 (Qin et al., 2024).</li>
+</ul>
+<hr>
+<h2 id="-2-tabu-search-국소-최적성local-optima의-극복">📌 (2) Tabu search 국소 최적성(Local Optima)의 극복</h2>
+<h3 id="한계점-1">한계점:</h3>
+<p>ThunderServe의 Tabu search가 지역 최적해에 갇힐 가능성이 있으며, 초기 값에 민감할 수 있다.</p>
+<h3 id="연구-방향-및-개선방안">연구 방향 및 개선방안:</h3>
+<table>
+  <thead>
+      <tr>
+          <th>방법론</th>
+          <th>세부 전략</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>다양한 초기값 설정</strong> (Multiple Initialization)</td>
+          <td>Hierarchical clustering 외에도 무작위 초기화를 병렬적으로 다수 수행하여 글로벌 최적에 도달할 확률을 높임</td>
+      </tr>
+      <tr>
+          <td><strong>다양한 메타휴리스틱 알고리즘 혼합</strong></td>
+          <td>Genetic algorithm, Simulated annealing, Reinforcement learning 등을 조합하거나 앙상블을 구성하여 국소 최적성 회피</td>
+      </tr>
+      <tr>
+          <td><strong>휴리스틱+강화학습 융합</strong> (Hybrid Method)</td>
+          <td>강화학습(RL)을 통해 초기 단계에서 GPU 그룹화/역할 배정을 탐색하고, 후반부에서 Tabu search로 정교하게 최적화</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="관련-최신-연구-흐름-예시-1">관련 최신 연구 흐름 예시:</h3>
+<ul>
+<li><strong>HexGen (2024)</strong>: 강화학습 기반 GPU 병렬화 전략 최적화를 통해 효율적 탐색 및 국소 최적성 탈출 시도 (Jiang et al., 2024).</li>
+<li><strong>Alpa (2022)</strong>: 자동 병렬 최적화 기법으로 다양한 초기 조건을 실험하여 지역 최적성을 극복 (Zheng et al., 2022).</li>
+</ul>
+<hr>
+<h2 id="-2-다양한-실시간-워크로드에-대한-범용성-향상">📌 (2) 다양한 실시간 워크로드에 대한 범용성 향상</h2>
+<h3 id="한계점-2">한계점:</h3>
+<p>논문에서 다룬 워크로드가 **코딩 및 대화(conversation)**에 국한되어 있으며, 실세계에서는 다양한 유형이 혼재되므로 범용성 검증 필요.</p>
+<h3 id="연구-방향-및-개선방안-1">연구 방향 및 개선방안:</h3>
+<table>
+  <thead>
+      <tr>
+          <th>방법론</th>
+          <th>세부 전략</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>워크로드 예측 모델의 고도화</strong></td>
+          <td>실시간으로 workload 특성을 자동 감지하고 분류하는 ML 기반 예측 모델 적용</td>
+      </tr>
+      <tr>
+          <td><strong>Adaptive Prefill-Decode 비율 조정</strong></td>
+          <td>워크로드 유형에 따라 자동으로 Prefill-Decode 비율을 동적으로 실시간 조정하는 온라인 학습 전략</td>
+      </tr>
+      <tr>
+          <td><strong>멀티 모델(multi-model) 동시 서비스 최적화</strong></td>
+          <td>여러 개의 서로 다른 모델(다중모델 서비스)을 지원할 수 있는 자동적 병렬 구성 기법 연구</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="관련-최신-연구-흐름-예시-2">관련 최신 연구 흐름 예시:</h3>
+<ul>
+<li><strong>Splitwise (2023)</strong>: Phase splitting을 활용하되, workload 유형을 동적으로 탐지하여 자동으로 Prefill-Decode 비율을 재조정하는 기법을 연구 (Patel et al., 2023).</li>
+<li><strong>DistServe (2024)</strong>: 다양한 워크로드를 위한 동적 병렬화를 통한 적응적 리소스 관리 접근법 제시 (Zhong et al., 2024).</li>
+</ul>
+<hr>
+<h2 id="-3-클라우드-환경-gpu-리소스-가용성-및-비용-안정성-확보">📌 (3) 클라우드 환경 GPU 리소스 가용성 및 비용 안정성 확보</h2>
+<h3 id="한계점-3">한계점:</h3>
+<p>클라우드 환경은 GPU 가용성과 비용이 변동성이 크므로 현실적 운영에 대한 추가적 고려가 필요하다.</p>
+<h3 id="연구-방향-및-개선방안-2">연구 방향 및 개선방안:</h3>
+<table>
+  <thead>
+      <tr>
+          <th>방법론</th>
+          <th>세부 전략</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Spot/Preemptible GPU 리소스 활용</strong></td>
+          <td>가격이 저렴한 대신 언제든지 회수될 수 있는 Spot Instance 등을 안정적으로 활용하는 리소스 관리 전략</td>
+      </tr>
+      <tr>
+          <td><strong>Cross-region GPU 활용 전략</strong></td>
+          <td>다양한 클라우드 제공자, 서로 다른 Region에 분산된 GPU를 효과적으로 병합하여 안정성 있는 서비스 제공</td>
+      </tr>
+      <tr>
+          <td><strong>경제적 최적화 기반 스케줄링</strong></td>
+          <td>가격 변동 및 서비스 수준 협약(Service Level Agreement, SLA)을 실시간으로 고려한 스케줄링 방식 연구</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="관련-최신-연구-흐름-예시-3">관련 최신 연구 흐름 예시:</h3>
+<ul>
+<li><strong>SpotServe (2023)</strong>: 저렴한 Spot GPU 환경에서 LLM 서비스를 위한 사전대처적(preemptive) 리소스 관리 전략 연구 (Miao et al., 2023).</li>
+<li><strong>SkyPilot (2023)</strong>: 클라우드 제공자 간 자동 GPU 리소스 관리 및 비용 효율성을 최적화하는 시스템 연구 (Yang et al., 2023).</li>
+</ul>
+<hr>
+<h2 id="-종합적인-나의-의견-및-향후-중요-연구-방향-제언">🔑 종합적인 나의 의견 및 향후 중요 연구 방향 제언:</h2>
+<p>ThunderServe가 제시한 성과와 독창적인 기법들은 매우 뛰어난 가치를 지니고 있다. 그러나 위에서 분석한 바와 같이 추가적인 네트워크 병목 해결, 최적화 알고리즘 고도화, 실시간 적응성 강화, 경제적 리소스 활용방안 등에서 발전할 여지가 충분하다.</p>
+<p>특히 다음 분야의 연구가 중요한 향후 과제로 보인다:</p>
+<ul>
+<li><strong>KV Cache 압축 및 교환 최적화</strong>를 통한 데이터 병목 해소.</li>
+<li><strong>강화학습 등 최신 ML기법</strong>을 이용하여 더 빠르고 최적의 병렬 구성과 재스케줄링 달성.</li>
+<li><strong>실제 클라우드 환경의 경제적 변화와 리소스 동적 특성</strong>을 심층적으로 반영한 자동화 및 최적화 연구 확대.</li>
+</ul>
+<p>이러한 방향으로 후속 연구를 진행할 경우, ThunderServe 시스템의 실질적인 가치는 더욱 향상될 수 있을 것으로 기대된다.</p>
+<h1 id="q--thunderserve가-이질적인-클라우드-환경에서-prefill과-decode-단계를-구분하여-gpu를-할당하는-전략이-기존의-균일-gpu-환경에서-통합된-처리방식에-비해-성능과-비용-측면에서-구체적으로-어떤-이유로-우수한-결과를-보였는지-설명해줘">Q : ThunderServe가 이질적인 클라우드 환경에서 Prefill과 Decode 단계를 구분하여 GPU를 할당하는 전략이 기존의 균일 GPU 환경에서 통합된 처리방식에 비해 성능과 비용 측면에서 구체적으로 어떤 이유로 우수한 결과를 보였는지 설명해줘.</h1>
+<p>ThunderServe가 기존의 균일한 GPU 환경에서 통합된 방식보다 성능 및 비용 효율성에서 우수한 결과를 보인 이유는 다음과 같은 세 가지 주요 원인으로 설명할 수 있다.</p>
+<p>첫 번째, LLM 추론의 두 단계(Prefill과 Decode)가 서로 다른 하드웨어 특성을 요구하기 때문이다. Prefill 단계는 연산 중심 작업으로 GPU의 높은 연산 능력(FLOPS)에 크게 의존하며, Decode 단계는 메모리 접근 위주의 작업으로 GPU의 메모리 대역폭에 큰 영향을 받는다. ThunderServe는 이러한 작업 특성을 명확히 구분하고 각 단계에 최적인 GPU를 별도로 배치함으로써 자원 활용도를 크게 향상시켰다. 예를 들어, 연산 성능이 뛰어난 A40 GPU는 Prefill 단계에 배치하고, 메모리 대역폭이 높은 3090Ti GPU는 Decode 단계에 할당하여, 각 GPU가 가진 특성을 최대한 활용하였다.</p>
+<p>추가적으로, 클라우드 환경의 다양한 GPU들은 각각의 성능 대비 가격이 다르다. 예컨대, 고성능 GPU인 A100의 경우 시간당 비용이 매우 높지만, 중간 성능 GPU인 A40과 메모리 효율 GPU인 3090Ti를 각각 Prefill과 Decode에 적합하게 혼합 배치하면, 낮은 비용으로도 효율을 크게 높일 수 있다. 구체적으로 ThunderServe는 같은 비용 예산 조건에서 균일한 A100 GPU 환경 대비 최대 3배 더 많은 모델 복제본(Replica)을 배치하여 병렬 처리 능력을 대폭 증가시킬 수 있었다.</p>
+<p>또한, ThunderServe는 KV cache 데이터의 통신 비용을 최소화하기 위해 16-bit 데이터를 4-bit로 압축하는 기법을 도입하였다. 이는 특히 이질적인 클라우드 환경에서의 낮은 네트워크 대역폭 환경을 효과적으로 극복하는데 큰 기여를 했다. 실험 결과, KV cache 전송 비용을 압축 전 최대 30%에서 압축 후 4~9%로 줄였으며, 통신 비용 절감 효과로 전체 시스템의 지연 시간이 평균 1.5배 줄고 처리량이 평균 1.7배 증가하는 성능 향상을 달성하였다.</p>
+<p>마지막으로 ThunderServe의 경량 재스케줄링 메커니즘은 실시간으로 변화하는 클라우드 환경에서 추가적인 비용 없이 즉각적으로 환경 변화(GPU 장애, 워크로드 변동 등)에 적응할 수 있게 해준다. 이는 기존 방식 대비 서비스 중단과 재로딩 비용을 제거하여 비용 효율성을 극대화하였다.</p>
+<p>이러한 ThunderServe의 전략들이 종합적으로 작용하여 기존의 균일 GPU 환경 대비 최대 2.1배 처리량 증가, 최대 2.5배의 지연시간 감소라는 탁월한 성능과 비용 효율성을 실현할 수 있었다.</p>
+<h1 id="q---논문에서-제안한-tabu-search-기반의-gpu-스케줄링-알고리즘이-왜-초기화로-hierarchical-clustering을-선택했는지-그리고-이-초기화-방식이-최적화-성능에-어떤-영향을-주는지-자세히-설명해줘">Q :  논문에서 제안한 Tabu Search 기반의 GPU 스케줄링 알고리즘이 왜 초기화로 Hierarchical Clustering을 선택했는지, 그리고 이 초기화 방식이 최적화 성능에 어떤 영향을 주는지 자세히 설명해줘.</h1>
+<p>논문에서 제안한 Tabu Search 기반의 GPU 스케줄링 알고리즘이 Hierarchical Clustering으로 초기화를 수행한 이유는 다음과 같다.</p>
+<p>첫째, 이질적인 클라우드 환경에서는 GPU들 간 네트워크 대역폭이 다양하게 존재하며, 이것이 성능에 큰 영향을 미친다. 특히 Prefill과 Decode 단계 사이에서 KV 캐시 데이터를 자주 주고받기 때문에 GPU 간 네트워크 비용을 최소화하는 초기 그룹화를 만드는 것이 매우 중요하다. Hierarchical Clustering을 사용하여 GPU들을 서로 간의 네트워크 대역폭을 기반으로 클러스터링하면, 가장 네트워크 연결성이 좋은 GPU끼리 우선적으로 그룹화된다. 즉, 통신비용이 높은 연결을 피하고, 초기부터 효율적인 병렬 처리 환경을 구축할 수 있게 된다.</p>
+<p>둘째, Tabu Search 알고리즘의 탐색 효율성을 높이기 위한 전략적 선택이다. Tabu Search는 탐색 과정에서 현재의 이웃 해(neighbor solutions)를 반복적으로 검사하며 최적화를 진행하기 때문에 초기 해가 매우 중요하다. 만약 임의의 무작위로 초기화를 하게 되면 최적해에 접근하기까지 시간이 오래 걸리고 지역 최적해(local optima)에 빠질 가능성도 커진다. 이에 비해 Hierarchical Clustering은 초기 솔루션의 품질을 높여 탐색 공간을 효과적으로 줄이고, 더 좋은 최종 결과로 빠르게 수렴할 가능성을 높인다.</p>
+<p>이러한 전략적 초기화 방식이 최적화 성능에 미치는 영향은 실험적으로도 입증되었다. 논문에서 제시된 결과에 따르면, Hierarchical Clustering으로 초기화한 Tabu Search 알고리즘은 무작위 초기화 대비 빠르게 수렴하여 약 20~50초 내로 우수한 최적화 결과에 도달하는 것으로 나타났다. 이는 현실적인 클라우드 환경에서 초기 설정 비용을 최소화하고, 빠르게 최적 성능을 확보하는 데 중요한 기여를 하고 있다.</p>
+<p>종합적으로 볼 때, Hierarchical Clustering을 통한 초기화는 이질적 GPU 환경에서 통신 비용을 미리 최소화하고, Tabu Search의 탐색 효율성을 높이는 핵심 요소로서, ThunderServe의 높은 성능과 빠른 최적화를 이끄는 중요한 전략이다.</p>
+<h1 id="q---kv-cache를-16-bit에서-4-bit로-압축하여-통신비용을-낮추었다고-했는데-이-방식이-모델의-정확도나-추론-품질에-어떤-영향을-미치는지-구체적인-수치-예시를-들어-설명해줘">Q :  KV cache를 16-bit에서 4-bit로 압축하여 통신비용을 낮추었다고 했는데, 이 방식이 모델의 정확도나 추론 품질에 어떤 영향을 미치는지 구체적인 수치 예시를 들어 설명해줘.</h1>
+<p>논문에서 KV cache를 16-bit에서 4-bit로 압축할 경우 모델의 정확도나 추론 품질에 미치는 영향에 대해서 실험을 수행하였고, 구체적인 수치를 통해 이 영향이 매우 제한적임을 입증하였다.</p>
+<p>논문에서는 대표적인 벤치마크 데이터셋(CoQA, TruthfulQA, GSM8K)을 이용하여 정확도 변화를 실험하였다. 실험 결과는 다음과 같다.</p>
+<p>CoQA 데이터셋의 경우,</p>
+<ul>
+<li>LLaMA-7B 모델 기준 16-bit KV cache 사용 시 정확도: <strong>63.95%</strong></li>
+<li>4-bit KV cache 사용 시 정확도: <strong>64.58%</strong> (오히려 약간 증가)</li>
+</ul>
+<p>TruthfulQA 데이터셋의 경우,</p>
+<ul>
+<li>LLaMA-7B 모델 기준 16-bit KV cache 사용 시 정확도: <strong>30.64%</strong></li>
+<li>4-bit KV cache 사용 시 정확도: <strong>30.13%</strong> (0.51%p 감소)</li>
+</ul>
+<p>GSM8K 데이터셋의 경우,</p>
+<ul>
+<li>LLaMA-7B 모델 기준 16-bit KV cache 사용 시 정확도: <strong>13.23%</strong></li>
+<li>4-bit KV cache 사용 시 정확도: <strong>12.54%</strong> (0.69%p 감소)</li>
+</ul>
+<p>즉, KV cache를 4-bit로 압축할 경우 정확도의 손실은 전반적으로 1% 이내로 매우 적으며, 데이터셋에 따라 오히려 정확도가 소폭 증가하는 경우도 관찰되었다. 논문은 이와 같은 결과가 나타난 이유로, ThunderServe가 압축된 KV cache를 전송할 때만 압축을 수행하고, 실제 연산에 활용할 때는 즉시 압축 해제하여 원래의 16-bit 정밀도로 복원하여 사용하기 때문이라고 설명하였다.</p>
+<p>요약하면, 논문에서 제시한 KV cache 4-bit 압축 방식은 모델 정확도나 추론 품질에 실질적인 영향을 거의 주지 않으면서도 통신 비용을 기존 대비 약 77%까지 효과적으로 감소시켜 전체적인 시스템 성능을 높일 수 있었다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/ThunderServe-High-performance-and-Cost-efficient-LLM-Serving-in-Cloud-Environments/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/ThunderServe-High-performance-and-Cost-efficient-LLM-Serving-in-Cloud-Environments/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/VOLUT-EFFICIENT-VOLUMETRIC-STREAMING-ENHANCED-BY-LUT-BASED-SUPER-RESOLUTION/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                VOLUT: EFFICIENT VOLUMETRIC STREAMING ENHANCED BY LUT-BASED SUPER-RESOLUTION
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2025-03-06">
+                03月06日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/LSERVE-EFFICIENT-LONG-SEQUENCE-LLM-SERVING-WITH-UNIFIED-SPARSE-ATTENTION/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                LSERVE: EFFICIENT LONG-SEQUENCE LLM SERVING WITH UNIFIED SPARSE ATTENTION
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2025-03-06">
+                03月06日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#-논문의-결론-요약">📌 논문의 결론 요약</a></li>
+    <li><a href="#-논문의-강점-및-독창성">📍 논문의 강점 및 독창성</a></li>
+    <li><a href="#-논문의-핵심-강점-및-독창적-지점">🔍 논문의 핵심 강점 및 독창적 지점</a>
+      <ul>
+        <li><a href="#1-이질적-gpu-환경의-체계적-활용">1. 이질적 GPU 환경의 체계적 활용</a></li>
+        <li><a href="#gpu-간-성능-비교-논문-table-1-기반">GPU 간 성능 비교 (논문 Table 1 기반)</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#-논문의-강점과-독창적-지점-요약">🎯 논문의 강점과 독창적 지점 요약</a></li>
+    <li><a href="#-한계점-및-향후-연구-과제">⚠️ 한계점 및 향후 연구 과제</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-핵심-알고리즘-개요">📌 핵심 알고리즘 개요</a></li>
+    <li><a href="#-핵심-알고리즘-예시-및-작동과정">🚀 핵심 알고리즘 예시 및 작동과정</a>
+      <ul>
+        <li><a href="#-가정된-예시-환경">✅ 가정된 예시 환경</a></li>
+        <li><a href="#step-by-step-algorithm-flow">Step-by-Step Algorithm Flow</a></li>
+        <li><a href="#-">🔹 <strong>[상위 문제 해결 과정]</strong></a></li>
+        <li><a href="#--1">🔹 <strong>[하위 문제 해결 과정]</strong></a></li>
+        <li><a href="#--2">🔹 <strong>[실시간 경량화된 재스케줄링 과정]</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-핵심-알고리즘-정리-요약">📋 핵심 알고리즘 정리 (요약)</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-결론-요약">📌 결론 (요약)</a></li>
+    <li><a href="#-비교-실험-결과의-구체적-수치-정리">🔥 비교 실험 결과의 구체적 수치 정리</a>
+      <ul>
+        <li><a href="#-비교-대상-시스템-및-환경-조건">⚙️ 비교 대상 시스템 및 환경 조건:</a></li>
+      </ul>
+    </li>
+    <li><a href="#-thunderserve가-기존-방법론-대비-특출난-이유-및-논문이-제시한-근거-분석">🚀 ThunderServe가 기존 방법론 대비 특출난 이유 및 논문이 제시한 근거 분석</a>
+      <ul>
+        <li><a href="#-이질적-gpu-특성을-고려한-phase-splitting-최적화">① <strong>이질적 GPU 특성을 고려한 Phase Splitting 최적화</strong></a></li>
+        <li><a href="#-kv-cache-압축-기법의-효율성">② <strong>KV cache 압축 기법의 효율성</strong></a></li>
+        <li><a href="#kv-cache-압축-전후-성능-비교-예시">KV Cache 압축 전/후 성능 비교 예시:</a></li>
+        <li><a href="#-1-내-생각">②-1. <strong>내 생각</strong>:</a></li>
+        <li><a href="#-tabu-search-기반의-최적화된-스케줄링-전략">③ <strong>Tabu Search 기반의 최적화된 스케줄링 전략</strong></a></li>
+        <li><a href="#-경량화된-재스케줄링-메커니즘의-높은-실시간-적응성">③ <strong>경량화된 재스케줄링 메커니즘의 높은 실시간 적응성</strong></a></li>
+        <li><a href="#-2-내-생각">②-2. <strong>내 생각</strong>:</a></li>
+      </ul>
+    </li>
+    <li><a href="#-thunderserve의-한계-및-추가적-생각">🛠️ ThunderServe의 한계 및 추가적 생각</a></li>
+    <li><a href="#-종합적인-내-평가-요약">📝 종합적인 내 평가 (요약)</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-논문의-llm-추론과정-개요-prefill--decode">📝 논문의 LLM 추론과정 개요 (Prefill &amp; Decode)</a></li>
+    <li><a href="#-입력-데이터-예시-및-전체-추론-과정-설명">📌 입력 데이터 예시 및 전체 추론 과정 설명</a>
+      <ul>
+        <li><a href="#-입력-예시">▶️ 입력 예시:</a></li>
+        <li><a href="#-1-prefill-단계-compute-intensive">✅ 1. Prefill 단계 (Compute-intensive)</a>
+          <ul>
+            <li><a href="#예시-결과">예시 결과:</a></li>
+          </ul>
+        </li>
+        <li><a href="#-2-kv-cache-전송-단계-prefill--decode">✅ 2. KV Cache 전송 단계 (Prefill → Decode)</a></li>
+        <li><a href="#-2-decode-단계-memory-access-intensive">✅ 2. Decode 단계 (Memory-access intensive)</a>
+          <ul>
+            <li><a href="#예시-결과-1">예시 결과:</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#-추론-과정에서-데이터-흐름-및-리소스-활용-예시-요약">📊 추론 과정에서 데이터 흐름 및 리소스 활용 예시 요약</a></li>
+    <li><a href="#-thunderserve가-특출난-성능을-낸-이유와-논문의-설명">⚙️ ThunderServe가 특출난 성능을 낸 이유와 논문의 설명</a></li>
+    <li><a href="#-나의-추가적-의견-한-줄-정리">🔍 나의 추가적 의견 (한 줄 정리)</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-각-한계점에-따른-연구-방향-및-개선방안">🚧 <strong>각 한계점에 따른 연구 방향 및 개선방안</strong></a></li>
+    <li><a href="#-1-kv-cache-전송-병목-현상의-극복">📌 (1) KV Cache 전송 병목 현상의 극복</a>
+      <ul>
+        <li><a href="#한계점">한계점:</a></li>
+        <li><a href="#해결-연구방향">해결 연구방향:</a></li>
+        <li><a href="#관련-최신-연구-흐름-예시">관련 최신 연구 흐름 예시:</a></li>
+      </ul>
+    </li>
+    <li><a href="#-2-tabu-search-국소-최적성local-optima의-극복">📌 (2) Tabu search 국소 최적성(Local Optima)의 극복</a>
+      <ul>
+        <li><a href="#한계점-1">한계점:</a></li>
+        <li><a href="#연구-방향-및-개선방안">연구 방향 및 개선방안:</a></li>
+        <li><a href="#관련-최신-연구-흐름-예시-1">관련 최신 연구 흐름 예시:</a></li>
+      </ul>
+    </li>
+    <li><a href="#-2-다양한-실시간-워크로드에-대한-범용성-향상">📌 (2) 다양한 실시간 워크로드에 대한 범용성 향상</a>
+      <ul>
+        <li><a href="#한계점-2">한계점:</a></li>
+        <li><a href="#연구-방향-및-개선방안-1">연구 방향 및 개선방안:</a></li>
+        <li><a href="#관련-최신-연구-흐름-예시-2">관련 최신 연구 흐름 예시:</a></li>
+      </ul>
+    </li>
+    <li><a href="#-3-클라우드-환경-gpu-리소스-가용성-및-비용-안정성-확보">📌 (3) 클라우드 환경 GPU 리소스 가용성 및 비용 안정성 확보</a>
+      <ul>
+        <li><a href="#한계점-3">한계점:</a></li>
+        <li><a href="#연구-방향-및-개선방안-2">연구 방향 및 개선방안:</a></li>
+        <li><a href="#관련-최신-연구-흐름-예시-3">관련 최신 연구 흐름 예시:</a></li>
+      </ul>
+    </li>
+    <li><a href="#-종합적인-나의-의견-및-향후-중요-연구-방향-제언">🔑 종합적인 나의 의견 및 향후 중요 연구 방향 제언:</a></li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

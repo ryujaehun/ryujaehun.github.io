@@ -1,0 +1,25 @@
+{
+  "background_color": "#ffffff",
+  "categories": [
+    "blog",
+    "technology",
+    "education"
+  ],
+  "description": "A blog about technology, daily life, and thoughts.",
+  "dir": "ltr",
+  "display": "standalone",
+  "icons": [
+    {
+      "sizes": "any",
+      "src": "/favicon.svg",
+      "type": "image/svg+xml"
+    }
+  ],
+  "lang": "en-US",
+  "name": "Jaehun's Blog",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "short_name": "Jaehun's Blog",
+  "start_url": "/",
+  "theme_color": "#09090b"
+}

@@ -1,0 +1,3448 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>CBQ: Cross-Block Quantization for Large Language Models | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 결론 및 주요 결과 논문 *&ldquo;CBQ: Cross-Block..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/CBQ-Cross-Block-Quantization-for-Large-Language-Models/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/CBQ-Cross-Block-Quantization-for-Large-Language-Models/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="CBQ: Cross-Block Quantization for Large Language Models">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 결론 및 주요 결과 논문 *“CBQ: Cross-Block Quantization for Large Language Models”*의 주요 기여와 성과를 요약하면 다음과 같습니다:">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-12-30T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-12-30T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="CBQ: Cross-Block Quantization for Large Language Models">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 결론 및 주요 결과 논문 *“CBQ: Cross-Block Quantization for Large Language Models”*의 주요 기여와 성과를 요약하면 다음과 같습니다:">
+
+
+  <meta itemprop="name" content="CBQ: Cross-Block Quantization for Large Language Models">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 결론 및 주요 결과 논문 *“CBQ: Cross-Block Quantization for Large Language Models”*의 주요 기여와 성과를 요약하면 다음과 같습니다:">
+  <meta itemprop="datePublished" content="2024-12-30T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-12-30T00:00:00+00:00">
+  <meta itemprop="wordCount" content="11463">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">CBQ: Cross-Block Quantization for Large Language Models</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    CBQ: Cross-Block Quantization for Large Language Models
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-12-30">
+          2024년 12월 30일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >23 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>11463 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2312.07950">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h2 id="결론-및-주요-결과">결론 및 주요 결과</h2>
+<p>논문 *&ldquo;CBQ: Cross-Block Quantization for Large Language Models&rdquo;*의 주요 기여와 성과를 요약하면 다음과 같습니다:</p>
+<ol>
+<li>
+<p><strong>강점 및 독창성</strong>:</p>
+<ul>
+<li><strong>Cross-Block Dependency (CBD):</strong> 기존 Block 기반 PTQ(Post-Training Quantization) 방식의 누적 오류 문제를 해결하기 위해 Cross-Block 의존성을 도입. 이는 Sliding Window 방식을 활용하여 여러 블록을 동시 최적화하여 정보 상호작용을 극대화.</li>
+<li><strong>Coarse-to-Fine Preprocessing (CFP):</strong> Outlier를 감지하고 처리하여 블록의 가중치 및 활성화 값의 분포를 안정화. 이는 기존의 단순한 활성화 전처리 방식을 넘어 가중치에 대한 Outlier 처리도 포함.</li>
+<li><strong>LoRA-Rounding:</strong> 가중치 양자화에서 발생하는 오류를 저비용으로 보정하는 새로운 로우랭크 기법. AdaRound 대비 매개변수 수를 줄이며 최적화 속도와 효율성을 향상.</li>
+</ul>
+</li>
+<li>
+<p><strong>주요 성과</strong>:</p>
+<ul>
+<li>다양한 LLM(Large Language Models)에서 W4A4, W4A8, W2A16 설정으로 <strong>최신 양자화 기술보다 우수한 성능</strong>을 보임.</li>
+<li>예를 들어, LLAMA1-65B 모델을 단일 GPU에서 4.3시간 만에 4비트로 양자화하며 높은 성능과 효율성을 유지.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="핵심-알고리즘-cbq의-과정-설명">핵심 알고리즘: CBQ의 과정 설명</h3>
+<p>다음은 CBQ의 전체 프로세스를 예시를 들어 설명합니다:</p>
+<h4 id="입력-예시">입력 예시:</h4>
+<ul>
+<li><strong>모델</strong>: Transformer 기반 모델 (예: LLAMA-13B)</li>
+<li><strong>양자화 목표</strong>: W4A4 (Weights 및 Activations 각각 4비트)</li>
+<li><strong>주어진 데이터</strong>: C4 데이터셋의 2048 토큰 샘플.</li>
+</ul>
+<h4 id="과정">과정:</h4>
+<ol>
+<li>
+<p><strong>Coarse-to-Fine Preprocessing (CFP)</strong>:</p>
+<ul>
+<li><strong>Coarse Detection</strong>: IQR (Interquartile Range)로 활성화 및 가중치의 Outlier 범위 설정.</li>
+<li><strong>Fine Detection</strong>: Outlier를 제거하고 특정 채널에서 Scaling을 적용하여 데이터 왜곡 최소화.</li>
+</ul>
+</li>
+<li>
+<p><strong>Cross-Block Dependency Optimization</strong>:</p>
+<ul>
+<li>Sliding Window 내의 여러 블록을 공동 최적화하며, 인접 블록 간 중첩(overlap)을 통해 정보 손실 방지.</li>
+<li>예: 블록 1-3 최적화 후 블록 2-4를 최적화.</li>
+</ul>
+</li>
+<li>
+<p><strong>LoRA-Rounding</strong>:</p>
+<ul>
+<li>가중치 양자화를 위한 Low-Rank 행렬(예: ( A1 )과 ( A2 )) 학습.</li>
+<li>각 가중치의 라운딩 오류를 보정하며, 원래 모델 출력과의 오차 ( L2 ) 및 KLD(Kullback-Leibler Divergence)를 통해 조정.</li>
+</ul>
+</li>
+<li>
+<p><strong>Loss 계산</strong>:</p>
+<ul>
+<li>( L_{\text{rec}} = L2 + KLD ), ( L_{\text{round}} ): 최적화 과정에서 Reconstruction Loss와 Rounding Loss 결합.</li>
+</ul>
+</li>
+</ol>
+<h4 id="출력">출력:</h4>
+<ul>
+<li>최종 W4A4 모델은 원래 모델 대비 성능 손실 &lt;1% 유지.</li>
+</ul>
+<hr>
+<h3 id="논문의-한계점">논문의 한계점</h3>
+<ol>
+<li>
+<p><strong>Cross-Block Reconstruction의 국소성</strong>:</p>
+<ul>
+<li>Sliding Window 접근법은 제한된 범위의 블록만을 고려하여 최적화를 수행. 더욱 전역적인 Cross-Block 최적화가 필요.</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 크기 확장성 문제</strong>:</p>
+<ul>
+<li>LoRA-Rounding은 기존 방법 대비 효율적이지만, 매우 큰 모델에서는 여전히 많은 메모리와 GPU 자원이 요구됨.</li>
+</ul>
+</li>
+<li>
+<p><strong>손실 설계의 복잡성</strong>:</p>
+<ul>
+<li>( L2 ), KLD, Homologous Reconstruction Loss 등 다양한 손실 설계가 결합되며, Hyperparameter 조정이 어려울 수 있음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="강점-대비-성능-비교-테이블">강점 대비 성능 비교 (테이블)</h3>
+<table>
+  <thead>
+      <tr>
+          <th>모델</th>
+          <th>방법</th>
+          <th>W4A4 Accuracy</th>
+          <th>W2A16 Accuracy</th>
+          <th>시간(65B 모델)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>GPTQ</td>
+          <td>57.19%</td>
+          <td>50.93%</td>
+          <td>14.4시간</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>OmniQuant</td>
+          <td>56.30%</td>
+          <td>52.64%</td>
+          <td>14.4시간</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td><strong>CBQ (Ours)</strong></td>
+          <td><strong>57.50%</strong></td>
+          <td><strong>55.95%</strong></td>
+          <td><strong>4.3시간</strong></td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+<p>CBQ는 특히 W2A16, W4A4과 같은 초저비트 양자화에서 경쟁 모델 대비 성능과 효율성을 크게 개선합니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>논문의 핵심 알고리즘은 **CBQ(Cross-Block Quantization)**입니다. 이는 LLM(Large Language Models)을 저비트(W4A4, W2A16 등)로 양자화할 때 발생하는 성능 손실을 최소화하기 위한 방법으로, 다음 세 가지 주요 기술을 중심으로 설계되었습니다: <strong>Coarse-to-Fine Preprocessing(CFP)</strong>, <strong>Cross-Block Dependency(CBD)</strong>, <strong>LoRA-Rounding</strong>.</p>
+<p>아래에서는 간단한 예제와 함께 전체 과정을 설명합니다.</p>
+<hr>
+<h3 id="1-문제-상황"><strong>1. 문제 상황</strong></h3>
+<p>Transformer 기반 LLM에서 가중치와 활성화를 저비트로 양자화하면:</p>
+<ul>
+<li><strong>Outliers</strong>: 가중치와 활성화 값 중 일부 극단적인 값이 모델 성능 저하를 유발.</li>
+<li><strong>Block 간 의존성 무시</strong>: 기존 블록별 최적화 방식에서는 블록 간 오류가 누적.</li>
+<li><strong>라운딩 오류</strong>: 가중치를 낮은 비트로 양자화할 때 발생하는 근사화 오류.</li>
+</ul>
+<p>CBQ는 이 문제들을 해결하기 위해 설계되었습니다.</p>
+<hr>
+<h3 id="2-핵심-알고리즘-단계"><strong>2. 핵심 알고리즘 단계</strong></h3>
+<h4 id="예제-설정">예제 설정</h4>
+<ul>
+<li><strong>입력 모델</strong>: Transformer 기반 모델(예: LLAMA-7B).</li>
+<li><strong>목표</strong>: W4A4로 양자화 (Weights 및 Activations 모두 4비트).</li>
+<li><strong>입력 데이터</strong>: C4 데이터셋의 2048 토큰 샘플.</li>
+</ul>
+<hr>
+<h4 id="1-coarse-to-fine-preprocessing-cfp"><strong>(1) Coarse-to-Fine Preprocessing (CFP)</strong></h4>
+<h5 id="목적-outliers극단값를-감지하고-처리하여-데이터의-안정성을-높임"><strong>목적</strong>: Outliers(극단값)를 감지하고 처리하여 데이터의 안정성을 높임.</h5>
+<ol>
+<li>
+<p><strong>Coarse Detection</strong>:</p>
+<ul>
+<li>활성화 값 (X)와 가중치 (W)의 분포에서 IQR(Interquartile Range)을 계산.</li>
+<li>( T = Q3 + 1.5 \cdot IQR ) 기준으로 Outlier를 감지.
+<ul>
+<li>( Q3 ): 75번째 백분위수, ( IQR = Q3 - Q1 ) (사분위 범위).</li>
+</ul>
+</li>
+<li>예: (X = [1, 2, 3, 100])에서 (T = 6.5), (100)이 Outlier로 감지.</li>
+</ul>
+</li>
+<li>
+<p><strong>Fine Detection</strong>:</p>
+<ul>
+<li>Outlier 그룹을 더 세분화하여 채널별 스케일링 및 가중치 자르기(truncation) 적용.</li>
+<li>활성화의 Outlier는 스케일링, 가중치는 잘라냄.</li>
+<li>예: Outlier (100)은 스케일링 (s_i = \text{Max}(X)/\text{Max}(\text{Outliers})) 적용.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="2-cross-block-dependency-optimization-cbd"><strong>(2) Cross-Block Dependency Optimization (CBD)</strong></h4>
+<h5 id="목적-sliding-window로-블록-간-의존성을-반영하여-누적-오류를-완화"><strong>목적</strong>: Sliding Window로 블록 간 의존성을 반영하여 누적 오류를 완화.</h5>
+<ol>
+<li>
+<p><strong>Sliding Window 적용</strong>:</p>
+<ul>
+<li>블록 1-3을 최적화한 뒤, 블록 2-4를 최적화하며 중첩(overlap)되는 블록 정보를 공유.</li>
+<li>예: Transformer 블록 구조
+<ul>
+<li>블록 1: [가중치 (W_1), 활성화 (X_1)]</li>
+<li>블록 2: [가중치 (W_2), 활성화 (X_2)]</li>
+<li>블록 3: [가중치 (W_3), 활성화 (X_3)].</li>
+</ul>
+</li>
+<li>블록 1-3을 먼저 최적화한 뒤 블록 2-4를 중첩 최적화.</li>
+</ul>
+</li>
+<li>
+<p><strong>Homologous Reconstruction</strong>:</p>
+<ul>
+<li>양자화된 출력과 원본 모델의 출력을 비교하여 Reconstruction Loss를 계산.</li>
+<li>예: 블록 1-3 최적화 후 출력 (O_{\text{quant}})과 (O_{\text{fp}})를 비교하여
+(L_{\text{rec}} = ||O_{\text{quant}} - O_{\text{fp}}||<em>2^2 + D</em>{KL}).</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="3-lora-rounding"><strong>(3) LoRA-Rounding</strong></h4>
+<h5 id="목적-가중치-양자화-시-발생하는-라운딩-오류를-보정"><strong>목적</strong>: 가중치 양자화 시 발생하는 라운딩 오류를 보정.</h5>
+<ol>
+<li>
+<p><strong>Low-Rank Matrix 분해</strong>:</p>
+<ul>
+<li>기존 가중치 양자화에서 발생하는 라운딩 오류를 보정하기 위해 로우랭크 행렬 (A_1)과 (A_2)를 학습.</li>
+<li>( V = A_1 \times A_2 ), ( \Delta W = \text{Sigmoid}(V) ).</li>
+<li>예: 가중치 (W = [1.2, 2.8]), 라운딩 시 ( [1, 3] )으로 근사.
+<ul>
+<li>( A_1 )과 ( A_2 )를 통해 가중치 보정 값 ( \Delta W ) 추가.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Rounding Loss</strong>:</p>
+<ul>
+<li>라운딩 행렬 ( \Delta W )의 정밀도를 높이기 위해 Loss (L_{\text{round}} = 1 - |2 \Delta W - 1|^\beta ) 적용.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="3-총-loss-함수"><strong>3. 총 Loss 함수</strong></h3>
+<p>최적화의 전체 Loss는 다음과 같이 구성:
+[
+L_{\text{total}} = L_{\text{rec}} + \gamma L_{\text{round}}
+]</p>
+<ul>
+<li>(L_{\text{rec}}): Reconstruction Loss (L2 + KLD).</li>
+<li>(L_{\text{round}}): Rounding Loss.</li>
+<li>(\gamma): 두 손실 간 가중치 조정.</li>
+</ul>
+<hr>
+<h3 id="4-최종-출력"><strong>4. 최종 출력</strong></h3>
+<ul>
+<li>양자화 모델(W4A4): 원본 성능 대비 &lt;1% 손실.</li>
+<li>예: LLAMA-7B 모델에서 양자화 후 정확도 75.89% (FP32 정확도: 80%).</li>
+</ul>
+<hr>
+<h3 id="정리"><strong>정리</strong></h3>
+<table>
+  <thead>
+      <tr>
+          <th>단계</th>
+          <th>주요 내용</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Coarse-to-Fine Preprocessing</strong></td>
+          <td>Outliers를 감지 및 처리하여 데이터 안정화.</td>
+      </tr>
+      <tr>
+          <td><strong>Cross-Block Dependency</strong></td>
+          <td>Sliding Window 방식으로 블록 간 의존성을 반영, Reconstruction Loss를 최소화.</td>
+      </tr>
+      <tr>
+          <td><strong>LoRA-Rounding</strong></td>
+          <td>Low-Rank 행렬로 라운딩 오류 보정, 효율적인 최적화 가능.</td>
+      </tr>
+      <tr>
+          <td><strong>최종 성능</strong></td>
+          <td>W4A4, W2A16과 같은 초저비트에서도 기존 대비 성능 유지, 최적화 시간 단축.</td>
+      </tr>
+  </tbody>
+</table>
+<p>CBQ는 LLM의 양자화에서 효율성과 정확도를 동시에 달성한 독창적인 방법입니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h3 id="논문에서-제시한-결과"><strong>논문에서 제시한 결과</strong></h3>
+<p>CBQ는 다양한 LLM 모델과 데이터셋에서 <strong>최신 양자화 기법</strong> 대비 더 나은 성능과 효율성을 입증했습니다.</p>
+<h4 id="주요-결과-요약"><strong>주요 결과 요약</strong></h4>
+<ul>
+<li><strong>초저비트 양자화 성능 (W4A4, W2A16)</strong>:
+<ul>
+<li>CBQ는 LLAMA-65B 모델에서 W4A4로 양자화하면서 정확도 77.69% (FP32: 80.79%)로, 기존 방법 대비 성능 저하가 최소화되었습니다.</li>
+<li>GPTQ(57.19%) 및 OmniQuant(71.81%)보다 성능이 월등히 우수.</li>
+</ul>
+</li>
+<li><strong>양자화 효율성</strong>:
+<ul>
+<li>LLAMA-65B 모델을 단일 GPU에서 4.3시간만에 양자화 (OmniQuant: 14.4시간).</li>
+<li>메모리 사용량 감소와 학습 시간 단축을 동시에 달성.</li>
+</ul>
+</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th><strong>모델</strong></th>
+          <th><strong>양자화 방식</strong></th>
+          <th><strong>성능 (W4A4)</strong></th>
+          <th><strong>성능 (W2A16)</strong></th>
+          <th><strong>시간 (GPU Hours)</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>LLAMA-65B</strong></td>
+          <td>GPTQ</td>
+          <td>57.19%</td>
+          <td>50.93%</td>
+          <td>14.4h</td>
+      </tr>
+      <tr>
+          <td></td>
+          <td>OmniQuant</td>
+          <td>71.81%</td>
+          <td>52.64%</td>
+          <td>14.4h</td>
+      </tr>
+      <tr>
+          <td></td>
+          <td><strong>CBQ</strong></td>
+          <td><strong>77.69%</strong></td>
+          <td><strong>55.95%</strong></td>
+          <td><strong>4.3h</strong></td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="다른-방법론-대비-특출난-점"><strong>다른 방법론 대비 특출난 점</strong></h3>
+<p>CBQ가 기존 방법론 대비 탁월한 성능을 발휘하는 주요 이유는 아래와 같은 <strong>핵심 기법</strong>에 있습니다:</p>
+<ol>
+<li>
+<p><strong>Cross-Block Dependency (CBD) 모델링</strong>:</p>
+<ul>
+<li>기존 OmniQuant와 같은 방법들은 블록별로 독립적으로 최적화를 수행, 블록 간 오류가 누적.</li>
+<li>CBQ는 Sliding Window와 Overlapping 방식을 사용하여 블록 간의 의존성을 반영.</li>
+<li>이를 통해 블록 간 정보 교환이 가능해져, 누적 오류를 줄이고 더 나은 성능을 확보.</li>
+</ul>
+</li>
+<li>
+<p><strong>Coarse-to-Fine Preprocessing (CFP)</strong>:</p>
+<ul>
+<li>Outlier(극단값)를 감지하고 제거하는 기존 기법(SmoothQuant, OmniQuant)은 활성화 값에만 초점을 맞춤.</li>
+<li>CBQ는 가중치와 활성화 값 모두에 대해 Outlier를 감지하고, 가중치를 자르고(Truncation) 활성화를 스케일링(Scaling)하여 더 안정적인 분포를 생성.</li>
+<li>이로 인해 Reconstruction 오류를 줄이고 학습 과정을 더욱 안정화.</li>
+</ul>
+</li>
+<li>
+<p><strong>LoRA-Rounding</strong>:</p>
+<ul>
+<li>AdaRound 대비 매개변수 수를 줄이고 저비용으로 라운딩 오류를 보정.</li>
+<li>저랭크(Low-Rank) 행렬을 사용하여 가중치 양자화의 손실을 최소화하며, 특히 초저비트 양자화(W2A16, W4A4)에서 성능 손실을 효과적으로 줄임.</li>
+</ul>
+</li>
+<li>
+<p><strong>Homologous Reconstruction Scheme</strong>:</p>
+<ul>
+<li>양자화된 블록의 출력을 원본 블록의 출력과 비교하는 Reconstruction 손실 계산.</li>
+<li>추가적으로, 양자화 블록 출력을 원본 모델의 다음 블록에 연결해 다시 Reconstruction을 진행하여 더 높은 정확도를 달성.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="cbq의-특출난-결과를-도출한-논문의-근거"><strong>CBQ의 특출난 결과를 도출한 논문의 근거</strong></h3>
+<ol>
+<li>
+<p><strong>Cross-Block Dependency가 성능을 높이는 이유</strong>:</p>
+<ul>
+<li>블록 간 의존성을 무시하면 각 블록의 최적화 결과가 독립적으로 누적 오류를 발생시킴.</li>
+<li>CBQ는 Sliding Window 방식을 도입해 블록 간 관계를 고려하며, Overlapping Window로 추가적인 연계성을 제공.</li>
+<li>논문 실험 결과:
+<ul>
+<li>Overlapping Window를 사용하지 않을 때 Perplexity가 13.82 (C4 데이터셋) → Overlapping 사용 시 13.29로 감소.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>CFP가 Outlier 문제를 해결하는 이유</strong>:</p>
+<ul>
+<li>Outlier는 모델의 비정상적인 분포를 유발하며 양자화 성능을 크게 저하.</li>
+<li>가중치와 활성화 모두에 대해 Coarse-to-Fine 방식으로 Outlier를 처리해 Reconstruction 오류를 최소화.</li>
+<li>논문 결과:
+<ul>
+<li>SmoothQuant 기반 전처리와 비교 시, Perplexity가 C4 데이터셋에서 15.69(SmoothQuant) → 13.29(CFP)로 개선.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>LoRA-Rounding의 기여</strong>:</p>
+<ul>
+<li>가중치 양자화에서 발생하는 라운딩 오류는 성능 손실의 주요 원인 중 하나.</li>
+<li>CBQ는 로우랭크(Low-Rank) 행렬을 도입해 매개변수 수를 줄이면서도 가중치 보정 효율성을 향상.</li>
+<li>논문 실험 결과:
+<ul>
+<li>LoRA-Rounding 없이 학습 시 Perplexity가 14.32 → LoRA-Rounding 사용 시 13.29로 개선.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="내-생각-cbq의-독창성과-한계"><strong>내 생각: CBQ의 독창성과 한계</strong></h3>
+<h4 id="cbq의-독창성"><strong>CBQ의 독창성</strong></h4>
+<p>CBQ는 기존 블록 단위 최적화 기법의 한계를 극복하기 위해 여러 혁신적인 요소를 통합했습니다. 특히 Cross-Block Dependency는 기존 OmniQuant 대비 큰 성능 향상을 보이며, Coarse-to-Fine Preprocessing과 LoRA-Rounding은 Outlier 처리와 양자화 손실 보정의 핵심 기술로 작용했습니다.</p>
+<h4 id="한계점"><strong>한계점</strong></h4>
+<ol>
+<li>
+<p><strong>모델 크기에 따른 제약</strong>:</p>
+<ul>
+<li>저비용 솔루션임에도, LLAMA-65B 이상의 초대형 모델에서는 여전히 메모리 및 계산 리소스가 요구됨.</li>
+<li>이를 해결하기 위해 더 효율적인 Low-Rank 분해나 분산 최적화 기법이 필요.</li>
+</ul>
+</li>
+<li>
+<p><strong>초매개변수(Hyperparameter) 조정의 복잡성</strong>:</p>
+<ul>
+<li>CFP, Loss Weight(γ), LoRA Rank 등 다수의 초매개변수 설정이 최종 성능에 큰 영향을 미침.</li>
+<li>자동화된 초매개변수 검색 기법과의 결합이 필요.</li>
+</ul>
+</li>
+<li>
+<p><strong>전역적 블록 최적화의 부재</strong>:</p>
+<ul>
+<li>Sliding Window 방식이 국소적 최적화에 치중, 전체 모델의 전역적 구조를 반영하지는 않음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="정리-1"><strong>정리</strong></h3>
+<p>CBQ는 <strong>Cross-Block Dependency</strong>, <strong>Coarse-to-Fine Preprocessing</strong>, <strong>LoRA-Rounding</strong>의 조합을 통해 초저비트 양자화에서도 기존 기법 대비 뛰어난 성능과 효율성을 보장합니다. 이는 특히 대규모 모델의 효율적인 양자화를 가능케 하며, Outlier 문제 및 누적 오류 문제를 효과적으로 해결했습니다. 다만, 초대형 모델의 효율적 처리와 초매개변수 최적화와 같은 추가 개선 가능성이 존재합니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="논문의-입력-데이터와-추론-과정"><strong>논문의 입력 데이터와 추론 과정</strong></h3>
+<h4 id="입력-데이터"><strong>입력 데이터</strong></h4>
+<p>논문에서 사용한 입력 데이터는 주로 **C4 (Colossal Clean Crawled Corpus)**와 <strong>WikiText-2</strong> 데이터셋으로, 다음과 같은 특성을 가집니다:</p>
+<ol>
+<li><strong>구성</strong>: 자연어 텍스트 데이터로 구성되며, 문장의 의미를 유지하면서도 모델의 언어 처리 능력을 평가하기 적합.</li>
+<li><strong>크기</strong>: C4 데이터셋은 수천 개의 문장으로 이루어진 2048 토큰 시퀀스를 무작위로 샘플링하여 사용.</li>
+</ol>
+<h5 id="예시-입력"><strong>예시 입력</strong></h5>
+<ul>
+<li><strong>입력 문장</strong>: &ldquo;The development of artificial intelligence has transformed industries globally.&rdquo;</li>
+<li><strong>토큰화</strong>: 위 문장은 Byte Pair Encoding(BPE) 또는 SentencePiece를 통해 다음과 같은 토큰 시퀀스로 변환됨:
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-0"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-0"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-0">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">[&#34;The&#34;, &#34;development&#34;, &#34;of&#34;, &#34;artificial&#34;, &#34;intelligence&#34;, &#34;has&#34;, &#34;transformed&#34;, &#34;industries&#34;, &#34;globally&#34;, &#34;.&#34;]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-0';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+</li>
+</ul>
+<h4 id="추론-과정"><strong>추론 과정</strong></h4>
+<p>CBQ에서 제안한 양자화 방식의 추론 과정은 다음과 같이 이루어집니다:</p>
+<ol>
+<li>
+<p><strong>Preprocessing</strong>:</p>
+<ul>
+<li>입력 텍스트는 토큰화되어 숫자 시퀀스로 변환.</li>
+<li>각 토큰은 모델의 입력 임베딩 레이어를 통해 고차원 벡터로 매핑.</li>
+</ul>
+</li>
+<li>
+<p><strong>Transformer 기반 블록</strong>:</p>
+<ul>
+<li>CBQ는 Transformer 블록에서 각 레이어의 가중치 ( W )와 활성화 ( X )를 W4A4 또는 W2A16 형태로 양자화.</li>
+<li>주요 연산:
+<ul>
+<li><strong>Self-Attention</strong>: 양자화된 ( W_q, W_k, W_v )를 통해 쿼리, 키, 값 계산.</li>
+<li><strong>Feed-Forward Layer</strong>: 양자화된 가중치 ( W_{FF} )로 활성화를 선형 변환.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Cross-Block Dependency 최적화</strong>:</p>
+<ul>
+<li>Sliding Window 기법을 사용하여 블록 간의 상호 작용을 모델링.</li>
+<li>예를 들어, 블록 1의 출력은 블록 2로 전달되어 재구성 손실을 최소화.</li>
+</ul>
+</li>
+<li>
+<p><strong>출력</strong>:</p>
+<ul>
+<li>최종적으로 Softmax를 적용하여 다음 토큰의 확률 분포를 출력.</li>
+<li><strong>예시 출력</strong>: [&ldquo;has&rdquo;, &ldquo;transformed&rdquo;, &ldquo;industries&rdquo;]에 대해 다음 토큰 &ldquo;globally&quot;의 확률.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="모델-아키텍처-구성"><strong>모델 아키텍처 구성</strong></h3>
+<p>CBQ가 적용된 모델은 일반적으로 <strong>Transformer 구조</strong>를 기반으로 하며, 다음과 같은 주요 컴포넌트로 구성됩니다:</p>
+<ol>
+<li>
+<p><strong>입력 임베딩 레이어</strong>:</p>
+<ul>
+<li>입력 토큰을 고차원 임베딩 벡터로 매핑.</li>
+<li>양자화된 ( W_{\text{embed}} )를 사용하여 효율성을 증가.</li>
+</ul>
+</li>
+<li>
+<p><strong>N개의 Transformer 블록</strong>:</p>
+<ul>
+<li>각 블록은 Self-Attention과 Feed-Forward 레이어로 구성.</li>
+<li><strong>Self-Attention</strong>:
+<ul>
+<li>쿼리 ( Q ), 키 ( K ), 값 ( V )를 생성하기 위해 가중치 ( W_q, W_k, W_v )를 양자화.</li>
+<li>연산: ( \text{Attention}(Q, K, V) = \text{Softmax}(QK^T / \sqrt{d_k})V ).</li>
+</ul>
+</li>
+<li><strong>Feed-Forward</strong>:
+<ul>
+<li>입력 ( X )에 대해 ( \text{FF}(X) = \sigma(XW_1 + b_1)W_2 + b_2 ).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>출력 레이어</strong>:</p>
+<ul>
+<li>마지막 블록의 출력을 확률 분포로 변환.</li>
+<li>양자화된 가중치 ( W_{\text{out}} )를 사용.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="모델-연산-요구량"><strong>모델 연산 요구량</strong></h3>
+<h4 id="1-연산-computing-requirements"><strong>1. 연산 (Computing Requirements)</strong></h4>
+<p>Transformer 모델의 주요 연산량은 Self-Attention과 Feed-Forward에서 발생합니다.</p>
+<h5 id="self-attention"><strong>Self-Attention</strong>:</h5>
+<ul>
+<li>연산량: ( O(n^2 \cdot d) ), 여기서 ( n )은 입력 시퀀스 길이, ( d )는 임베딩 차원.</li>
+<li>양자화의 효과:
+<ul>
+<li>W4A4로 가중치 및 활성화 값이 4비트로 압축되므로, 메모리 접근 비용과 곱셈 연산이 크게 감소.</li>
+</ul>
+</li>
+</ul>
+<h5 id="feed-forward-layer"><strong>Feed-Forward Layer</strong>:</h5>
+<ul>
+<li>연산량: ( O(n \cdot d^2) ).</li>
+<li>양자화된 가중치 ( W_1, W_2 )로 연산.</li>
+</ul>
+<h4 id="2-메모리-요구량"><strong>2. 메모리 요구량</strong></h4>
+<ul>
+<li>일반적인 Transformer는 FP32(32비트)로 가중치와 활성화를 저장.</li>
+<li>CBQ 적용 시, W4A4 양자화는 메모리 사용량을 ( \approx 8\times )까지 감소.</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th><strong>모델 크기</strong></th>
+          <th><strong>FP32 메모리 사용량</strong></th>
+          <th><strong>W4A4 메모리 사용량</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>LLAMA-65B</td>
+          <td>260GB</td>
+          <td>32.5GB</td>
+      </tr>
+      <tr>
+          <td>LLAMA-30B</td>
+          <td>120GB</td>
+          <td>15GB</td>
+      </tr>
+  </tbody>
+</table>
+<h4 id="3-컴퓨팅-요구량-절감"><strong>3. 컴퓨팅 요구량 절감</strong></h4>
+<ul>
+<li>양자화된 모델은 기존 FP32 대비 최대 <strong>4배</strong> 빠른 추론 속도를 달성.</li>
+<li>예: LLAMA-65B 모델에서 W4A4로 양자화 시, 단일 GPU에서 4.3시간 내 양자화 완료.</li>
+</ul>
+<hr>
+<h3 id="cbq가-연산-및-메모리-효율을-높이는-방법"><strong>CBQ가 연산 및 메모리 효율을 높이는 방법</strong></h3>
+<ol>
+<li>
+<p><strong>Coarse-to-Fine Preprocessing</strong>:</p>
+<ul>
+<li>Outlier를 처리하여 연산 중 발생하는 비효율 제거.</li>
+<li>활성화 값의 범위를 축소하여 연산량 감소.</li>
+</ul>
+</li>
+<li>
+<p><strong>Cross-Block Dependency</strong>:</p>
+<ul>
+<li>Sliding Window 기법으로 블록 간 오류 누적 방지.</li>
+<li>Overlapping 블록 최적화를 통해 연산 중복을 최소화.</li>
+</ul>
+</li>
+<li>
+<p><strong>LoRA-Rounding</strong>:</p>
+<ul>
+<li>로우랭크(Low-Rank) 행렬 분해를 통해 학습 매개변수 수를 감소.</li>
+<li>메모리 사용량을 기존 AdaRound 대비 2배 이상 감소.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="정리-2"><strong>정리</strong></h3>
+<p>CBQ는 <strong>입력 데이터</strong>에서 발생하는 Outlier 문제를 해결하고, <strong>모델 아키텍처</strong>에서 발생하는 블록 간 누적 오류와 메모리 사용량을 줄이는 데 성공했습니다. 특히, W4A4 양자화는 FP32 대비 8배 메모리 절감, 4배 빠른 추론 속도를 제공하며, Self-Attention과 Feed-Forward의 주요 연산량을 크게 줄입니다. <strong>CBQ는 대규모 LLM을 리소스 제한 환경에서도 효과적으로 사용할 수 있는 혁신적인 접근법</strong>입니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>CBQ 논문은 대규모 언어 모델(LLM)의 초저비트 양자화 문제를 해결하는 데 성공했지만, 몇 가지 한계가 존재합니다. 이를 극복하기 위한 연구 흐름은 아래와 같이 정리할 수 있습니다.</p>
+<hr>
+<h3 id="1-한계점-및-이를-해결하기-위한-연구-방향"><strong>1. 한계점 및 이를 해결하기 위한 연구 방향</strong></h3>
+<h4 id="1-cross-block-dependency의-국소성"><strong>(1) Cross-Block Dependency의 국소성</strong></h4>
+<ul>
+<li>
+<p><strong>한계점</strong>:</p>
+<ul>
+<li>CBQ의 Cross-Block Dependency(CBD)는 Sliding Window를 활용해 블록 간 의존성을 일부 반영했으나, 전체 모델의 전역적인 상호작용까지는 고려하지 못함.</li>
+<li>Sliding Window 접근법은 최적화 범위를 지역적으로 제한하여, 멀리 떨어진 블록 간 관계를 모델링하지 못함.</li>
+</ul>
+</li>
+<li>
+<p><strong>연구 흐름</strong>:</p>
+<ul>
+<li><strong>Graph Neural Networks (GNN)</strong>:
+<ul>
+<li>Transformer의 블록을 노드로 보고, 블록 간의 관계를 그래프로 표현.</li>
+<li>GNN을 활용해 전역적인 블록 간 상호작용을 학습.</li>
+<li>예: 각 블록의 출력 특성을 그래프로 연결하여 더 나은 Reconstruction Loss를 달성.</li>
+</ul>
+</li>
+<li><strong>Transformer 구조 재설계</strong>:
+<ul>
+<li>Cross-Block Attention 메커니즘을 도입하여 멀리 떨어진 블록 간의 상호작용을 포함.</li>
+<li>예: Sliding Window를 보완하여 모든 블록을 일정 간격으로 연결.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="2-양자화-초매개변수-최적화"><strong>(2) 양자화 초매개변수 최적화</strong></h4>
+<ul>
+<li>
+<p><strong>한계점</strong>:</p>
+<ul>
+<li>Coarse-to-Fine Preprocessing(CFP) 및 LoRA-Rounding에서 많은 초매개변수(λ1, λ2, rank 등)가 존재하며, 이를 설정하는 과정이 복잡.</li>
+<li>잘못된 초매개변수 설정은 성능 저하로 이어질 가능성이 큼.</li>
+</ul>
+</li>
+<li>
+<p><strong>연구 흐름</strong>:</p>
+<ul>
+<li><strong>AutoML 기반 초매개변수 탐색</strong>:
+<ul>
+<li>Bayesian Optimization 또는 Reinforcement Learning 기반으로 초매개변수를 자동 탐색.</li>
+<li>예: λ1, λ2와 같은 전처리 매개변수를 데이터 분포에 따라 자동으로 최적화.</li>
+</ul>
+</li>
+<li><strong>Adaptive Tuning Framework</strong>:
+<ul>
+<li>모델 학습 중 동적으로 초매개변수를 조정하는 메커니즘 도입.</li>
+<li>예: 학습 과정에서 Reconstruction Loss의 감소율을 기준으로 λ 값을 조정.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="3-대규모-모델에-대한-확장성"><strong>(3) 대규모 모델에 대한 확장성</strong></h4>
+<ul>
+<li>
+<p><strong>한계점</strong>:</p>
+<ul>
+<li>CBQ는 메모리 및 연산 효율을 개선했지만, 초대형 모델(예: GPT-3, LLAMA2-175B)에서 여전히 상당한 메모리와 계산 자원이 필요.</li>
+</ul>
+</li>
+<li>
+<p><strong>연구 흐름</strong>:</p>
+<ul>
+<li><strong>분산 양자화 (Distributed Quantization)</strong>:
+<ul>
+<li>모델을 여러 GPU/노드에 분할하여 병렬로 양자화 수행.</li>
+<li>예: 각 GPU에서 별도 블록 그룹을 양자화한 후, 결과를 병합.</li>
+</ul>
+</li>
+<li><strong>Sparse Quantization</strong>:
+<ul>
+<li>중요하지 않은 가중치(Zero 또는 작은 값)를 선택적으로 양자화하거나 제거.</li>
+<li>예: Gradient Clipping과 Sparsity를 동시에 적용해 메모리 사용량 감소.</li>
+</ul>
+</li>
+<li><strong>Dynamic Precision Quantization</strong>:
+<ul>
+<li>가중치 및 활성화에 대해 블록별로 서로 다른 비트를 동적으로 할당.</li>
+<li>예: 중요한 블록에는 W4A8, 덜 중요한 블록에는 W2A16 적용.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="4-라운딩-오류의-완전한-제거"><strong>(4) 라운딩 오류의 완전한 제거</strong></h4>
+<ul>
+<li>
+<p><strong>한계점</strong>:</p>
+<ul>
+<li>LoRA-Rounding은 라운딩 오류를 효과적으로 보정하지만, 모든 양자화된 가중치에서 발생하는 오류를 완전히 제거하지는 못함.</li>
+</ul>
+</li>
+<li>
+<p><strong>연구 흐름</strong>:</p>
+<ul>
+<li><strong>Differentiable Quantization</strong>:
+<ul>
+<li>양자화 과정을 미분 가능하게 설계하여 가중치 라운딩을 직접 최적화.</li>
+<li>예: SoftQuant 기법을 활용해 양자화 가중치와 손실을 동시 최적화.</li>
+</ul>
+</li>
+<li><strong>Hybrid Quantization</strong>:
+<ul>
+<li>일부 중요 가중치는 높은 비트를 유지하고, 나머지는 저비트로 양자화.</li>
+<li>예: 핵심 파라미터는 FP16, 나머지는 INT4를 사용.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="5-loss-함수-설계의-복잡성"><strong>(5) Loss 함수 설계의 복잡성</strong></h4>
+<ul>
+<li>
+<p><strong>한계점</strong>:</p>
+<ul>
+<li>CBQ의 Reconstruction Loss는 ( L2 + KLD )에 Homologous Reconstruction을 추가하며, 설계가 복잡하고 계산 비용이 높음.</li>
+</ul>
+</li>
+<li>
+<p><strong>연구 흐름</strong>:</p>
+<ul>
+<li><strong>Simplified Loss Function</strong>:
+<ul>
+<li>L2 또는 KLD 중 하나만 선택하거나, 더욱 경량화된 Reconstruction Loss 설계.</li>
+<li>예: Cosine Similarity를 활용해 간단한 거리 기반 손실로 대체.</li>
+</ul>
+</li>
+<li><strong>Meta-Learning 기반 Loss 설계</strong>:
+<ul>
+<li>특정 데이터 및 모델 구조에 맞춘 최적의 손실 함수를 학습.</li>
+<li>예: Meta-Optimizer를 통해 Loss 가중치를 동적으로 조정.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="정리된-연구-흐름"><strong>정리된 연구 흐름</strong></h3>
+<table>
+  <thead>
+      <tr>
+          <th><strong>한계점</strong></th>
+          <th><strong>연구 흐름</strong></th>
+          <th><strong>예시 기법</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>국소적 의존성 문제</strong></td>
+          <td>전역적 상호작용 모델링 (GNN, Cross-Block Attention)</td>
+          <td>GNN 기반 블록 연결, Cross-Block Attention</td>
+      </tr>
+      <tr>
+          <td><strong>초매개변수 최적화</strong></td>
+          <td>AutoML, Adaptive Tuning</td>
+          <td>Bayesian Optimization, Reinforcement Learning</td>
+      </tr>
+      <tr>
+          <td><strong>대규모 모델 확장성 부족</strong></td>
+          <td>분산 양자화, Sparse Quantization, Dynamic Precision</td>
+          <td>Distributed GPU Quantization, Hybrid Precision</td>
+      </tr>
+      <tr>
+          <td><strong>라운딩 오류 문제</strong></td>
+          <td>Differentiable Quantization, Hybrid Quantization</td>
+          <td>SoftQuant, FP16 + INT4</td>
+      </tr>
+      <tr>
+          <td><strong>Loss 복잡성</strong></td>
+          <td>Loss 경량화, Meta-Learning 기반 손실 설계</td>
+          <td>Cosine Similarity Loss, Meta-Optimizer</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="내-생각"><strong>내 생각</strong></h3>
+<p>CBQ는 초저비트 양자화의 성능과 효율성 측면에서 중요한 기여를 했지만, 대규모 모델 확장성과 Loss 설계, 초매개변수 최적화 문제에서 개선 여지가 있습니다. 특히 <strong>전역적 블록 상호작용 모델링(GNN)</strong> 및 <strong>분산 양자화 기법</strong>은 향후 초대규모 모델을 효율적으로 다룰 수 있는 중요한 방향으로 보입니다.</p>
+<h1 id="q--cbq의-cross-block-dependencycbd-기법에서-sliding-window-방식과-overlapping-block-설계가-구체적으로-reconstruction-loss-감소에-어떤-기여를-하는가">Q : CBQ의 Cross-Block Dependency(CBD) 기법에서 Sliding Window 방식과 Overlapping Block 설계가 구체적으로 Reconstruction Loss 감소에 어떤 기여를 하는가?</h1>
+<p>CBQ의 <strong>Cross-Block Dependency(CBD)</strong> 기법에서 <strong>Sliding Window</strong>와 <strong>Overlapping Block</strong> 설계는 Reconstruction Loss 감소를 위해 다음과 같은 방식으로 기여합니다:</p>
+<hr>
+<h3 id="1-sliding-window-방식"><strong>1. Sliding Window 방식</strong></h3>
+<h4 id="핵심-아이디어"><strong>핵심 아이디어</strong></h4>
+<p>Sliding Window는 Transformer 모델의 블록을 일정 범위 내에서 동시에 최적화하며, 블록 간 정보를 효과적으로 공유합니다.</p>
+<h4 id="기여"><strong>기여</strong></h4>
+<ol>
+<li>
+<p><strong>국소적 최적화</strong>:</p>
+<ul>
+<li>기존 방법은 개별 블록 단위로 최적화하여 각 블록의 Reconstruction Loss를 최소화했으나, 다음 블록에 영향을 주는 정보는 고려하지 않았습니다.</li>
+<li>Sliding Window는 여러 블록을 포함한 <strong>로컬 블록 그룹</strong>을 동시에 최적화함으로써, 블록 간 상호작용을 고려한 Reconstruction Loss를 감소시킵니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>누적 오류 완화</strong>:</p>
+<ul>
+<li>Transformer는 각 블록이 순차적으로 연결되므로, 이전 블록의 출력이 다음 블록의 입력으로 사용됩니다.</li>
+<li>Sliding Window는 이 흐름을 고려하여 현재 블록 그룹의 Reconstruction 오류가 이후 블록에 미치는 영향을 줄입니다.</li>
+</ul>
+</li>
+</ol>
+<h4 id="예제"><strong>예제</strong></h4>
+<ul>
+<li>블록 1<del>3을 첫 번째 Window로, 블록 4</del>6을 두 번째 Window로 설정.</li>
+<li>블록 1~3 최적화 시, 블록 3 출력이 블록 4의 입력으로 사용되므로 이후 단계의 Reconstruction 오류가 줄어듭니다.</li>
+</ul>
+<hr>
+<h3 id="2-overlapping-block-설계"><strong>2. Overlapping Block 설계</strong></h3>
+<h4 id="핵심-아이디어-1"><strong>핵심 아이디어</strong></h4>
+<p>Sliding Window의 인접한 두 구간이 일부 블록을 공유(Overlapping)하여 최적화 과정에서 상호작용을 강화합니다.</p>
+<h4 id="기여-1"><strong>기여</strong></h4>
+<ol>
+<li>
+<p><strong>블록 간 연계 강화</strong>:</p>
+<ul>
+<li>Overlapping을 통해 인접 Window의 공유 블록이 동일한 Reconstruction Loss에 영향을 받습니다.</li>
+<li>이는 블록 간의 독립적인 최적화를 방지하고, 각 Window가 이전 Window와 <strong>연속적 관계</strong>를 형성하도록 합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>정보 전파</strong>:</p>
+<ul>
+<li>이전 Window에서 최적화된 블록이 다음 Window의 학습에도 기여.</li>
+<li>결과적으로, 전반적인 모델의 Reconstruction 오류가 감소합니다.</li>
+</ul>
+</li>
+</ol>
+<h4 id="예제-1"><strong>예제</strong></h4>
+<ul>
+<li>블록 1<del>3 (Window 1)과 블록 3</del>5 (Window 2)가 Overlapping.</li>
+<li>블록 3은 두 Window 모두에서 최적화 대상이 되어, 정보 공유와 오류 보정을 강화.</li>
+</ul>
+<hr>
+<h3 id="3-sliding-window와-overlapping-block의-결합-효과"><strong>3. Sliding Window와 Overlapping Block의 결합 효과</strong></h3>
+<h4 id="시너지-효과"><strong>시너지 효과</strong></h4>
+<ol>
+<li>Sliding Window는 여러 블록의 동시 최적화를 통해 블록 간 연계성을 개선.</li>
+<li>Overlapping Block은 이 연계성을 강화하여 전역적으로 Reconstruction Loss를 줄임.</li>
+</ol>
+<h4 id="논문-실험-결과"><strong>논문 실험 결과</strong></h4>
+<ul>
+<li>Overlapping이 없는 경우: Perplexity(C4 데이터셋) = 13.82.</li>
+<li>Overlapping 사용: Perplexity(C4 데이터셋) = 13.29.</li>
+<li>약 4%의 성능 향상이 나타나며, 이는 Overlapping이 Loss 감소에 기여한 중요한 지표로 볼 수 있습니다.</li>
+</ul>
+<hr>
+<h3 id="한계와-개선-가능성"><strong>한계와 개선 가능성</strong></h3>
+<p>Sliding Window와 Overlapping Block은 국소적 최적화에 초점을 맞추었으나, 전역적인 블록 상호작용에는 제한적입니다. 이를 개선하기 위해, 다음과 같은 방법이 추가 연구될 수 있습니다:</p>
+<ul>
+<li><strong>Global Attention</strong>: 모든 블록 간의 관계를 모델링.</li>
+<li><strong>Hierarchical Optimization</strong>: 블록 그룹 수준과 모델 전체 수준에서 다단계 최적화.</li>
+</ul>
+<p>이 두 설계는 CBQ가 Reconstruction Loss를 줄이는 데 중요한 역할을 하며, Transformer 모델의 초저비트 양자화에서 성능을 유지하는 핵심 요소입니다.</p>
+<h1 id="q--coarse-to-fine-preprocessingcfp이-기존-outlier-처리-기법-대비-성능-향상을-이끈-이유는-무엇이며-가중치와-활성화-값-각각에-대해-다른-접근-방식을-사용한-근거는-무엇인가">Q : Coarse-to-Fine Preprocessing(CFP)이 기존 Outlier 처리 기법 대비 성능 향상을 이끈 이유는 무엇이며, 가중치와 활성화 값 각각에 대해 다른 접근 방식을 사용한 근거는 무엇인가?</h1>
+<h1 id="a">A:</h1>
+<h3 id="coarse-to-fine-preprocessingcfp의-기존-outlier-처리-기법-대비-성능-향상-이유"><strong>Coarse-to-Fine Preprocessing(CFP)의 기존 Outlier 처리 기법 대비 성능 향상 이유</strong></h3>
+<p>CFP(Coarse-to-Fine Preprocessing)는 기존 Outlier 처리 방식보다 성능 향상에 기여했으며, 이는 두 단계로 구성된 정교한 Outlier 감지 및 처리 방식 덕분입니다.</p>
+<hr>
+<h3 id="1-기존-outlier-처리-기법의-한계"><strong>1. 기존 Outlier 처리 기법의 한계</strong></h3>
+<ul>
+<li><strong>SmoothQuant</strong>와 같은 기존 방법:
+<ul>
+<li>주로 **활성화 값(Activation)**의 Outlier만을 처리.</li>
+<li>단순히 비정상적인 값을 감지하고 스케일링(Scaling)하거나 삭제.</li>
+<li>Outlier가 많은 데이터에서 효과가 제한적이며, 가중치(Weight) Outlier는 무시.</li>
+</ul>
+</li>
+<li>이러한 단순 처리 방식은 Outlier가 높은 모델에서 Reconstruction Loss를 충분히 줄이지 못함.</li>
+</ul>
+<hr>
+<h3 id="2-cfp가-성능을-향상시킨-이유"><strong>2. CFP가 성능을 향상시킨 이유</strong></h3>
+<p>CFP는 <strong>Coarse Detection</strong>과 <strong>Fine Detection</strong> 두 단계로 Outlier를 감지하고, 가중치와 활성화 값 각각에 적합한 처리를 적용하여 데이터 분포를 안정화시킵니다.</p>
+<h4 id="1-coarse-detection"><strong>(1) Coarse Detection</strong></h4>
+<ul>
+<li><strong>목적</strong>: Outlier 후보를 빠르게 감지하여 검색 공간 축소.</li>
+<li><strong>방법</strong>: IQR(Interquartile Range)을 활용하여 분포의 상위 25%를 초과하는 값을 Outlier로 설정.
+<ul>
+<li>( T = Q3 + \lambda_1 \cdot IQR ), 여기서 ( \lambda_1 )은 조정 가능한 상수.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>Outlier의 범위를 신속히 파악.</li>
+<li>계산 비용을 줄이고 이후 Fine Detection을 위한 후보군 설정.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-fine-detection"><strong>(2) Fine Detection</strong></h4>
+<ul>
+<li><strong>목적</strong>: Coarse Detection에서 감지된 Outlier를 더욱 세밀하게 분류.</li>
+<li><strong>방법</strong>:
+<ul>
+<li>Outlier 그룹을 Outlier Subset과 Reserved Subset으로 분리.</li>
+<li>두 그룹 간의 분포 차이를 최대화하고, Subset 내부의 분포를 최소화:
+<ul>
+<li>( M = M_{\text{inter}} - \lambda_2 M_{\text{intra}} ).</li>
+</ul>
+</li>
+<li>여기서 ( M_{\text{inter}} ): 두 그룹 간 거리, ( M_{\text{intra}} ): 그룹 내부 분산.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>잔여 Outlier를 더욱 정밀히 감지.</li>
+<li>불필요한 값 삭제 및 적절한 보정 가능.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-가중치와-활성화-값-각각에-대해-다른-접근-방식을-사용한-근거"><strong>3. 가중치와 활성화 값 각각에 대해 다른 접근 방식을 사용한 근거</strong></h3>
+<p>CFP는 **가중치(Weight)**와 <strong>활성화 값(Activation)</strong> 각각의 특성과 모델 내 중요성에 따라 다른 접근 방식을 사용합니다.</p>
+<h4 id="1-가중치weight-outlier"><strong>(1) 가중치(Weight) Outlier</strong></h4>
+<ul>
+<li>
+<p><strong>특성</strong>:</p>
+<ul>
+<li>가중치는 모델의 구조적 학습 매개변수로, 일정 범위를 초과한 Outlier는 중요한 정보가 아닐 가능성이 큼.</li>
+<li>대부분 가중치의 분포는 정규 분포를 따르며, Outlier는 분포의 꼬리에서 발생.</li>
+</ul>
+</li>
+<li>
+<p><strong>처리 방식</strong>: <strong>Truncation(잘라내기)</strong></p>
+<ul>
+<li>Outlier 값을 일정 임계값 이상에서 잘라내어 제거.</li>
+<li>잔여 가중치의 분포를 안정화.</li>
+</ul>
+</li>
+<li>
+<p><strong>근거</strong>:</p>
+<ul>
+<li>가중치의 Outlier를 직접 삭제해도 학습된 모델의 주요 특성이 유지됨.</li>
+<li>Truncation으로 메모리 사용량과 연산 비용을 줄임.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-활성화-값activation-outlier"><strong>(2) 활성화 값(Activation) Outlier</strong></h4>
+<ul>
+<li>
+<p><strong>특성</strong>:</p>
+<ul>
+<li>활성화 값은 모델 추론 중 입력 데이터에 따라 변화하며, Outlier가 중요한 정보일 가능성 존재.</li>
+<li>Outlier 제거는 정보 손실 및 성능 저하를 유발할 수 있음.</li>
+</ul>
+</li>
+<li>
+<p><strong>처리 방식</strong>: <strong>Scaling(스케일링)</strong></p>
+<ul>
+<li>Outlier를 직접 제거하지 않고, 비정상적으로 큰 값을 적절한 스케일링 팩터 ( s_i )로 조정:
+<ul>
+<li>( s_i = \sqrt{\text{Max}(|X_i|) / \text{Max}(\text{Outliers})} ).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>근거</strong>:</p>
+<ul>
+<li>활성화 값의 Outlier를 스케일링하면 중요한 정보의 손실 없이 분포를 안정화.</li>
+<li>스케일링으로 모델 추론의 안정성을 유지.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-실험-결과로-증명된-cfp의-효과"><strong>4. 실험 결과로 증명된 CFP의 효과</strong></h3>
+<p>CFP는 SmoothQuant 대비 가중치와 활성화 값 모두를 처리하여 다음과 같은 성능 향상을 달성:</p>
+<ul>
+<li>C4 데이터셋의 Perplexity:
+<ul>
+<li>SmoothQuant: <strong>15.69</strong>.</li>
+<li>CFP: <strong>13.29</strong> (약 15% 감소).</li>
+</ul>
+</li>
+<li>WikiText-2 데이터셋에서도 유사한 성능 향상.</li>
+</ul>
+<hr>
+<h3 id="5-내-생각"><strong>5. 내 생각</strong></h3>
+<p>CFP의 Coarse-to-Fine 방식은 기존 방법의 단순한 Outlier 처리 한계를 극복하며, 특히 가중치와 활성화 값에 대해 다른 접근 방식을 적용한 점이 효과적이었습니다.</p>
+<ul>
+<li><strong>가중치</strong>는 학습된 구조적 정보이므로, Outlier를 직접 제거하여 분포를 단순화.</li>
+<li><strong>활성화 값</strong>은 동적인 입력 데이터를 포함하므로, 스케일링으로 정보를 유지.
+이러한 설계는 Outlier를 효율적으로 처리하면서도 모델의 성능을 유지하게 한 핵심 요소입니다.</li>
+</ul>
+<h1 id="q--lora-rounding에서-low-rank-분해를-활용한-가중치-보정이-라운딩-오류를-최소화하는데-이를-더-확장하여-전역적으로-적용할-수-있는-방법은-무엇인가-예-초대규모-모델에-적용-시-예상되는-한계와-해결-방안">Q : LoRA-Rounding에서 Low-Rank 분해를 활용한 가중치 보정이 라운딩 오류를 최소화하는데, 이를 더 확장하여 전역적으로 적용할 수 있는 방법은 무엇인가? (예: 초대규모 모델에 적용 시 예상되는 한계와 해결 방안)</h1>
+<h3 id="lora-rounding에서-low-rank-분해를-확장하여-전역적으로-적용할-수-있는-방법"><strong>LoRA-Rounding에서 Low-Rank 분해를 확장하여 전역적으로 적용할 수 있는 방법</strong></h3>
+<p>LoRA-Rounding은 저비용으로 라운딩 오류를 최소화하기 위해 <strong>Low-Rank 분해</strong>를 활용합니다. 이를 초대규모 모델에 확장하기 위해서는 전역적으로 가중치 보정을 고려해야 하며, 다음과 같은 전략을 사용할 수 있습니다.</p>
+<hr>
+<h3 id="1-lora-rounding-확장의-주요-문제"><strong>1. LoRA-Rounding 확장의 주요 문제</strong></h3>
+<ol>
+<li>
+<p><strong>초대규모 모델의 매개변수 수</strong>:</p>
+<ul>
+<li>초대규모 모델(예: GPT-3, LLAMA2-175B)은 수십억 개의 매개변수를 포함하므로, 모든 가중치에 대해 LoRA-Rounding을 적용하면 메모리와 계산 비용이 크게 증가.</li>
+</ul>
+</li>
+<li>
+<p><strong>블록 간 독립적 최적화의 한계</strong>:</p>
+<ul>
+<li>기존 LoRA-Rounding은 각 Transformer 블록 내에서 로컬 최적화 수행.</li>
+<li>초대규모 모델에서는 블록 간 상호작용이 무시될 경우, 전역적인 오류 누적 문제 발생.</li>
+</ul>
+</li>
+<li>
+<p><strong>연산 비용 증가</strong>:</p>
+<ul>
+<li>Low-Rank 행렬 ( A_1 )과 ( A_2 )를 추가적으로 학습하는 과정에서 연산 오버헤드 발생.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-전역적으로-적용하기-위한-방법"><strong>2. 전역적으로 적용하기 위한 방법</strong></h3>
+<h4 id="1-중요-블록-선택-selective-lora-rounding"><strong>(1) 중요 블록 선택 (Selective LoRA-Rounding)</strong></h4>
+<ul>
+<li>
+<p><strong>아이디어</strong>:</p>
+<ul>
+<li>모델의 모든 블록에 동일한 수준의 Low-Rank 분해를 적용하지 않고, 성능에 중요한 블록만 선택적으로 LoRA-Rounding을 적용.</li>
+</ul>
+</li>
+<li>
+<p><strong>방법</strong>:</p>
+<ol>
+<li><strong>Gradient Magnitude</strong> 기반 중요도 평가:
+<ul>
+<li>각 Transformer 블록에서 Gradients의 크기를 분석하여 중요한 블록을 식별.</li>
+<li>중요한 블록에만 Low-Rank 분해 적용.</li>
+</ul>
+</li>
+<li><strong>Layer-wise Mixed Precision</strong>:
+<ul>
+<li>주요 블록은 W4A4로, 중요도가 낮은 블록은 W2A8과 같은 비트로 양자화.</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>예상 효과</strong>:</p>
+<ul>
+<li>메모리와 계산 비용 감소.</li>
+<li>중요한 블록에 자원을 집중하여 전역적으로 성능 유지.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="2-전역-low-rank-행렬-학습-global-lora"><strong>(2) 전역 Low-Rank 행렬 학습 (Global LoRA)</strong></h4>
+<ul>
+<li>
+<p><strong>아이디어</strong>:</p>
+<ul>
+<li>개별 블록이 아닌, 전체 모델의 가중치 분포를 고려한 전역적 Low-Rank 분해.</li>
+</ul>
+</li>
+<li>
+<p><strong>방법</strong>:</p>
+<ol>
+<li><strong>가중치 공유</strong>:
+<ul>
+<li>블록 간 공통적인 가중치 특성을 학습하도록 ( A_1 )과 ( A_2 )를 공유.</li>
+</ul>
+</li>
+<li><strong>하이퍼 네트워크(Hyper Network)</strong>:
+<ul>
+<li>각 블록의 가중치 보정 행렬을 생성하는 하이퍼 네트워크 도입.</li>
+<li>하이퍼 네트워크는 전체 모델의 특성을 기반으로 Low-Rank 행렬을 동적으로 생성.</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>예상 효과</strong>:</p>
+<ul>
+<li>블록 간 일관성을 유지하면서 전역적 오류 보정 가능.</li>
+<li>가중치 학습 비용을 줄이며, 모델 크기에 대한 확장성 확보.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="3-sparse-lora-rounding"><strong>(3) Sparse LoRA-Rounding</strong></h4>
+<ul>
+<li>
+<p><strong>아이디어</strong>:</p>
+<ul>
+<li>가중치 중 중요한 부분에만 Low-Rank 분해 적용.</li>
+</ul>
+</li>
+<li>
+<p><strong>방법</strong>:</p>
+<ol>
+<li><strong>Sparse Attention 적용</strong>:
+<ul>
+<li>Attention 메커니즘에서 중요한 Query-Key-Value(QKV) 매트릭스에만 Low-Rank 분해.</li>
+</ul>
+</li>
+<li><strong>Sparse Weight Masking</strong>:
+<ul>
+<li>Lasso(ℓ1 정규화)와 같은 기법을 통해 중요하지 않은 가중치 요소를 0으로 설정한 뒤, Low-Rank 분해를 적용.</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>예상 효과</strong>:</p>
+<ul>
+<li>불필요한 연산 제거로 메모리 사용량 최적화.</li>
+<li>중요한 가중치에 집중하여 모델 성능 유지.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="4-multi-scale-lora-rounding"><strong>(4) Multi-Scale LoRA-Rounding</strong></h4>
+<ul>
+<li>
+<p><strong>아이디어</strong>:</p>
+<ul>
+<li>블록 수준뿐만 아니라, 더 작은 스케일(예: 헤드, 채널)에서 Low-Rank 분해를 적용.</li>
+</ul>
+</li>
+<li>
+<p><strong>방법</strong>:</p>
+<ol>
+<li><strong>Head-Wise Decomposition</strong>:
+<ul>
+<li>Attention 메커니즘 내에서 헤드마다 Low-Rank 분해를 적용.</li>
+</ul>
+</li>
+<li><strong>Channel-Wise Decomposition</strong>:
+<ul>
+<li>피드포워드 네트워크(FFN)에서 채널 단위로 Low-Rank 행렬을 학습.</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>예상 효과</strong>:</p>
+<ul>
+<li>세부적 최적화로 더 적은 리소스로 높은 성능 확보.</li>
+<li>기존 블록 단위 최적화보다 더 미세한 수준에서 오류를 보정.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-초대규모-모델에서-예상되는-한계"><strong>3. 초대규모 모델에서 예상되는 한계</strong></h3>
+<ol>
+<li>
+<p><strong>메모리 및 연산 비용</strong>:</p>
+<ul>
+<li>Low-Rank 분해에 따른 추가 매개변수가 증가하며, 특히 전역적으로 적용 시 비용이 급격히 늘어날 수 있음.</li>
+</ul>
+</li>
+<li>
+<p><strong>블록 간 의존성 모델링의 복잡성</strong>:</p>
+<ul>
+<li>전역적 상호작용을 고려하면, 블록 간 관계를 학습하는 비용이 증가.</li>
+</ul>
+</li>
+<li>
+<p><strong>훈련 효율성</strong>:</p>
+<ul>
+<li>초대규모 모델에서는 학습 시간이 길어질 가능성이 높음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="4-해결-방안"><strong>4. 해결 방안</strong></h3>
+<ol>
+<li>
+<p><strong>모듈식 학습 (Modular Training)</strong>:</p>
+<ul>
+<li>모델을 여러 모듈로 나누어 병렬적으로 학습.</li>
+<li>각 모듈은 독립적으로 LoRA-Rounding 적용 후 결합.</li>
+</ul>
+</li>
+<li>
+<p><strong>메모리 효율 최적화</strong>:</p>
+<ul>
+<li>Quantization-Aware Training(QAT)과 결합하여 학습 중 메모리 사용량을 최소화.</li>
+</ul>
+</li>
+<li>
+<p><strong>블록 간 전이 학습 (Transfer Learning)</strong>:</p>
+<ul>
+<li>중요한 블록에서 학습된 Low-Rank 행렬을 다른 블록에 전이.</li>
+<li>초기화 비용을 줄이고 학습 시간을 단축.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="정리-3"><strong>정리</strong></h3>
+<p>LoRA-Rounding의 전역적 확장은 초대규모 모델에서 높은 성능을 유지하면서도 메모리와 계산 효율성을 높이는 데 필수적입니다. 이를 위해 선택적 적용(Selective LoRA), 전역 학습(Global LoRA), 희소성 적용(Sparse LoRA)과 같은 방법론이 유효하며, 추가적으로 모듈화 및 전이 학습을 통해 확장성을 개선할 수 있습니다. 이러한 접근법은 초대규모 LLM에서 LoRA-Rounding의 잠재력을 극대화할 수 있는 방향으로 보입니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/CBQ-Cross-Block-Quantization-for-Large-Language-Models/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/CBQ-Cross-Block-Quantization-for-Large-Language-Models/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/SCCA-Shifted-Cross-Chunk-Attention-for-long-contextual-semantic-expansion/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                SCCA: Shifted Cross Chunk Attention for long contextual semantic expansion
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-12-30">
+                12月30日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/SparQ-Attention-Bandwidth-Efficient-LLM-Inference/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                SparQ Attention: Bandwidth-Efficient LLM Inference
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-12-31">
+                12月31日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#결론-및-주요-결과">결론 및 주요 결과</a>
+      <ul>
+        <li><a href="#핵심-알고리즘-cbq의-과정-설명">핵심 알고리즘: CBQ의 과정 설명</a>
+          <ul>
+            <li><a href="#입력-예시">입력 예시:</a></li>
+            <li><a href="#과정">과정:</a></li>
+            <li><a href="#출력">출력:</a></li>
+          </ul>
+        </li>
+        <li><a href="#논문의-한계점">논문의 한계점</a></li>
+        <li><a href="#강점-대비-성능-비교-테이블">강점 대비 성능 비교 (테이블)</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-문제-상황"><strong>1. 문제 상황</strong></a></li>
+        <li><a href="#2-핵심-알고리즘-단계"><strong>2. 핵심 알고리즘 단계</strong></a>
+          <ul>
+            <li><a href="#예제-설정">예제 설정</a></li>
+            <li><a href="#1-coarse-to-fine-preprocessing-cfp"><strong>(1) Coarse-to-Fine Preprocessing (CFP)</strong></a></li>
+            <li><a href="#2-cross-block-dependency-optimization-cbd"><strong>(2) Cross-Block Dependency Optimization (CBD)</strong></a></li>
+            <li><a href="#3-lora-rounding"><strong>(3) LoRA-Rounding</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-총-loss-함수"><strong>3. 총 Loss 함수</strong></a></li>
+        <li><a href="#4-최종-출력"><strong>4. 최종 출력</strong></a></li>
+        <li><a href="#정리"><strong>정리</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문에서-제시한-결과"><strong>논문에서 제시한 결과</strong></a>
+          <ul>
+            <li><a href="#주요-결과-요약"><strong>주요 결과 요약</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#다른-방법론-대비-특출난-점"><strong>다른 방법론 대비 특출난 점</strong></a></li>
+        <li><a href="#cbq의-특출난-결과를-도출한-논문의-근거"><strong>CBQ의 특출난 결과를 도출한 논문의 근거</strong></a></li>
+        <li><a href="#내-생각-cbq의-독창성과-한계"><strong>내 생각: CBQ의 독창성과 한계</strong></a>
+          <ul>
+            <li><a href="#cbq의-독창성"><strong>CBQ의 독창성</strong></a></li>
+            <li><a href="#한계점"><strong>한계점</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#정리-1"><strong>정리</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-입력-데이터와-추론-과정"><strong>논문의 입력 데이터와 추론 과정</strong></a>
+          <ul>
+            <li><a href="#입력-데이터"><strong>입력 데이터</strong></a></li>
+            <li><a href="#추론-과정"><strong>추론 과정</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#모델-아키텍처-구성"><strong>모델 아키텍처 구성</strong></a></li>
+        <li><a href="#모델-연산-요구량"><strong>모델 연산 요구량</strong></a>
+          <ul>
+            <li><a href="#1-연산-computing-requirements"><strong>1. 연산 (Computing Requirements)</strong></a></li>
+            <li><a href="#2-메모리-요구량"><strong>2. 메모리 요구량</strong></a></li>
+            <li><a href="#3-컴퓨팅-요구량-절감"><strong>3. 컴퓨팅 요구량 절감</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#cbq가-연산-및-메모리-효율을-높이는-방법"><strong>CBQ가 연산 및 메모리 효율을 높이는 방법</strong></a></li>
+        <li><a href="#정리-2"><strong>정리</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-한계점-및-이를-해결하기-위한-연구-방향"><strong>1. 한계점 및 이를 해결하기 위한 연구 방향</strong></a>
+          <ul>
+            <li><a href="#1-cross-block-dependency의-국소성"><strong>(1) Cross-Block Dependency의 국소성</strong></a></li>
+            <li><a href="#2-양자화-초매개변수-최적화"><strong>(2) 양자화 초매개변수 최적화</strong></a></li>
+            <li><a href="#3-대규모-모델에-대한-확장성"><strong>(3) 대규모 모델에 대한 확장성</strong></a></li>
+            <li><a href="#4-라운딩-오류의-완전한-제거"><strong>(4) 라운딩 오류의 완전한 제거</strong></a></li>
+            <li><a href="#5-loss-함수-설계의-복잡성"><strong>(5) Loss 함수 설계의 복잡성</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#정리된-연구-흐름"><strong>정리된 연구 흐름</strong></a></li>
+        <li><a href="#내-생각"><strong>내 생각</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-sliding-window-방식"><strong>1. Sliding Window 방식</strong></a>
+          <ul>
+            <li><a href="#핵심-아이디어"><strong>핵심 아이디어</strong></a></li>
+            <li><a href="#기여"><strong>기여</strong></a></li>
+            <li><a href="#예제"><strong>예제</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-overlapping-block-설계"><strong>2. Overlapping Block 설계</strong></a>
+          <ul>
+            <li><a href="#핵심-아이디어-1"><strong>핵심 아이디어</strong></a></li>
+            <li><a href="#기여-1"><strong>기여</strong></a></li>
+            <li><a href="#예제-1"><strong>예제</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-sliding-window와-overlapping-block의-결합-효과"><strong>3. Sliding Window와 Overlapping Block의 결합 효과</strong></a>
+          <ul>
+            <li><a href="#시너지-효과"><strong>시너지 효과</strong></a></li>
+            <li><a href="#논문-실험-결과"><strong>논문 실험 결과</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#한계와-개선-가능성"><strong>한계와 개선 가능성</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#coarse-to-fine-preprocessingcfp의-기존-outlier-처리-기법-대비-성능-향상-이유"><strong>Coarse-to-Fine Preprocessing(CFP)의 기존 Outlier 처리 기법 대비 성능 향상 이유</strong></a></li>
+        <li><a href="#1-기존-outlier-처리-기법의-한계"><strong>1. 기존 Outlier 처리 기법의 한계</strong></a></li>
+        <li><a href="#2-cfp가-성능을-향상시킨-이유"><strong>2. CFP가 성능을 향상시킨 이유</strong></a>
+          <ul>
+            <li><a href="#1-coarse-detection"><strong>(1) Coarse Detection</strong></a></li>
+            <li><a href="#2-fine-detection"><strong>(2) Fine Detection</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-가중치와-활성화-값-각각에-대해-다른-접근-방식을-사용한-근거"><strong>3. 가중치와 활성화 값 각각에 대해 다른 접근 방식을 사용한 근거</strong></a>
+          <ul>
+            <li><a href="#1-가중치weight-outlier"><strong>(1) 가중치(Weight) Outlier</strong></a></li>
+            <li><a href="#2-활성화-값activation-outlier"><strong>(2) 활성화 값(Activation) Outlier</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-실험-결과로-증명된-cfp의-효과"><strong>4. 실험 결과로 증명된 CFP의 효과</strong></a></li>
+        <li><a href="#5-내-생각"><strong>5. 내 생각</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#lora-rounding에서-low-rank-분해를-확장하여-전역적으로-적용할-수-있는-방법"><strong>LoRA-Rounding에서 Low-Rank 분해를 확장하여 전역적으로 적용할 수 있는 방법</strong></a></li>
+        <li><a href="#1-lora-rounding-확장의-주요-문제"><strong>1. LoRA-Rounding 확장의 주요 문제</strong></a></li>
+        <li><a href="#2-전역적으로-적용하기-위한-방법"><strong>2. 전역적으로 적용하기 위한 방법</strong></a>
+          <ul>
+            <li><a href="#1-중요-블록-선택-selective-lora-rounding"><strong>(1) 중요 블록 선택 (Selective LoRA-Rounding)</strong></a></li>
+            <li><a href="#2-전역-low-rank-행렬-학습-global-lora"><strong>(2) 전역 Low-Rank 행렬 학습 (Global LoRA)</strong></a></li>
+            <li><a href="#3-sparse-lora-rounding"><strong>(3) Sparse LoRA-Rounding</strong></a></li>
+            <li><a href="#4-multi-scale-lora-rounding"><strong>(4) Multi-Scale LoRA-Rounding</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-초대규모-모델에서-예상되는-한계"><strong>3. 초대규모 모델에서 예상되는 한계</strong></a></li>
+        <li><a href="#4-해결-방안"><strong>4. 해결 방안</strong></a></li>
+        <li><a href="#정리-3"><strong>정리</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

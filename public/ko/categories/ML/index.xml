@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ML on Jaehun's Blog</title><link>https://jaehun.me/ko/categories/ML/</link><description>Recent content in ML on Jaehun's Blog</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Fri, 12 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://jaehun.me/ko/categories/ML/index.xml" rel="self" type="application/rss+xml"/><item><title>LLVM loop unroll and jam pass and view-cfg</title><link>https://jaehun.me/ko/ko/posts/2021-2-12-llvm-unrollandjam/</link><pubDate>Fri, 12 Feb 2021 00:00:00 +0000</pubDate><guid>https://jaehun.me/ko/ko/posts/2021-2-12-llvm-unrollandjam/</guid><description>&lt;p>
+&lt;figure class="image-figure not-prose my-8" 
+ data-lightbox-enabled="false"
+ data-gallery-type="auto">
+ &lt;div class="image-container">
+ 
+ &lt;img
+ src="https://jaehun.me/assets/images/llvm.jpeg"
+ alt=""
+ 
+ loading="lazy"
+ decoding="async"
+ data-gallery-src="https://jaehun.me/assets/images/llvm.jpeg"
+ data-gallery-alt=""
+ data-gallery-title="" />&lt;/div>
+
+ &lt;/figure>
+대학원 컴파일러 수업에서 ML을 이용하여 unroll and jam을 판별하는 모델을 학습을 하는 term project를 진행하였다.
+unroll and jam pass는 이름에서 알 수 있듯이 loop 최적화에 관련된 pass로 unroll 과 jam을 수행하여 innermost loop body의 병렬성을 증가시켜서 제한된 resource의 utilization을 증가시키는 최적화이다.
+내 기억이 맞다면 O2 이상의 최적화 부터 적용되는데 opt의 debug를 통하여 볼때 생각보다 잘? 사용이 안된다.
+LLVM code를 보면 대부분 loop unroll과 loop fusion pass를 재활용하며 검사 정도만 하는데 이 때문에 da,lcssa,loop simplify가 조건을 만족하여도 unroll and jam pass가 동작되지 않는 경우가 많다.&lt;/p></description></item><item><title>간단논문 정리 DARTS DIFFERENTIABLE ARCHITECTURE SEARCH (ICLR 2019)</title><link>https://jaehun.me/ko/ko/posts/2021-2-12-paper-DARTS/</link><pubDate>Fri, 12 Feb 2021 00:00:00 +0000</pubDate><guid>https://jaehun.me/ko/ko/posts/2021-2-12-paper-DARTS/</guid><description>&lt;h1 id="제목">제목&lt;/h1>
+&lt;p>DARTS: DIFFERENTIABLE ARCHITECTURE SEARCH&lt;/p>
+&lt;h1 id="저자">저자&lt;/h1>
+&lt;p>Hanxiao Liu,Karen Simonyan,Yiming Yang&lt;/p>
+&lt;h1 id="motivation">Motivation&lt;/h1>
+&lt;p>기존 NAS가 상당수의 시간 혹은 cost가 필요(2000 GPU days of reinforcement learning, 3150 GPU days of evolution)이러한 원인 중 하나가 discrete domain, which leads to a large number of architecture evaluations required 때문이라고 분석. 물론 이전에도 filter size와 같은 것들을 연속적으로 학습 했으나 해당 논문은 블록, 그래프 토플로지 까지 학습하는 것을 목표로 함&lt;/p></description></item><item><title>간단논문 정리 End-to-End Deep Learning of Optimization Heuristics (PACT 17)</title><link>https://jaehun.me/ko/ko/posts/2021-2-12-paper-End-to-EndDeepLearning-of-pptimization-heuristics/</link><pubDate>Fri, 12 Feb 2021 00:00:00 +0000</pubDate><guid>https://jaehun.me/ko/ko/posts/2021-2-12-paper-End-to-EndDeepLearning-of-pptimization-heuristics/</guid><description>&lt;h1 id="제목">제목&lt;/h1>
+&lt;p>End-to-End Deep Learning of Optimization Heuristics&lt;/p>
+&lt;h1 id="저자">저자&lt;/h1>
+&lt;p>Chris Cummins ; Pavlos Petoumenos ; Zheng Wang ; Hugh Leather&lt;/p>
+&lt;h1 id="motivation">Motivation&lt;/h1>
+&lt;p>기존 머신러닝을 이용한 compiler optimizaion 방법에서는 human experts를 이용한 feature engineering 이 필요&lt;/p>
+&lt;h1 id="contribution">Contribution&lt;/h1>
+&lt;p>논문에서 제안하는 Source Rewriter &amp;amp; Language model을 이용하여 RAW PROGRAM CODE을 직접 이용하여 compiler optimizaion을 수행 아울어 transfer learning 을 이용하여 small number of program 에서도 학습을 수행&lt;/p></description></item><item><title>간단논문 정리 Fast and Effective Orchestration of Compiler Optimizations(Zhelong Pan,Rudolf Eigenmann;Purdue University ;CGO’06)</title><link>https://jaehun.me/ko/ko/posts/2021-2-12-paper-Fast-and-EffectiveOrchestrationofCompilerOptimizations/</link><pubDate>Fri, 12 Feb 2021 00:00:00 +0000</pubDate><guid>https://jaehun.me/ko/ko/posts/2021-2-12-paper-Fast-and-EffectiveOrchestrationofCompilerOptimizations/</guid><description>&lt;h1 id="제목">제목&lt;/h1>
+&lt;p>Fast and Effective Orchestration of Compiler Optimizations&lt;/p>
+&lt;h1 id="저자">저자&lt;/h1>
+&lt;p>Zhelong Pan,Rudolf Eigenmann&lt;/p>
+&lt;h1 id="motivation">Motivation&lt;/h1>
+&lt;p>compile-time optimizations 은 전반적으로 프로그램 성능을 향상시키지만 일부 기법은 성능 하락을 야기한다.
+입력프로그램와 target architecture에 대한 불충분한 정보는 컴파일 시간에 정확도 향상을 향상 시키는 모델의 한계를 만든다.&lt;/p></description></item><item><title>간단논문 정리 TVM An Automated End-to-End Optimizing Compiler for Deep Learning (OSDI 18)</title><link>https://jaehun.me/ko/ko/posts/2021-2-12-paper-tvm/</link><pubDate>Fri, 12 Feb 2021 00:00:00 +0000</pubDate><guid>https://jaehun.me/ko/ko/posts/2021-2-12-paper-tvm/</guid><description>&lt;p>
+&lt;figure class="image-figure not-prose my-8" 
+ data-lightbox-enabled="false"
+ data-gallery-type="auto">
+ &lt;div class="image-container">
+ 
+ &lt;img
+ src="https://jaehun.me/assets/images/tvm1.png"
+ alt=""
+ 
+ loading="lazy"
+ decoding="async"
+ data-gallery-src="https://jaehun.me/assets/images/tvm1.png"
+ data-gallery-alt=""
+ data-gallery-title="" />&lt;/div>
+
+ &lt;/figure>&lt;/p>
+&lt;h1 id="제목">제목&lt;/h1>
+&lt;p>TVM: An Automated End-to-End Optimizing Compiler for Deep Learning&lt;/p>
+&lt;h1 id="tvm">TVM?&lt;/h1>
+&lt;p>해당논문은 머신러닝용 컴파일러중에 대표적인 TVM에 대한 paper입니다. 현재는 apache에서 관리 하고 있으며 graph level IR 을 통한 target-independent optimization,
+autotune을 통한 target-dependent optimization 을 지원하며 llvm 및 vta를 통하여 cpu,gpu뿐만 아니라 FPGA를 backend로 지원합니다.&lt;/p></description></item><item><title>논문 정리 Chameleon Adaptive Code Optimization for Expedited Deep Neural Network Compilation(ICLR 2020)</title><link>https://jaehun.me/ko/ko/posts/2021-2-12-paper-chameleon/</link><pubDate>Fri, 12 Feb 2021 00:00:00 +0000</pubDate><guid>https://jaehun.me/ko/ko/posts/2021-2-12-paper-chameleon/</guid><description>&lt;p>
+&lt;figure class="image-figure not-prose my-8" 
+ data-lightbox-enabled="false"
+ data-gallery-type="auto">
+ &lt;div class="image-container">
+ 
+ &lt;img
+ src="https://jaehun.me/assets/images/chameleon1.jpg"
+ alt=""
+ 
+ loading="lazy"
+ decoding="async"
+ data-gallery-src="https://jaehun.me/assets/images/chameleon1.jpg"
+ data-gallery-alt=""
+ data-gallery-title="" />&lt;/div>
+
+ &lt;/figure>&lt;/p>
+&lt;h1 id="제목">제목&lt;/h1>
+&lt;p>Chameleon: Adaptive Code Optimization for Expedited Deep Neural Network Compilation&lt;/p>
+&lt;h1 id="저자">저자&lt;/h1>
+&lt;p>Byung Hoon Ahn, Prannoy Pilligundla, Amir Yazdanbakhsh, Hadi Esmaeilzadeh&lt;/p>
+&lt;h1 id="motivation">Motivation&lt;/h1>
+&lt;p>The current approaches are oblivious to the patterns in the design space of schedules that are available for exploitation, and causes inefficient search or even converges to solutions that may even be suboptimal.
+Current solutions that rely on greedy sampling lead to significant fractions of the candidate configurations being redundant over iterations(long compilation time)&lt;/p></description></item><item><title>논문 정리 NeuroVectorizer End-to-End Vectorization with Deep Reinforcement Learning (CGO 20)</title><link>https://jaehun.me/ko/ko/posts/2021-2-12-paper-NeuroVectorizer/</link><pubDate>Fri, 12 Feb 2021 00:00:00 +0000</pubDate><guid>https://jaehun.me/ko/ko/posts/2021-2-12-paper-NeuroVectorizer/</guid><description>&lt;p>
+&lt;figure class="image-figure not-prose my-8" 
+ data-lightbox-enabled="false"
+ data-gallery-type="auto">
+ &lt;div class="image-container">
+ 
+ &lt;img
+ src="https://jaehun.me/assets/images/nv1.png"
+ alt=""
+ 
+ loading="lazy"
+ decoding="async"
+ data-gallery-src="https://jaehun.me/assets/images/nv1.png"
+ data-gallery-alt=""
+ data-gallery-title="" />&lt;/div>
+
+ &lt;/figure>&lt;/p>
+&lt;h1 id="제목">제목&lt;/h1>
+&lt;p>NeuroVectorizer: End-to-End Vectorization with Deep Reinforcement Learning&lt;/p>
+&lt;h1 id="저자">저자&lt;/h1>
+&lt;p>Ameer Haj-Ali, Nesreen K. Ahmed, Ted Willke, Sophia Shao, Krste Asanovic, Ion Stoica&lt;/p>
+&lt;h1 id="motivation">Motivation&lt;/h1>
+&lt;p>Compilers are designed today to use fixed-cost models that are based on heuristics to make vectorization decisions on loops. However, these models are unable to capture the data dependency, the computation graph, or the organization of instructions
+The vectorization is critical to enhancing the performance of compute-intensive workloads in modern computers.&lt;/p></description></item></channel></rss>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Load Balancing on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/Load-Balancing/</link>
+    <description>Recent content in Load Balancing on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Tue, 01 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/Load-Balancing/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Auxiliary-Loss-Free Load Balancing Strategy for Mixture-of-Experts</title>
+      <link>http://192.168.1.11:1314/posts/Auxiliary-Loss-Free-Load-Balancing-Strategy-for-Mixture-of-Experts/</link>
+      <pubDate>Tue, 01 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Auxiliary-Loss-Free-Load-Balancing-Strategy-for-Mixture-of-Experts/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2408.15664v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;Loss-Free Balancing(LFB)은 &lt;em&gt;auxiliary loss&lt;/em&gt;를 완전히 제거한 채, &lt;strong&gt;전문가별 bias 한 줄 업데이트&lt;/strong&gt;만으로 Mixture-of-Experts(MoE) 모델의 ‘로드 밸런스 ↔ 성능’ 딜레마를 깨고 **Perplexity ≈ 0.5↓, MaxVio ≥ 90 %↓**를 동시에 달성했다.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

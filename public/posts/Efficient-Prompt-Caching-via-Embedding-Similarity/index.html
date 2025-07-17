@@ -1,0 +1,3351 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Efficient Prompt Caching via Embedding Similarity | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점과 독창적인 지점 강점: 효율적인 프롬프트 캐싱 문제 해결:..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/Efficient-Prompt-Caching-via-Embedding-Similarity/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/Efficient-Prompt-Caching-via-Embedding-Similarity/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="Efficient Prompt Caching via Embedding Similarity">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점과 독창적인 지점 강점: 효율적인 프롬프트 캐싱 문제 해결:">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-12-15T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-12-15T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="Efficient Prompt Caching via Embedding Similarity">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점과 독창적인 지점 강점: 효율적인 프롬프트 캐싱 문제 해결:">
+
+
+  <meta itemprop="name" content="Efficient Prompt Caching via Embedding Similarity">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점과 독창적인 지점 강점: 효율적인 프롬프트 캐싱 문제 해결:">
+  <meta itemprop="datePublished" content="2024-12-15T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-12-15T00:00:00+00:00">
+  <meta itemprop="wordCount" content="12243">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">Efficient Prompt Caching via Embedding Similarity</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    Efficient Prompt Caching via Embedding Similarity
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-12-15">
+          2024년 12월 15일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >25 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>12243 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2402.01173">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h3 id="논문의-강점과-독창적인-지점">논문의 강점과 독창적인 지점</h3>
+<h4 id="강점">강점:</h4>
+<ol>
+<li>
+<p><strong>효율적인 프롬프트 캐싱 문제 해결</strong>:</p>
+<ul>
+<li>LLM의 높은 자원 소모 문제를 완화하기 위해 프롬프트 캐싱을 도입하고, 기존 임베딩 기반 접근법을 개선함.</li>
+<li>기존 모델(Wang et al., 2022)의 AUC가 0.51인 데이터셋에서 이를 0.81로 향상.</li>
+</ul>
+</li>
+<li>
+<p><strong>정량적 성능 개선</strong>:</p>
+<ul>
+<li>BCE(Binary Cross-Entropy)와 SLD(Squared Log Difference) 두 가지 손실 함수를 통해 임베딩을 정교하게 튜닝.</li>
+<li>실험적으로 캐싱 효율을 기존 46%에서 BCE(54%), SLD(52.4%)로 개선.</li>
+</ul>
+</li>
+<li>
+<p><strong>새로운 데이터셋 구성</strong>:</p>
+<ul>
+<li>기존 모델이 어려움을 겪는 데이터셋(“Hard Dataset”)을 설계하여 임베딩 모델의 한계를 드러내고, 그 위에서 새로운 방법론을 테스트.</li>
+</ul>
+</li>
+<li>
+<p><strong>이론적 보장</strong>:</p>
+<ul>
+<li>O(1/N^(1/4))의 수렴율을 이론적으로 증명하며, 제안한 방법의 신뢰성을 입증.</li>
+</ul>
+</li>
+</ol>
+<h4 id="독창적인-지점">독창적인 지점:</h4>
+<ul>
+<li>기존 임베딩 모델이 단순히 의미론적 유사성만을 고려한 반면, 본 논문에서는 두 프롬프트가 동일한 응답으로 처리될 가능성을 학습하는 새로운 임베딩 학습 프레임워크를 제안.</li>
+<li>LLM을 호출하지 않고 이전 응답을 재활용하는 효율적인 캐싱 전략을 설계하고 최적화.</li>
+</ul>
+<hr>
+<h3 id="핵심-알고리즘-설명-예시-입력-기반">핵심 알고리즘 설명 (예시 입력 기반)</h3>
+<h4 id="예제-입력">예제 입력:</h4>
+<ul>
+<li><strong>프롬프트1</strong>: &ldquo;SAT 점수가 2400에서 1600으로 바뀐 것은 언제인가?&rdquo;</li>
+<li><strong>프롬프트2</strong>: &ldquo;SAT 점수가 1600에서 2400으로 바뀐 것은 언제인가?&rdquo;</li>
+<li><strong>라벨</strong>: 0 (같은 응답으로 처리될 수 없음)</li>
+</ul>
+<h4 id="알고리즘-과정">알고리즘 과정:</h4>
+<ol>
+<li>
+<p><strong>임베딩 생성</strong>:</p>
+<ul>
+<li>프롬프트1과 프롬프트2를 벡터 공간에 매핑: ( v_{\theta}(q_1), v_{\theta}(q_2) )</li>
+<li>예: ( v_{\theta}(q_1) = [0.85, 0.13, &hellip;, 0.72], v_{\theta}(q_2) = [0.84, 0.12, &hellip;, 0.71] )</li>
+</ul>
+</li>
+<li>
+<p><strong>코사인 유사도 계산</strong>:</p>
+<ul>
+<li>두 임베딩 간의 코사인 유사도:
+[
+\text{sim}(v_{\theta}(q_1), v_{\theta}(q_2)) = \frac{\langle v_{\theta}(q_1), v_{\theta}(q_2) \rangle}{|v_{\theta}(q_1)| |v_{\theta}(q_2)|}
+]</li>
+<li>예: ( \text{sim} = 0.997 )</li>
+</ul>
+</li>
+<li>
+<p><strong>응답 가능성 판단</strong>:</p>
+<ul>
+<li>시그모이드 함수로 변환:
+[
+P_{\theta, \lambda, c}(q_1 = q_2) = \sigma\left(\frac{\text{sim}}{\lambda} - c\right)
+]</li>
+<li>( \lambda = 0.01, c = 88 ) 사용 시, ( P = \sigma(99.7 - 88) \approx 0.999 )</li>
+</ul>
+</li>
+<li>
+<p><strong>캐싱 결정</strong>:</p>
+<ul>
+<li>( P )가 임계값(예: 0.9)을 초과하면 캐싱 히트로 간주. 그렇지 않으면 LLM 호출.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="한계점">한계점</h3>
+<ol>
+<li>
+<p><strong>특정 환경 의존</strong>:</p>
+<ul>
+<li>설계된 하드 데이터셋이 실세계 환경과 얼마나 유사한지는 명확하지 않음.</li>
+<li>다양한 도메인에서의 일반화 성능 검증 부족.</li>
+</ul>
+</li>
+<li>
+<p><strong>캐싱의 한계</strong>:</p>
+<ul>
+<li>LLM의 응답이 항상 결정적인 정답을 제공하지 않는 경우, 캐싱 실패율이 높아질 가능성 존재.</li>
+</ul>
+</li>
+<li>
+<p><strong>성능 한계</strong>:</p>
+<ul>
+<li>이론적 수렴률 O(1/N^(1/4))는 향후 연구에서 더 빠른 수렴 속도를 필요로 할 수 있음.</li>
+</ul>
+</li>
+<li>
+<p><strong>비용 문제</strong>:</p>
+<ul>
+<li>GPT-4 기반 라벨링은 높은 계산 비용을 수반하며, 실제 대규모 응용에서 사용하기 어려울 수 있음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="정리된-비교표">정리된 비교표</h3>
+<table>
+  <thead>
+      <tr>
+          <th><strong>항목</strong></th>
+          <th><strong>본 논문</strong></th>
+          <th><strong>기존 방법(Wang et al., 2022)</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>AUC</td>
+          <td>0.81</td>
+          <td>0.51</td>
+      </tr>
+      <tr>
+          <td>캐싱 효율</td>
+          <td>54% (BCE), 52.4% (SLD)</td>
+          <td>46%</td>
+      </tr>
+      <tr>
+          <td>데이터셋 적합성</td>
+          <td>하드 데이터셋 구성</td>
+          <td>일반 데이터셋 사용</td>
+      </tr>
+      <tr>
+          <td>이론적 보장</td>
+          <td>있음 (O(1/N^(1/4)))</td>
+          <td>없음</td>
+      </tr>
+  </tbody>
+</table>
+<p>이 논문은 기존 임베딩 접근법의 한계를 명확히 인지하고, LLM의 효율성을 높이는 데 기여한 점에서 중요한 연구라 할 수 있습니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>논문의 핵심 알고리즘은 LLM(대규모 언어 모델)의 프롬프트 캐싱 효율성을 높이는 <strong>임베딩 유사도 기반 방법</strong>으로, 동일 응답으로 처리될 가능성이 높은 프롬프트를 효율적으로 판별하는 데 중점을 둡니다. 이를 구체적인 예시를 통해 단계별로 자세히 설명하겠습니다.</p>
+<hr>
+<h3 id="예제-두-프롬프트-비교">예제: 두 프롬프트 비교</h3>
+<h4 id="입력-예시"><strong>입력 예시</strong></h4>
+<ul>
+<li><strong>프롬프트1</strong>: &ldquo;SAT 점수가 2400에서 1600으로 바뀐 것은 언제인가?&rdquo;</li>
+<li><strong>프롬프트2</strong>: &ldquo;SAT 점수가 1600에서 2400으로 바뀐 것은 언제인가?&rdquo;</li>
+<li><strong>라벨</strong>: ( 0 ) (동일 응답으로 처리될 수 없음)</li>
+</ul>
+<hr>
+<h3 id="알고리즘-과정-1"><strong>알고리즘 과정</strong></h3>
+<h4 id="1단계-임베딩-생성"><strong>1단계: 임베딩 생성</strong></h4>
+<p>프롬프트를 고차원 벡터 공간으로 매핑하여 임베딩을 생성합니다.</p>
+<ul>
+<li>사용 모델: <strong>intfloat/e5-large-v2</strong> (사전 학습된 언어 모델의 마지막 층 활용)</li>
+<li>프롬프트를 벡터로 변환:
+<ul>
+<li>( v_{\theta}(q_1) = [0.85, 0.13, &hellip;, 0.72] ) (1024차원 벡터)</li>
+<li>( v_{\theta}(q_2) = [0.84, 0.12, &hellip;, 0.71] )</li>
+</ul>
+</li>
+</ul>
+<h4 id="2단계-코사인-유사도-계산"><strong>2단계: 코사인 유사도 계산</strong></h4>
+<p>두 프롬프트의 임베딩 벡터 간의 코사인 유사도를 계산합니다.</p>
+<ul>
+<li>공식:
+[
+\text{sim}(v_{\theta}(q_1), v_{\theta}(q_2)) = \frac{\langle v_{\theta}(q_1), v_{\theta}(q_2) \rangle}{|v_{\theta}(q_1)| \cdot |v_{\theta}(q_2)|}
+]</li>
+<li>예:
+<ul>
+<li>( \text{sim} = \frac{0.85 \cdot 0.84 + 0.13 \cdot 0.12 + &hellip; + 0.72 \cdot 0.71}{|v_{\theta}(q_1)| \cdot |v_{\theta}(q_2)|} )</li>
+<li>계산 결과: ( \text{sim} = 0.997 ) (높은 유사도)</li>
+</ul>
+</li>
+</ul>
+<h4 id="3단계-응답-가능성-추정"><strong>3단계: 응답 가능성 추정</strong></h4>
+<p>코사인 유사도를 시그모이드 함수를 통해 확률로 변환하여, 동일 응답으로 처리 가능 여부를 추정합니다.</p>
+<ul>
+<li>확률 공식:
+[
+P_{\theta, \lambda, c}(q_1 = q_2) = \sigma\left(\frac{\text{sim}}{\lambda} - c\right)
+]
+<ul>
+<li>( \sigma(x) = \frac{1}{1 + e^{-x}} ) (시그모이드 함수)</li>
+<li>하이퍼파라미터:
+<ul>
+<li>( \lambda = 0.01 ): 스케일링 파라미터</li>
+<li>( c = 88 ): 응답 가능성 기준값</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>계산:
+<ul>
+<li>( P = \sigma\left(\frac{0.997}{0.01} - 88\right) = \sigma(99.7 - 88) = \sigma(11.7) )</li>
+<li>결과: ( P \approx 0.999 )</li>
+</ul>
+</li>
+</ul>
+<h4 id="4단계-캐싱-여부-판단"><strong>4단계: 캐싱 여부 판단</strong></h4>
+<p>계산된 확률 ( P )를 임계값과 비교하여 캐싱 여부를 결정합니다.</p>
+<ul>
+<li>
+<p>( P \geq \tau ) (임계값, 예: ( 0.9 ))인 경우 캐싱 히트로 간주, 이전 응답 재사용.</p>
+</li>
+<li>
+<p>( P &lt; \tau )인 경우, LLM 호출.</p>
+</li>
+<li>
+<p>예:</p>
+<ul>
+<li>( P = 0.999 \geq 0.9 ): 캐싱 히트로 판단.</li>
+<li>하지만 실제 라벨은 ( 0 )이므로, 이 경우는 <strong>오류 발생</strong>.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="정리된-알고리즘-algorithm-3"><strong>정리된 알고리즘 (Algorithm 3)</strong></h3>
+<table>
+  <thead>
+      <tr>
+          <th>단계</th>
+          <th>설명</th>
+          <th>예제 적용</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>1. 임베딩 생성</strong></td>
+          <td>프롬프트를 벡터로 변환</td>
+          <td>( v_{\theta}(q_1), v_{\theta}(q_2) )</td>
+      </tr>
+      <tr>
+          <td><strong>2. 코사인 유사도 계산</strong></td>
+          <td>벡터 간 유사도 계산</td>
+          <td>( \text{sim} = 0.997 )</td>
+      </tr>
+      <tr>
+          <td><strong>3. 응답 가능성 추정</strong></td>
+          <td>시그모이드 함수로 확률화</td>
+          <td>( P \approx 0.999 )</td>
+      </tr>
+      <tr>
+          <td><strong>4. 캐싱 여부 판단</strong></td>
+          <td>임계값과 비교하여 캐싱 여부 결정</td>
+          <td>캐싱 히트로 판단</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="결론"><strong>결론</strong></h3>
+<p>이 알고리즘은 LLM 호출 빈도를 줄이기 위해 유사 프롬프트를 효과적으로 탐지하려는 시도를 합니다. 그러나 위 예제처럼 높은 유사도에도 불구하고 응답이 달라야 하는 경우(라벨 0)에는 잘못된 판단을 내릴 수 있습니다. 이러한 문제를 완화하기 위해, 논문에서는 추가적인 데이터셋 구성과 임베딩 튜닝을 통해 성능을 개선하였습니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h3 id="논문-결과-분석">논문 결과 분석</h3>
+<h4 id="주요-결과">주요 결과:</h4>
+<ol>
+<li>
+<p><strong>캐싱 예측 성능(AUC)</strong>:</p>
+<ul>
+<li>기존 임베딩 모델(Wang et al., 2022)의 AUC: <strong>0.51</strong> (랜덤 수준)</li>
+<li>제안한 모델(BCE/SLD 튜닝 후)의 AUC: <strong>0.81</strong> (약 60% 개선)</li>
+</ul>
+</li>
+<li>
+<p><strong>캐싱 효율</strong>:</p>
+<ul>
+<li>기존 모델: <strong>46%</strong></li>
+<li>튜닝 후 모델:
+<ul>
+<li>BCE 기반 모델: <strong>54.0%</strong></li>
+<li>SLD 기반 모델: <strong>52.4%</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>ROC 곡선</strong>:</p>
+<ul>
+<li>초기 모델은 TPR(FP 비율)이 낮았지만, 튜닝 후 두 모델(BCE/SLD) 모두 명확히 개선된 형태를 보여줌.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="특출난-점">특출난 점</h3>
+<h4 id="1-hard-dataset-설계">1. <strong>Hard Dataset 설계</strong>:</h4>
+<ul>
+<li>기존 임베딩 모델이 고난도 데이터셋에서 실패(랜덤 수준 AUC)하도록 의도적으로 구성.</li>
+<li>예: 라벨이 0임에도 높은 코사인 유사도를 갖거나, 라벨이 1임에도 낮은 유사도를 가지는 프롬프트 쌍 포함.
+<ul>
+<li>예시:
+<ul>
+<li>Label 0: &ldquo;SAT 점수 변경(2400→1600)&ldquo;과 &ldquo;SAT 점수 변경(1600→2400)&rdquo;</li>
+<li>Label 1: &ldquo;노래 &lsquo;A Song for You&rsquo; 작곡자&quot;와 &ldquo;노래 &lsquo;A Song for You&rsquo;의 작곡자는 누구인가?&rdquo;</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>특출난 점</strong>: 기존 모델이 처리하기 어려운 사례를 통해 새로운 모델의 실질적 우수성을 강조.</p>
+<h4 id="2-fine-tuned-embedding">2. <strong>Fine-tuned Embedding</strong>:</h4>
+<ul>
+<li>기존 임베딩 모델을 BCE(Binary Cross Entropy) 및 SLD(Squared Log Difference) 기반으로 재학습.</li>
+<li>목적:
+<ul>
+<li>단순히 &ldquo;의미론적 유사성&quot;을 측정하는 기존 모델의 한계를 극복.</li>
+<li>두 프롬프트가 동일 응답을 가질 확률을 학습하도록 변환.</li>
+</ul>
+</li>
+</ul>
+<p><strong>특출난 점</strong>: 학습 과정에서 사용된 손실 함수와 하이퍼파라미터 최적화가 성능 개선에 기여.</p>
+<ul>
+<li>BCE 손실: 샘플 효율성이 높음.</li>
+<li>SLD 손실: 로그 차이 기반 학습으로 확률 분포를 정교히 조정.</li>
+</ul>
+<h4 id="3-이론적-보장과-실험적-검증">3. <strong>이론적 보장과 실험적 검증</strong>:</h4>
+<ul>
+<li>O(1/N^(1/4))의 수렴률을 보장.</li>
+<li>다양한 실험:
+<ul>
+<li>Fine-tuning 없이 기존 모델 성능(AUC 0.51).</li>
+<li>튜닝 후 성능 향상(AUC 0.81, 효율 54%).</li>
+</ul>
+</li>
+</ul>
+<p><strong>특출난 점</strong>: 이론적 수렴 보장과 실험적 검증 간의 일관성을 확보.</p>
+<hr>
+<h3 id="논문에서-제시한-이유">논문에서 제시한 이유</h3>
+<h4 id="1-기존-모델의-한계">1. <strong>기존 모델의 한계</strong>:</h4>
+<ul>
+<li>기존 모델(Wang et al., 2022)은 &ldquo;의미론적 유사성&quot;만을 학습.</li>
+<li>문제:
+<ul>
+<li>유사성이 높아도 다른 응답이 필요하거나, 유사성이 낮아도 동일 응답이 필요한 경우 실패.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-임베딩-튜닝의-필요성">2. <strong>임베딩 튜닝의 필요성</strong>:</h4>
+<ul>
+<li>동일 응답 가능성을 학습하는 별도의 벡터 공간 필요.</li>
+<li>BCE/SLD 손실을 통해 정확도 향상.
+<ul>
+<li>BCE: 확률적 분류를 통한 손실 최소화.</li>
+<li>SLD: 로그 차이를 최소화하여 극단적 확률 오류 감소.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-hard-dataset의-효과">3. <strong>Hard Dataset의 효과</strong>:</h4>
+<ul>
+<li>잘못된 캐싱 히트 가능성을 노출하는 데이터를 구성.</li>
+<li>기존 모델이 실패하도록 설계해 새로운 모델의 개선 효과를 부각.</li>
+</ul>
+<hr>
+<h3 id="나의-생각">나의 생각</h3>
+<h4 id="1-hard-dataset의-설계-중요성">1. <strong>Hard Dataset의 설계 중요성</strong>:</h4>
+<ul>
+<li>논문의 주요 기여는 <strong>데이터셋 설계</strong>와 <strong>튜닝 방법론</strong>의 결합.</li>
+<li>모델 성능이 극적으로 개선된 이유는 기존 임베딩이 어려운 데이터에서 학습된 결과.</li>
+</ul>
+<h4 id="2-튜닝-방법론의-설득력">2. <strong>튜닝 방법론의 설득력</strong>:</h4>
+<ul>
+<li>BCE 기반 손실은 잘 정의된 확률 문제에서 효과적.</li>
+<li>SLD는 극단적인 확률 값(0 또는 1)을 정교하게 보정.</li>
+<li>두 손실 함수를 실험적으로 비교한 것은 매우 합리적이며 학계 및 실무에 유용.</li>
+</ul>
+<h4 id="3-한계와-개선점">3. <strong>한계와 개선점</strong>:</h4>
+<ul>
+<li>Hard Dataset이 특정한 인위적 상황에 의존.
+<ul>
+<li>다양한 도메인이나 대규모 데이터에서 일반화 능력 검증 필요.</li>
+</ul>
+</li>
+<li>튜닝에 GPT-4를 활용했는데, 이는 비용 문제를 야기할 수 있음.</li>
+</ul>
+<h4 id="4-실용적-영향력">4. <strong>실용적 영향력</strong>:</h4>
+<ul>
+<li>논문의 방법론은 대규모 LLM 배포 환경(예: 검색 엔진, 챗봇)에서 자원 최적화에 기여 가능.</li>
+<li>단, 캐싱 효율의 추가적 향상 및 실시간 환경에서의 검증이 추가되면 더욱 설득력 있을 것.</li>
+</ul>
+<hr>
+<h3 id="정리">정리</h3>
+<p>논문의 성과는 다음 두 가지 요소가 결합된 결과:</p>
+<ol>
+<li><strong>Hard Dataset 설계</strong>: 기존 모델의 한계를 극대화.</li>
+<li><strong>Fine-tuning 임베딩 방법론</strong>: BCE/SLD 기반 학습으로 동일 응답 가능성 학습.</li>
+</ol>
+<p>이러한 요소가 결합되어 AUC 0.81, 캐싱 효율 54%라는 뛰어난 결과를 도출하였습니다. 앞으로 더 넓은 도메인에서 일반화된 실험과 비용 최적화가 이루어진다면 실용적으로 더 큰 영향을 미칠 수 있을 것입니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="논문의-입력-데이터와-추론-과정">논문의 입력 데이터와 추론 과정</h3>
+<h4 id="입력-데이터"><strong>입력 데이터</strong></h4>
+<ol>
+<li>
+<p><strong>프롬프트 쌍 (Prompt Pairs):</strong></p>
+<ul>
+<li>입력 데이터는 두 개의 프롬프트 ( q_1, q_2 )로 이루어진 쌍입니다.</li>
+<li>예:
+<ul>
+<li><strong>프롬프트 1</strong>: &ldquo;SAT 점수가 2400에서 1600으로 바뀐 것은 언제인가?&rdquo;</li>
+<li><strong>프롬프트 2</strong>: &ldquo;SAT 점수가 1600에서 2400으로 바뀐 것은 언제인가?&rdquo;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>라벨(Label):</strong></p>
+<ul>
+<li>두 프롬프트가 동일한 응답으로 처리될 수 있는지 나타내는 0 또는 1의 값.</li>
+<li>예:
+<ul>
+<li>( \text{Label} = 0 ) (같은 응답으로 처리 불가능)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="추론-과정"><strong>추론 과정</strong></h4>
+<ol>
+<li>
+<p><strong>프롬프트 임베딩 생성:</strong></p>
+<ul>
+<li>두 프롬프트 ( q_1, q_2 )를 사전 학습된 임베딩 모델을 사용해 고차원 벡터로 변환.</li>
+<li>사용 모델: <code>intfloat/e5-large-v2</code> (1024차원 벡터를 생성).</li>
+<li>예:
+<ul>
+<li>( v_\theta(q_1) = [0.85, 0.13, \dots, 0.72] )</li>
+<li>( v_\theta(q_2) = [0.84, 0.12, \dots, 0.71] )</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>코사인 유사도 계산:</strong></p>
+<ul>
+<li>두 임베딩 벡터 간의 코사인 유사도를 계산.</li>
+<li>공식:
+[
+\text{sim}(v_\theta(q_1), v_\theta(q_2)) = \frac{\langle v_\theta(q_1), v_\theta(q_2) \rangle}{|v_\theta(q_1)| \cdot |v_\theta(q_2)|}
+]</li>
+<li>예:
+<ul>
+<li>( \text{sim} = 0.997 ) (유사도가 높음)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>확률 추정:</strong></p>
+<ul>
+<li>코사인 유사도를 입력으로 사용하여 두 프롬프트가 동일 응답을 가질 확률 ( P )을 계산.</li>
+<li>공식:
+[
+P_{\theta, \lambda, c}(q_1 = q_2) = \sigma\left(\frac{\text{sim}}{\lambda} - c\right)
+]
+<ul>
+<li>( \sigma(x) = \frac{1}{1 + e^{-x}} ) (시그모이드 함수)</li>
+<li>( \lambda = 0.01 ), ( c = 88 )로 설정.</li>
+</ul>
+</li>
+<li>예:
+<ul>
+<li>( P = \sigma\left(\frac{0.997}{0.01} - 88\right) = \sigma(11.7) \approx 0.999 )</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>캐싱 여부 판단:</strong></p>
+<ul>
+<li>확률 ( P )가 특정 임계값 ( \tau ) (예: 0.9)를 초과하면 캐싱 히트로 간주, 이전 응답 사용.</li>
+<li>예:
+<ul>
+<li>( P = 0.999 \geq 0.9 ): 캐싱 히트.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="모델-아키텍처-및-구성">모델 아키텍처 및 구성</h3>
+<h4 id="1-주요-구성"><strong>1. 주요 구성</strong></h4>
+<ol>
+<li>
+<p><strong>임베딩 생성기 (Embedding Generator):</strong></p>
+<ul>
+<li><strong>모델 사용:</strong> <code>intfloat/e5-large-v2</code>.</li>
+<li><strong>구성:</strong> Transformer 기반 모델로, 프롬프트의 마지막 레이어 출력을 1024차원 벡터로 제공.</li>
+</ul>
+</li>
+<li>
+<p><strong>코사인 유사도 계산 모듈:</strong></p>
+<ul>
+<li>두 벡터 간 코사인 유사도를 계산.</li>
+<li>연산: ( O(d) ) (여기서 ( d = 1024 )).</li>
+</ul>
+</li>
+<li>
+<p><strong>확률 추정 모듈:</strong></p>
+<ul>
+<li>시그모이드 함수와 선형 변환을 포함.</li>
+<li>연산: ( O(1) ) (간단한 스칼라 계산).</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="2-연산량-computational-complexity"><strong>2. 연산량 (Computational Complexity)</strong></h4>
+<ol>
+<li>
+<p><strong>임베딩 생성:</strong></p>
+<ul>
+<li>Transformer 모델은 ( O(n^2 d) )의 복잡도를 가짐.
+<ul>
+<li>( n ): 입력 텍스트의 토큰 개수 (예: 30개)</li>
+<li>( d ): 벡터 차원 (1024)</li>
+<li>예: 입력 텍스트당 복잡도 ( O(30^2 \cdot 1024) = O(921,600) ).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>코사인 유사도 계산:</strong></p>
+<ul>
+<li>( O(d) = O(1024) ).</li>
+</ul>
+</li>
+<li>
+<p><strong>확률 추정:</strong></p>
+<ul>
+<li>( O(1) ) (시그모이드 및 스칼라 연산).</li>
+</ul>
+</li>
+<li>
+<p><strong>총 추론 복잡도:</strong></p>
+<ul>
+<li>( O(2n^2d + d + 1) ): ( O(n^2 d) )가 지배적.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="3-메모리-요구량"><strong>3. 메모리 요구량</strong></h4>
+<ol>
+<li>
+<p><strong>임베딩 저장:</strong></p>
+<ul>
+<li>임베딩 벡터 ( v_\theta ): 1024차원 float32.
+<ul>
+<li>한 벡터당 약 ( 1024 \times 4 ) bytes = 4KB.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>캐싱 메모리:</strong></p>
+<ul>
+<li>캐시 크기 ( k ): 최대 ( k \times 4 )KB.</li>
+<li>예: 1000개 프롬프트 캐시 시 ( 4 \times 1000 = 4 )MB.</li>
+</ul>
+</li>
+<li>
+<p><strong>Transformer 메모리:</strong></p>
+<ul>
+<li>( O(n^2 d) ) 메모리 복잡도.
+<ul>
+<li>( n = 30, d = 1024 )일 경우 약 ( 30^2 \cdot 1024 \times 4 ) bytes = 3.6MB.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="4-컴퓨팅-요구량"><strong>4. 컴퓨팅 요구량</strong></h4>
+<ol>
+<li>
+<p><strong>추론 시간:</strong></p>
+<ul>
+<li>임베딩 생성이 가장 시간이 오래 걸림 (( O(n^2 d) )).</li>
+<li>두 프롬프트 비교 시, 캐싱 여부 확인은 매우 빠름 (( O(d) + O(1) )).</li>
+</ul>
+</li>
+<li>
+<p><strong>실용적 시나리오:</strong></p>
+<ul>
+<li>배치 처리: 여러 프롬프트를 한꺼번에 비교하면 병렬화로 추론 시간 단축 가능.</li>
+<li>캐싱 시스템과의 통합 시, 자주 사용되는 응답은 임베딩 계산을 피할 수 있어 컴퓨팅 자원 절약.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="요약">요약</h3>
+<h4 id="추론-과정-1"><strong>추론 과정</strong></h4>
+<ol>
+<li>프롬프트 임베딩 생성 (( O(n^2d) )).</li>
+<li>두 임베딩 간 코사인 유사도 계산 (( O(d) )).</li>
+<li>확률 계산 후 캐싱 여부 판단 (( O(1) )).</li>
+</ol>
+<h4 id="모델-아키텍처"><strong>모델 아키텍처</strong></h4>
+<ul>
+<li>Transformer 기반 임베딩 생성기 + 간단한 코사인 유사도 및 확률 계산 모듈.</li>
+</ul>
+<h4 id="연산-및-메모리-효율"><strong>연산 및 메모리 효율</strong></h4>
+<ul>
+<li>연산: Transformer의 복잡도가 대부분을 차지 (( O(n^2d) )).</li>
+<li>메모리: 캐시 크기에 따라 가변적이나 상대적으로 효율적 (수 MB 수준).</li>
+</ul>
+<p>논문의 모델 아키텍처는 계산적으로 효율적이며, 기존 임베딩 모델과 간단한 연산으로 LLM 호출 빈도를 줄이는 데 초점을 맞추고 있습니다.</p>
+<h1 id="q-hard-dataset이-기존-모델의-한계를-드러내는-데는-효과적이었지만-실세계-데이터에서의-일반화-성능은-어떻게-평가할-수-있을까요-논문에-제안된-모델이-다양한-도메인에서도-유사한-성능-향상을-보일-것이라고-신뢰할-수-있는-근거가-무엇인가요">Q: &ldquo;Hard Dataset이 기존 모델의 한계를 드러내는 데는 효과적이었지만, 실세계 데이터에서의 일반화 성능은 어떻게 평가할 수 있을까요? 논문에 제안된 모델이 다양한 도메인에서도 유사한 성능 향상을 보일 것이라고 신뢰할 수 있는 근거가 무엇인가요?&rdquo;</h1>
+<h3 id="답변">답변:</h3>
+<h4 id="1-hard-dataset의-목적과-한계"><strong>1. Hard Dataset의 목적과 한계</strong></h4>
+<ul>
+<li>
+<p><strong>목적</strong>:</p>
+<ul>
+<li>Hard Dataset은 기존 임베딩 모델(Wang et al., 2022)이 실패하도록 설계되어, 새로운 모델이 효과적으로 학습할 수 있는 환경을 제공합니다.</li>
+<li>특정 라벨에 반대되는 코사인 유사도 값을 가진 데이터 쌍을 포함함으로써, 기존 모델이 단순한 의미론적 유사성에 의존하는 약점을 강조합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>한계</strong>:</p>
+<ul>
+<li>Hard Dataset은 의도적으로 구성된 인위적인 데이터셋으로, 실제 환경에서 흔하지 않을 수 있는 극단적인 사례를 포함합니다.</li>
+<li>따라서 실세계 데이터에서의 일반화 성능은 명확히 보장되지 않습니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-실세계-데이터에서-일반화-성능-평가-필요성"><strong>2. 실세계 데이터에서 일반화 성능 평가 필요성</strong></h4>
+<ul>
+<li>
+<p><strong>실세계 데이터의 특징</strong>:</p>
+<ul>
+<li>Hard Dataset처럼 인위적으로 극단적인 사례만 존재하지 않으며, 더 다양한 유사성 및 응답 패턴을 가집니다.</li>
+<li>실세계 데이터에서는 Hard Dataset보다 &ldquo;평균적인 사례&quot;가 더 많을 가능성이 큽니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>제안된 평가 방식</strong>:</p>
+<ul>
+<li>다양한 도메인과 데이터셋(예: QA 시스템, 검색 엔진 로그)을 활용한 추가적인 검증이 필요합니다.</li>
+<li>도메인 간 성능 차이를 비교하여 특정 도메인에 특화된 튜닝이 아닌, 범용 임베딩의 가능성을 확인해야 합니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-논문에서-신뢰를-주장하는-근거"><strong>3. 논문에서 신뢰를 주장하는 근거</strong></h4>
+<ol>
+<li>
+<p><strong>Hard Dataset의 설계 의의</strong>:</p>
+<ul>
+<li>Hard Dataset은 기존 모델의 취약성을 노출하면서 새로운 모델의 우수성을 검증하는 효과적인 테스트베드입니다.</li>
+<li>새로운 모델이 Hard Dataset에서 AUC를 0.51에서 0.81로 개선했으므로, 데이터셋의 극단적 특성을 극복하는 능력을 보였습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>이론적 보장</strong>:</p>
+<ul>
+<li>논문에서는 학습 알고리즘의 수렴 속도를 ( O(1/N^{1/4}) )로 제시하며, 충분한 학습 데이터가 주어진다면 다양한 데이터셋에서 성능이 개선될 가능성을 암시합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Fine-tuning의 일반화 가능성</strong>:</p>
+<ul>
+<li>Fine-tuning 과정에서 사용하는 BCE 및 SLD 손실 함수는 특정 데이터셋에 한정되지 않고, 확률적 관계를 학습하므로 다른 도메인에서도 성능 개선 가능성을 기대할 수 있습니다.</li>
+</ul>
+</li>
+</ol>
+<h4 id="4-추가적으로-검토해야-할-사항"><strong>4. 추가적으로 검토해야 할 사항</strong></h4>
+<ol>
+<li>
+<p><strong>실험 데이터셋의 다양성</strong>:</p>
+<ul>
+<li>Hard Dataset 외에도, 다양한 도메인의 실제 데이터(예: 금융, 의료, 고객 서비스 등)에서 검증이 이루어져야 합니다.</li>
+<li>특히 프롬프트의 길이, 복잡성, 언어적 다양성이 성능에 미치는 영향을 평가해야 합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Fail-safe 메커니즘</strong>:</p>
+<ul>
+<li>실세계 데이터에서 캐싱 실패 사례(예: 캐싱 히트의 오류)가 발생할 가능성이 더 높으므로 이를 처리할 보완 메커니즘이 필요합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>계층적 평가 방식</strong>:</p>
+<ul>
+<li>단순히 Hard Dataset에서의 개선 성과를 넘어, 실세계 데이터의 평균 사례 및 극단적 사례에 대해 분리된 성능 평가가 필요합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="결론-1"><strong>결론</strong></h4>
+<p>논문에서 제안된 모델은 Hard Dataset을 기반으로 효과를 입증했지만, 실세계 데이터에서의 일반화 성능을 신뢰하기 위해서는 다음이 필요합니다:</p>
+<ol>
+<li><strong>다양한 도메인 데이터셋에서의 추가 실험</strong></li>
+<li><strong>캐싱 실패 대응 전략 제안</strong></li>
+<li><strong>평균 및 극단적 사례에 대한 분리된 평가</strong></li>
+</ol>
+<p>Hard Dataset은 연구 초기 단계에서 기존 모델의 한계를 드러내는 데 효과적이지만, 실세계 응용에서 성능을 보장하기 위해서는 더 광범위한 평가와 실험이 요구됩니다.</p>
+<h1 id="q-fine-tuning-과정에서-overfitting-가능성은-어떻게-제어되었나요-특히-학습-데이터셋이-특정-설계hard-dataset로-구성된-경우-새로운-프롬프트-쌍에-대해-과적합-문제가-발생하지-않도록-어떤-방어-기법을-적용했나요">Q: &ldquo;Fine-tuning 과정에서 Overfitting 가능성은 어떻게 제어되었나요? 특히, 학습 데이터셋이 특정 설계(Hard Dataset)로 구성된 경우, 새로운 프롬프트 쌍에 대해 과적합 문제가 발생하지 않도록 어떤 방어 기법을 적용했나요?&rdquo;</h1>
+<h1 id="a">A:</h1>
+<h3 id="답변-1">답변:</h3>
+<h4 id="1-fine-tuning-과정에서-overfitting-제어의-필요성"><strong>1. Fine-tuning 과정에서 Overfitting 제어의 필요성</strong></h4>
+<p>Fine-tuning은 학습 데이터에 과도하게 적합(overfitting)하여 일반화 성능이 떨어질 가능성을 동반합니다. 특히, 논문의 Hard Dataset은 인위적으로 설계된 특수 데이터셋이기 때문에, 새로운 프롬프트 쌍(실세계 데이터)에 대해 일반화되지 못할 가능성이 존재합니다.</p>
+<hr>
+<h4 id="2-논문에서-제시된-overfitting-방어-기법"><strong>2. 논문에서 제시된 Overfitting 방어 기법</strong></h4>
+<ol>
+<li>
+<p><strong>Validation Set 사용:</strong></p>
+<ul>
+<li>데이터셋을 학습(70%), 검증(10%), 테스트(20%)로 분할.</li>
+<li>검증 데이터에서 성능(AUC)을 기준으로 학습을 조기 종료(Early Stopping)하여 과적합을 방지.</li>
+</ul>
+</li>
+<li>
+<p><strong>손실 함수의 역할:</strong></p>
+<ul>
+<li>**Binary Cross-Entropy(BCE)**와 <strong>Squared Log Difference(SLD)</strong> 손실 함수를 각각 실험.</li>
+<li>BCE는 확률 분포를 단순화하여 샘플 효율성이 높고 과적합 가능성이 적음.</li>
+<li>SLD는 확률 분포의 극단적인 차이를 보정하며, 오차 분산을 줄여 안정적 학습을 지원.</li>
+</ul>
+</li>
+<li>
+<p><strong>Regularization:</strong></p>
+<ul>
+<li><strong>AdamW</strong> 최적화 알고리즘을 사용해 가중치 감쇠(weight decay) 기법으로 과적합 제어.</li>
+<li>Regularization은 학습 과정에서 가중치 크기를 제한하여 모델이 데이터에 과도하게 적합되지 않도록 함.</li>
+</ul>
+</li>
+<li>
+<p><strong>Hyperparameter 설정:</strong></p>
+<ul>
+<li>학습률(( \eta = 10^{-5} )), 배치 크기(( B = 16 )) 등 하이퍼파라미터를 보수적으로 설정.</li>
+<li>과도한 학습을 방지하기 위해 비교적 작은 학습률과 배치 크기를 사용.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="3-overfitting-가능성을-추가적으로-완화할-수-있는-방법"><strong>3. Overfitting 가능성을 추가적으로 완화할 수 있는 방법</strong></h4>
+<ol>
+<li>
+<p><strong>Cross-Validation 활용:</strong></p>
+<ul>
+<li>단일 검증 세트가 아닌 k-겹 교차 검증(k-fold cross-validation)을 통해 과적합 가능성을 더 면밀히 평가할 수 있음.</li>
+<li>모든 데이터가 학습 및 검증에 사용되므로 일반화 성능 평가에 더 적합.</li>
+</ul>
+</li>
+<li>
+<p><strong>Dropout 및 Noise Injection:</strong></p>
+<ul>
+<li>Fine-tuning 시 Dropout 기법을 추가해 특정 노드의 활성화를 랜덤하게 억제.</li>
+<li>학습 데이터에 약간의 잡음을 추가해 모델이 데이터에 과도하게 적합되지 않도록 유도.</li>
+</ul>
+</li>
+<li>
+<p><strong>Hard Dataset 외 데이터 포함:</strong></p>
+<ul>
+<li>Hard Dataset에 포함되지 않은 일반적인 데이터도 학습에 포함.</li>
+<li>모델이 극단적인 사례뿐만 아니라 평균적인 사례에도 적합하도록 유도.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="4-논문에서-overfitting-방어-기법의-한계"><strong>4. 논문에서 Overfitting 방어 기법의 한계</strong></h4>
+<ol>
+<li>
+<p><strong>Hard Dataset 의존성:</strong></p>
+<ul>
+<li>학습 과정이 Hard Dataset에 특화되어 있어, 새로운 도메인 또는 데이터셋에서의 성능이 보장되지 않음.</li>
+<li>일반적인 데이터셋에서의 Fine-tuning이 부족할 경우, Hard Dataset에 과적합될 가능성 존재.</li>
+</ul>
+</li>
+<li>
+<p><strong>Regularization의 제한적 사용:</strong></p>
+<ul>
+<li>논문에서는 AdamW를 통한 가중치 감쇠만 언급되었으며, Dropout 같은 다른 일반적 기법은 사용되지 않음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="5-fine-tuning이-과적합을-유발하지-않은-이유"><strong>5. Fine-tuning이 과적합을 유발하지 않은 이유</strong></h4>
+<ol>
+<li>
+<p><strong>Validation Set 성능 유지:</strong></p>
+<ul>
+<li>Fine-tuning 중 검증 데이터에서의 AUC가 지속적으로 개선되었으며, 과적합의 징후(검증 AUC 감소)가 관찰되지 않음.</li>
+</ul>
+</li>
+<li>
+<p><strong>Loss Function 차별화:</strong></p>
+<ul>
+<li>BCE와 SLD 두 가지 손실 함수를 사용해, 다양한 학습 시나리오에서 모델의 안정성을 확인.</li>
+</ul>
+</li>
+<li>
+<p><strong>결과적 성능:</strong></p>
+<ul>
+<li>테스트 데이터에서 AUC 0.81을 기록하며, 학습 데이터(Hard Dataset)에만 치우치지 않았음을 입증.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="6-결론-및-개선-제안"><strong>6. 결론 및 개선 제안</strong></h4>
+<p>Fine-tuning 과정에서 Overfitting 가능성을 제어하기 위해 논문은 적절한 검증 세트 활용, Regularization, 보수적 하이퍼파라미터 설정을 적용했습니다. 그러나 Hard Dataset에 의존하는 구조적 한계를 완화하려면 다음을 추가적으로 고려해야 합니다:</p>
+<ol>
+<li><strong>다양한 데이터 도메인에서 추가 실험 및 Fine-tuning.</strong></li>
+<li><strong>Dropout, Data Augmentation 등 다양한 Regularization 기법 활용.</strong></li>
+<li><strong>교차 검증(K-fold) 기반 Fine-tuning 성능 평가.</strong></li>
+</ol>
+<p>이러한 보완은 실세계 데이터에서 더 강력한 일반화 성능을 보장할 수 있습니다.</p>
+<h1 id="q--임베딩-생성과-fine-tuning에-사용된-계산-자원의-비용-대비-llm-호출-빈도를-줄이는-것으로-얼마나-효율적인-절감-효과를-얻었나요-실제-대규모-시스템에서-이-방법론이-경제적으로-채택될-수-있는-조건은-무엇인가요">Q : &ldquo;임베딩 생성과 Fine-tuning에 사용된 계산 자원의 비용 대비, LLM 호출 빈도를 줄이는 것으로 얼마나 효율적인 절감 효과를 얻었나요? 실제 대규모 시스템에서 이 방법론이 경제적으로 채택될 수 있는 조건은 무엇인가요?&rdquo;</h1>
+<h3 id="답변-2">답변</h3>
+<h4 id="1-논문에서-계산-자원-절감-효과"><strong>1. 논문에서 계산 자원 절감 효과</strong></h4>
+<p>논문은 프롬프트 캐싱을 통해 <strong>LLM 호출 빈도를 줄임으로써 자원 소비를 절감</strong>하는 효과를 보였습니다. 이를 구체적으로 계산해보면 다음과 같습니다:</p>
+<hr>
+<h4 id="11-캐싱-효율로-인한-자원-절감-효과"><strong>1.1 캐싱 효율로 인한 자원 절감 효과</strong></h4>
+<ol>
+<li>
+<p><strong>캐싱 효율</strong>:</p>
+<ul>
+<li>기존 임베딩 모델:
+<ul>
+<li>캐싱 효율: 46% (100번 중 46번 LLM 호출 절감)</li>
+</ul>
+</li>
+<li>Fine-tuning된 모델(BCE):
+<ul>
+<li>캐싱 효율: 54% (100번 중 54번 LLM 호출 절감)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>자원 절감 효과 계산</strong>:</p>
+<ul>
+<li>LLM 호출 비용은 프롬프트 길이와 모델 크기에 따라 다르지만, 대략적으로 LLM 호출 비용은 캐싱 비용보다 훨씬 높습니다.</li>
+<li>캐싱 비용은 프롬프트 임베딩 생성 및 유사도 계산 비용으로 대체됩니다.</li>
+<li>절감 효과 = (LLM 호출 비용 - 캐싱 비용) × 캐싱 히트 수.</li>
+</ul>
+</li>
+<li>
+<p><strong>캐싱 비용</strong>:</p>
+<ul>
+<li>임베딩 생성: Transformer 모델에서 ( O(n^2d) ) 복잡도.</li>
+<li>코사인 유사도 계산: ( O(d) ) 복잡도.</li>
+</ul>
+</li>
+<li>
+<p><strong>LLM 호출 비용 비교</strong>:</p>
+<ul>
+<li>LLM 호출 비용은 ( O(nt) ), 여기서 ( n )은 토큰 수, ( t )는 호출 시 생성되는 평균 토큰 수.</li>
+<li>일반적으로 ( nt \gg n^2d + d )이므로 캐싱을 활용하면 큰 비용 절감 가능.</li>
+</ul>
+</li>
+</ol>
+<p><strong>결론</strong>: 캐싱 효율 54%로 약 8% 추가 절감 효과를 얻었으며, 대규모 시스템에서는 LLM 호출 빈도가 높아질수록 절감 효과가 증가합니다.</p>
+<hr>
+<h4 id="12-fine-tuning으로-인한-비용-증가"><strong>1.2 Fine-tuning으로 인한 비용 증가</strong></h4>
+<p>Fine-tuning 과정에서 추가적인 계산 비용이 발생합니다.</p>
+<ol>
+<li>
+<p><strong>Fine-tuning 비용</strong>:</p>
+<ul>
+<li>데이터셋 크기: 약 37,382개의 Hard Dataset.</li>
+<li>학습 단계: Epoch 20 기준으로 각 데이터에 대해 ( O(n^2d) ) 복잡도.</li>
+</ul>
+</li>
+<li>
+<p><strong>Fine-tuning 비용과 절감 효과 비교</strong>:</p>
+<ul>
+<li>Fine-tuning은 초기 1회 비용이지만, 캐싱은 LLM 호출을 지속적으로 줄이므로 대규모 응용에서는 초기 비용 대비 장기적으로 효율적.</li>
+<li>한 번 Fine-tuning된 모델은 여러 응용에서 재사용 가능.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="2-대규모-시스템에서-채택-조건"><strong>2. 대규모 시스템에서 채택 조건</strong></h4>
+<p>논문의 방법론이 대규모 시스템에서 경제적으로 채택되기 위해 다음 조건이 필요합니다:</p>
+<hr>
+<h4 id="21-대규모-llm-호출-시-이점"><strong>2.1 대규모 LLM 호출 시 이점</strong></h4>
+<ol>
+<li>
+<p><strong>고빈도 호출 시스템</strong>:</p>
+<ul>
+<li>고객 지원 봇, 검색 엔진, 대화형 AI 등 LLM 호출 빈도가 높은 시스템에서 캐싱은 가장 효과적.</li>
+<li>예: 초당 수백~수천 개의 요청을 처리해야 하는 환경.</li>
+</ul>
+</li>
+<li>
+<p><strong>고비용 LLM 사용</strong>:</p>
+<ul>
+<li>GPT-4와 같은 고비용 LLM 호출 시 캐싱으로 인한 비용 절감 효과가 극대화.</li>
+<li>캐싱 비용은 고정적이고 상대적으로 저렴하므로, LLM 호출이 많을수록 절감 효과가 커짐.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="22-자원-사용-효율화"><strong>2.2 자원 사용 효율화</strong></h4>
+<ol>
+<li>
+<p><strong>캐시 메모리 요구 사항</strong>:</p>
+<ul>
+<li>캐싱 시스템에서의 메모리 사용량은 제한적(임베딩 벡터당 4KB).</li>
+<li>대규모 시스템에서 수백만 개의 프롬프트를 캐싱해도 몇 GB 수준의 메모리로 충분히 관리 가능.</li>
+</ul>
+</li>
+<li>
+<p><strong>컴퓨팅 요구량</strong>:</p>
+<ul>
+<li>캐싱을 위한 코사인 유사도 계산과 임베딩 생성의 연산은 GPU에서 병렬 처리 가능.</li>
+<li>대규모 LLM 호출 비용(( O(nt) )) 대비 캐싱 연산(( O(n^2d + d) ))이 훨씬 적음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="23-모델-재활용-가능성"><strong>2.3 모델 재활용 가능성</strong></h4>
+<p>Fine-tuning된 임베딩 모델은 다음 조건에서 재활용이 가능:</p>
+<ol>
+<li>
+<p><strong>다양한 도메인 적용</strong>:</p>
+<ul>
+<li>특정 도메인에 특화되지 않고 일반적인 프롬프트 응답 유사성을 학습.</li>
+<li>새로운 도메인에서도 추가 Fine-tuning 없이 사용 가능하다면 더 경제적.</li>
+</ul>
+</li>
+<li>
+<p><strong>업데이트 주기</strong>:</p>
+<ul>
+<li>캐싱 시스템은 LLM 모델 업데이트 주기에 맞춰 재학습 필요.</li>
+<li>새로운 데이터에서 Fine-tuning 주기가 짧아지면 비용이 다시 증가할 가능성 존재.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="3-추가적-제안"><strong>3. 추가적 제안</strong></h4>
+<ol>
+<li>
+<p><strong>Fine-tuning 비용-효율 최적화</strong>:</p>
+<ul>
+<li>초기 Fine-tuning 비용을 줄이기 위해 학습 데이터의 크기를 조정하거나 효율적인 학습 방법(예: LoRA)을 활용.</li>
+</ul>
+</li>
+<li>
+<p><strong>캐시 크기와 효율의 최적화</strong>:</p>
+<ul>
+<li>캐시 크기와 캐싱 효율 간의 트레이드오프를 최적화해 메모리와 연산 자원을 절약.</li>
+</ul>
+</li>
+<li>
+<p><strong>장기적 비용 분석</strong>:</p>
+<ul>
+<li>Fine-tuning 비용 대비 캐싱을 통해 절감되는 LLM 호출 비용의 장기적 비율 분석 필요.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="4-결론"><strong>4. 결론</strong></h4>
+<p>논문에서 제안된 방법론은 높은 LLM 호출 빈도를 요구하는 시스템에서 비용을 절감하는 데 효과적입니다. 캐싱 효율(54%)로 LLM 호출 비용을 상당 부분 줄였으며, Fine-tuning 비용은 초기 1회성 비용으로 간주할 수 있습니다.</p>
+<p>그러나 경제적 채택을 보장하려면 다음 조건을 만족해야 합니다:</p>
+<ol>
+<li><strong>고빈도 LLM 호출 환경</strong>.</li>
+<li><strong>Fine-tuning 비용의 상쇄 가능성</strong>.</li>
+<li><strong>Fine-tuned 모델의 도메인 간 재활용성</strong>.</li>
+</ol>
+<p>대규모 시스템에서 이를 채택하면 초기 비용을 장기적인 절감 효과로 상쇄할 수 있습니다.</p>
+<h1 id="q--bcebinary-cross-entropy와-sldsquared-log-difference-손실-함수가-다른-성능-특성을-보였는데-실제-응용에서-두-손실-함수-중-하나를-선택할-때-어떤-기준이-적합할까요-특정-시나리오에서-한-가지-손실-함수가-더-적합하다고-할-수-있는-이유는-무엇인가요">Q : &ldquo;BCE(Binary Cross Entropy)와 SLD(Squared Log Difference) 손실 함수가 다른 성능 특성을 보였는데, 실제 응용에서 두 손실 함수 중 하나를 선택할 때 어떤 기준이 적합할까요? 특정 시나리오에서 한 가지 손실 함수가 더 적합하다고 할 수 있는 이유는 무엇인가요?&rdquo;</h1>
+<h1 id="a-1">A:</h1>
+<h3 id="답변-3">답변</h3>
+<h4 id="1-bce와-sld-손실-함수의-차이점"><strong>1. BCE와 SLD 손실 함수의 차이점</strong></h4>
+<p>Binary Cross Entropy (BCE)와 Squared Log Difference (SLD)는 서로 다른 목적과 특성을 가진 손실 함수로, 특정 상황에서 각기 다른 장점을 제공합니다.</p>
+<hr>
+<h4 id="11-binary-cross-entropy-bce"><strong>1.1 Binary Cross Entropy (BCE)</strong></h4>
+<ul>
+<li>
+<p><strong>정의</strong>:
+BCE는 두 확률 분포 간의 불확실성을 최소화하는 데 사용됩니다.
+[
+L_{BCE} = - \frac{1}{N} \sum_{i=1}^{N} \left( p_i \cdot \log(\hat{p}_i) + (1 - p_i) \cdot \log(1 - \hat{p}_i) \right)
+]
+여기서 ( p_i )는 실제 값, ( \hat{p}_i )는 예측 값.</p>
+</li>
+<li>
+<p><strong>특징</strong>:</p>
+<ul>
+<li>BCE는 확률적 분류 문제에서 널리 사용됩니다.</li>
+<li>( \hat{p}_i )가 ( p_i )와 멀리 떨어질수록 더 큰 벌점을 부여.</li>
+<li><strong>샘플 효율성</strong>이 높아 적은 데이터에서도 잘 작동.</li>
+</ul>
+</li>
+<li>
+<p><strong>장점</strong>:</p>
+<ol>
+<li>확률 분류 문제에 최적화되어 있음.</li>
+<li>과적합 가능성이 낮고 안정적.</li>
+<li>극단적 확률 값(0 또는 1) 근처에서도 효과적으로 작동.</li>
+</ol>
+</li>
+<li>
+<p><strong>단점</strong>:</p>
+<ol>
+<li>확률 값의 로그가 0에 가까울 때 불안정해질 수 있음.</li>
+<li>극단적인 확률 차이를 미세하게 조정하기 어려움.</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="12-squared-log-difference-sld"><strong>1.2 Squared Log Difference (SLD)</strong></h4>
+<ul>
+<li>
+<p><strong>정의</strong>:
+SLD는 두 값의 로그 차이를 제곱하여 손실을 계산합니다.
+[
+L_{SLD} = \frac{1}{N} \sum_{i=1}^{N} \left( \log(p_i) - \log(\hat{p}_i) \right)^2
+]
+로그 값을 사용하기 때문에 극단적인 값 차이를 더 신중히 처리.</p>
+</li>
+<li>
+<p><strong>특징</strong>:</p>
+<ul>
+<li>확률 분포 간의 <strong>미세한 차이</strong>를 조정하는 데 효과적.</li>
+<li>극단적인 확률 값에서의 큰 차이를 강조하지 않음.</li>
+</ul>
+</li>
+<li>
+<p><strong>장점</strong>:</p>
+<ol>
+<li>극단적 확률 값(0 또는 1)을 부드럽게 조정 가능.</li>
+<li>높은 정확도를 요구하는 시나리오에서 세밀한 학습 가능.</li>
+<li>학습된 분포가 더 균일하게 조정.</li>
+</ol>
+</li>
+<li>
+<p><strong>단점</strong>:</p>
+<ol>
+<li>샘플 효율성이 낮아 더 많은 데이터 필요.</li>
+<li>계산 복잡도가 다소 높음.</li>
+<li>극단적 확률 값에서는 계산 안정성을 위해 추가 처리(log 0 방지)가 필요.</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="2-논문의-결과에서-bce와-sld-비교"><strong>2. 논문의 결과에서 BCE와 SLD 비교</strong></h4>
+<ol>
+<li>
+<p><strong>BCE와 SLD 모델 성능</strong>:</p>
+<ul>
+<li>AUC:
+<ul>
+<li>BCE: <strong>0.81</strong></li>
+<li>SLD: <strong>0.81</strong> (동일)</li>
+</ul>
+</li>
+<li>캐싱 효율:
+<ul>
+<li>BCE: <strong>54.0%</strong></li>
+<li>SLD: <strong>52.4%</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>결론</strong>:</p>
+<ul>
+<li>두 손실 함수 모두 Hard Dataset에서 AUC와 캐싱 효율 측면에서 유사한 성능을 보였지만, BCE가 샘플 효율성 및 캐싱 효율에서 약간 더 우수.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="3-특정-시나리오에서-손실-함수-선택-기준"><strong>3. 특정 시나리오에서 손실 함수 선택 기준</strong></h4>
+<ol>
+<li>
+<p><strong>BCE가 적합한 시나리오</strong>:</p>
+<ul>
+<li><strong>확률 분류 문제</strong>:
+<ul>
+<li>입력 데이터가 명확히 ( 0 ) 또는 ( 1 )로 분류될 수 있는 경우.</li>
+</ul>
+</li>
+<li><strong>데이터가 적은 경우</strong>:
+<ul>
+<li>샘플 효율성이 높기 때문에 적은 데이터에서도 성능을 유지.</li>
+</ul>
+</li>
+<li><strong>시스템의 신속한 응답이 중요한 경우</strong>:
+<ul>
+<li>BCE의 연산은 더 간단하며, 학습 및 추론 비용이 낮음.</li>
+</ul>
+</li>
+</ul>
+<p><strong>예시</strong>:</p>
+<ul>
+<li>실시간 응답 시스템(검색 엔진, 챗봇).</li>
+<li>데이터 레이블이 신뢰할 수 있고 명확한 경우.</li>
+</ul>
+</li>
+<li>
+<p><strong>SLD가 적합한 시나리오</strong>:</p>
+<ul>
+<li><strong>확률 조정이 중요한 경우</strong>:
+<ul>
+<li>( 0 )과 ( 1 )에 가까운 확률 값에서 미세한 조정이 필요할 때.</li>
+</ul>
+</li>
+<li><strong>높은 정확도를 요구하는 고정밀 작업</strong>:
+<ul>
+<li>캐싱 히트 실패를 최소화해야 하는 환경.</li>
+</ul>
+</li>
+<li><strong>대규모 학습 데이터가 있는 경우</strong>:
+<ul>
+<li>SLD는 데이터가 많을수록 더 안정적으로 학습 가능.</li>
+</ul>
+</li>
+</ul>
+<p><strong>예시</strong>:</p>
+<ul>
+<li>의료 정보 시스템(정확도가 매우 중요).</li>
+<li>확률 조정이 필요한 예측 시스템(예: 추천 시스템, 금융 모델).</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="4-선택-시-고려해야-할-추가-요인"><strong>4. 선택 시 고려해야 할 추가 요인</strong></h4>
+<ol>
+<li>
+<p><strong>학습 데이터의 크기와 품질</strong>:</p>
+<ul>
+<li>데이터가 적거나 노이즈가 많다면 BCE가 유리.</li>
+<li>데이터가 많고 높은 품질을 가진다면 SLD로 미세 조정 가능.</li>
+</ul>
+</li>
+<li>
+<p><strong>컴퓨팅 자원</strong>:</p>
+<ul>
+<li>BCE는 계산적으로 더 효율적이며 메모리 소비가 적음.</li>
+<li>SLD는 계산량이 많으므로 대규모 자원이 필요한 환경에서만 적합.</li>
+</ul>
+</li>
+<li>
+<p><strong>응용 시스템의 요구사항</strong>:</p>
+<ul>
+<li>실시간성이 중요하면 BCE.</li>
+<li>높은 정확도가 중요하면 SLD.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="5-결론-및-추천"><strong>5. 결론 및 추천</strong></h4>
+<ul>
+<li>
+<p><strong>BCE</strong>:</p>
+<ul>
+<li>샘플 효율성과 계산 효율을 중시하는 응용(검색 엔진, 실시간 시스템)에 적합.</li>
+<li>특히 데이터가 제한적이거나, 캐싱 오류가 큰 문제가 되지 않는 경우 추천.</li>
+</ul>
+</li>
+<li>
+<p><strong>SLD</strong>:</p>
+<ul>
+<li>높은 정확도와 미세 조정을 요구하는 환경(의료, 금융 등)에 적합.</li>
+<li>데이터가 많고 계산 자원이 충분한 경우 추천.</li>
+</ul>
+</li>
+</ul>
+<h4 id="핵심-정리"><strong>핵심 정리</strong></h4>
+<table>
+  <thead>
+      <tr>
+          <th><strong>손실 함수</strong></th>
+          <th><strong>적합 시나리오</strong></th>
+          <th><strong>장점</strong></th>
+          <th><strong>단점</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>BCE</strong></td>
+          <td>데이터가 적고, 빠른 학습/추론이 중요한 경우</td>
+          <td>샘플 효율성, 계산 간단</td>
+          <td>극단적 확률 차이 조정 어려움</td>
+      </tr>
+      <tr>
+          <td><strong>SLD</strong></td>
+          <td>고정밀, 극단적 확률 조정이 필요한 경우</td>
+          <td>미세 조정 가능, 극단적 확률 안정성</td>
+          <td>샘플 효율성 낮음, 계산량 많음</td>
+      </tr>
+  </tbody>
+</table>
+<p>두 손실 함수는 각각의 강점이 있으므로 응용 시나리오에 따라 선택하는 것이 중요합니다.</p>
+<h1 id="q-캐싱-히트가-잘못된-응답을-반환하는-실패-사례가-있을-경우-이를-동적으로-탐지하거나-수정하는-메커니즘은-무엇인가요-이러한-실패가-시스템-성능에-미치는-영향을-완화하기-위한-보완-방법은-논의되고-있나요">Q: &ldquo;캐싱 히트가 잘못된 응답을 반환하는 실패 사례가 있을 경우, 이를 동적으로 탐지하거나 수정하는 메커니즘은 무엇인가요? 이러한 실패가 시스템 성능에 미치는 영향을 완화하기 위한 보완 방법은 논의되고 있나요?&rdquo;</h1>
+<h3 id="답변-4">답변</h3>
+<h4 id="1-논문에서-캐싱-히트-실패에-대한-처리"><strong>1. 논문에서 캐싱 히트 실패에 대한 처리</strong></h4>
+<p>논문은 캐싱 히트 실패(잘못된 응답 반환)가 시스템 성능에 미칠 수 있는 영향을 완전히 다루지는 않았지만, 관련 문제를 부분적으로 다룰 수 있는 메커니즘과 방법론을 암시하고 있습니다.</p>
+<ol>
+<li>
+<p><strong>캐싱 히트 평가</strong>:</p>
+<ul>
+<li>캐싱 히트가 발생했을 때, GPT-4를 활용해 반환된 응답이 프롬프트에 적합한지 검사.</li>
+<li>잘못된 응답일 경우 이를 &ldquo;False Hit&quot;로 기록.</li>
+</ul>
+</li>
+<li>
+<p><strong>효율 측정 방식</strong>:</p>
+<ul>
+<li>캐싱 효율 계산: ((\text{정확한 캐싱 히트 수} - \text{잘못된 캐싱 히트 수}) / \text{예상 히트 수})</li>
+<li>이 과정에서 잘못된 캐싱 히트를 명시적으로 추적하지만, 실시간으로 이를 탐지하거나 수정하는 메커니즘은 논의되지 않음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="2-캐싱-히트-실패가-성능에-미치는-영향"><strong>2. 캐싱 히트 실패가 성능에 미치는 영향</strong></h4>
+<ol>
+<li>
+<p><strong>잘못된 응답 반환의 문제</strong>:</p>
+<ul>
+<li>사용자 경험 저하:
+<ul>
+<li>캐싱 실패로 인해 부정확한 응답이 반환되면 시스템 신뢰도가 낮아짐.</li>
+</ul>
+</li>
+<li>누적된 오류:
+<ul>
+<li>잘못된 응답이 캐시에 저장되면 이후 프롬프트에서 잘못된 응답을 반복적으로 사용할 가능성.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>효율성 저하</strong>:</p>
+<ul>
+<li>잘못된 캐싱 히트는 오히려 LLM 호출보다 더 큰 비용을 초래할 수 있음(잘못된 정보 수정 비용 포함).</li>
+<li>False Hit가 많아지면 캐싱 시스템의 장점이 상쇄될 수 있음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="3-캐싱-실패를-동적으로-탐지하거나-수정하는-메커니즘"><strong>3. 캐싱 실패를 동적으로 탐지하거나 수정하는 메커니즘</strong></h4>
+<ol>
+<li>
+<p><strong>동적 탐지 메커니즘</strong></p>
+<ul>
+<li><strong>Confidence Threshold</strong>:
+<ul>
+<li>프롬프트 유사성 임계값을 조정해 캐싱 히트를 더 신중하게 판단.</li>
+<li>예: 현재 설정된 임계값 ( \tau = 0.9 )를 더 높이거나, 응답의 컨텍스트 민감성을 반영한 동적 임계값 설정.</li>
+</ul>
+</li>
+<li><strong>검증 모델</strong>:
+<ul>
+<li>별도의 경량 검증 모델을 추가하여 캐싱된 응답이 프롬프트와 맞는지 빠르게 확인.</li>
+<li>예: LLM 대신 작은 크기의 QA 모델을 활용.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>자동 수정 메커니즘</strong></p>
+<ul>
+<li><strong>Runtime Verification</strong>:
+<ul>
+<li>캐싱된 응답을 사용하기 전, 메타데이터(응답 생성 시점, 프롬프트와의 유사성 등)를 검사하여 캐싱이 적합한지 동적으로 검증.</li>
+</ul>
+</li>
+<li><strong>Feedback Loop</strong>:
+<ul>
+<li>사용자가 잘못된 응답을 보고하면 이를 학습 데이터로 활용해 캐싱 모델을 점진적으로 개선.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="4-시스템-성능에-미치는-영향을-완화하기-위한-보완-방법"><strong>4. 시스템 성능에 미치는 영향을 완화하기 위한 보완 방법</strong></h4>
+<ol>
+<li>
+<p><strong>캐시 관리 정책 개선</strong></p>
+<ul>
+<li><strong>LRU(Least Recently Used) 기반 캐싱</strong>:
+<ul>
+<li>최근 사용되지 않은 응답부터 캐시에서 제거.</li>
+<li>잘못된 응답이 오랫동안 남아있지 않도록 함.</li>
+</ul>
+</li>
+<li><strong>Adaptive Cache Eviction</strong>:
+<ul>
+<li>캐싱 히트 실패 비율이 높은 응답을 우선적으로 제거.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>캐시 실패 사례 학습</strong></p>
+<ul>
+<li><strong>Hard Negative Mining</strong>:
+<ul>
+<li>캐싱 히트 실패 사례를 수집하여 임베딩 모델을 재학습.</li>
+<li>실패 사례를 통해 모델이 더 복잡한 유사성 패턴을 학습하도록 함.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>LLM 호출과의 하이브리드 방식</strong></p>
+<ul>
+<li><strong>Fallback Mechanism</strong>:
+<ul>
+<li>캐싱된 응답이 적합하지 않다고 판단되면 LLM 호출로 전환.</li>
+</ul>
+</li>
+<li><strong>Confidence Weighted Decision</strong>:
+<ul>
+<li>캐싱 응답의 유사성 점수를 기반으로 LLM 호출 여부를 동적으로 결정.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>사용자 중심 검증</strong></p>
+<ul>
+<li>사용자 피드백을 활용해 캐싱 실패를 식별하고 개선.</li>
+<li>잘못된 응답이 보고되면, 이를 학습 데이터로 추가해 Fine-tuning.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="5-추가적으로-고려할-수-있는-연구-방향"><strong>5. 추가적으로 고려할 수 있는 연구 방향</strong></h4>
+<ol>
+<li>
+<p><strong>다중 임계값 시스템</strong>:</p>
+<ul>
+<li>임계값을 고정하지 않고, 프롬프트 유형(질문/명령/정보 요청 등)에 따라 유연하게 설정.</li>
+</ul>
+</li>
+<li>
+<p><strong>캐싱 실패와 LLM 호출 간의 비용 균형</strong>:</p>
+<ul>
+<li>캐싱 실패를 줄이기 위해 높은 정확도를 요구하면 캐싱의 이점이 줄어들 수 있음.</li>
+<li>실패와 호출 간 비용 최적화를 위한 동적 시스템 설계 필요.</li>
+</ul>
+</li>
+<li>
+<p><strong>문맥 인식 캐싱</strong>:</p>
+<ul>
+<li>단순히 프롬프트 간의 유사성뿐만 아니라 응답이 포함된 문맥적 정보도 고려.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="6-결론"><strong>6. 결론</strong></h4>
+<p>캐싱 히트 실패는 사용자 경험과 시스템 성능에 부정적인 영향을 미칠 수 있습니다. 이를 완화하기 위해 다음과 같은 보완책을 제안할 수 있습니다:</p>
+<ol>
+<li><strong>Confidence Threshold 조정</strong>과 <strong>검증 모델 추가</strong>로 실패 탐지.</li>
+<li><strong>Feedback Loop</strong>를 통한 학습 데이터 확장 및 모델 개선.</li>
+<li><strong>Adaptive Cache Eviction</strong>과 <strong>Fallback Mechanism</strong>을 사용해 동적으로 실패 관리.</li>
+</ol>
+<p>이러한 보완 메커니즘은 캐싱 시스템의 신뢰성과 효율성을 높이는 데 기여할 수 있습니다. 논문에서는 실패 사례 처리에 대한 구체적인 논의가 부족했으므로, 향후 연구에서 이 부분을 더 깊이 다룰 필요가 있습니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/Efficient-Prompt-Caching-via-Embedding-Similarity/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/Efficient-Prompt-Caching-via-Embedding-Similarity/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/FP6-LLM-Efficiently-Serving-Large-Language-Models-Through-FP6-Centric-Algorithm-System-Co-Design/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                FP6-LLM: Efficiently Serving Large Language Models Through FP6-Centric Algorithm-System Co-Design
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-12-15">
+                12月15日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Decoding-Speculative-Decoding/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Decoding Speculative Decoding
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-12-15">
+                12月15日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-강점과-독창적인-지점">논문의 강점과 독창적인 지점</a>
+          <ul>
+            <li><a href="#강점">강점:</a></li>
+            <li><a href="#독창적인-지점">독창적인 지점:</a></li>
+          </ul>
+        </li>
+        <li><a href="#핵심-알고리즘-설명-예시-입력-기반">핵심 알고리즘 설명 (예시 입력 기반)</a>
+          <ul>
+            <li><a href="#예제-입력">예제 입력:</a></li>
+            <li><a href="#알고리즘-과정">알고리즘 과정:</a></li>
+          </ul>
+        </li>
+        <li><a href="#한계점">한계점</a></li>
+        <li><a href="#정리된-비교표">정리된 비교표</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#예제-두-프롬프트-비교">예제: 두 프롬프트 비교</a>
+          <ul>
+            <li><a href="#입력-예시"><strong>입력 예시</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#알고리즘-과정-1"><strong>알고리즘 과정</strong></a>
+          <ul>
+            <li><a href="#1단계-임베딩-생성"><strong>1단계: 임베딩 생성</strong></a></li>
+            <li><a href="#2단계-코사인-유사도-계산"><strong>2단계: 코사인 유사도 계산</strong></a></li>
+            <li><a href="#3단계-응답-가능성-추정"><strong>3단계: 응답 가능성 추정</strong></a></li>
+            <li><a href="#4단계-캐싱-여부-판단"><strong>4단계: 캐싱 여부 판단</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#정리된-알고리즘-algorithm-3"><strong>정리된 알고리즘 (Algorithm 3)</strong></a></li>
+        <li><a href="#결론"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문-결과-분석">논문 결과 분석</a>
+          <ul>
+            <li><a href="#주요-결과">주요 결과:</a></li>
+          </ul>
+        </li>
+        <li><a href="#특출난-점">특출난 점</a>
+          <ul>
+            <li><a href="#1-hard-dataset-설계">1. <strong>Hard Dataset 설계</strong>:</a></li>
+            <li><a href="#2-fine-tuned-embedding">2. <strong>Fine-tuned Embedding</strong>:</a></li>
+            <li><a href="#3-이론적-보장과-실험적-검증">3. <strong>이론적 보장과 실험적 검증</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#논문에서-제시한-이유">논문에서 제시한 이유</a>
+          <ul>
+            <li><a href="#1-기존-모델의-한계">1. <strong>기존 모델의 한계</strong>:</a></li>
+            <li><a href="#2-임베딩-튜닝의-필요성">2. <strong>임베딩 튜닝의 필요성</strong>:</a></li>
+            <li><a href="#3-hard-dataset의-효과">3. <strong>Hard Dataset의 효과</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#나의-생각">나의 생각</a>
+          <ul>
+            <li><a href="#1-hard-dataset의-설계-중요성">1. <strong>Hard Dataset의 설계 중요성</strong>:</a></li>
+            <li><a href="#2-튜닝-방법론의-설득력">2. <strong>튜닝 방법론의 설득력</strong>:</a></li>
+            <li><a href="#3-한계와-개선점">3. <strong>한계와 개선점</strong>:</a></li>
+            <li><a href="#4-실용적-영향력">4. <strong>실용적 영향력</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#정리">정리</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-입력-데이터와-추론-과정">논문의 입력 데이터와 추론 과정</a>
+          <ul>
+            <li><a href="#입력-데이터"><strong>입력 데이터</strong></a></li>
+            <li><a href="#추론-과정"><strong>추론 과정</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#모델-아키텍처-및-구성">모델 아키텍처 및 구성</a>
+          <ul>
+            <li><a href="#1-주요-구성"><strong>1. 주요 구성</strong></a></li>
+            <li><a href="#2-연산량-computational-complexity"><strong>2. 연산량 (Computational Complexity)</strong></a></li>
+            <li><a href="#3-메모리-요구량"><strong>3. 메모리 요구량</strong></a></li>
+            <li><a href="#4-컴퓨팅-요구량"><strong>4. 컴퓨팅 요구량</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#요약">요약</a>
+          <ul>
+            <li><a href="#추론-과정-1"><strong>추론 과정</strong></a></li>
+            <li><a href="#모델-아키텍처"><strong>모델 아키텍처</strong></a></li>
+            <li><a href="#연산-및-메모리-효율"><strong>연산 및 메모리 효율</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#답변">답변:</a>
+          <ul>
+            <li><a href="#1-hard-dataset의-목적과-한계"><strong>1. Hard Dataset의 목적과 한계</strong></a></li>
+            <li><a href="#2-실세계-데이터에서-일반화-성능-평가-필요성"><strong>2. 실세계 데이터에서 일반화 성능 평가 필요성</strong></a></li>
+            <li><a href="#3-논문에서-신뢰를-주장하는-근거"><strong>3. 논문에서 신뢰를 주장하는 근거</strong></a></li>
+            <li><a href="#4-추가적으로-검토해야-할-사항"><strong>4. 추가적으로 검토해야 할 사항</strong></a></li>
+            <li><a href="#결론-1"><strong>결론</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#답변-1">답변:</a>
+          <ul>
+            <li><a href="#1-fine-tuning-과정에서-overfitting-제어의-필요성"><strong>1. Fine-tuning 과정에서 Overfitting 제어의 필요성</strong></a></li>
+            <li><a href="#2-논문에서-제시된-overfitting-방어-기법"><strong>2. 논문에서 제시된 Overfitting 방어 기법</strong></a></li>
+            <li><a href="#3-overfitting-가능성을-추가적으로-완화할-수-있는-방법"><strong>3. Overfitting 가능성을 추가적으로 완화할 수 있는 방법</strong></a></li>
+            <li><a href="#4-논문에서-overfitting-방어-기법의-한계"><strong>4. 논문에서 Overfitting 방어 기법의 한계</strong></a></li>
+            <li><a href="#5-fine-tuning이-과적합을-유발하지-않은-이유"><strong>5. Fine-tuning이 과적합을 유발하지 않은 이유</strong></a></li>
+            <li><a href="#6-결론-및-개선-제안"><strong>6. 결론 및 개선 제안</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#답변-2">답변</a>
+          <ul>
+            <li><a href="#1-논문에서-계산-자원-절감-효과"><strong>1. 논문에서 계산 자원 절감 효과</strong></a></li>
+            <li><a href="#11-캐싱-효율로-인한-자원-절감-효과"><strong>1.1 캐싱 효율로 인한 자원 절감 효과</strong></a></li>
+            <li><a href="#12-fine-tuning으로-인한-비용-증가"><strong>1.2 Fine-tuning으로 인한 비용 증가</strong></a></li>
+            <li><a href="#2-대규모-시스템에서-채택-조건"><strong>2. 대규모 시스템에서 채택 조건</strong></a></li>
+            <li><a href="#21-대규모-llm-호출-시-이점"><strong>2.1 대규모 LLM 호출 시 이점</strong></a></li>
+            <li><a href="#22-자원-사용-효율화"><strong>2.2 자원 사용 효율화</strong></a></li>
+            <li><a href="#23-모델-재활용-가능성"><strong>2.3 모델 재활용 가능성</strong></a></li>
+            <li><a href="#3-추가적-제안"><strong>3. 추가적 제안</strong></a></li>
+            <li><a href="#4-결론"><strong>4. 결론</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#답변-3">답변</a>
+          <ul>
+            <li><a href="#1-bce와-sld-손실-함수의-차이점"><strong>1. BCE와 SLD 손실 함수의 차이점</strong></a></li>
+            <li><a href="#11-binary-cross-entropy-bce"><strong>1.1 Binary Cross Entropy (BCE)</strong></a></li>
+            <li><a href="#12-squared-log-difference-sld"><strong>1.2 Squared Log Difference (SLD)</strong></a></li>
+            <li><a href="#2-논문의-결과에서-bce와-sld-비교"><strong>2. 논문의 결과에서 BCE와 SLD 비교</strong></a></li>
+            <li><a href="#3-특정-시나리오에서-손실-함수-선택-기준"><strong>3. 특정 시나리오에서 손실 함수 선택 기준</strong></a></li>
+            <li><a href="#4-선택-시-고려해야-할-추가-요인"><strong>4. 선택 시 고려해야 할 추가 요인</strong></a></li>
+            <li><a href="#5-결론-및-추천"><strong>5. 결론 및 추천</strong></a></li>
+            <li><a href="#핵심-정리"><strong>핵심 정리</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#답변-4">답변</a>
+          <ul>
+            <li><a href="#1-논문에서-캐싱-히트-실패에-대한-처리"><strong>1. 논문에서 캐싱 히트 실패에 대한 처리</strong></a></li>
+            <li><a href="#2-캐싱-히트-실패가-성능에-미치는-영향"><strong>2. 캐싱 히트 실패가 성능에 미치는 영향</strong></a></li>
+            <li><a href="#3-캐싱-실패를-동적으로-탐지하거나-수정하는-메커니즘"><strong>3. 캐싱 실패를 동적으로 탐지하거나 수정하는 메커니즘</strong></a></li>
+            <li><a href="#4-시스템-성능에-미치는-영향을-완화하기-위한-보완-방법"><strong>4. 시스템 성능에 미치는 영향을 완화하기 위한 보완 방법</strong></a></li>
+            <li><a href="#5-추가적으로-고려할-수-있는-연구-방향"><strong>5. 추가적으로 고려할 수 있는 연구 방향</strong></a></li>
+            <li><a href="#6-결론"><strong>6. 결론</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

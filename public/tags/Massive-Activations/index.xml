@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Massive Activations on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/Massive-Activations/</link>
+    <description>Recent content in Massive Activations on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Wed, 09 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/Massive-Activations/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Massive Activations in Large Language Models</title>
+      <link>http://192.168.1.11:1314/posts/Massive-Activations-in-Large-Language-Models/</link>
+      <pubDate>Wed, 09 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Massive-Activations-in-Large-Language-Models/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2402.17762v2&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;massive-activations-hidden-biases-재해석된-self-attention의-비밀&#34;&gt;Massive Activations, Hidden Biases: 재해석된 Self-Attention의 비밀&lt;/h1&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;수천만 개 중 &lt;strong&gt;4–10 개의 초거대 스칼라(×10 000)&lt;/strong&gt; 가 LLM · ViT의 성능을 사실상 ‘혼자서’ 지탱한다.&#xA;이 스칼라는 &lt;strong&gt;입력과 무관한 상수형 자기-어텐션 bias&lt;/strong&gt; 로 작동하며, -0-으로 만들면 모델이 즉시 붕괴(PPL → ∞)한다.&#xA;저자들은 이 암묵적 현상을 &lt;strong&gt;Explicit Attention Bias(EAB)&lt;/strong&gt; 라는 모듈로 치환해 &lt;strong&gt;성능을 완전히 복구&lt;/strong&gt;하면서 분석·압축·안전성까지 한 번에 열어젖혔다. &lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

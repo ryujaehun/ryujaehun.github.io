@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cpp on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/categories/cpp/</link>
+    <description>Recent content in Cpp on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Tue, 24 Dec 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/categories/cpp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Abseil Tip 231 여기와 저기 사이 – 간과되기 쉬운 몇 가지 알고리즘</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-231-%EC%97%AC%EA%B8%B0%EC%99%80-%EC%A0%80%EA%B8%B0-%EC%82%AC%EC%9D%B4-%EA%B0%84%EA%B3%BC%EB%90%98%EA%B8%B0-%EC%89%AC%EC%9A%B4-%EB%AA%87-%EA%B0%80%EC%A7%80-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/</link>
+      <pubDate>Tue, 24 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-231-%EC%97%AC%EA%B8%B0%EC%99%80-%EC%A0%80%EA%B8%B0-%EC%82%AC%EC%9D%B4-%EA%B0%84%EA%B3%BC%EB%90%98%EA%B8%B0-%EC%89%AC%EC%9A%B4-%EB%AA%87-%EA%B0%80%EC%A7%80-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/</guid>
+      <description>&lt;p&gt;아래는 **&amp;ldquo;이번 주의 팁 #231: 여기와 저기 사이 – 간과되기 쉬운 몇 가지 알고리즘&amp;rdquo;**에 대한 한글 번역입니다.&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #231: 여기와 저기 사이 – 간과되기 쉬운 몇 가지 알고리즘&amp;rdquo;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 232 변수 선언 시 auto를 언제 사용할 것인가</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-232-%EB%B3%80%EC%88%98-%EC%84%A0%EC%96%B8-%EC%8B%9C-auto%EB%A5%BC-%EC%96%B8%EC%A0%9C-%EC%82%AC%EC%9A%A9%ED%95%A0-%EA%B2%83%EC%9D%B8%EA%B0%80/</link>
+      <pubDate>Tue, 24 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-232-%EB%B3%80%EC%88%98-%EC%84%A0%EC%96%B8-%EC%8B%9C-auto%EB%A5%BC-%EC%96%B8%EC%A0%9C-%EC%82%AC%EC%9A%A9%ED%95%A0-%EA%B2%83%EC%9D%B8%EA%B0%80/</guid>
+      <description>&lt;p&gt;아래는 **&amp;ldquo;이번 주의 팁 #232: 변수 선언 시 &lt;code&gt;auto&lt;/code&gt;를 언제 사용할 것인가&amp;rdquo;**에 대한 한글 번역입니다.&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #232: 변수 선언 시 &lt;code&gt;auto&lt;/code&gt;를 언제 사용할 것인가&amp;rdquo;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 234 값, 포인터, 참조로 전달하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-234-%EA%B0%92-%ED%8F%AC%EC%9D%B8%ED%84%B0-%EC%B0%B8%EC%A1%B0%EB%A1%9C-%EC%A0%84%EB%8B%AC%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Tue, 24 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-234-%EA%B0%92-%ED%8F%AC%EC%9D%B8%ED%84%B0-%EC%B0%B8%EC%A1%B0%EB%A1%9C-%EC%A0%84%EB%8B%AC%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;p&gt;아래는 **&amp;ldquo;이번 주의 팁 #234: 값, 포인터, 참조로 전달하기&amp;rdquo;**에 대한 한글 번역입니다.&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #234: 값, 포인터, 참조로 전달하기&amp;rdquo;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 197 Reader Lock은 드물게 사용해야 합니다</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-197-Reader-Lock%EC%9D%80-%EB%93%9C%EB%AC%BC%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%B4%EC%95%BC-%ED%95%A9%EB%8B%88%EB%8B%A4/</link>
+      <pubDate>Wed, 18 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-197-Reader-Lock%EC%9D%80-%EB%93%9C%EB%AC%BC%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%B4%EC%95%BC-%ED%95%A9%EB%8B%88%EB%8B%A4/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #197: Reader Lock은 드물게 사용해야 합니다&amp;rdquo;&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;원문 게시일:&lt;/strong&gt; 2021년 7월 29일&lt;br&gt;&#xA;&lt;strong&gt;업데이트:&lt;/strong&gt; 2024년 4월 1일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;작성자:&lt;/strong&gt; &lt;a href=&#34;mailto:titus@cs.ucr.edu&#34;&gt;Titus Winters&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 224 vector.at() 사용 피하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-224-vector.at-%EC%82%AC%EC%9A%A9-%ED%94%BC%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Wed, 18 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-224-vector.at-%EC%82%AC%EC%9A%A9-%ED%94%BC%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #224: &lt;code&gt;vector.at()&lt;/code&gt; 사용 피하기&amp;rdquo;&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;원문 게시일:&lt;/strong&gt; 2023년 8월 24일&lt;br&gt;&#xA;&lt;strong&gt;업데이트:&lt;/strong&gt; 2024년 1월 24일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;작성자:&lt;/strong&gt; &lt;a href=&#34;mailto:titus@cs.ucr.edu&#34;&gt;Titus Winters&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/224&#34;&gt;abseil.io/tips/224&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;at&#34;&gt;&lt;strong&gt;&lt;code&gt;at()&lt;/code&gt;는 무엇을 하나요?&lt;/strong&gt;&lt;/h2&gt;&#xA;&lt;p&gt;&lt;code&gt;at(size_type pos)&lt;/code&gt; 메서드의 동작은 다음과 같이 정의됩니다:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 227 빈 컨테이너와 부호 없는 정수 연산 주의하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-227-%EB%B9%88-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EC%99%80-%EB%B6%80%ED%98%B8-%EC%97%86%EB%8A%94-%EC%A0%95%EC%88%98-%EC%97%B0%EC%82%B0-%EC%A3%BC%EC%9D%98%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Wed, 18 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-227-%EB%B9%88-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EC%99%80-%EB%B6%80%ED%98%B8-%EC%97%86%EB%8A%94-%EC%A0%95%EC%88%98-%EC%97%B0%EC%82%B0-%EC%A3%BC%EC%9D%98%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #227: 빈 컨테이너와 부호 없는 정수 연산 주의하기&amp;rdquo;&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;원문 게시일:&lt;/strong&gt; 2023년 11월 16일&lt;br&gt;&#xA;&lt;strong&gt;업데이트:&lt;/strong&gt; 2024년 3월 11일&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 229 템플릿 메타프로그래밍을 위한 순위 기반 오버로드</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-229-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%ED%83%80%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%EC%9D%84-%EC%9C%84%ED%95%9C-%EC%88%9C%EC%9C%84-%EA%B8%B0%EB%B0%98-%EC%98%A4%EB%B2%84%EB%A1%9C%EB%93%9C/</link>
+      <pubDate>Wed, 18 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-229-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%ED%83%80%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%EC%9D%84-%EC%9C%84%ED%95%9C-%EC%88%9C%EC%9C%84-%EA%B8%B0%EB%B0%98-%EC%98%A4%EB%B2%84%EB%A1%9C%EB%93%9C/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #229: 템플릿 메타프로그래밍을 위한 순위 기반 오버로드&amp;rdquo;&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;원문 게시일:&lt;/strong&gt; 2024년 2월 5일&lt;br&gt;&#xA;&lt;strong&gt;업데이트:&lt;/strong&gt; 2024년 2월 20일&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 124 absl::StrFormat()</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-124-abslStrFormat/</link>
+      <pubDate>Tue, 17 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-124-abslStrFormat/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #124: &lt;code&gt;absl::StrFormat()&lt;/code&gt;&amp;rdquo;&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;원문 게시일:&lt;/strong&gt; 2016년 10월 11일&lt;br&gt;&#xA;&lt;strong&gt;업데이트:&lt;/strong&gt; 2022년 11월 16일&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/124&#34;&gt;abseil.io/tips/124&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2&gt;&lt;strong&gt;&lt;code&gt;str_format&lt;/code&gt; 라이브러리와 &lt;code&gt;absl::StrFormat()&lt;/code&gt;&lt;/strong&gt;&lt;/h2&gt;&#xA;&lt;p&gt;오랜 테스트와 개발 과정을 거친 끝에, &lt;code&gt;str_format&lt;/code&gt; 라이브러리를 정식으로 공개하게 되었습니다. &lt;code&gt;str_format&lt;/code&gt; 라이브러리는 매우 효율적이고 타입 안전하며 확장 가능한 라이브러리로, 모든 &lt;code&gt;printf&lt;/code&gt; 형식의 문법을 구현합니다. 거의 모든 &lt;code&gt;printf&lt;/code&gt; 스타일 변환은 손쉽게 &lt;code&gt;absl::StrFormat()&lt;/code&gt;으로 업그레이드할 수 있습니다. 자세한 문서는 &lt;a href=&#34;https://abseil.io/docs/cpp/guides/format&#34;&gt;여기&lt;/a&gt;에서 확인하세요. 이 라이브러리는 printf 스타일 포맷팅에 가장 적합하지만, 이 글에서는 printf 스타일의 사용 여부에 대한 입장은 따로 표명하지 않습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 18 Substitute를 활용한 문자열 포맷팅</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-18-Substitute%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EB%AC%B8%EC%9E%90%EC%97%B4-%ED%8F%AC%EB%A7%B7%ED%8C%85/</link>
+      <pubDate>Tue, 17 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-18-Substitute%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EB%AC%B8%EC%9E%90%EC%97%B4-%ED%8F%AC%EB%A7%B7%ED%8C%85/</guid>
+      <description>&lt;p&gt;물론입니다! 아래는 번역된 내용입니다:&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #18: Substitute를 활용한 문자열 포맷팅&amp;rdquo;&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;원문 게시일:&lt;/strong&gt; 2012년 10월 4일&lt;br&gt;&#xA;&lt;strong&gt;업데이트:&lt;/strong&gt; 2022년 11월 16일&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 198 태그 타입(Tag Types)</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-198-%ED%83%9C%EA%B7%B8-%ED%83%80%EC%9E%85Tag-Types/</link>
+      <pubDate>Tue, 17 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-198-%ED%83%9C%EA%B7%B8-%ED%83%80%EC%9E%85Tag-Types/</guid>
+      <description>&lt;p&gt;아래는 **&amp;ldquo;이번 주의 팁 #198: 태그 타입(Tag Types)&amp;rdquo;**에 대한 한글 번역입니다.&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #198: 태그 타입(Tag Types)&amp;rdquo;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 215 AbslStringify()를 사용한 사용자 정의 타입 문자열화&#34;</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-215-AbslStringify%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%9C-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%A0%95%EC%9D%98-%ED%83%80%EC%9E%85-%EB%AC%B8%EC%9E%90%EC%97%B4%ED%99%94/</link>
+      <pubDate>Tue, 17 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-215-AbslStringify%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%9C-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%A0%95%EC%9D%98-%ED%83%80%EC%9E%85-%EB%AC%B8%EC%9E%90%EC%97%B4%ED%99%94/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #215: &lt;code&gt;AbslStringify()&lt;/code&gt;를 사용한 사용자 정의 타입 문자열화&amp;rdquo;&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;원문 게시일:&lt;/strong&gt; 2022년 11월 2일&lt;br&gt;&#xA;&lt;strong&gt;업데이트:&lt;/strong&gt; 2022년 11월 16일&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 218 FTADLE로 확장 지점 설계하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-218-FTADLE%EB%A1%9C-%ED%99%95%EC%9E%A5-%EC%A7%80%EC%A0%90-%EC%84%A4%EA%B3%84%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Tue, 17 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-218-FTADLE%EB%A1%9C-%ED%99%95%EC%9E%A5-%EC%A7%80%EC%A0%90-%EC%84%A4%EA%B3%84%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #218: FTADLE로 확장 지점 설계하기&amp;rdquo;&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;원문 게시일:&lt;/strong&gt; 2023년 1월 19일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;작성자:&lt;/strong&gt; &lt;a href=&#34;mailto:asoffer@google.com&#34;&gt;Andy Soffer&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/218&#34;&gt;abseil.io/tips/218&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;확장-지점-설계하기&#34;&gt;&lt;strong&gt;확장 지점 설계하기&lt;/strong&gt;&lt;/h2&gt;&#xA;&lt;p&gt;가정해 봅시다. 여러분은 &lt;code&gt;sketchy&lt;/code&gt;라는 라이브러리를 개발 중이고, 이 라이브러리는 캔버스에 그림을 그리는 기능을 제공합니다. 이미 점, 선, 텍스트 같은 기본 도형을 그리는 기능을 제공하지만, 사용자가 자신만의 타입을 그리는 방식을 정의할 수 있도록 **확장 지점(extension point)**을 설계하려고 합니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 3 문자열 연결과 operator&#43; vs. StrCat()</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-3-%EB%AC%B8%EC%9E%90%EC%97%B4-%EC%97%B0%EA%B2%B0%EA%B3%BC-operator-vs.-StrCat/</link>
+      <pubDate>Tue, 17 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-3-%EB%AC%B8%EC%9E%90%EC%97%B4-%EC%97%B0%EA%B2%B0%EA%B3%BC-operator-vs.-StrCat/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #3: 문자열 연결과 &lt;code&gt;operator+&lt;/code&gt; vs. &lt;code&gt;StrCat()&lt;/code&gt;&amp;rdquo;&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;원문 게시일:&lt;/strong&gt; 2012년 5월 11일&lt;br&gt;&#xA;&lt;strong&gt;업데이트:&lt;/strong&gt; 2022년 11월 16일&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/3&#34;&gt;abseil.io/tips/3&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;개요&#34;&gt;&lt;strong&gt;개요&lt;/strong&gt;&lt;/h2&gt;&#xA;&lt;p&gt;리뷰어가 &amp;ldquo;문자열 연결 연산자 &lt;code&gt;+&lt;/code&gt;를 사용하지 마세요. 비효율적입니다.&amp;ldquo;라고 말하면 많은 개발자가 의아해합니다. &lt;code&gt;string::operator+&lt;/code&gt;가 왜 비효율적일까요? 이런 간단한 작업에서 실수를 하기 어려울 것 같은데 말이죠.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 186 함수는 무명 네임스페이스에 두는 것을 선호하세요</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-186-%ED%95%A8%EC%88%98%EB%8A%94-%EB%AC%B4%EB%AA%85-%EB%84%A4%EC%9E%84%EC%8A%A4%ED%8E%98%EC%9D%B4%EC%8A%A4%EC%97%90-%EB%91%90%EB%8A%94-%EA%B2%83%EC%9D%84-%EC%84%A0%ED%98%B8%ED%95%98%EC%84%B8%EC%9A%94/</link>
+      <pubDate>Sun, 15 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-186-%ED%95%A8%EC%88%98%EB%8A%94-%EB%AC%B4%EB%AA%85-%EB%84%A4%EC%9E%84%EC%8A%A4%ED%8E%98%EC%9D%B4%EC%8A%A4%EC%97%90-%EB%91%90%EB%8A%94-%EA%B2%83%EC%9D%84-%EC%84%A0%ED%98%B8%ED%95%98%EC%84%B8%EC%9A%94/</guid>
+      <description>&lt;p&gt;원문 게시: 2020년 11월 5일, 주간 팁 #186&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: &lt;a href=&#34;mailto:jdennett@google.com&#34;&gt;James Dennett&lt;/a&gt;, &lt;a href=&#34;mailto:jrennie@google.com&#34;&gt;Jason Rennie&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;최종 수정: 2020-11-05&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/186&#34;&gt;abseil.io/tips/186&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;모든 것은 가능한 한 단순해야 하지만, 지나치게 단순해서는 안 된다.&amp;rdquo; - 아인슈타인의 생각을 해석한 로저 세션스&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 187 std::unique_ptr Must Be Moved&#34;</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-187-stdunique_ptr-Must-Be-Moved/</link>
+      <pubDate>Sun, 15 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-187-stdunique_ptr-Must-Be-Moved/</guid>
+      <description>&lt;p&gt;원문 게시: 2020년 11월 5일, 주간 팁 #187&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: &lt;a href=&#34;mailto:asoffer@google.com&#34;&gt;Andy Soffer&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;최종 수정: 2020-11-05&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/187&#34;&gt;abseil.io/tips/187&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;“첫 번째 장에 &lt;code&gt;std::unique_ptr&lt;/code&gt;가 벽에 걸려 있다면, 두 번째 또는 세 번째 장에서는 반드시 이동되어야 합니다. 이동하지 않을 거라면 처음부터 거기 있으면 안 됩니다.” ~ 안톤 체호프의 말에 약간의 변형을 가하여&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 188 스마트 포인터를 함수 매개변수로 사용할 때 주의하세요</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-188-%EC%8A%A4%EB%A7%88%ED%8A%B8-%ED%8F%AC%EC%9D%B8%ED%84%B0%EB%A5%BC-%ED%95%A8%EC%88%98-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%A0-%EB%95%8C-%EC%A3%BC%EC%9D%98%ED%95%98%EC%84%B8%EC%9A%94/</link>
+      <pubDate>Sun, 15 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-188-%EC%8A%A4%EB%A7%88%ED%8A%B8-%ED%8F%AC%EC%9D%B8%ED%84%B0%EB%A5%BC-%ED%95%A8%EC%88%98-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%A0-%EB%95%8C-%EC%A3%BC%EC%9D%98%ED%95%98%EC%84%B8%EC%9A%94/</guid>
+      <description>&lt;p&gt;원문 게시: 2020년 12월 10일, 주간 팁 #188&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: &lt;a href=&#34;mailto:krzysio@google.com&#34;&gt;Krzysztof Kosiński&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;최종 수정: 2020-12-10&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/188&#34;&gt;abseil.io/tips/188&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;이-코드의-문제는-무엇일까요&#34;&gt;이 코드의 문제는 무엇일까요?&lt;/h2&gt;&#xA;&lt;pre class=&#34;prettyprint lang-cpp bad-code&#34;&gt;&#xA;bool CanYouPetTheDog(const std::shared_ptr&amp;lt;Dog&amp;gt;&amp; dog,&#xA;                     absl::Duration min_delay) {&#xA;  return dog-&amp;gt;GetLastPetTime() + min_delay &amp;lt; absl::Now();&#xA;}&#xA;&lt;/pre&gt;&#xA;&lt;p&gt;&lt;code&gt;CanYouPetTheDog&lt;/code&gt; 함수는 &lt;code&gt;dog&lt;/code&gt; 매개변수의 소유권을 변경하지 않습니다. 그럼에도 불구하고, 함수의 시그니처는 &lt;code&gt;dog&lt;/code&gt;가 반드시 &lt;code&gt;std::shared_ptr&lt;/code&gt;에 저장되어야 함을 요구합니다. 이는 함수의 동작에 필요하지 않은 특정 소유권 모델에 대한 불필요한 의존성을 초래합니다. 이러한 의존성은 호출자가 &lt;code&gt;std::unique_ptr&lt;/code&gt;과 같은 다른 소유권 모델을 사용하거나 객체를 스택에 생성하는 것을 방해합니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 116 함수 인자에서 참조 사용 시 주의사항</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-116-%ED%95%A8%EC%88%98-%EC%9D%B8%EC%9E%90%EC%97%90%EC%84%9C-%EC%B0%B8%EC%A1%B0-%EC%82%AC%EC%9A%A9-%EC%8B%9C-%EC%A3%BC%EC%9D%98%EC%82%AC%ED%95%AD/</link>
+      <pubDate>Sat, 14 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-116-%ED%95%A8%EC%88%98-%EC%9D%B8%EC%9E%90%EC%97%90%EC%84%9C-%EC%B0%B8%EC%A1%B0-%EC%82%AC%EC%9A%A9-%EC%8B%9C-%EC%A3%BC%EC%9D%98%EC%82%AC%ED%95%AD/</guid>
+      <description>&lt;h3 id=&#34;tip-of-the-week-116-함수-인자에서-참조-사용-시-주의사항&#34;&gt;Tip of the Week #116: 함수 인자에서 참조 사용 시 주의사항&lt;/h3&gt;&#xA;&lt;p&gt;작성자: &lt;a href=&#34;mailto:pilki@google.com&#34;&gt;Alex Pilkiewicz&lt;/a&gt;&lt;br&gt;&#xA;최초 작성일: 2016년 5월 26일&lt;br&gt;&#xA;업데이트: 2020년 6월 1일&lt;br&gt;&#xA;원문 링크: &lt;a href=&#34;https://abseil.io/tips/116&#34;&gt;abseil.io/tips/116&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;em&gt;그림에서 이미지로, 이미지에서 텍스트로, 텍스트에서 음성으로, 상상의 포인터가 하나의 고유한 공간을 안정화하려고 시도하며 참조 체계를 가리키고 고정합니다. — 미셸 푸코, 《이것은 파이프가 아니다》&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 165 초기화 구문을 포함한 if와 switch 문 사용하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-165-%EC%B4%88%EA%B8%B0%ED%99%94-%EA%B5%AC%EB%AC%B8%EC%9D%84-%ED%8F%AC%ED%95%A8%ED%95%9C-if%EC%99%80-switch-%EB%AC%B8-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Sat, 14 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-165-%EC%B4%88%EA%B8%B0%ED%99%94-%EA%B5%AC%EB%AC%B8%EC%9D%84-%ED%8F%AC%ED%95%A8%ED%95%9C-if%EC%99%80-switch-%EB%AC%B8-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;h3 id=&#34;tip-of-the-week-165-초기화-구문을-포함한-if와-switch-문-사용하기&#34;&gt;Tip of the Week #165: 초기화 구문을 포함한 &lt;code&gt;if&lt;/code&gt;와 &lt;code&gt;switch&lt;/code&gt; 문 사용하기&lt;/h3&gt;&#xA;&lt;p&gt;작성자: &lt;a href=&#34;mailto:tkoeppe@google.com&#34;&gt;Thomas Köppe&lt;/a&gt;&lt;br&gt;&#xA;최초 작성일: 2019년 8월 17일&lt;br&gt;&#xA;업데이트: 2020년 1월 17일&lt;br&gt;&#xA;원문 링크: &lt;a href=&#34;https://abseil.io/tips/165&#34;&gt;abseil.io/tips/165&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 181 StatusOr&lt;T&gt; 값 접근하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-181-StatusOrT-%EA%B0%92-%EC%A0%91%EA%B7%BC%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Sat, 14 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-181-StatusOrT-%EA%B0%92-%EC%A0%91%EA%B7%BC%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;h3 id=&#34;tip-of-the-week-181-statusort-값-접근하기&#34;&gt;Tip of the Week #181: &lt;code&gt;StatusOr&amp;lt;T&amp;gt;&lt;/code&gt; 값 접근하기&lt;/h3&gt;&#xA;&lt;p&gt;작성자: &lt;a href=&#34;mailto:msheely@google.com&#34;&gt;Michael Sheely&lt;/a&gt;&lt;br&gt;&#xA;최초 작성일: 2020년 7월 9일&lt;br&gt;&#xA;업데이트: 2020년 9월 2일&lt;br&gt;&#xA;원문 링크: &lt;a href=&#34;https://abseil.io/tips/181&#34;&gt;abseil.io/tips/181&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&#xA;  &lt;blockquote&#xA;    class=&#34;border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1&#34;&gt;&#xA;    &lt;div class=&#34;prose prose-sm max-w-none&#34;&gt;&#xA;      &lt;p&gt;&lt;code&gt;StatusOr&amp;lt;Readability&amp;gt;&lt;/code&gt;: 선택하지 않아도 됩니다!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 76 absl::Status 사용하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-76-abslStatus-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Sat, 14 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-76-abslStatus-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;h3 id=&#34;tip-of-the-week-76-abslstatus-사용하기&#34;&gt;Tip of the Week #76: &lt;code&gt;absl::Status&lt;/code&gt; 사용하기&lt;/h3&gt;&#xA;&lt;p&gt;작성자: &lt;a href=&#34;mailto:titus@cs.ucr.edu&#34;&gt;Titus Winters&lt;/a&gt;&lt;br&gt;&#xA;최초 작성일: 2014년 5월 4일&lt;br&gt;&#xA;업데이트: 2020년 2월 6일&lt;br&gt;&#xA;원문 링크: &lt;a href=&#34;https://abseil.io/tips/76&#34;&gt;abseil.io/tips/76&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h3 id=&#34;abslstatus를-사용해야-하는-이유와-사용-시-유의점&#34;&gt;&lt;code&gt;absl::Status&lt;/code&gt;를 사용해야 하는 이유와 사용 시 유의점&lt;/h3&gt;&#xA;&lt;p&gt;&lt;code&gt;absl::Status&lt;/code&gt;를 언제, 어떻게 사용해야 하는지 궁금한 분들을 위해 몇 가지 이유와 고려 사항을 소개합니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 140 상수(Constant) 처리 안전한 관용구</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-140-%EC%83%81%EC%88%98Constant-%EC%B2%98%EB%A6%AC-%EC%95%88%EC%A0%84%ED%95%9C-%EA%B4%80%EC%9A%A9%EA%B5%AC/</link>
+      <pubDate>Thu, 12 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-140-%EC%83%81%EC%88%98Constant-%EC%B2%98%EB%A6%AC-%EC%95%88%EC%A0%84%ED%95%9C-%EA%B4%80%EC%9A%A9%EA%B5%AC/</guid>
+      <description>&lt;h1 id=&#34;주간-팁-140-상수constant-처리-안전한-관용구&#34;&gt;주간 팁 #140: 상수(Constant) 처리: 안전한 관용구&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 TotW #140으로 2017년 12월 8일 게시됨&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;작성자: &lt;a href=&#34;mailto:gmatta@gmail.com&#34;&gt;Matt Armstrong&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;2020년 5월 6일 업데이트됨&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 163 std::optional 매개변수 전달하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-163-stdoptional-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98-%EC%A0%84%EB%8B%AC%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Thu, 12 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-163-stdoptional-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98-%EC%A0%84%EB%8B%AC%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;h1 id=&#34;주간-팁-163-codestdoptionalcode-매개변수-전달하기&#34;&gt;주간 팁 #163: &lt;code&gt;&amp;lt;code&amp;gt;std::optional&amp;lt;/code&amp;gt;&lt;/code&gt; 매개변수 전달하기&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 TotW #163으로 2019년 7월 11일 게시됨&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;작성자: &lt;a href=&#34;mailto:puddles@google.com&#34;&gt;Ian Eldred Pudney&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;2020-04-06 업데이트됨&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/163&#34;&gt;abseil.io/tips/163&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;Null 참조는 정말로 10억 달러의 실수일까요?&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 171 Sentinel 값 피하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-171-Sentinel-%EA%B0%92-%ED%94%BC%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Thu, 12 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-171-Sentinel-%EA%B0%92-%ED%94%BC%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;h1 id=&#34;주간-팁-171-sentinel-값-피하기&#34;&gt;주간 팁 #171: Sentinel 값 피하기&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 TotW #171로 2019년 11월 8일 게시됨&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;작성자: &lt;a href=&#34;mailto:hwright@google.com&#34;&gt;Hyrum Wright&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;2020-04-06 업데이트됨&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/171&#34;&gt;abseil.io/tips/171&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Sentinel_value&#34;&gt;Sentinel 값&lt;/a&gt;은 특정 컨텍스트에서 특별한 의미를 가지는 값입니다. 예를 들어, 다음과 같은 API를 생각해봅시다:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 172 지정 초기화자(Designated Initializers)</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-172-%EC%A7%80%EC%A0%95-%EC%B4%88%EA%B8%B0%ED%99%94%EC%9E%90Designated-Initializers/</link>
+      <pubDate>Thu, 12 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-172-%EC%A7%80%EC%A0%95-%EC%B4%88%EA%B8%B0%ED%99%94%EC%9E%90Designated-Initializers/</guid>
+      <description>&lt;h1 id=&#34;주간-팁-172-지정-초기화자designated-initializers&#34;&gt;주간 팁 #172: 지정 초기화자(Designated Initializers)&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 TotW #172로 2019년 12월 11일 게시됨&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;작성자: &lt;a href=&#34;mailto:jacobsa@google.com&#34;&gt;Aaron Jacobs&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;2020-04-06 업데이트됨&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/172&#34;&gt;abseil.io/tips/172&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://en.cppreference.com/w/cpp/language/aggregate_initialization#Designated_initializers&#34;&gt;지정 초기화자&lt;/a&gt;는 구조체의 내용을 간결하면서도 읽기 쉽고 유지보수 가능한 방식으로 지정하기 위한 C++20 표준의 문법입니다. 다음과 같은 반복적인 코드를 작성하는 대신:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 173 옵션 구조체로 인수 래핑하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-173-%EC%98%B5%EC%85%98-%EA%B5%AC%EC%A1%B0%EC%B2%B4%EB%A1%9C-%EC%9D%B8%EC%88%98-%EB%9E%98%ED%95%91%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Thu, 12 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-173-%EC%98%B5%EC%85%98-%EA%B5%AC%EC%A1%B0%EC%B2%B4%EB%A1%9C-%EC%9D%B8%EC%88%98-%EB%9E%98%ED%95%91%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;h1 id=&#34;주간-팁-173-옵션-구조체로-인수-래핑하기&#34;&gt;주간 팁 #173: 옵션 구조체로 인수 래핑하기&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 TotW #173으로 2019년 12월 19일 게시됨&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;작성자: &lt;a href=&#34;mailto:jbandela@google.com&#34;&gt;John Bandela&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;2020-04-06 업데이트됨&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/173&#34;&gt;abseil.io/tips/173&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;em&gt;상자는 없었고, 가방도 없었어요. 그는 머리가 아플 때까지 고민했어요.&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 175 C&#43;&#43;14와 C&#43;&#43;17의 리터럴 상수 변경 사항</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-175-C-14%EC%99%80-C-17%EC%9D%98-%EB%A6%AC%ED%84%B0%EB%9F%B4-%EC%83%81%EC%88%98-%EB%B3%80%EA%B2%BD-%EC%82%AC%ED%95%AD/</link>
+      <pubDate>Thu, 12 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-175-C-14%EC%99%80-C-17%EC%9D%98-%EB%A6%AC%ED%84%B0%EB%9F%B4-%EC%83%81%EC%88%98-%EB%B3%80%EA%B2%BD-%EC%82%AC%ED%95%AD/</guid>
+      <description>&lt;h1 id=&#34;주간-팁-175-c14와-c17의-리터럴-상수-변경-사항&#34;&gt;주간 팁 #175: C++14와 C++17의 리터럴 상수 변경 사항&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 TotW #175으로 2020년 1월 30일 게시됨&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;작성자: &lt;a href=&#34;mailto:jdennett@google.com&#34;&gt;James Dennett&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;2020-04-06 업데이트됨&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/175&#34;&gt;abseil.io/tips/175&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 176 출력 매개변수 대신 반환 값을 선호하세요</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-176-%EC%B6%9C%EB%A0%A5-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98-%EB%8C%80%EC%8B%A0-%EB%B0%98%ED%99%98-%EA%B0%92%EC%9D%84-%EC%84%A0%ED%98%B8%ED%95%98%EC%84%B8%EC%9A%94/</link>
+      <pubDate>Thu, 12 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-176-%EC%B6%9C%EB%A0%A5-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98-%EB%8C%80%EC%8B%A0-%EB%B0%98%ED%99%98-%EA%B0%92%EC%9D%84-%EC%84%A0%ED%98%B8%ED%95%98%EC%84%B8%EC%9A%94/</guid>
+      <description>&lt;h1 id=&#34;주간-팁-176-출력-매개변수-대신-반환-값을-선호하세요&#34;&gt;주간 팁 #176: 출력 매개변수 대신 반환 값을 선호하세요&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 TotW #176으로 2020년 3월 12일 게시됨&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;작성자: &lt;a href=&#34;mailto:edechamps@google.com&#34;&gt;Etienne Dechamps&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;2020-04-06 업데이트됨&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/176&#34;&gt;abseil.io/tips/176&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;문제&#34;&gt;문제&lt;/h2&gt;&#xA;&lt;p&gt;다음과 같은 함수를 고려해봅시다:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 177 할당 가능성과 데이터 멤버 타입</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-177-%ED%95%A0%EB%8B%B9-%EA%B0%80%EB%8A%A5%EC%84%B1%EA%B3%BC-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%A9%A4%EB%B2%84-%ED%83%80%EC%9E%85/</link>
+      <pubDate>Thu, 12 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-177-%ED%95%A0%EB%8B%B9-%EA%B0%80%EB%8A%A5%EC%84%B1%EA%B3%BC-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%A9%A4%EB%B2%84-%ED%83%80%EC%9E%85/</guid>
+      <description>&lt;h1 id=&#34;주간-팁-177-할당-가능성과-데이터-멤버-타입&#34;&gt;주간 팁 #177: 할당 가능성과 데이터 멤버 타입&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 TotW #177로 2020년 4월 6일 게시됨&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;작성자: &lt;a href=&#34;mailto:titus@cs.ucr.edu&#34;&gt;Titus Winters&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;2020-04-06 업데이트됨&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/177&#34;&gt;abseil.io/tips/177&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;타입을 구현할 때는 먼저 타입 설계에 대해 결정하세요. 구현 세부사항보다 API를 우선시하는 것이 중요합니다. 이를 잘 보여주는 일반적인 예는 타입의 할당 가능성과 데이터 멤버의 한정자 간의 트레이드오프입니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 5 사라지는 객체의 함정</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-5-%EC%82%AC%EB%9D%BC%EC%A7%80%EB%8A%94-%EA%B0%9D%EC%B2%B4%EC%9D%98-%ED%95%A8%EC%A0%95/</link>
+      <pubDate>Thu, 12 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-5-%EC%82%AC%EB%9D%BC%EC%A7%80%EB%8A%94-%EA%B0%9D%EC%B2%B4%EC%9D%98-%ED%95%A8%EC%A0%95/</guid>
+      <description>&lt;h1 id=&#34;주간-팁-5-사라지는-객체의-함정&#34;&gt;주간 팁 #5: 사라지는 객체의 함정&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 TotW #5로 2012년 6월 26일 게시됨&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;2020년 6월 1일 업데이트됨&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/5&#34;&gt;abseil.io/tips/5&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;무언가를 잃고 나서야 그것의 소중함을 알게 된다.&amp;rdquo;&lt;/em&gt;&lt;br&gt;&#xA;&lt;em&gt;- 신데렐라(Cinderella)&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 108 std::bind를 피하세요</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-108-stdbind%EB%A5%BC-%ED%94%BC%ED%95%98%EC%84%B8%EC%9A%94/</link>
+      <pubDate>Tue, 10 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-108-stdbind%EB%A5%BC-%ED%94%BC%ED%95%98%EC%84%B8%EC%9A%94/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Roman Perepelitsa&lt;/strong&gt; &lt;a href=&#34;mailto:roman.perepelitsa@gmail.com&#34;&gt;(roman.perepelitsa@gmail.com)&lt;/a&gt; 작성&lt;br&gt;&#xA;최초 게시일: 2016년 1월 7일&lt;br&gt;&#xA;최종 업데이트: 2020년 8월 19일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;빠른 링크&lt;/strong&gt;: &lt;a href=&#34;https://abseil.io/tips/108&#34;&gt;abseil.io/tips/108&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;stdbind를-피하세요&#34;&gt;&lt;code&gt;std::bind&lt;/code&gt;를 피하세요&lt;/h2&gt;&#xA;&lt;p&gt;이 팁에서는 코드 작성 시 &lt;code&gt;std::bind()&lt;/code&gt;를 피해야 하는 이유를 요약합니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 132 Avoid Redundant Map Lookups</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-132-Avoid-Redundant-Map-Lookups/</link>
+      <pubDate>Tue, 10 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-132-Avoid-Redundant-Map-Lookups/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Matt Kulukundis&lt;/strong&gt; &lt;a href=&#34;mailto:kfm@google.com&#34;&gt;(kfm@google.com)&lt;/a&gt; 작성&lt;br&gt;&#xA;최초 게시일: 2017년 3월 30일&lt;br&gt;&#xA;최종 업데이트: 2019년 11월 25일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;빠른 링크&lt;/strong&gt;: &lt;a href=&#34;https://abseil.io/tips/132&#34;&gt;abseil.io/tips/132&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&#xA;  &lt;blockquote&#xA;    class=&#34;border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1&#34;&gt;&#xA;    &lt;div class=&#34;prose prose-sm max-w-none&#34;&gt;&#xA;      &lt;p&gt;&lt;strong&gt;&amp;ldquo;이곳이 바로 스나크가 있을 곳이야!&amp;rdquo;&lt;/strong&gt; 선장이 외쳤다.&lt;br&gt;&#xA;그는 조심스럽게 그의 승무원들을 상륙시키며,&lt;br&gt;&#xA;조수의 꼭대기에 머물며 머리카락을 손가락으로 얽어 쥐고 있었다.&lt;br&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 146 기본 초기화와 값 초기화</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-146-%EA%B8%B0%EB%B3%B8-%EC%B4%88%EA%B8%B0%ED%99%94%EC%99%80-%EA%B0%92-%EC%B4%88%EA%B8%B0%ED%99%94/</link>
+      <pubDate>Tue, 10 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-146-%EA%B8%B0%EB%B3%B8-%EC%B4%88%EA%B8%B0%ED%99%94%EC%99%80-%EA%B0%92-%EC%B4%88%EA%B8%B0%ED%99%94/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Dominic Hamon&lt;/strong&gt; &lt;a href=&#34;mailto:dominic@google.com&#34;&gt;(dominic@google.com)&lt;/a&gt; 작성&lt;br&gt;&#xA;최초 게시일: 2018년 4월 19일&lt;br&gt;&#xA;최종 업데이트: 2020년 4월 6일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;빠른 링크&lt;/strong&gt;: &lt;a href=&#34;https://abseil.io/tips/146&#34;&gt;abseil.io/tips/146&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&#xA;  &lt;blockquote&#xA;    class=&#34;border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1&#34;&gt;&#xA;    &lt;div class=&#34;prose prose-sm max-w-none&#34;&gt;&#xA;      &lt;p&gt;&lt;em&gt;&amp;ldquo;성공으로 가는 길은 항상 공사 중이다.&amp;rdquo;&lt;/em&gt;&lt;br&gt;&#xA;– 릴리 톰린&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 161 좋은 지역 변수와 나쁜 지역 변수</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-161-%EC%A2%8B%EC%9D%80-%EC%A7%80%EC%97%AD-%EB%B3%80%EC%88%98%EC%99%80-%EB%82%98%EC%81%9C-%EC%A7%80%EC%97%AD-%EB%B3%80%EC%88%98/</link>
+      <pubDate>Tue, 10 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-161-%EC%A2%8B%EC%9D%80-%EC%A7%80%EC%97%AD-%EB%B3%80%EC%88%98%EC%99%80-%EB%82%98%EC%81%9C-%EC%A7%80%EC%97%AD-%EB%B3%80%EC%88%98/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;James Dennett&lt;/strong&gt; &lt;a href=&#34;mailto:jdennett@google.com&#34;&gt;(jdennett@google.com)&lt;/a&gt; 작성&lt;br&gt;&#xA;최초 게시일: 2019년 4월 16일&lt;br&gt;&#xA;최종 업데이트: 2020년 4월 6일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;빠른 링크&lt;/strong&gt;: &lt;a href=&#34;https://abseil.io/tips/161&#34;&gt;abseil.io/tips/161&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&#xA;  &lt;blockquote&#xA;    class=&#34;border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1&#34;&gt;&#xA;    &lt;div class=&#34;prose prose-sm max-w-none&#34;&gt;&#xA;      &lt;p&gt;&lt;em&gt;&amp;ldquo;우리는 전역적으로 당황할 수 있지만, 지역적으로 고통받는다.&amp;rdquo;&lt;/em&gt;&lt;br&gt;&#xA;– 조너선 프랜즌&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 166 복사가 복사가 아닐 때</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-166-%EB%B3%B5%EC%82%AC%EA%B0%80-%EB%B3%B5%EC%82%AC%EA%B0%80-%EC%95%84%EB%8B%90-%EB%95%8C/</link>
+      <pubDate>Tue, 10 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-166-%EB%B3%B5%EC%82%AC%EA%B0%80-%EB%B3%B5%EC%82%AC%EA%B0%80-%EC%95%84%EB%8B%90-%EB%95%8C/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Richard Smith&lt;/strong&gt; &lt;a href=&#34;mailto:richardsmith@google.com&#34;&gt;(richardsmith@google.com)&lt;/a&gt; 작성&lt;br&gt;&#xA;최초 게시일: 2019년 8월 28일&lt;br&gt;&#xA;최종 업데이트: 2020년 4월 6일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;빠른 링크&lt;/strong&gt;: &lt;a href=&#34;https://abseil.io/tips/166&#34;&gt;abseil.io/tips/166&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&#xA;  &lt;blockquote&#xA;    class=&#34;border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1&#34;&gt;&#xA;    &lt;div class=&#34;prose prose-sm max-w-none&#34;&gt;&#xA;      &lt;p&gt;&lt;em&gt;&amp;ldquo;필요하지 않은 한 존재를 늘리지 말라.&amp;rdquo;&lt;/em&gt; – 윌리엄 오컴&lt;br&gt;&#xA;&lt;em&gt;&amp;ldquo;어디로 가야 할지 모르면 잘못된 길로 갈 가능성이 높다.&amp;rdquo;&lt;/em&gt; – 테리 프래쳇&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 168 inline 변수</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-168-inline-%EB%B3%80%EC%88%98/</link>
+      <pubDate>Tue, 10 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-168-inline-%EB%B3%80%EC%88%98/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;James Dennett&lt;/strong&gt; &lt;a href=&#34;mailto:jdennett@google.com&#34;&gt;(jdennett@google.com)&lt;/a&gt; 작성&lt;br&gt;&#xA;최초 게시일: 2019년 9월 12일&lt;br&gt;&#xA;최종 업데이트: 2020년 4월 6일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;빠른 링크&lt;/strong&gt;: &lt;a href=&#34;https://abseil.io/tips/168&#34;&gt;abseil.io/tips/168&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;C++17의 &lt;code&gt;inline&lt;/code&gt; 변수를 사용하여 헤더 파일에서 문자열 상수를 정의하는 안전한 방법은 다음과 같습니다:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 147 Exhaustive switch 문을 책임감 있게 사용하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-147-Exhaustive-switch-%EB%AC%B8%EC%9D%84-%EC%B1%85%EC%9E%84%EA%B0%90-%EC%9E%88%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Mon, 09 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-147-Exhaustive-switch-%EB%AC%B8%EC%9D%84-%EC%B1%85%EC%9E%84%EA%B0%90-%EC%9E%88%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;h2 id=&#34;주간-팁-147-exhaustive-switch-문을-책임감-있게-사용하기&#34;&gt;주간 팁 #147: Exhaustive &lt;code&gt;switch&lt;/code&gt; 문을 책임감 있게 사용하기&lt;/h2&gt;&#xA;&lt;p&gt;원래 게시일: 2018년 4월 25일&lt;br&gt;&#xA;&lt;em&gt;작성자: &lt;a href=&#34;mailto:jnewsome@google.com&#34;&gt;Jim Newsome&lt;/a&gt;&lt;/em&gt;&lt;br&gt;&#xA;최종 업데이트: 2020년 4월 6일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;바로가기:&lt;/strong&gt; &lt;a href=&#34;https://abseil.io/tips/147&#34;&gt;abseil.io/tips/147&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h3 id=&#34;소개&#34;&gt;소개&lt;/h3&gt;&#xA;&lt;p&gt;&lt;code&gt;-Werror&lt;/code&gt; 컴파일러 플래그를 사용하면 &lt;code&gt;enum&lt;/code&gt; 타입의 값을 대상으로 하는 &lt;code&gt;switch&lt;/code&gt; 문에 &lt;code&gt;default&lt;/code&gt; 레이블이 없을 경우, 모든 열거자가 &lt;code&gt;case&lt;/code&gt; 문으로 처리되지 않으면 컴파일 오류가 발생합니다. 이를 &lt;em&gt;exhaustive&lt;/em&gt; 또는 &lt;em&gt;defaultless&lt;/em&gt; &lt;code&gt;switch&lt;/code&gt; 문이라고 부르기도 합니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 158 Abseil 연관 컨테이너와 contains()</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-158-Abseil-%EC%97%B0%EA%B4%80-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EC%99%80-contains/</link>
+      <pubDate>Mon, 09 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-158-Abseil-%EC%97%B0%EA%B4%80-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EC%99%80-contains/</guid>
+      <description>&lt;h2 id=&#34;주간-팁-158-abseil-연관-컨테이너와-contains&#34;&gt;주간 팁 #158: Abseil 연관 컨테이너와 &lt;code&gt;contains()&lt;/code&gt;&lt;/h2&gt;&#xA;&lt;p&gt;원래 게시일: 2019년 1월 3일&lt;br&gt;&#xA;&lt;em&gt;작성자: &lt;a href=&#34;mailto:jdennett@google.com&#34;&gt;James Dennett&lt;/a&gt;&lt;/em&gt;&lt;br&gt;&#xA;최종 업데이트: 2020년 4월 20일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;바로가기:&lt;/strong&gt; &lt;a href=&#34;https://abseil.io/tips/158&#34;&gt;abseil.io/tips/158&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h3 id=&#34;이-컨테이너에-이-값이-포함되어-있나요&#34;&gt;이 컨테이너에 이 값이 포함되어 있나요?&lt;/h3&gt;&#xA;&lt;p&gt;C++에서 집합(set)에 특정 값이 포함되어 있는지, 맵(map)에 특정 키가 포함되어 있는지 확인하려면 전통적으로 다음과 같은 다소 장황한 코드를 작성해야 했습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 180 Dangling References(유효하지 않은 참조) 피하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-180-Dangling-References%EC%9C%A0%ED%9A%A8%ED%95%98%EC%A7%80-%EC%95%8A%EC%9D%80-%EC%B0%B8%EC%A1%B0-%ED%94%BC%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Mon, 09 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-180-Dangling-References%EC%9C%A0%ED%9A%A8%ED%95%98%EC%A7%80-%EC%95%8A%EC%9D%80-%EC%B0%B8%EC%A1%B0-%ED%94%BC%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;h2 id=&#34;주간-팁-180-dangling-references유효하지-않은-참조-피하기&#34;&gt;주간 팁 #180: Dangling References(유효하지 않은 참조) 피하기&lt;/h2&gt;&#xA;&lt;p&gt;원래 게시일: 2020년 6월 11일&lt;br&gt;&#xA;&lt;em&gt;작성자: &lt;a href=&#34;mailto:titus@cs.ucr.edu&#34;&gt;Titus Winters&lt;/a&gt;&lt;/em&gt;&lt;br&gt;&#xA;최종 업데이트: 2020년 6월 11일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;바로가기:&lt;/strong&gt; &lt;a href=&#34;https://abseil.io/tips/180&#34;&gt;abseil.io/tips/180&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h3 id=&#34;소개&#34;&gt;소개&lt;/h3&gt;&#xA;&lt;p&gt;C++는 다른 많은 언어와 달리, 유효하지 않은 메모리를 참조하는 것을 방지하는 안전 장치가 부족합니다. 이미 &lt;code&gt;delete&lt;/code&gt;된 객체의 포인터를 역참조하거나 스코프에서 벗어난 객체를 참조할 수 있습니다. 클래스 타입조차도 이러한 위험을 내포하고 있습니다. 특히, &lt;code&gt;view&lt;/code&gt;와 &lt;code&gt;span&lt;/code&gt;이라는 이름을 사용하는 객체는 &amp;ldquo;참조 의미론(reference semantics)을 가지며 dangling(유효하지 않음)이 발생할 수 있음&amp;quot;을 나타냅니다. 이러한 타입은 참조 의미론을 가지며, 항상 포인터가 가리키는 데이터를 소유하지 않는다는 점에서 주의가 필요합니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 182 정수형 변수를 초기화하세요!</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-182-%EC%A0%95%EC%88%98%ED%98%95-%EB%B3%80%EC%88%98%EB%A5%BC-%EC%B4%88%EA%B8%B0%ED%99%94%ED%95%98%EC%84%B8%EC%9A%94/</link>
+      <pubDate>Mon, 09 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-182-%EC%A0%95%EC%88%98%ED%98%95-%EB%B3%80%EC%88%98%EB%A5%BC-%EC%B4%88%EA%B8%B0%ED%99%94%ED%95%98%EC%84%B8%EC%9A%94/</guid>
+      <description>&lt;h2 id=&#34;주간-팁-182-정수형-변수를-초기화하세요&#34;&gt;주간 팁 #182: 정수형 변수를 초기화하세요!&lt;/h2&gt;&#xA;&lt;p&gt;원래 게시일: 2020년 7월 23일&lt;br&gt;&#xA;최종 업데이트: 2020년 7월 23일&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;바로가기:&lt;/strong&gt; &lt;a href=&#34;https://abseil.io/tips/182&#34;&gt;abseil.io/tips/182&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;결정의 순간, 할 수 있는 가장 좋은 일은 옳은 일을 하는 것이고, 그다음으로 좋은 것은 틀린 일을 하는 것이며, 가장 나쁜 것은 아무것도 하지 않는 것이다.&amp;rdquo;&lt;br&gt;&#xA;&amp;ndash; 시어도어 루즈벨트&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 103 플래그는 전역 변수입니다</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-103-%ED%94%8C%EB%9E%98%EA%B7%B8%EB%8A%94-%EC%A0%84%EC%97%AD-%EB%B3%80%EC%88%98%EC%9E%85%EB%8B%88%EB%8B%A4/</link>
+      <pubDate>Sun, 08 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-103-%ED%94%8C%EB%9E%98%EA%B7%B8%EB%8A%94-%EC%A0%84%EC%97%AD-%EB%B3%80%EC%88%98%EC%9E%85%EB%8B%88%EB%8B%A4/</guid>
+      <description>&lt;h3 id=&#34;주간-팁-103-플래그는-전역-변수입니다&#34;&gt;주간 팁 #103: 플래그는 전역 변수입니다&lt;/h3&gt;&#xA;&lt;p&gt;&lt;strong&gt;작성자: &lt;a href=&#34;mailto:marmstrong@google.com&#34;&gt;Matt Armstrong&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;code&gt;.cc&lt;/code&gt; 파일에서 전역 범위로 플래그를 정의하세요. 해당 &lt;code&gt;.h&lt;/code&gt; 파일에서는 최대 한 번만 선언하세요.&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;왜-헤더-파일에-선언할까요&#34;&gt;왜 헤더 파일에 선언할까요?&lt;/h2&gt;&#xA;&lt;p&gt;헤더 파일 사용은 대부분 우리에게 자연스러운 습관이지만, 그 이유를 잊었을 수도 있습니다. 헤더 파일을 사용하는 이유는 다음과 같습니다:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 45 플래그를 피하라, 특히 라이브러리 코드에서</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-45-%ED%94%8C%EB%9E%98%EA%B7%B8%EB%A5%BC-%ED%94%BC%ED%95%98%EB%9D%BC-%ED%8A%B9%ED%9E%88-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC-%EC%BD%94%EB%93%9C%EC%97%90%EC%84%9C/</link>
+      <pubDate>Sun, 08 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-45-%ED%94%8C%EB%9E%98%EA%B7%B8%EB%A5%BC-%ED%94%BC%ED%95%98%EB%9D%BC-%ED%8A%B9%ED%9E%88-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC-%EC%BD%94%EB%93%9C%EC%97%90%EC%84%9C/</guid>
+      <description>&lt;h3 id=&#34;주간-팁-45-플래그를-피하라-특히-라이브러리-코드에서&#34;&gt;주간 팁 #45: 플래그를 피하라, 특히 라이브러리 코드에서&lt;/h3&gt;&#xA;&lt;p&gt;&lt;strong&gt;최초 게시일:&lt;/strong&gt; 2013년 6월 3일&lt;br&gt;&#xA;&lt;strong&gt;작성자:&lt;/strong&gt; &lt;a href=&#34;mailto:titus@google.com&#34;&gt;Titus Winters&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;내 코드의 동작이 전역 변수로 제어되기를 바란다. 이 변수는 코드만으로는 값이 예측되지 않으며, 사용 기록이 불완전하고, 코드를 통해 제거하는 데 큰 어려움이 따른다.&amp;rdquo; — 아무도 그런 말을 하지 않는다.&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 90 Retired Flags(사용 중단된 플래그)</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-90-Retired-Flags%EC%82%AC%EC%9A%A9-%EC%A4%91%EB%8B%A8%EB%90%9C-%ED%94%8C%EB%9E%98%EA%B7%B8/</link>
+      <pubDate>Sun, 08 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-90-Retired-Flags%EC%82%AC%EC%9A%A9-%EC%A4%91%EB%8B%A8%EB%90%9C-%ED%94%8C%EB%9E%98%EA%B7%B8/</guid>
+      <description>&lt;h2 id=&#34;주간-팁-90-retired-flags사용-중단된-플래그&#34;&gt;주간 팁 #90: Retired Flags(사용 중단된 플래그)&lt;/h2&gt;&#xA;&lt;p&gt;원래 게시일: 2015년 3월 19일&lt;br&gt;&#xA;작성자: &lt;a href=&#34;mailto:titus@google.com&#34;&gt;Titus Winters&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h3 id=&#34;소개&#34;&gt;소개&lt;/h3&gt;&#xA;&lt;p&gt;명령줄 플래그(command-line flags)를 잘못 사용하면 플래그를 바이너리 및 프로덕션 서버에서 안전하게 제거하는 것이 어려워집니다. (&lt;a href=&#34;https://abseil.io/tips/45&#34;&gt;주간 팁 #45&lt;/a&gt;에서 다룬 플래그의 잘못된 사용 사례를 참고하세요.)&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 136 Unordered Containers</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-136-Unordered-Containers/</link>
+      <pubDate>Fri, 06 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-136-Unordered-Containers/</guid>
+      <description>&lt;h3 id=&#34;주간-팁-136-unordered-containers&#34;&gt;주간 팁 #136: Unordered Containers&lt;/h3&gt;&#xA;&lt;p&gt;&lt;em&gt;2017년 6월 23일 처음 게시된 TotW #136을 업데이트한 내용입니다.&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: &lt;a href=&#34;mailto:kfm@google.com&#34;&gt;Matt Kulukundis&lt;/a&gt;&lt;/em&gt;&lt;br&gt;&#xA;업데이트: 2020-04-06&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/136&#34;&gt;abseil.io/tips/136&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;때로는 정말 좋은 자료를 접했을 때, 그걸 최고의 쇼로 만들고자 스스로에게 기대를 걸게 됩니다. 그냥 평범한 일만 하고 집에 가는 것과는 다르죠.&amp;rdquo;&lt;/em&gt;&lt;br&gt;&#xA;– 피터 딩클리지&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 144 연관 컨테이너에서의 이종 조회(Heterogeneous Lookup)</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-144-%EC%97%B0%EA%B4%80-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EC%97%90%EC%84%9C%EC%9D%98-%EC%9D%B4%EC%A2%85-%EC%A1%B0%ED%9A%8CHeterogeneous-Lookup/</link>
+      <pubDate>Fri, 06 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-144-%EC%97%B0%EA%B4%80-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EC%97%90%EC%84%9C%EC%9D%98-%EC%9D%B4%EC%A2%85-%EC%A1%B0%ED%9A%8CHeterogeneous-Lookup/</guid>
+      <description>&lt;h3 id=&#34;주간-팁-144-연관-컨테이너에서의-이종-조회heterogeneous-lookup&#34;&gt;주간 팁 #144: 연관 컨테이너에서의 이종 조회(Heterogeneous Lookup)&lt;/h3&gt;&#xA;&lt;p&gt;&lt;em&gt;2018년 3월 23일 처음 게시된 TotW #144을 업데이트한 내용입니다.&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: &lt;a href=&#34;mailto:sbenza@google.com&#34;&gt;Samuel Benzaquen&lt;/a&gt;&lt;/em&gt;&lt;br&gt;&#xA;업데이트: 2020-04-06&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 152 AbslHashValue과 함께</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-152-AbslHashValue%EA%B3%BC-%ED%95%A8%EA%BB%98/</link>
+      <pubDate>Fri, 06 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-152-AbslHashValue%EA%B3%BC-%ED%95%A8%EA%BB%98/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-152&#34;&gt;title: &amp;ldquo;주간 팁 #152: &lt;code&gt;AbslHashValue&lt;/code&gt;과 함께&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/152&#xA;type: markdown&#xA;order: &amp;ldquo;152&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 2018년 6월 21일에 TotW #152로 게시됨&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: &lt;a href=&#34;mailto:kfm@google.com&#34;&gt;Matt Kulukundis&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 153 using-directives를 사용하지 마세요</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-153-using-directives%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EC%A7%80-%EB%A7%88%EC%84%B8%EC%9A%94/</link>
+      <pubDate>Fri, 06 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-153-using-directives%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EC%A7%80-%EB%A7%88%EC%84%B8%EC%9A%94/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-153&#34;&gt;title: &amp;ldquo;주간 팁 #153: &lt;code&gt;using-directives&lt;/code&gt;를 사용하지 마세요&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/153&#xA;type: markdown&#xA;order: &amp;ldquo;153&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 2018년 7월 17일에 TotW #153으로 게시됨&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 117 복사 생략과 값으로 전달하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-117-%EB%B3%B5%EC%82%AC-%EC%83%9D%EB%9E%B5%EA%B3%BC-%EA%B0%92%EC%9C%BC%EB%A1%9C-%EC%A0%84%EB%8B%AC%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Thu, 05 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-117-%EB%B3%B5%EC%82%AC-%EC%83%9D%EB%9E%B5%EA%B3%BC-%EA%B0%92%EC%9C%BC%EB%A1%9C-%EC%A0%84%EB%8B%AC%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;p&gt;원래 TotW #117로 2016년 6월 8일 게시됨&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성: Geoff Romer &lt;a href=&#34;mailto:gromer@gmail.com&#34;&gt;(gromer@google.com)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;모든 것이 멀리 있다. 복사의 복사의 복사. 불면증 거리 속의 모든 것, 당신은 어떤 것도 만질 수 없고, 아무것도 당신을 만질 수 없다.&amp;rdquo; — 척 팔라니uk&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 148 Overload Sets</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-148-Overload-Sets/</link>
+      <pubDate>Thu, 05 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-148-Overload-Sets/</guid>
+      <description>&lt;p&gt;원래 TotW #148로 2018년 5월 3일 게시됨&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성: &lt;a href=&#34;mailto:titus@cs.ucr.edu&#34;&gt;Titus Winters&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;업데이트: 2020-04-06&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;전기 정보를 가지고 사는 것의 한 가지 효과는 정보 과부하 상태에서 항상 살아가는 것입니다. 항상 감당할 수 있는 것보다 많은 정보가 존재합니다.&amp;rdquo; — 마셜 맥루언&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 149 Object Lifetimes vs = delete</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-149-Object-Lifetimes-vs-delete/</link>
+      <pubDate>Thu, 05 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-149-Object-Lifetimes-vs-delete/</guid>
+      <description>&lt;h2 id=&#34;order-149&#34;&gt;title: &amp;ldquo;이번 주의 팁 #149: 객체 수명 vs. &lt;code&gt;= delete&lt;/code&gt;&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/149&#xA;type: markdown&#xA;order: &amp;ldquo;149&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 TotW #149로 2018년 5월 3일 게시됨&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성: &lt;a href=&#34;mailto:titus@cs.ucr.edu&#34;&gt;Titus Winters&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;업데이트: 2020-04-06&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;다시 파란 속으로, 돈이 사라진 후에&lt;br/&gt; 인생에 한 번, 지하로 흐르는 물처럼&amp;rdquo; — 데이비드 번&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 24 복사, 축약</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-24-%EB%B3%B5%EC%82%AC-%EC%B6%95%EC%95%BD/</link>
+      <pubDate>Thu, 05 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-24-%EB%B3%B5%EC%82%AC-%EC%B6%95%EC%95%BD/</guid>
+      <description>&lt;h2 id=&#34;order-024&#34;&gt;title: &amp;ldquo;이번 주의 팁 #24: 복사, 축약&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/24&#xA;type: markdown&#xA;order: &amp;ldquo;024&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 TotW #24로 2012년 11월 26일 게시됨&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성: Titus Winters &lt;a href=&#34;mailto:titus@gmail.com&#34;&gt;(titus@google.com)&lt;/a&gt; 및 Chandler Carruth &lt;a href=&#34;mailto:chandlerc@google.com&#34;&gt;(chandlerc@google.com)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;다른 사람을 따라 하는 것은 필요하지만, 자신을 따라 하는 것은 비참하다.&amp;rdquo; - 파블로 피카소&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 11 반환 정책</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-11-%EB%B0%98%ED%99%98-%EC%A0%95%EC%B1%85/</link>
+      <pubDate>Wed, 04 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-11-%EB%B0%98%ED%99%98-%EC%A0%95%EC%B1%85/</guid>
+      <description>&lt;h2 id=&#34;주간-팁-11-반환-정책&#34;&gt;주간 팁 #11: 반환 정책&lt;/h2&gt;&#xA;&lt;p&gt;원래 게시일: 2012년 8월 16일&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: Paul S. R. Chisholm &lt;a href=&#34;mailto:p.s.r.chisholm@gmail.com&#34;&gt;(p.s.r.chisholm@google.com)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;Frodo: 돌아오는 여정에는 남은 것이 없을 거야.&lt;/em&gt;&lt;br&gt;&#xA;&lt;em&gt;Sam: 돌아오는 여정은 없을 거예요, 미스터 프로도.&lt;/em&gt;&lt;br&gt;&#xA;– &lt;em&gt;반지의 제왕: 왕의 귀환&lt;/em&gt; (J.R.R. 톨킨 원작, 프란 월시, 필리파 보이엔스, 피터 잭슨 각본)&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 120 반환 값은 건드리지 마세요</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-120-%EB%B0%98%ED%99%98-%EA%B0%92%EC%9D%80-%EA%B1%B4%EB%93%9C%EB%A6%AC%EC%A7%80-%EB%A7%88%EC%84%B8%EC%9A%94/</link>
+      <pubDate>Wed, 04 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-120-%EB%B0%98%ED%99%98-%EA%B0%92%EC%9D%80-%EA%B1%B4%EB%93%9C%EB%A6%AC%EC%A7%80-%EB%A7%88%EC%84%B8%EC%9A%94/</guid>
+      <description>&lt;h2 id=&#34;주간-팁-120-반환-값은-건드리지-마세요&#34;&gt;주간 팁 #120: 반환 값은 건드리지 마세요&lt;/h2&gt;&#xA;&lt;p&gt;원래 게시일: 2012년 8월 16일&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: Samuel Benzaquen, &lt;a href=&#34;mailto:sbenza@gmail.com&#34;&gt;(sbenza@google.com)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;다음과 같은 코드 조각이 있다고 가정해 봅시다. 이 코드는 RAII 클린업 함수에 의존하고 있으며, 예상대로 작동하는 것처럼 보입니다:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 143 C&#43;&#43;11 삭제된 함수 (= delete)</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-143-C-11-%EC%82%AD%EC%A0%9C%EB%90%9C-%ED%95%A8%EC%88%98-delete/</link>
+      <pubDate>Wed, 04 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-143-C-11-%EC%82%AD%EC%A0%9C%EB%90%9C-%ED%95%A8%EC%88%98-delete/</guid>
+      <description>&lt;h2 id=&#34;주간-팁-143-c11-삭제된-함수--delete&#34;&gt;주간 팁 #143: C++11 삭제된 함수 (&lt;code&gt;= delete&lt;/code&gt;)&lt;/h2&gt;&#xA;&lt;p&gt;원래 게시일: 2018년 3월 2일&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: &lt;a href=&#34;mailto:mosescu@google.com&#34;&gt;레오나르드 모세스쿠&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;업데이트: 2020-04-06&lt;/p&gt;&#xA;&lt;p&gt;퀵 링크: &lt;a href=&#34;https://abseil.io/tips/143&#34;&gt;abseil.io/tips/143&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h3 id=&#34;소개&#34;&gt;소개&lt;/h3&gt;&#xA;&lt;p&gt;인터페이스는 일반적으로 호출할 수 있는 연산의 집합을 정의합니다. 그러나 때때로 우리는 반대로 &lt;em&gt;사용하지 말아야 할&lt;/em&gt; 연산 집합을 명시적으로 정의하고 싶을 때가 있습니다. 예를 들어, 복사 생성자와 복사 대입 연산자를 비활성화하는 것은 특정 타입에 대한 복사 동작을 제한하는 일반적인 방법입니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 134 make_unique와 private 생성자</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-134-make_unique%EC%99%80-private-%EC%83%9D%EC%84%B1%EC%9E%90/</link>
+      <pubDate>Tue, 03 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-134-make_unique%EC%99%80-private-%EC%83%9D%EC%84%B1%EC%9E%90/</guid>
+      <description>&lt;h3 id=&#34;주간-팁-134-make_unique와-private-생성자&#34;&gt;주간 팁 #134: &lt;code&gt;make_unique&lt;/code&gt;와 &lt;code&gt;private&lt;/code&gt; 생성자&lt;/h3&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 게시일&lt;/strong&gt;: 2017년 5월 10일 (TotW #134)&lt;br&gt;&#xA;&lt;strong&gt;작성자&lt;/strong&gt;: Yitzhak Mandelbaum, Google 엔지니어&lt;br&gt;&#xA;&lt;strong&gt;최종 업데이트&lt;/strong&gt;: 2020년 4월 6일&lt;br&gt;&#xA;&lt;strong&gt;빠른 링크&lt;/strong&gt;: &lt;a href=&#34;https://abseil.io/tips/134&#34;&gt;abseil.io/tips/134&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 141 bool로의 암시적 변환에 주의하라</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-141-bool%EB%A1%9C%EC%9D%98-%EC%95%94%EC%8B%9C%EC%A0%81-%EB%B3%80%ED%99%98%EC%97%90-%EC%A3%BC%EC%9D%98%ED%95%98%EB%9D%BC/</link>
+      <pubDate>Tue, 03 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-141-bool%EB%A1%9C%EC%9D%98-%EC%95%94%EC%8B%9C%EC%A0%81-%EB%B3%80%ED%99%98%EC%97%90-%EC%A3%BC%EC%9D%98%ED%95%98%EB%9D%BC/</guid>
+      <description>&lt;h3 id=&#34;주간-팁-141-bool로의-암시적-변환에-주의하라&#34;&gt;주간 팁 #141: &lt;code&gt;bool&lt;/code&gt;로의 암시적 변환에 주의하라&lt;/h3&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 게시일&lt;/strong&gt;: 2018년 1월 19일 (TotW #141)&lt;br&gt;&#xA;&lt;strong&gt;작성자&lt;/strong&gt;: &lt;a href=&#34;mailto:sfreilich@google.com&#34;&gt;Samuel Freilich&lt;/a&gt;&lt;br&gt;&#xA;&lt;strong&gt;최종 업데이트&lt;/strong&gt;: 2020년 4월 6일&lt;br&gt;&#xA;&lt;strong&gt;빠른 링크&lt;/strong&gt;: &lt;a href=&#34;https://abseil.io/tips/141&#34;&gt;abseil.io/tips/141&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;두-가지-널-포인터-검사-방법&#34;&gt;두 가지 널 포인터 검사 방법&lt;/h2&gt;&#xA;&lt;p&gt;널 포인터를 역참조하기 전에 검사는 충돌과 버그를 방지하기 위해 중요합니다. 이 검사는 두 가지 방법으로 수행할 수 있습니다:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 61 기본 멤버 초기화 (Default Member Initializers)</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-61-%EA%B8%B0%EB%B3%B8-%EB%A9%A4%EB%B2%84-%EC%B4%88%EA%B8%B0%ED%99%94-Default-Member-Initializers/</link>
+      <pubDate>Tue, 03 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-61-%EA%B8%B0%EB%B3%B8-%EB%A9%A4%EB%B2%84-%EC%B4%88%EA%B8%B0%ED%99%94-Default-Member-Initializers/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h3 id=&#34;주간-팁-61-기본-멤버-초기화-default-member-initializers&#34;&gt;주간 팁 #61: 기본 멤버 초기화 (Default Member Initializers)&lt;/h3&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 게시일&lt;/strong&gt;: 2013년 11월 12일 (TotW #61)&lt;br&gt;&#xA;&lt;strong&gt;작성자&lt;/strong&gt;: Michael Chastain &lt;a href=&#34;mailto:mec.desktop@gmail.com&#34;&gt;(mec.desktop@gmail.com)&lt;/a&gt;&lt;br&gt;&#xA;&lt;strong&gt;최종 업데이트&lt;/strong&gt;: 2016년 10월&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;기본-멤버-초기화-선언하기&#34;&gt;기본 멤버 초기화 선언하기&lt;/h2&gt;&#xA;&lt;p&gt;기본 멤버 초기화는 생성 시 멤버의 기본 값을 선언하며, 다음과 같은 형태로 작성됩니다:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 93 absl::Span 사용하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-93-abslSpan-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Tue, 03 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-93-abslSpan-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h3 id=&#34;주간-팁-93-abslspan-사용하기&#34;&gt;주간 팁 #93: &lt;code&gt;absl::Span&lt;/code&gt; 사용하기&lt;/h3&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;strong&gt;원래 게시일&lt;/strong&gt;: 2015년 4월 23일 (TotW #93)&lt;br&gt;&#xA;&lt;strong&gt;작성자&lt;/strong&gt;: &lt;a href=&#34;mailto:sbenza@google.com&#34;&gt;Samuel Benzaquen&lt;/a&gt;&lt;br&gt;&#xA;&lt;strong&gt;최종 업데이트&lt;/strong&gt;: 2023년 5월 8일&lt;br&gt;&#xA;&lt;strong&gt;빠른 링크&lt;/strong&gt;: &lt;a href=&#34;https://abseil.io/tips/93&#34;&gt;abseil.io/tips/93&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;Google에서는 소유하지 않은 문자열을 처리할 때 &lt;code&gt;string_view&lt;/code&gt;를 함수 매개변수와 반환 타입으로 사용하는 것이 일반적입니다.&lt;br&gt;&#xA;이렇게 하면 API가 더 유연해지고, &lt;code&gt;string&lt;/code&gt;으로 불필요한 변환을 피함으로써 성능이 개선될 수 있습니다. (&lt;a href=&#34;http://192.168.1.11:1314/tips/1&#34;&gt;팁 #1&lt;/a&gt; 참조)&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 142 다중 매개변수 생성자와 explicit</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-142-%EB%8B%A4%EC%A4%91-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98-%EC%83%9D%EC%84%B1%EC%9E%90%EC%99%80-explicit/</link>
+      <pubDate>Mon, 02 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-142-%EB%8B%A4%EC%A4%91-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98-%EC%83%9D%EC%84%B1%EC%9E%90%EC%99%80-explicit/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-142&#34;&gt;title: &amp;ldquo;Tip of the Week #142: 다중 매개변수 생성자와 &lt;code&gt;explicit&lt;/code&gt;&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/142&#xA;type: markdown&#xA;order: &amp;ldquo;142&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;처음 게시: 2018-01-29 (TotW #142)&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: &lt;a href=&#34;mailto:jdennett@google.com&#34;&gt;James Dennett&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;업데이트: 2020-04-06&lt;/p&gt;&#xA;&lt;p&gt;바로가기: &lt;a href=&#34;https://abseil.io/tips/142&#34;&gt;abseil.io/tips/142&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;“명시적(explicit)이 암시적(implicit)보다 낫다.” &amp;ndash;&lt;br&gt;&#xA;&lt;a href=&#34;https://www.python.org/dev/peps/pep-0020/&#34;&gt;PEP 20&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 59 튜플 연결하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-59-%ED%8A%9C%ED%94%8C-%EC%97%B0%EA%B2%B0%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Mon, 02 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-59-%ED%8A%9C%ED%94%8C-%EC%97%B0%EA%B2%B0%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-059&#34;&gt;title: &amp;ldquo;Tip of the Week #59: 튜플 연결하기&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/59&#xA;type: markdown&#xA;order: &amp;ldquo;059&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;처음 게시: 2013-10-21 (totw/59)&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: Greg Miller &lt;a href=&#34;mailto:jgm@google.com&#34;&gt;(jgm@google.com)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;업데이트: 2018-01-24&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;이제 손을 맞잡고, 마음도 함께 나누십시오.&amp;rdquo; &amp;ndash;헨리 6세, 윌리엄 셰익스피어&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 88 초기화 방법 =, (), 그리고 {}</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-88-%EC%B4%88%EA%B8%B0%ED%99%94-%EB%B0%A9%EB%B2%95-%EA%B7%B8%EB%A6%AC%EA%B3%A0/</link>
+      <pubDate>Mon, 02 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-88-%EC%B4%88%EA%B8%B0%ED%99%94-%EB%B0%A9%EB%B2%95-%EA%B7%B8%EB%A6%AC%EA%B3%A0/</guid>
+      <description>&lt;h2 id=&#34;order-088&#34;&gt;title: &amp;ldquo;Tip of the Week #88: 초기화 방법: =, (), 그리고 {}&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/88&#xA;type: markdown&#xA;order: &amp;ldquo;088&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;처음 게시: 2015-01-27 (TotW #88)&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: Titus Winters &lt;a href=&#34;mailto:titus@google.com&#34;&gt;(titus@google.com)&lt;/a&gt;, Google C++ 스타일 심사 위원회를 대표하여&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;C++11은 &amp;ldquo;통일된 초기화 문법&amp;quot;이라고 불리는 새로운 문법을 도입했습니다. 이는 다양한 초기화 스타일을 통합하고, &lt;a href=&#34;http://en.wikipedia.org/wiki/Most_vexing_parse&#34;&gt;가장 성가신 구문 분석 문제(Most Vexing Parse)&lt;/a&gt;를 피하며, 협소 변환(narrowing conversion)을 방지하기 위해 설계되었습니다. 하지만 이 새로운 메커니즘은 또 다른 초기화 문법을 추가했을 뿐이며, 이 역시 고유한 장단점을 가지고 있습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 10 문자열 분리, 골치 아프지 않게</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-10-%EB%AC%B8%EC%9E%90%EC%97%B4-%EB%B6%84%EB%A6%AC-%EA%B3%A8%EC%B9%98-%EC%95%84%ED%94%84%EC%A7%80-%EC%95%8A%EA%B2%8C/</link>
+      <pubDate>Fri, 29 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-10-%EB%AC%B8%EC%9E%90%EC%97%B4-%EB%B6%84%EB%A6%AC-%EA%B3%A8%EC%B9%98-%EC%95%84%ED%94%84%EC%A7%80-%EC%95%8A%EA%B2%8C/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-010&#34;&gt;title: &amp;ldquo;이번 주의 팁 #10: 문자열 분리, 골치 아프지 않게!&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/10&#xA;type: markdown&#xA;order: &amp;ldquo;010&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 2012-08-16에 totw/10으로 게시됨&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 3 문자열 연결과 operator&#43; vs. StrCat()</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-3-%EB%AC%B8%EC%9E%90%EC%97%B4-%EC%97%B0%EA%B2%B0%EA%B3%BC-operator-vs.-StrCat/</link>
+      <pubDate>Fri, 29 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-3-%EB%AC%B8%EC%9E%90%EC%97%B4-%EC%97%B0%EA%B2%B0%EA%B3%BC-operator-vs.-StrCat/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-003&#34;&gt;title: &amp;ldquo;이번 주의 팁 #3: 문자열 연결과 operator+ vs. StrCat()&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/3&#xA;type: markdown&#xA;order: &amp;ldquo;003&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 2012-05-11에 totw/3으로 게시됨&lt;/p&gt;&#xA;&lt;p&gt;2017-09-18 업데이트; 2018-01-22 수정&lt;/p&gt;&#xA;&lt;p&gt;리뷰어가 &amp;ldquo;문자열 연결 연산자를 사용하지 마세요, 비효율적이에요&amp;quot;라고 말했을 때 종종 사용자들은 놀라곤 합니다. &lt;code&gt;std::string::operator+&lt;/code&gt;가 비효율적이라니요? 그렇게 구현하기 어렵기라도 한 걸까요?&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 36 새로운 Join API</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-36-%EC%83%88%EB%A1%9C%EC%9A%B4-Join-API/</link>
+      <pubDate>Fri, 29 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-36-%EC%83%88%EB%A1%9C%EC%9A%B4-Join-API/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-131&#34;&gt;title: &amp;ldquo;주간 팁 #131: 특별 멤버 함수와 &lt;code&gt;= default&lt;/code&gt;&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/131&#xA;type: markdown&#xA;order: &amp;ldquo;131&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 2017-03-24에 totw/131로 게시됨&lt;/p&gt;&#xA;&lt;p&gt;작성자: James Dennett &lt;a href=&#34;mailto:jdennett@google.com&#34;&gt;(jdennett@google.com)&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;C++는 초기부터 &lt;em&gt;특별 멤버 함수&lt;/em&gt;라 불리는 몇 가지 기능을 지원했습니다: 기본 생성자, 소멸자, 복사 생성자 및 복사 할당 연산자입니다. C++11은 여기에 이동 생성자와 이동 할당 연산자를 추가하고, &lt;code&gt;=default&lt;/code&gt;와 &lt;code&gt;=delete&lt;/code&gt;라는 문법을 통해 이러한 기본값을 선언 및 정의하는 시점을 제어할 수 있게 했습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 131 Special 멤버 함수와 = default</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-131-Special-%EB%A9%A4%EB%B2%84-%ED%95%A8%EC%88%98%EC%99%80-default/</link>
+      <pubDate>Thu, 28 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-131-Special-%EB%A9%A4%EB%B2%84-%ED%95%A8%EC%88%98%EC%99%80-default/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-131&#34;&gt;title: &amp;ldquo;주간 팁 #131: 특별 멤버 함수와 &lt;code&gt;= default&lt;/code&gt;&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/131&#xA;type: markdown&#xA;order: &amp;ldquo;131&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 2017-03-24에 totw/131로 게시됨&lt;/p&gt;&#xA;&lt;p&gt;작성자: James Dennett &lt;a href=&#34;mailto:jdennett@google.com&#34;&gt;(jdennett@google.com)&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;C++는 초기부터 &lt;em&gt;특별 멤버 함수&lt;/em&gt;라 불리는 몇 가지 기능을 지원했습니다: 기본 생성자, 소멸자, 복사 생성자 및 복사 할당 연산자입니다. C++11은 여기에 이동 생성자와 이동 할당 연산자를 추가하고, &lt;code&gt;=default&lt;/code&gt;와 &lt;code&gt;=delete&lt;/code&gt;라는 문법을 통해 이러한 기본값을 선언 및 정의하는 시점을 제어할 수 있게 했습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 42 초기화 메서드보다 팩토리 함수를 선호하세요</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-42-%EC%B4%88%EA%B8%B0%ED%99%94-%EB%A9%94%EC%84%9C%EB%93%9C%EB%B3%B4%EB%8B%A4-%ED%8C%A9%ED%86%A0%EB%A6%AC-%ED%95%A8%EC%88%98%EB%A5%BC-%EC%84%A0%ED%98%B8%ED%95%98%EC%84%B8%EC%9A%94/</link>
+      <pubDate>Thu, 28 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-42-%EC%B4%88%EA%B8%B0%ED%99%94-%EB%A9%94%EC%84%9C%EB%93%9C%EB%B3%B4%EB%8B%A4-%ED%8C%A9%ED%86%A0%EB%A6%AC-%ED%95%A8%EC%88%98%EB%A5%BC-%EC%84%A0%ED%98%B8%ED%95%98%EC%84%B8%EC%9A%94/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-042&#34;&gt;title: &amp;ldquo;주간 팁 #42: 초기화 메서드보다 팩토리 함수를 선호하세요&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/42&#xA;type: markdown&#xA;order: &amp;ldquo;042&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 2013-05-10에 totw/42로 게시됨&lt;br&gt;&#xA;작성자: Geoffrey Romer &lt;a href=&#34;mailto:gromer@google.com&#34;&gt;(gromer@google.com)&lt;/a&gt;&lt;br&gt;&#xA;2017-12-21 개정&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 74 위임 생성자와 상속 생성자</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-74-%EC%9C%84%EC%9E%84-%EC%83%9D%EC%84%B1%EC%9E%90%EC%99%80-%EC%83%81%EC%86%8D-%EC%83%9D%EC%84%B1%EC%9E%90/</link>
+      <pubDate>Thu, 28 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-74-%EC%9C%84%EC%9E%84-%EC%83%9D%EC%84%B1%EC%9E%90%EC%99%80-%EC%83%81%EC%86%8D-%EC%83%9D%EC%84%B1%EC%9E%90/</guid>
+      <description>&lt;p&gt;원래 2014-04-21에 totw/74로 게시됨&lt;br&gt;&#xA;작성자: Bradley White &lt;a href=&#34;mailto:bww@google.com&#34;&gt;(bww@google.com)&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;위임 작업이 효과를 발휘하려면, 위임하는 사람도 함께 일해야 합니다.&amp;rdquo; &amp;ndash; 로버트 하프&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 119 using 선언과 네임스페이스 별칭 사용하기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-119-using-%EC%84%A0%EC%96%B8%EA%B3%BC-%EB%84%A4%EC%9E%84%EC%8A%A4%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B3%84%EC%B9%AD-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/</link>
+      <pubDate>Tue, 26 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-119-using-%EC%84%A0%EC%96%B8%EA%B3%BC-%EB%84%A4%EC%9E%84%EC%8A%A4%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B3%84%EC%B9%AD-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/</guid>
+      <description>&lt;h3 id=&#34;주간-팁-119-using-선언과-네임스페이스-별칭-사용하기&#34;&gt;주간 팁 #119: &lt;code&gt;using&lt;/code&gt; 선언과 네임스페이스 별칭 사용하기&lt;/h3&gt;&#xA;&lt;p&gt;원래 게시일: 2016-07-14&lt;br&gt;&#xA;작성자: Thomas Köppe &lt;a href=&#34;mailto:tkoeppe@google.com&#34;&gt;(tkoeppe@google.com)&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;이 팁은 &lt;code&gt;.cc&lt;/code&gt; 파일에서 &lt;code&gt;using&lt;/code&gt; 선언과 네임스페이스 별칭을 작성할 때 발생할 수 있는 미묘한 문제를 피하기 위한 간단하고 견고한 방법을 제공합니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 123  absl::optional과 std::unique_ptr</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-123-absloptional%EA%B3%BC-stdunique_ptr/</link>
+      <pubDate>Tue, 26 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-123-absloptional%EA%B3%BC-stdunique_ptr/</guid>
+      <description>&lt;h3 id=&#34;주간-팁-123-absloptional과-stdunique_ptr&#34;&gt;주간 팁 #123: &lt;code&gt;absl::optional&lt;/code&gt;과 &lt;code&gt;std::unique_ptr&lt;/code&gt;&lt;/h3&gt;&#xA;&lt;p&gt;원래 게시일: 2016-09-06&lt;br&gt;&#xA;작성자: Alexey Sokolov &lt;a href=&#34;mailto:sokolov@google.com&#34;&gt;(sokolov@google.com)&lt;/a&gt;&lt;br&gt;&#xA;Etienne Dechamps &lt;a href=&#34;mailto:edechamps@google.com&#34;&gt;(edechamps@google.com)&lt;/a&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;값을-저장하는-방법&#34;&gt;값을 저장하는 방법&lt;/h2&gt;&#xA;&lt;p&gt;이 팁에서는 값을 저장하는 여러 가지 방법을 다룹니다. 여기서는 클래스 멤버 변수를 예로 들지만, 아래의 많은 점은 지역 변수에도 적용됩니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 130 네임스페이스 이름 지정</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-130-%EB%84%A4%EC%9E%84%EC%8A%A4%ED%8E%98%EC%9D%B4%EC%8A%A4-%EC%9D%B4%EB%A6%84-%EC%A7%80%EC%A0%95/</link>
+      <pubDate>Tue, 26 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-130-%EB%84%A4%EC%9E%84%EC%8A%A4%ED%8E%98%EC%9D%B4%EC%8A%A4-%EC%9D%B4%EB%A6%84-%EC%A7%80%EC%A0%95/</guid>
+      <description>&lt;h3 id=&#34;주간-팁-130-네임스페이스-이름-지정&#34;&gt;주간 팁 #130: 네임스페이스 이름 지정&lt;/h3&gt;&#xA;&lt;p&gt;원래 게시일: 2017-02-17&lt;br&gt;&#xA;작성자: Titus Winters &lt;a href=&#34;mailto:titus@google.com&#34;&gt;(titus@google.com)&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;정확한 이름 지정은 보는 이의 독창성을 제한한다.&lt;/em&gt;&lt;br&gt;&#xA;— 피에르 보나르(Pierre Bonnard)&lt;/p&gt;&#xA;&lt;p&gt;Google C++ 스타일 가이드 초기에는 네임스페이스 이름 지정에 대한 지침이 포함되어 있었습니다. 이 지침은 일반적으로 다음과 같이 요약될 수 있습니다:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 109 함수 선언에서 의미 있는 const 사용</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-109-%ED%95%A8%EC%88%98-%EC%84%A0%EC%96%B8%EC%97%90%EC%84%9C-%EC%9D%98%EB%AF%B8-%EC%9E%88%EB%8A%94-const-%EC%82%AC%EC%9A%A9/</link>
+      <pubDate>Mon, 25 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-109-%ED%95%A8%EC%88%98-%EC%84%A0%EC%96%B8%EC%97%90%EC%84%9C-%EC%9D%98%EB%AF%B8-%EC%9E%88%EB%8A%94-const-%EC%82%AC%EC%9A%A9/</guid>
+      <description>&lt;h3 id=&#34;한글-번역&#34;&gt;한글 번역&lt;/h3&gt;&#xA;&lt;hr&gt;&#xA;&lt;h3 id=&#34;tip-of-the-week-109-함수-선언에서-의미-있는&#34;&gt;&lt;strong&gt;Tip of the Week #109: 함수 선언에서 의미 있는 &lt;code&gt;const&lt;/code&gt; 사용&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;p&gt;&lt;strong&gt;Greg Miller&lt;/strong&gt; &lt;a href=&#34;mailto:jgm@google.com&#34;&gt;(jgm@google.com)&lt;/a&gt;&lt;br&gt;&#xA;&lt;strong&gt;2016-01-14&lt;/strong&gt;에 totw/109로 최초 게시&lt;/p&gt;&#xA;&lt;p&gt;이 문서는 함수 선언에서 &lt;code&gt;const&lt;/code&gt;가 언제 의미가 있고, 언제 의미가 없어 생략하는 것이 최선인지 설명합니다. 먼저, *선언(declaration)*과 *정의(definition)*의 차이를 간단히 살펴보겠습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 126 make_unique는 새로운 new입니다</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-126-make_unique%EB%8A%94-%EC%83%88%EB%A1%9C%EC%9A%B4-new%EC%9E%85%EB%8B%88%EB%8B%A4/</link>
+      <pubDate>Mon, 25 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-126-make_unique%EB%8A%94-%EC%83%88%EB%A1%9C%EC%9A%B4-new%EC%9E%85%EB%8B%88%EB%8B%A4/</guid>
+      <description>&lt;h3 id=&#34;한글-번역&#34;&gt;한글 번역&lt;/h3&gt;&#xA;&lt;hr&gt;&#xA;&lt;h3 id=&#34;tip-of-the-week-126&#34;&gt;&lt;strong&gt;Tip of the Week #126: &lt;code&gt;make_unique&lt;/code&gt;는 새로운 &lt;code&gt;new&lt;/code&gt;입니다&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;p&gt;&lt;strong&gt;By James Dennett&lt;/strong&gt; &lt;a href=&#34;mailto:jdennett@google.com&#34;&gt;(jdennett@google.com)&lt;/a&gt;,&lt;br&gt;&#xA;&lt;strong&gt;Titus Winters&lt;/strong&gt; &lt;a href=&#34;mailto:titus@google.com&#34;&gt;(titus@google.com)&lt;/a&gt;의 메일링 리스트 게시글을 기반으로 작성&lt;br&gt;&#xA;&lt;strong&gt;2016-12-12&lt;/strong&gt;에 totw/126으로 최초 게시&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 99 비멤버 인터페이스 에티켓</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-99-%EB%B9%84%EB%A9%A4%EB%B2%84-%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EC%97%90%ED%8B%B0%EC%BC%93/</link>
+      <pubDate>Mon, 25 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-99-%EB%B9%84%EB%A9%A4%EB%B2%84-%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EC%97%90%ED%8B%B0%EC%BC%93/</guid>
+      <description>&lt;h3 id=&#34;한글-번역&#34;&gt;한글 번역&lt;/h3&gt;&#xA;&lt;hr&gt;&#xA;&lt;h3 id=&#34;tip-of-the-week-99-비멤버-인터페이스-에티켓&#34;&gt;&lt;strong&gt;Tip of the Week #99: 비멤버 인터페이스 에티켓&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;p&gt;&lt;strong&gt;2015-06-24&lt;/strong&gt;에 totw/99로 최초 게시&lt;br&gt;&#xA;&lt;strong&gt;2017-10-10&lt;/strong&gt; 수정됨&lt;/p&gt;&#xA;&lt;p&gt;C++ 클래스의 인터페이스는 클래스 멤버나 정의로만 제한되지 않습니다. API를 평가할 때, 클래스 본문 외부에서 정의된 내용도 클래스의 public 멤버만큼이나 인터페이스의 일부가 될 수 있습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 112 emplace vs. push_back</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-112-emplace-vs.-push_back/</link>
+      <pubDate>Wed, 20 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-112-emplace-vs.-push_back/</guid>
+      <description>&lt;h3 id=&#34;한글-번역&#34;&gt;한글 번역&lt;/h3&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-112&#34;&gt;title: &amp;ldquo;Tip of the Week #112: emplace vs. push_back&amp;rdquo;&lt;br&gt;&#xA;layout: tips&lt;br&gt;&#xA;sidenav: side-nav-tips.html&lt;br&gt;&#xA;published: true&lt;br&gt;&#xA;permalink: tips/112&lt;br&gt;&#xA;type: markdown&lt;br&gt;&#xA;order: &amp;ldquo;112&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 게시 날짜: 2016-02-25, totw/112&lt;br&gt;&#xA;작성자: Geoff Romer &lt;a href=&#34;mailto:gromer@google.com&#34;&gt;(gromer@google.com)&lt;/a&gt;&lt;br&gt;&#xA;개정일: 2017-08-30&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;우리가 힘을 덜 사용할수록, 우리의 힘은 더 커질 것이다.&amp;rdquo; — 토머스 제퍼슨&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 49 인자 기반 탐색</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-49-%EC%9D%B8%EC%9E%90-%EA%B8%B0%EB%B0%98-%ED%83%90%EC%83%89/</link>
+      <pubDate>Wed, 20 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-49-%EC%9D%B8%EC%9E%90-%EA%B8%B0%EB%B0%98-%ED%83%90%EC%83%89/</guid>
+      <description>&lt;h3 id=&#34;한글-번역&#34;&gt;한글 번역&lt;/h3&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-049&#34;&gt;title: &amp;ldquo;Tip of the Week #49: Argument-Dependent Lookup&amp;rdquo;&lt;br&gt;&#xA;layout: tips&lt;br&gt;&#xA;sidenav: side-nav-tips.html&lt;br&gt;&#xA;published: true&lt;br&gt;&#xA;permalink: tips/49&lt;br&gt;&#xA;type: markdown&lt;br&gt;&#xA;order: &amp;ldquo;049&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 게시 날짜: 2013-07-14, totw/49&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;quot;&amp;hellip;어떤 법적 용어의 흔적을 따르든 간에 사라져버린 그것&amp;hellip;&amp;quot;&lt;br&gt;&#xA;– 안토닌 스칼리아, &lt;a href=&#34;http://www.supremecourt.gov/opinions/12pdf/12-307_6j37.pdf&#34;&gt;미국 대 Windsor 반대 의견&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 65 제자리에 넣기</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-65-%EC%A0%9C%EC%9E%90%EB%A6%AC%EC%97%90-%EB%84%A3%EA%B8%B0/</link>
+      <pubDate>Wed, 20 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-65-%EC%A0%9C%EC%9E%90%EB%A6%AC%EC%97%90-%EB%84%A3%EA%B8%B0/</guid>
+      <description>&lt;h3 id=&#34;한글-번역&#34;&gt;한글 번역&lt;/h3&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-065&#34;&gt;title: &amp;ldquo;Tip of the Week #65: 제자리에 요소 넣기(Putting Things in their Place)&amp;rdquo;&lt;br&gt;&#xA;layout: tips&lt;br&gt;&#xA;sidenav: side-nav-tips.html&lt;br&gt;&#xA;published: true&lt;br&gt;&#xA;permalink: tips/65&lt;br&gt;&#xA;type: markdown&lt;br&gt;&#xA;order: &amp;ldquo;065&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 게시 날짜: 2013-12-12, totw/65&lt;br&gt;&#xA;작성자: Hyrum Wright &lt;a href=&#34;mailto:hyrum@hyrumwright.org&#34;&gt;(hyrum@hyrumwright.org)&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;&amp;ldquo;설명하죠. 아니요, 너무 길어요. 요약하겠습니다.&amp;rdquo; — 이니고 몬토야&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 101  반환 값, 참조 및 수명</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-101-%EB%B0%98%ED%99%98-%EA%B0%92-%EC%B0%B8%EC%A1%B0-%EB%B0%8F-%EC%88%98%EB%AA%85/</link>
+      <pubDate>Mon, 18 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-101-%EB%B0%98%ED%99%98-%EA%B0%92-%EC%B0%B8%EC%A1%B0-%EB%B0%8F-%EC%88%98%EB%AA%85/</guid>
+      <description>&lt;h1 id=&#34;주간-팁-101-반환-값-참조-및-수명&#34;&gt;주간 팁 #101: 반환 값, 참조 및 수명&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;Originally posted as totw/101 on 2015-07-29&lt;/strong&gt;&lt;br&gt;&#xA;By Titus Winters (&lt;a href=&#34;mailto:titus@google.com&#34;&gt;titus@google.com&lt;/a&gt;)&lt;/p&gt;&#xA;&lt;p&gt;다음의 코드 스니펫을 보겠습니다:&lt;/p&gt;&#xA;&lt;div&#xA;  class=&#34;code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md&#34;&gt;&#xA;  &#xA;  &lt;div&#xA;    class=&#34;code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3&#34;&gt;&#xA;    &#xA;    &lt;div class=&#34;flex items-center gap-2&#34;&gt;&#xA;      &lt;div class=&#34;text-muted-foreground flex-shrink-0&#34;&gt;&#xA;        &#xA;  &lt;svg class=&#34;h-4 w-4&#34;&#xA;    fill=&#34;none&#34;&#xA;    stroke=&#34;currentColor&#34;&#xA;    viewBox=&#34;0 0 24 24&#34;&gt;&lt;path stroke-linecap=&#34;round&#34; stroke-linejoin=&#34;round&#34; stroke-width=&#34;2&#34; d=&#34;M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4&#34; /&gt;&#xA;&lt;/svg&gt;&#xA;      &lt;/div&gt;&#xA;      &lt;span class=&#34;text-muted-foreground text-sm font-medium&#34;&gt;&#xA;        C&amp;#43;&amp;#43;&#xA;      &lt;/span&gt;&#xA;    &lt;/div&gt;&#xA;&#xA;    &#xA;    &lt;div class=&#34;flex items-center gap-2&#34;&gt;&#xA;      &lt;button&#xA;          class=&#34;collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none&#34;&#xA;          data-code-id=&#34;code-0&#34;&#xA;          data-default-state=&#34;expanded&#34;&#xA;          data-collapsed=&#34;false&#34;&#xA;          data-auto-collapse-lines=&#34;30&#34;&#xA;          data-auto-collapse-height=&#34;400&#34;&#xA;          data-collapsed-height=&#34;120&#34;&#xA;          title=&#34;접기&#34;&#xA;          aria-label=&#34;접기&#34;&gt;&#xA;          &lt;span class=&#34;collapse-icon&#34;&gt;&#xA;            &#xA;  &lt;svg class=&#34;h-3 w-3&#34;&#xA;    fill=&#34;none&#34;&#xA;    stroke=&#34;currentColor&#34;&#xA;    viewBox=&#34;0 0 24 24&#34;&gt;&lt;path fill=&#34;currentColor&#34; d=&#34;M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z&#34;/&gt;&lt;/svg&gt;&#xA;          &lt;/span&gt;&#xA;          &lt;span class=&#34;collapse-text hidden sm:inline&#34;&#xA;            &gt;접기&lt;/span&#xA;          &gt;&#xA;        &lt;/button&gt;&#xA;      &lt;button&#xA;        class=&#34;copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none&#34;&#xA;        data-code-id=&#34;code-0&#34;&#xA;        title=&#34;복사&#34;&#xA;        aria-label=&#34;복사&#34;&gt;&#xA;        &lt;span class=&#34;copy-icon&#34;&gt;&#xA;          &#xA;  &lt;svg class=&#34;h-3 w-3&#34;&#xA;    fill=&#34;none&#34;&#xA;    stroke=&#34;currentColor&#34;&#xA;    viewBox=&#34;0 0 24 24&#34;&gt;&lt;path stroke-linecap=&#34;round&#34; stroke-linejoin=&#34;round&#34; stroke-width=&#34;2&#34; d=&#34;M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z&#34; /&gt;&#xA;&lt;/svg&gt;&#xA;        &lt;/span&gt;&#xA;        &lt;span class=&#34;copy-text hidden sm:inline&#34;&#xA;          &gt;복사&lt;/span&#xA;        &gt;&#xA;      &lt;/button&gt;&#xA;    &lt;/div&gt;&#xA;  &lt;/div&gt;&#xA;&#xA;  &#xA;  &lt;div class=&#34;code-block-content relative&#34; id=&#34;code-0&#34;&gt;&#xA;    &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;ln&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;name&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;obj&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;GetName&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;ln&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;std&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;unique_ptr&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Consumer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;consumer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Consumer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;));&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&#xA;    &#xA;    &lt;div&#xA;      class=&#34;collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300&#34;&gt;&#xA;      &lt;div&#xA;        class=&#34;text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200&#34;&gt;&#xA;        클릭하여 더 보기&#xA;      &lt;/div&gt;&#xA;    &lt;/div&gt;&#xA;  &lt;/div&gt;&#xA;&lt;/div&gt;&#xA;&#xA;&#xA;&lt;script&gt;&#xA;(function() {&#xA;  const codeId = &#39;code-0&#39;;&#xA;  const copyBtn = document.querySelector(&#39;.copy-code-btn[data-code-id=&#34;&#39; + codeId + &#39;&#34;]&#39;);&#xA;  const collapseBtn = document.querySelector(&#39;.collapse-code-btn[data-code-id=&#34;&#39; + codeId + &#39;&#34;]&#39;);&#xA;  const codeContainer = document.getElementById(codeId);&#xA;&#xA;  if (!codeContainer) return;&#xA;&#xA;  &#xA;  if (copyBtn) {&#xA;    const copyIcon = copyBtn.querySelector(&#39;.copy-icon&#39;);&#xA;    const copyText = copyBtn.querySelector(&#39;.copy-text&#39;);&#xA;&#xA;    copyBtn.addEventListener(&#39;click&#39;, async function() {&#xA;      try {&#xA;        &#xA;        let codeText = &#39;&#39;;&#xA;&#xA;        &#xA;        const codeTableCell = codeContainer.querySelector(&#39;.lntd:last-child code&#39;);&#xA;        if (codeTableCell) {&#xA;          codeText = codeTableCell.textContent || codeTableCell.innerText;&#xA;        } else {&#xA;          &#xA;          const codeElement = codeContainer.querySelector(&#39;code&#39;);&#xA;          if (codeElement) {&#xA;            &#xA;            const hasInlineLineNumbers = codeElement.querySelector(&#39;.ln&#39;);&#xA;            if (hasInlineLineNumbers) {&#xA;              &#xA;              const codeLines = codeElement.querySelectorAll(&#39;.cl&#39;);&#xA;              if (codeLines.length &gt; 0) {&#xA;                codeText = Array.from(codeLines)&#xA;                  .map(line =&gt; {&#xA;                    const text = line.textContent || line.innerText;&#xA;                    &#xA;                    return text.replace(/\n+$/, &#39;&#39;);&#xA;                  })&#xA;                  .join(&#39;\n&#39;)&#xA;                  .replace(/\n+$/, &#39;&#39;); &#xA;              } else {&#xA;                &#xA;                const allText = codeElement.textContent || codeElement.innerText;&#xA;                codeText = allText.replace(/^\d+/gm, &#39;&#39;).replace(/^\s+/gm, &#39;&#39;);&#xA;              }&#xA;            } else {&#xA;              &#xA;              codeText = codeElement.textContent || codeElement.innerText;&#xA;            }&#xA;          } else {&#xA;            &#xA;            codeText = codeContainer.textContent || codeContainer.innerText;&#xA;          }&#xA;        }&#xA;&#xA;        &#xA;        codeText = codeText.trim();&#xA;&#xA;        &#xA;        await navigator.clipboard.writeText(codeText);&#xA;&#xA;        &#xA;        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;&#xA;        if (copyText) {&#xA;          copyText.textContent = &#39;복사됨&#39;;&#xA;        }&#xA;        copyBtn.classList.add(&#39;text-green-600&#39;);&#xA;&#xA;        &#xA;        setTimeout(() =&gt; {&#xA;          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;&#xA;          if (copyText) {&#xA;            copyText.textContent = &#39;복사&#39;;&#xA;          }&#xA;          copyBtn.classList.remove(&#39;text-green-600&#39;);&#xA;        }, 2000);&#xA;&#xA;      } catch (err) {&#xA;        console.error(&#39;复制失败:&#39;, err);&#xA;&#xA;        &#xA;        const range = document.createRange();&#xA;        const codeElement = codeContainer.querySelector(&#39;code&#39;) || codeContainer;&#xA;        range.selectNodeContents(codeElement);&#xA;        const selection = window.getSelection();&#xA;        selection.removeAllRanges();&#xA;        selection.addRange(range);&#xA;&#xA;        &#xA;        if (copyText) {&#xA;          copyText.textContent = &#39;선택됨&#39;;&#xA;        }&#xA;&#xA;        setTimeout(() =&gt; {&#xA;          if (copyText) {&#xA;            copyText.textContent = &#39;복사&#39;;&#xA;          }&#xA;          selection.removeAllRanges();&#xA;        }, 2000);&#xA;      }&#xA;    });&#xA;  }&#xA;&#xA;  &#xA;  if (collapseBtn) {&#xA;    const collapseIcon = collapseBtn.querySelector(&#39;.collapse-icon&#39;);&#xA;    const collapseText = collapseBtn.querySelector(&#39;.collapse-text&#39;);&#xA;    const collapseOverlay = codeContainer.querySelector(&#39;.collapse-overlay&#39;);&#xA;&#xA;    &#xA;    let codeElement = codeContainer.querySelector(&#39;pre.chroma&#39;);&#xA;    if (!codeElement) {&#xA;      codeElement = codeContainer.querySelector(&#39;pre&#39;);&#xA;    }&#xA;&#xA;    const defaultState = collapseBtn.dataset.defaultState || &#39;expanded&#39;;&#xA;    const isCollapsedAttr = collapseBtn.dataset.collapsed === &#39;true&#39;;&#xA;    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;&#xA;    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;&#xA;    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;&#xA;&#xA;    let isCollapsed = false;&#xA;&#xA;    &#xA;    function initCollapse() {&#xA;      &#xA;      const shouldCollapse = isCollapsedAttr ||&#xA;                           defaultState === &#39;collapsed&#39; ||&#xA;                           shouldAutoCollapse();&#xA;&#xA;      if (shouldCollapse) {&#xA;        setCollapsed(true, false); &#xA;      }&#xA;    }&#xA;&#xA;    function shouldAutoCollapse() {&#xA;      &#xA;      if (codeElement) {&#xA;        const lines = codeElement.querySelectorAll(&#39;.line, .cl&#39;);&#xA;        const height = codeElement.offsetHeight;&#xA;        return lines.length &gt; autoCollapseLines || height &gt; autoCollapseHeight;&#xA;      }&#xA;&#xA;      &#xA;      const containerHeight = codeContainer.offsetHeight;&#xA;      if (containerHeight &gt; autoCollapseHeight) {&#xA;        return true;&#xA;      }&#xA;&#xA;      &#xA;      const textContent = codeContainer.textContent || codeContainer.innerText || &#39;&#39;;&#xA;      const estimatedLines = textContent.split(&#39;\n&#39;).length;&#xA;      return estimatedLines &gt; autoCollapseLines;&#xA;    }&#xA;&#xA;    function setCollapsed(collapsed, animate = true) {&#xA;      if (!collapseOverlay) return;&#xA;&#xA;      isCollapsed = collapsed;&#xA;&#xA;      if (collapsed) {&#xA;        &#xA;        codeContainer.style.maxHeight = collapsedHeight + &#39;px&#39;;&#xA;        codeContainer.style.overflow = &#39;hidden&#39;;&#xA;        collapseOverlay.style.opacity = &#39;1&#39;;&#xA;        collapseOverlay.style.pointerEvents = &#39;auto&#39;;&#xA;&#xA;        &#xA;        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;&#xA;        if (collapseText) {&#xA;          collapseText.textContent = &#39;펼치기&#39;;&#xA;        }&#xA;        collapseBtn.title = &#39;펼치기&#39;;&#xA;&#xA;      } else {&#xA;        &#xA;        codeContainer.style.maxHeight = &#39;&#39;;&#xA;        codeContainer.style.overflow = &#39;&#39;;&#xA;        collapseOverlay.style.opacity = &#39;0&#39;;&#xA;        collapseOverlay.style.pointerEvents = &#39;none&#39;;&#xA;&#xA;        &#xA;        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;&#xA;        if (collapseText) {&#xA;          collapseText.textContent = &#39;접기&#39;;&#xA;        }&#xA;        collapseBtn.title = &#39;접기&#39;;&#xA;      }&#xA;&#xA;      &#xA;      if (animate) {&#xA;        codeContainer.style.transition = &#39;max-height 0.3s ease-out&#39;;&#xA;        setTimeout(() =&gt; {&#xA;          codeContainer.style.transition = &#39;&#39;;&#xA;        }, 300);&#xA;      }&#xA;    }&#xA;&#xA;    function toggleCollapse() {&#xA;      setCollapsed(!isCollapsed, true);&#xA;    }&#xA;&#xA;    &#xA;    collapseBtn.addEventListener(&#39;click&#39;, toggleCollapse);&#xA;&#xA;    &#xA;    if (collapseOverlay) {&#xA;      collapseOverlay.addEventListener(&#39;click&#39;, () =&gt; {&#xA;        if (isCollapsed) {&#xA;          setCollapsed(false, true);&#xA;        }&#xA;      });&#xA;    }&#xA;&#xA;    &#xA;    initCollapse();&#xA;  }&#xA;})();&#xA;&lt;/script&gt;&#xA;&lt;p&gt;특히 여기서 &lt;code&gt;&amp;amp;&lt;/code&gt;에 주목해주세요. 이것이 적절할까요? 우리는 무엇을 확인해야 할까요? 어떤 문제가 발생할 수 있을까요? 많은 C++ 프로그래머들이 참조에 대해 완전히 이해하지 못한 상태에서 &amp;ldquo;복사를 피한다&amp;quot;고만 알고 있는 경우가 많습니다. 하지만 C++의 대부분의 문제처럼, 이 문제도 더 복잡합니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 107 참조 수명 연장</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-107-%EC%B0%B8%EC%A1%B0-%EC%88%98%EB%AA%85-%EC%97%B0%EC%9E%A5/</link>
+      <pubDate>Mon, 18 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-107-%EC%B0%B8%EC%A1%B0-%EC%88%98%EB%AA%85-%EC%97%B0%EC%9E%A5/</guid>
+      <description>&lt;p&gt;아래는 &amp;ldquo;이번 주의 팁 #107: 참조 수명 확장&amp;quot;에 대한 한글 번역입니다:&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;strong&gt;제목:&lt;/strong&gt; &amp;ldquo;이번 주의 팁 #107: 참조 수명 확장&amp;rdquo;&lt;br&gt;&#xA;&lt;strong&gt;원문 게시일:&lt;/strong&gt; 2015년 12월 10일&lt;br&gt;&#xA;&lt;strong&gt;작성자:&lt;/strong&gt; Titus Winters (&lt;a href=&#34;mailto:titus@google.com&#34;&gt;titus@google.com&lt;/a&gt;)&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 135 계약을 테스트하라, 구현을 테스트하지 마라</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-135-%EA%B3%84%EC%95%BD%EC%9D%84-%ED%85%8C%EC%8A%A4%ED%8A%B8%ED%95%98%EB%9D%BC-%EA%B5%AC%ED%98%84%EC%9D%84-%ED%85%8C%EC%8A%A4%ED%8A%B8%ED%95%98%EC%A7%80-%EB%A7%88%EB%9D%BC/</link>
+      <pubDate>Mon, 18 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-135-%EA%B3%84%EC%95%BD%EC%9D%84-%ED%85%8C%EC%8A%A4%ED%8A%B8%ED%95%98%EB%9D%BC-%EA%B5%AC%ED%98%84%EC%9D%84-%ED%85%8C%EC%8A%A4%ED%8A%B8%ED%95%98%EC%A7%80-%EB%A7%88%EB%9D%BC/</guid>
+      <description>&lt;h1 id=&#34;주간-팁-135-계약을-테스트하라-구현을-테스트하지-마라&#34;&gt;주간 팁 #135: 계약을 테스트하라, 구현을 테스트하지 마라&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;Originally posted as TotW #135 on June 5, 2017&lt;/strong&gt;&lt;br&gt;&#xA;&lt;em&gt;By &lt;a href=&#34;mailto:jdennett@google.com&#34;&gt;James Dennett&lt;/a&gt;&lt;/em&gt;&lt;br&gt;&#xA;Updated 2020-04-06&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;&amp;ldquo;진정한 친구가 한 명이라도 있다면, 당신은 이미 많은 것을 가진 것이다.&amp;rdquo; — 토마스 풀러(Thomas Fuller)&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 64 Raw 문자열 리터럴</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-64-Raw-%EB%AC%B8%EC%9E%90%EC%97%B4-%EB%A6%AC%ED%84%B0%EB%9F%B4/</link>
+      <pubDate>Thu, 14 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-64-Raw-%EB%AC%B8%EC%9E%90%EC%97%B4-%EB%A6%AC%ED%84%B0%EB%9F%B4/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-064&#34;&gt;title: &amp;ldquo;이번 주의 팁 #64: Raw 문자열 리터럴&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/64&#xA;type: markdown&#xA;order: &amp;ldquo;064&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 totw/64로 2013-12-09에 게시됨&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: Titus Winters &lt;a href=&#34;mailto:titus@google.com&#34;&gt;(titus@google.com)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;2017-10-23 업데이트&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 77 임시 객체, 이동, 복사</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-77-%EC%9E%84%EC%8B%9C-%EA%B0%9D%EC%B2%B4-%EC%9D%B4%EB%8F%99-%EB%B3%B5%EC%82%AC/</link>
+      <pubDate>Thu, 14 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-77-%EC%9E%84%EC%8B%9C-%EA%B0%9D%EC%B2%B4-%EC%9D%B4%EB%8F%99-%EB%B3%B5%EC%82%AC/</guid>
+      <description>&lt;h2 id=&#34;order-077&#34;&gt;title: &amp;ldquo;이번 주의 팁 #77: 임시 객체, 이동, 복사&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/77&#xA;type: markdown&#xA;order: &amp;ldquo;077&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 totw/77로 2014-07-09에 게시됨&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: Titus Winters &lt;a href=&#34;mailto:titus@google.com&#34;&gt;(titus@google.com)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 86 클래스(enum class)를 활용한 열거형</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-86-%ED%81%B4%EB%9E%98%EC%8A%A4enum-class%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EC%97%B4%EA%B1%B0%ED%98%95/</link>
+      <pubDate>Thu, 14 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-86-%ED%81%B4%EB%9E%98%EC%8A%A4enum-class%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EC%97%B4%EA%B1%B0%ED%98%95/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-086&#34;&gt;title: &amp;ldquo;이번 주의 팁 #86: 클래스(enum class)를 활용한 열거형&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/86&#xA;type: markdown&#xA;order: &amp;ldquo;086&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 totw/86로 2015-01-05에 게시됨&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 122 테스트 픽스처, 명확성, 그리고 데이터 흐름</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-122-%ED%85%8C%EC%8A%A4%ED%8A%B8-%ED%94%BD%EC%8A%A4%EC%B2%98-%EB%AA%85%ED%99%95%EC%84%B1-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%9D%90%EB%A6%84/</link>
+      <pubDate>Wed, 13 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-122-%ED%85%8C%EC%8A%A4%ED%8A%B8-%ED%94%BD%EC%8A%A4%EC%B2%98-%EB%AA%85%ED%99%95%EC%84%B1-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%9D%90%EB%A6%84/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-122&#34;&gt;title: &amp;ldquo;이번 주의 팁 #122: 테스트 픽스처, 명확성, 그리고 데이터 흐름&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/122&#xA;type: markdown&#xA;order: &amp;ldquo;122&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 totw/122로 2016-08-30에 게시됨&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 55 이름 개수 세기와 unique_ptr</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-55-%EC%9D%B4%EB%A6%84-%EA%B0%9C%EC%88%98-%EC%84%B8%EA%B8%B0%EC%99%80-unique_ptr/</link>
+      <pubDate>Wed, 13 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-55-%EC%9D%B4%EB%A6%84-%EA%B0%9C%EC%88%98-%EC%84%B8%EA%B8%B0%EC%99%80-unique_ptr/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;order-055&#34;&gt;title: &amp;ldquo;이번 주의 팁 #55: 이름 개수 세기와 &lt;code&gt;unique_ptr&lt;/code&gt;&amp;rdquo;&#xA;layout: tips&#xA;sidenav: side-nav-tips.html&#xA;published: true&#xA;permalink: tips/55&#xA;type: markdown&#xA;order: &amp;ldquo;055&amp;rdquo;&lt;/h2&gt;&#xA;&lt;p&gt;원래 totw/55로 2013-09-12에 게시됨&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;작성자: Titus Winters &lt;a href=&#34;mailto:titus@google.com&#34;&gt;(titus@google.com)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;2017-10-20 업데이트됨&lt;/p&gt;&#xA;&lt;p&gt;빠른 링크: &lt;a href=&#34;https://abseil.io/tips/55&#34;&gt;abseil.io/tips/55&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Abseil Tip 1 string_view의 활용 방법과 이점</title>
+      <link>http://192.168.1.11:1314/posts/Abseil-Tip-1-string_view%EC%9D%98-%ED%99%9C%EC%9A%A9-%EB%B0%A9%EB%B2%95%EA%B3%BC-%EC%9D%B4%EC%A0%90/</link>
+      <pubDate>Tue, 12 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Abseil-Tip-1-string_view%EC%9D%98-%ED%99%9C%EC%9A%A9-%EB%B0%A9%EB%B2%95%EA%B3%BC-%EC%9D%B4%EC%A0%90/</guid>
+      <description>&lt;h3 id=&#34;abseil-tip-1&#34;&gt;&lt;strong&gt;Abseil Tip #1: &lt;code&gt;string_view&lt;/code&gt;의 활용 방법과 이점&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;h4 id=&#34;string_view&#34;&gt;&lt;strong&gt;&lt;code&gt;string_view&lt;/code&gt;란 무엇이고, 왜 중요한가?&lt;/strong&gt;&lt;/h4&gt;&#xA;&lt;p&gt;C++에서 문자열을 인자로 받는 함수를 작성할 때, 주로 다음 세 가지 방식 중 하나를 사용합니다:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

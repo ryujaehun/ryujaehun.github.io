@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>일상 on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/categories/%EC%9D%BC%EC%83%81/</link>
+    <description>Recent content in 일상 on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Sun, 06 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/categories/%EC%9D%BC%EC%83%81/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>셀프 로드 자전거 정비 가이드</title>
+      <link>http://192.168.1.11:1314/posts/%EC%85%80%ED%94%84-%EB%A1%9C%EB%93%9C-%EC%9E%90%EC%A0%84%EA%B1%B0-%EC%A0%95%EB%B9%84-%EA%B0%80%EC%9D%B4%EB%93%9C/</link>
+      <pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/%EC%85%80%ED%94%84-%EB%A1%9C%EB%93%9C-%EC%9E%90%EC%A0%84%EA%B1%B0-%EC%A0%95%EB%B9%84-%EA%B0%80%EC%9D%B4%EB%93%9C/</guid>
+      <description>&lt;p&gt;안녕하세요! 오랜만에 일상글을 작성해보네요 오늘은 출퇴근 및 라이딩에 사용하고 있는 제 자전거(첼로 스칼라티 D7)를 집에서 셀프 정비하기 위한 가이드를 만들었는데 공유해봅니다.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

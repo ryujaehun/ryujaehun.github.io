@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Gemini 2.5 on Jaehun's Blog</title><link>https://jaehun.me/ko/tags/Gemini-2.5/</link><description>Recent content in Gemini 2.5 on Jaehun's Blog</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Mon, 23 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://jaehun.me/ko/tags/Gemini-2.5/index.xml" rel="self" type="application/rss+xml"/><item><title>Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality, Long Context, and Next Generation Agentic Capabilities</title><link>https://jaehun.me/ko/ko/posts/2025-06-23-paper-gemini2.5/</link><pubDate>Mon, 23 Jun 2025 00:00:00 +0000</pubDate><guid>https://jaehun.me/ko/ko/posts/2025-06-23-paper-gemini2.5/</guid><description>&lt;p>&lt;a href="https://storage.googleapis.com/deepmind-media/gemini/gemini_v2_5_report.pdf">논문 링크&lt;/a>&lt;/p>
+&lt;h1 id="gemini-25-1-m-토큰멀티모달초저지연-llm의-비밀을-벗기다">Gemini 2.5: 1 M 토큰·멀티모달·초저지연 LLM의 비밀을 벗기다&lt;/h1>
+&lt;h2 id="한-줄-요약-tldr">한 줄 요약 (TL;DR)&lt;/h2>
+
+ &lt;blockquote
+ class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+ &lt;div class="prose prose-sm max-w-none">
+ &lt;p>&lt;strong>Sparse-MoE + Slice-Elastic TPU 학습 + Flash Distillation&lt;/strong> 덕분에, Gemini 2.5는 1 M 토큰 컨텍스트와 비디오·오디오까지 통합하면서도 &lt;strong>코딩·수학·롱컨텍스트·비디오&lt;/strong> 벤치마크에서 GPT-4/Claude 4를 큰 폭으로 제치고, Flash 변형은 &lt;strong>≈ 320 tokens/s&lt;/strong>·비용 **35 %↓**로 “성능-지연-비용” Pareto 프런티어를 다시 그렸다.&lt;/p>
+ &lt;/div>
+ &lt;/blockquote></description></item></channel></rss>

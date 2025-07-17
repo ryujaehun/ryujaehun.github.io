@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>FP8 on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/FP8/</link>
+    <description>Recent content in FP8 on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Sat, 05 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/FP8/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>DeepSeek-V3 Technical Report</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-V3-Technical-Report/</link>
+      <pubDate>Sat, 05 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-V3-Technical-Report/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2412.19437v2&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;DeepSeek-V3는 671 B-parameter MoE LLM에 &lt;code&gt;Aux-loss-free Load-Balancing Bias&lt;/code&gt; + FP8 혼정밀 훈련 + Multi-Token Prediction을 결합해, dense 405 B 모델과 동급 (또는 우위) 성능을 절반 이하의 GPU 시간·비용으로 달성한 오픈소스 SOTA이다.&lt;/strong&gt; &lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

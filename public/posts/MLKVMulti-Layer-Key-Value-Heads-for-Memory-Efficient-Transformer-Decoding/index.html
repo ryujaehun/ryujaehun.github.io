@@ -1,0 +1,2646 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>MLKV:Multi-Layer Key-Value Heads for Memory Efficient Transformer Decoding | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 요약 이 논문은 **MLKV (Multi-Layer Key-Value..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/MLKVMulti-Layer-Key-Value-Heads-for-Memory-Efficient-Transformer-Decoding/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/MLKVMulti-Layer-Key-Value-Heads-for-Memory-Efficient-Transformer-Decoding/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="MLKV:Multi-Layer Key-Value Heads for Memory Efficient Transformer Decoding">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 요약 이 논문은 **MLKV (Multi-Layer Key-Value Sharing)**라는 새로운 방법을 제안하여 Transformer 모델에서 KV(Key-Value) 캐시 메모리 사용량을 효율적으로 줄이는 방안을 탐구합니다. 기존 MQA(Multi-Query Attention) 및 GQA(Grouped-Query Attention)보다 더 많은 메모리 절약을 가능하게 하면서도 성능 저하를 최소화하려는 것이 목표입니다. MLKV는 Key-Value 헤드를 레이어 간에 공유하여 KV 캐시 크기를 모델 레이어 수의 작은 비율까지 줄이는 혁신적인 접근 방식을 제시합니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-11-28T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-11-28T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="MLKV:Multi-Layer Key-Value Heads for Memory Efficient Transformer Decoding">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 요약 이 논문은 **MLKV (Multi-Layer Key-Value Sharing)**라는 새로운 방법을 제안하여 Transformer 모델에서 KV(Key-Value) 캐시 메모리 사용량을 효율적으로 줄이는 방안을 탐구합니다. 기존 MQA(Multi-Query Attention) 및 GQA(Grouped-Query Attention)보다 더 많은 메모리 절약을 가능하게 하면서도 성능 저하를 최소화하려는 것이 목표입니다. MLKV는 Key-Value 헤드를 레이어 간에 공유하여 KV 캐시 크기를 모델 레이어 수의 작은 비율까지 줄이는 혁신적인 접근 방식을 제시합니다.">
+
+
+  <meta itemprop="name" content="MLKV:Multi-Layer Key-Value Heads for Memory Efficient Transformer Decoding">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 요약 이 논문은 **MLKV (Multi-Layer Key-Value Sharing)**라는 새로운 방법을 제안하여 Transformer 모델에서 KV(Key-Value) 캐시 메모리 사용량을 효율적으로 줄이는 방안을 탐구합니다. 기존 MQA(Multi-Query Attention) 및 GQA(Grouped-Query Attention)보다 더 많은 메모리 절약을 가능하게 하면서도 성능 저하를 최소화하려는 것이 목표입니다. MLKV는 Key-Value 헤드를 레이어 간에 공유하여 KV 캐시 크기를 모델 레이어 수의 작은 비율까지 줄이는 혁신적인 접근 방식을 제시합니다.">
+  <meta itemprop="datePublished" content="2024-11-28T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-11-28T00:00:00+00:00">
+  <meta itemprop="wordCount" content="7105">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">MLKV:Multi-Layer Key-Value Heads for Memory Efficient Transformer Decoding</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    MLKV:Multi-Layer Key-Value Heads for Memory Efficient Transformer Decoding
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-11-28">
+          2024년 11월 28일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >15 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>7105 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2406.09297">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h3 id="논문의-요약">논문의 요약</h3>
+<p>이 논문은 **MLKV (Multi-Layer Key-Value Sharing)**라는 새로운 방법을 제안하여 Transformer 모델에서 KV(Key-Value) 캐시 메모리 사용량을 효율적으로 줄이는 방안을 탐구합니다. 기존 MQA(Multi-Query Attention) 및 GQA(Grouped-Query Attention)보다 더 많은 메모리 절약을 가능하게 하면서도 성능 저하를 최소화하려는 것이 목표입니다. MLKV는 Key-Value 헤드를 레이어 간에 공유하여 KV 캐시 크기를 모델 레이어 수의 작은 비율까지 줄이는 혁신적인 접근 방식을 제시합니다.</p>
+<hr>
+<h3 id="논문의-강점">논문의 강점</h3>
+<ol>
+<li>
+<p><strong>혁신적인 메모리 절약 기법</strong>:</p>
+<ul>
+<li>MLKV는 기존의 MQA 및 GQA의 한계를 뛰어넘어 레이어 간 KV 헤드 공유를 통해 최대 6배 더 효율적인 메모리 절약을 달성합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>효율성과 성능의 균형</strong>:</p>
+<ul>
+<li>실험 결과에서, 약간의 성능 손실을 대가로 메모리 절약을 극대화하는 합리적인 트레이드오프를 제안합니다.</li>
+<li>특히, 모델 파라미터 수는 유지하면서도 KV 캐시 크기를 획기적으로 줄이는 점이 돋보입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>구체적이고 재현 가능한 실험 설정</strong>:</p>
+<ul>
+<li>오픈 소스 모델(Pythia-160M) 및 데이터셋(The Pile)을 활용하여 실험 재현 가능성을 보장합니다.</li>
+<li>다양한 모델 변형과 벤치마크를 통해 제안 방법의 효과를 검증합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>확장 가능성</strong>:</p>
+<ul>
+<li>MLKV는 모델 크기가 클수록 효과가 두드러질 가능성이 높아, 대규모 Transformer에 적합합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="독창적인-지점">독창적인 지점</h3>
+<ul>
+<li><strong>레이어 간 Key-Value 공유</strong>:
+기존 MQA와 GQA는 레이어 내에서만 KV를 공유했으나, MLKV는 이를 레이어 간으로 확장하여 KV 캐시를 더 작게 줄이는 데 성공했습니다.</li>
+<li><strong>업트레이닝(uptraining)</strong>:
+기존 모델 체크포인트를 활용해 새로운 KV 공유 스킴에 적응시키는 업트레이닝 방식을 통해, 기존 모델 구조를 활용할 수 있는 유연성을 제공합니다.</li>
+</ul>
+<hr>
+<h3 id="핵심-알고리즘-및-예시">핵심 알고리즘 및 예시</h3>
+<h4 id="mlkv-작동-방식">MLKV 작동 방식:</h4>
+<p>MLKV는 레이어 내의 Query 헤드 간뿐 아니라, 레이어 간에도 Key-Value 헤드를 공유합니다. 이를 통해 KV 캐시 크기가 레이어 수의 비율로 줄어듭니다.</p>
+<h5 id="수학적-정의">수학적 정의:</h5>
+<ul>
+<li>
+<p><strong>Query, Key, Value 계산</strong>:
+[
+q_i = xW^Q_i, ; k_{j,k} = xW^K_{j,k}, ; v_{j,k} = xW^V_{j,k}
+]</p>
+<ul>
+<li>(q_i): Query 벡터</li>
+<li>(k_{j,k}), (v_{j,k}): Key와 Value 벡터 (여러 레이어에서 공유)</li>
+</ul>
+</li>
+<li>
+<p><strong>Attention 계산</strong>:
+[
+o_{i,j,k} = \text{Attention}(q_i, k_{j,k}, v_{j,k})
+]</p>
+</li>
+<li>
+<p><strong>레이어 계산</strong>:
+[
+\text{Layers}(x) = L_{1,1} \circ L_{n,k} \circ \cdots \circ L_{l,m}(x), ; k = \left\lfloor \frac{n-1}{l/m} \right\rfloor + 1
+]</p>
+</li>
+</ul>
+<h4 id="예시-입력">예시 입력:</h4>
+<ol>
+<li>
+<p>입력: (x) (시퀀스 길이: 1024, 배치 크기: 8)</p>
+</li>
+<li>
+<p>MLKV에서:</p>
+<ul>
+<li><strong>단일 KV 헤드 공유</strong>: (m=1), (g=1) 설정 시, 모든 레이어에서 동일한 Key-Value 헤드 사용.</li>
+<li>캐시 크기: (2bsmgdk = 0.375 \times \text{OPT-175B의 MHA 캐시 크기}).</li>
+</ul>
+</li>
+<li>
+<p>결과:</p>
+<ul>
+<li>모델은 최대 메모리 절약을 달성하며, 일부 벤치마크(예: SciQ)에서 여전히 높은 정확도를 유지.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="논문의-한계점">논문의 한계점</h3>
+<ol>
+<li>
+<p><strong>성능 저하</strong>:</p>
+<ul>
+<li>MLKV는 극단적으로 낮은 KV 헤드 설정(예: (m=1))에서 모델 성능이 크게 저하됩니다.</li>
+<li>일부 벤치마크에서 정확도가 MQA/GQA에 비해 열등한 결과를 보입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>확장성 한계</strong>:</p>
+<ul>
+<li>실험은 비교적 작은 모델(160M, 410M 파라미터)로 제한되었으며, 수십억 파라미터 규모의 모델에서 검증되지 않았습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>추가 작업 필요</strong>:</p>
+<ul>
+<li>인코더-디코더 구조에 대한 적용 가능성이 논의되지 않았으며, 초기 학습(pre-training)에서 MLKV 적용 결과는 제공되지 않았습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>추론 속도</strong>:</p>
+<ul>
+<li>메모리 사용량 감소에도 불구하고, 추론 속도 개선은 실질적으로 확인되지 않았습니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론">결론</h3>
+<p>MLKV는 메모리 제한이 중요한 애플리케이션에서 Transformer 모델을 더 효율적으로 사용할 수 있도록 하는 혁신적인 기법입니다. 성능과 메모리의 균형을 고려하여, 다양한 사용 사례에 맞는 설정을 선택할 수 있도록 유연한 옵션을 제공합니다. 다만, 성능 저하를 감수해야 하는 상황과 대규모 모델에서의 성능 검증이 필요합니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<h3 id="논문의-핵심-알고리즘-mlkv-multi-layer-key-value-sharing">논문의 핵심 알고리즘: MLKV (Multi-Layer Key-Value Sharing)</h3>
+<p>MLKV는 Transformer 모델에서 KV(Key-Value) 헤드를 레이어 간에 공유하여 메모리 사용을 줄이는 알고리즘입니다. 이를 이해하기 위해 기존의 방법(MHA, MQA, GQA)과 MLKV의 차이점을 설명하고, 예시를 통해 MLKV의 작동 과정을 단계적으로 설명하겠습니다.</p>
+<hr>
+<h3 id="1-핵심-아이디어">1. <strong>핵심 아이디어</strong></h3>
+<ul>
+<li>
+<p><strong>기존 방법</strong>:</p>
+<ul>
+<li><strong>MHA</strong>: 모든 Query 헤드마다 개별 Key-Value 헤드를 유지합니다. 메모리 사용량이 큽니다.</li>
+<li><strong>MQA</strong>: 레이어 내부에서 모든 Query 헤드가 동일한 단일 Key-Value 헤드를 공유합니다.</li>
+<li><strong>GQA</strong>: 레이어 내부에서 Query 헤드들을 그룹화하여 그룹별로 Key-Value 헤드를 공유합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>MLKV</strong>:</p>
+<ul>
+<li>MQA와 GQA에서 한 걸음 더 나아가, 레이어 간에도 Key-Value 헤드를 공유합니다.</li>
+<li>이로 인해 KV 캐시 크기를 레이어 수의 비율로 감소시킬 수 있습니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-수학적-표현">2. <strong>수학적 표현</strong></h3>
+<ul>
+<li>
+<p><strong>Key-Value 헤드 정의</strong>:</p>
+<ul>
+<li>( q_i = x W^Q_i ): Query 헤드 ((i)-번째 Query)</li>
+<li>( k_{j,k} = x W^K_{j,k} ): (j)-번째 레이어의 (k)-번째 Key 헤드</li>
+<li>( v_{j,k} = x W^V_{j,k} ): (j)-번째 레이어의 (k)-번째 Value 헤드</li>
+</ul>
+</li>
+<li>
+<p><strong>Attention 연산</strong>:
+[
+o_{i,j,k} = \text{Attention}(q_i, k_{j,k}, v_{j,k}) = \text{softmax}\left(\frac{q_i k_{j,k}^\top}{\sqrt{d_k}}\right) v_{j,k}
+]</p>
+</li>
+<li>
+<p><strong>MLKV 적용된 레이어 계산</strong>:
+[
+\text{Layers}(x) = L_{1,1} \circ L_{n,k} \circ \cdots \circ L_{l,m}(x)
+]
+여기서 (k = \left\lfloor \frac{n-1}{l/m} \right\rfloor + 1)로, 레이어 수 (l)와 공유되는 Key-Value 레이어 (m)에 따라 Key-Value 헤드가 결정됩니다.</p>
+</li>
+</ul>
+<hr>
+<h3 id="3-mlkv의-예시">3. <strong>MLKV의 예시</strong></h3>
+<h4 id="설정"><strong>설정</strong>:</h4>
+<ul>
+<li>Transformer 모델의 입력:
+<ul>
+<li>배치 크기 (b=2), 시퀀스 길이 (s=4), 모델 레이어 수 (l=4), Query 헤드 수 (h=2).</li>
+<li>(m=2): MLKV가 2개의 Key-Value 헤드를 사용 (레이어 간 공유).</li>
+</ul>
+</li>
+</ul>
+<h4 id="단계별-계산"><strong>단계별 계산</strong>:</h4>
+<ol>
+<li>
+<p><strong>Query, Key, Value 생성</strong>:</p>
+<ul>
+<li>각 입력 (x \in \mathbb{R}^{s \times d})는 Query, Key, Value로 변환됩니다:
+[
+q_i = x W^Q_i, ; k_{j,k} = x W^K_{j,k}, ; v_{j,k} = x W^V_{j,k}
+]</li>
+</ul>
+<p>예를 들어:</p>
+<ul>
+<li>레이어 1과 2는 (k_{1,1}, v_{1,1})를 공유.</li>
+<li>레이어 3과 4는 (k_{2,2}, v_{2,2})를 공유.</li>
+</ul>
+</li>
+<li>
+<p><strong>Attention 계산</strong>:</p>
+<ul>
+<li>각 레이어의 Query와 공유된 Key-Value를 사용:
+[
+o_{i,j,k} = \text{softmax}\left(\frac{q_i k_{j,k}^\top}{\sqrt{d_k}}\right) v_{j,k}
+]</li>
+</ul>
+<p>예를 들어, 레이어 1과 2의 모든 Query 헤드는 동일한 (k_{1,1}, v_{1,1})를 사용해 Attention 출력 (o_{i,1,1}, o_{i,2,1})를 계산.</p>
+</li>
+<li>
+<p><strong>레이어 통합</strong>:</p>
+<ul>
+<li>레이어 1<del>2와 레이어 3</del>4는 각자의 Key-Value 공유를 기반으로 최종 출력을 계산:
+[
+\text{Layers}(x) = L_{1,1} \circ L_{2,1} \circ L_{3,2} \circ L_{4,2}(x)
+]</li>
+</ul>
+</li>
+</ol>
+<h4 id="결과"><strong>결과</strong>:</h4>
+<ul>
+<li>메모리 사용:
+<ul>
+<li>KV 캐시 크기는 (2bsmgdk = 2 \times 2 \times 4 \times 2 \times d_k = 32d_k).</li>
+<li>기존 MHA 대비 (50%) 메모리 절약.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-mlkv의-장점">4. <strong>MLKV의 장점</strong></h3>
+<ul>
+<li><strong>효율성</strong>: 적은 수의 KV 헤드로 메모리를 절약.</li>
+<li><strong>유연성</strong>: 성능 저하를 최소화하면서 다양한 설정 가능.</li>
+<li><strong>적용성</strong>: 기존 모델을 업트레이닝(uptraining)을 통해 손쉽게 전환 가능.</li>
+</ul>
+<hr>
+<h3 id="5-정리">5. <strong>정리</strong></h3>
+<p>MLKV는 Key-Value 헤드를 레이어 간에 공유하는 혁신적인 접근 방식을 통해 Transformer 모델의 KV 캐시 크기를 크게 줄이는 알고리즘입니다. 이는 성능-메모리 트레이드오프를 제공하며, 대규모 모델의 추론 효율성을 높이는 데 유용합니다. MLKV는 설정에 따라 최적의 메모리 절약 및 성능 유지 간 균형을 맞출 수 있는 도구를 제공합니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h3 id="논문에서-제시한-결과-및-분석">논문에서 제시한 결과 및 분석</h3>
+<h4 id="1-결과-요약">1. <strong>결과 요약</strong></h4>
+<ul>
+<li>
+<p><strong>메모리 사용량 감소</strong>:</p>
+<ul>
+<li>MLKV는 KV 캐시 크기를 기존 MQA 대비 최대 <strong>6배 줄임</strong>.</li>
+<li>OPT-175B 모델 기준:
+<ul>
+<li>MHA: 144GB</li>
+<li>MQA: 1.5GB</li>
+<li>MLKV: 0.375GB</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>성능 (벤치마크 정확도)</strong>:</p>
+<ul>
+<li>여러 NLP 벤치마크에서 정확도를 측정 (ARC-e, LAMBADA, PIQA, SciQ).</li>
+<li>MLKV-48, MLKV-12 등 일부 설정에서 기존 방법론(MQA, GQA)에 가까운 성능 유지.</li>
+<li>극단적으로 KV 헤드 수를 줄인 경우(예: MLKV-1) 성능 급격히 저하.</li>
+</ul>
+</li>
+<li>
+<p><strong>추론 효율성</strong>:</p>
+<ul>
+<li>MLKV를 사용한 모델은 더 큰 배치 크기와 더 긴 시퀀스 길이를 처리 가능.</li>
+<li>메모리 사용량은 선형적으로 증가하나, 다른 방법론 대비 훨씬 완만한 기울기.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="2-다른-방법론과의-비교">2. <strong>다른 방법론과의 비교</strong></h4>
+<ul>
+<li>
+<p><strong>MQA 및 GQA 대비 특출난 점</strong>:</p>
+<ul>
+<li>
+<p><strong>더 큰 메모리 절약</strong>:</p>
+<ul>
+<li>MQA는 레이어 내의 Query 헤드 간에 단일 Key-Value 헤드를 공유하여 메모리를 절약하지만, 레이어별 최소 KV 헤드 수(=레이어 수)를 유지해야 합니다.</li>
+<li>MLKV는 레이어 간에도 Key-Value 헤드를 공유하여, KV 헤드 수를 레이어 수의 비율 이하로 줄임.</li>
+</ul>
+</li>
+<li>
+<p><strong>유연한 설정</strong>:</p>
+<ul>
+<li>MLKV는 (m &lt; l) 설정을 통해 특정 사용 사례에 맞게 KV 캐시 크기를 최적화 가능.</li>
+<li>특히 메모리 제한이 중요한 환경(예: 모바일 디바이스, 임베디드 시스템)에서 효과적.</li>
+</ul>
+</li>
+<li>
+<p><strong>성능-메모리 트레이드오프의 개선</strong>:</p>
+<ul>
+<li>(m = l/2) 또는 (m = l/3)와 같은 설정에서, MQA 수준의 성능을 유지하면서도 추가 메모리 절약 가능.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>한계점</strong>:</p>
+<ul>
+<li>(m = 1) 같은 극단적 설정에서는 성능이 급격히 저하.</li>
+<li>일부 벤치마크에서는 GQA 대비 낮은 성능을 보임.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="3-mlkv의-결과를-도출한-핵심-기법">3. <strong>MLKV의 결과를 도출한 핵심 기법</strong></h4>
+<ul>
+<li>
+<p><strong>레이어 간 KV 헤드 공유</strong>:</p>
+<ul>
+<li>논문에서는 Transformer의 레이어가 &ldquo;유사한 패턴을 학습한다&quot;는 기존 연구(Geva et al., 2021)를 기반으로, 레이어 간 Key-Value를 공유해도 모델 성능이 크게 저하되지 않는다고 주장.</li>
+<li>특히 인접한 레이어는 비슷한 특성을 학습하기 때문에, Key-Value 공유가 가능하다는 점을 실험적으로 검증.</li>
+</ul>
+</li>
+<li>
+<p><strong>업트레이닝</strong>:</p>
+<ul>
+<li>기존 모델 체크포인트를 활용해 새로운 KV 공유 설정으로 적응시키는 업트레이닝 기법을 사용.</li>
+<li>이는 기존 모델 구조를 재활용하며, 추가 학습 비용을 최소화함.</li>
+</ul>
+</li>
+<li>
+<p><strong>설계 유연성</strong>:</p>
+<ul>
+<li>(m)과 (g) (레이어 및 그룹별 KV 헤드 수)를 조절하여 다양한 메모리-성능 트레이드오프를 실험.</li>
+<li>(m = l/2)와 같은 설정이 가장 합리적임을 제안.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="4-mlkv의-효과에-대한-논문의-주장">4. <strong>MLKV의 효과에 대한 논문의 주장</strong></h4>
+<ul>
+<li>논문은 다음과 같은 이유로 MLKV가 효과적이라고 주장합니다:
+<ol>
+<li><strong>Transformer 레이어의 중복성</strong>:
+<ul>
+<li>연구에 따르면, Transformer의 낮은 레이어는 &ldquo;표면적 패턴&quot;을 학습하고, 높은 레이어는 &ldquo;추상적 의미&quot;를 학습합니다. 따라서, 인접한 레이어 간 Key-Value를 공유해도 정보 손실이 크지 않습니다.</li>
+</ul>
+</li>
+<li><strong>KV 캐시 최적화</strong>:
+<ul>
+<li>기존의 GQA와 MQA는 레이어 내 최적화에 국한되었으나, MLKV는 레이어 간 최적화를 통해 더 큰 메모리 절약을 달성합니다.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="5-내-생각과-평가">5. <strong>내 생각과 평가</strong></h4>
+<ul>
+<li>
+<p><strong>강점</strong>:</p>
+<ul>
+<li>논문에서 제시한 &ldquo;레이어 간 중복성 활용&quot;이라는 아이디어는 설득력이 있으며, 실험 결과 이를 뒷받침합니다. 특히 대규모 Transformer 모델에서 메모리 효율성을 극대화하려는 목적에 부합합니다.</li>
+<li>MLKV는 메모리-성능 트레이드오프를 유연하게 조절할 수 있는 도구를 제공하며, 특정 애플리케이션(예: 실시간 응답, 메모리 제한 환경)에서 매우 유용할 것으로 보입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>한계</strong>:</p>
+<ul>
+<li>(m = 1) 또는 (m = l/6) 같은 극단적 설정에서 성능 저하가 두드러지는 만큼, 모델 성능과 메모리 효율성 간 적절한 균형을 찾는 것이 중요합니다.</li>
+<li>논문에서 주장한 &ldquo;레이어 간 중복성&quot;이 실제로 모든 언어 모델에 적용 가능한지, 혹은 특정 아키텍처에 국한되는지 추가 검증이 필요합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>제안</strong>:</p>
+<ul>
+<li>논문에서 사용한 작은 모델(160M, 410M) 외에, 10B+ 규모의 모델에서도 동일한 결과가 나타나는지 실험이 필요합니다.</li>
+<li>다양한 도메인 태스크(예: 이미지-텍스트 모델, 멀티모달 Transformer)에서도 MLKV가 유사한 성능-메모리 트레이드오프를 제공할지 검토해야 합니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결론-1">결론</h3>
+<p>MLKV는 Transformer의 KV 캐시 최적화에 있어 획기적인 접근법을 제안하며, 메모리 사용량을 크게 줄이면서도 성능 손실을 최소화할 수 있는 잠재력을 보였습니다. 이는 대규모 언어 모델을 메모리 제한이 있는 환경에 적용할 수 있도록 하는 중요한 기여로 평가됩니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="입력-데이터와-추론-과정">입력 데이터와 추론 과정</h3>
+<h4 id="입력-데이터"><strong>입력 데이터</strong></h4>
+<ul>
+<li>
+<p><strong>입력 데이터 구성</strong>:</p>
+<ul>
+<li>입력 데이터는 NLP 태스크에서 사용되는 토큰화된 시퀀스입니다. 예를 들어, &ldquo;The quick brown fox&quot;라는 문장을 입력 데이터로 사용한다고 가정.</li>
+<li>각 단어는 토큰화되고, 정수 ID로 변환된 후 임베딩 벡터로 매핑됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>입력 데이터의 특징</strong>:</p>
+<ul>
+<li>시퀀스 길이 (s): 4 (예: &ldquo;The&rdquo;, &ldquo;quick&rdquo;, &ldquo;brown&rdquo;, &ldquo;fox&rdquo;).</li>
+<li>배치 크기 (b): 2 (병렬적으로 처리되는 문장 수).</li>
+<li>임베딩 차원 (d): 모델의 숨겨진 차원(예: (d=512)).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="추론-과정-예시"><strong>추론 과정 예시</strong></h4>
+<p>Transformer 모델의 추론 과정은 다음 단계로 이루어집니다.</p>
+<ol>
+<li>
+<p><strong>입력 임베딩</strong>:</p>
+<ul>
+<li>정수 ID로 표현된 입력 데이터는 임베딩 벡터로 변환됩니다.</li>
+<li>결과는 (x \in \mathbb{R}^{b \times s \times d})의 형태를 가집니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Key, Query, Value 계산</strong>:</p>
+<ul>
+<li>각 Transformer 레이어에서 Query, Key, Value가 계산됩니다.</li>
+<li>(W^Q, W^K, W^V)는 선형 변환 행렬입니다.
+[
+q_i = x W^Q_i, ; k_i = x W^K_i, ; v_i = x W^V_i
+]</li>
+<li>결과:
+[
+q_i, k_i, v_i \in \mathbb{R}^{b \times s \times d_h}
+]
+여기서 (d_h = \frac{d}{h}), (h)는 Attention 헤드의 개수.</li>
+</ul>
+</li>
+<li>
+<p><strong>Attention 계산</strong>:</p>
+<ul>
+<li>Query와 Key를 이용해 Attention 가중치 계산:
+[
+\alpha_i = \text{softmax}\left(\frac{q_i k_i^\top}{\sqrt{d_h}}\right)
+]</li>
+<li>Value에 가중치를 곱해 최종 Attention 출력 계산:
+[
+o_i = \alpha_i v_i
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>MLKV 적용</strong>:</p>
+<ul>
+<li><strong>Key-Value 헤드 공유</strong>:
+<ul>
+<li>기존의 Query, Key, Value 연산은 각 레이어에서 독립적으로 수행됩니다.</li>
+<li>MLKV에서는 Key와 Value를 여러 레이어 간에 공유:
+[
+k_{j,k} = x W^K_{j,k}, ; v_{j,k} = x W^V_{j,k}
+]
+<ul>
+<li>예를 들어, 레이어 1과 2는 동일한 (k_{1,1}, v_{1,1})를 공유.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Feedforward Network</strong>:</p>
+<ul>
+<li>Attention 출력을 MLP(다층 퍼셉트론)으로 전달:
+[
+\text{FFN}(x) = \text{ReLU}(x W_1 + b_1) W_2 + b_2
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>출력</strong>:</p>
+<ul>
+<li>마지막 Transformer 레이어의 출력은 최종 예측을 위해 로지트(logit)로 변환됩니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="모델-아키텍처-구성">모델 아키텍처 구성</h3>
+<ol>
+<li>
+<p><strong>Multi-Head Attention</strong>:</p>
+<ul>
+<li>(h): Attention 헤드 수 (예: 8).</li>
+<li>각 헤드는 Query, Key, Value로 나뉘어 병렬적으로 계산.</li>
+</ul>
+</li>
+<li>
+<p><strong>Feedforward Network</strong>:</p>
+<ul>
+<li>두 개의 완전 연결 레이어:
+<ul>
+<li>첫 번째 레이어의 출력 차원: (4d) (확장).</li>
+<li>두 번째 레이어의 출력 차원: (d) (축소).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Residual Connections 및 Layer Normalization</strong>:</p>
+<ul>
+<li>각 레이어의 입력과 출력을 더해 레지듀얼(residual) 연결 수행.</li>
+<li>정규화를 통해 학습 안정성을 높임.</li>
+</ul>
+</li>
+<li>
+<p><strong>MLKV의 구조</strong>:</p>
+<ul>
+<li>Key와 Value를 레이어 간 공유.</li>
+<li>모델의 레이어 수 (l), 그룹 수 (g), Key-Value 헤드 수 (m)로 설정.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="메모리-요구량-및-컴퓨팅-요구량">메모리 요구량 및 컴퓨팅 요구량</h3>
+<h4 id="메모리-요구량"><strong>메모리 요구량</strong></h4>
+<p>Transformer 모델의 메모리 사용량은 다음과 같이 나뉩니다:</p>
+<ol>
+<li>
+<p><strong>KV 캐시 메모리</strong>:</p>
+<ul>
+<li>
+<p>KV 캐시 크기:
+[
+\text{MHA: } 2bslh d_h, ; \text{MQA: } 2bsl d_h, ; \text{MLKV: } 2bsmg d_h
+]
+여기서:</p>
+<ul>
+<li>(b): 배치 크기.</li>
+<li>(s): 시퀀스 길이.</li>
+<li>(l): 레이어 수.</li>
+<li>(h): Attention 헤드 수.</li>
+<li>(m): MLKV에서 Key-Value 헤드가 존재하는 레이어 수.</li>
+<li>(g): 그룹화된 KV 헤드 수.</li>
+</ul>
+</li>
+<li>
+<p>예: (b=2, s=1024, l=12, h=12, d_h=64, m=6, g=1)일 때:
+[
+\text{MLKV KV 캐시 크기} = 2 \times 2 \times 1024 \times 6 \times 1 \times 64 = 1.57 \text{MB (float16 기준)}
+]</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 파라미터 메모리</strong>:</p>
+<ul>
+<li>선형 연산 가중치((W^Q, W^K, W^V, W^O, W_1, W_2)) 저장.</li>
+</ul>
+</li>
+<li>
+<p><strong>배치 크기에 따른 임시 텐서</strong>:</p>
+<ul>
+<li>Forward 및 Backward 계산 중 생성되는 중간 텐서.</li>
+</ul>
+</li>
+</ol>
+<h4 id="컴퓨팅-요구량"><strong>컴퓨팅 요구량</strong></h4>
+<ol>
+<li>
+<p><strong>Attention 계산</strong>:</p>
+<ul>
+<li>Query-Key 행렬 곱:
+[
+b \cdot h \cdot s \cdot s \cdot d_h
+]</li>
+<li>Value 가중치 곱:
+[
+b \cdot h \cdot s \cdot d_h \cdot s
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>Feedforward 연산</strong>:</p>
+<ul>
+<li>첫 번째 레이어:
+[
+b \cdot s \cdot d \cdot 4d
+]</li>
+<li>두 번째 레이어:
+[
+b \cdot s \cdot 4d \cdot d
+]</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-2">결론</h3>
+<ul>
+<li><strong>MLKV는 메모리 효율을 극대화</strong>: Key-Value 헤드 공유를 통해 KV 캐시 크기를 최소화.</li>
+<li><strong>컴퓨팅 요구량은 기존 모델과 유사</strong>: KV 캐시 메모리 외의 연산량은 크게 변하지 않음.</li>
+<li><strong>적용성 높은 구조</strong>: 배치 크기와 시퀀스 길이에 따른 메모리 요구량 감소가 추론 성능 향상으로 이어짐.</li>
+</ul>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<h3 id="논문의-한계-및-이를-극복하기-위한-연구-흐름">논문의 한계 및 이를 극복하기 위한 연구 흐름</h3>
+<p>논문에서 제시한 MLKV의 한계를 극복하기 위해 여러 방향의 연구 흐름이 존재합니다. 이를 세부적으로 설명하겠습니다.</p>
+<hr>
+<h3 id="1-한계점-요약">1. <strong>한계점 요약</strong></h3>
+<ol>
+<li>
+<p><strong>극단적 KV 공유의 성능 저하</strong>:</p>
+<ul>
+<li>(m = 1) 또는 (m = l/6) 같은 극단적인 설정에서는 성능이 크게 저하됩니다.</li>
+<li>Key-Value를 지나치게 공유하면 모델의 표현력이 제한됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>대규모 모델에 대한 검증 부족</strong>:</p>
+<ul>
+<li>본 연구는 상대적으로 작은 모델(160M, 410M 파라미터)에서 실험되었으며, 수십억 파라미터 규모의 모델에서는 성능이 검증되지 않았습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>인코더-디코더 구조에서의 적용성 미확인</strong>:</p>
+<ul>
+<li>MLKV는 디코더 중심의 구조에만 실험되었으며, 인코더-디코더 모델(예: BERT, T5)에서는 검증되지 않았습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>추론 속도 개선의 부재</strong>:</p>
+<ul>
+<li>메모리 사용량은 줄었으나, 추론 속도는 개선되지 않았습니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-이를-극복하기-위한-연구-흐름">2. <strong>이를 극복하기 위한 연구 흐름</strong></h3>
+<h4 id="a-kv-캐시-압축-및-동적-관리">A. <strong>KV 캐시 압축 및 동적 관리</strong></h4>
+<p>KV 캐시 메모리 최적화의 대안적 접근 방식:</p>
+<ol>
+<li>
+<p><strong>KV 캐시 압축</strong>:</p>
+<ul>
+<li>SCISSORHANDS (Liu et al., 2023): 중요한 토큰만 선택적으로 KV 캐시에 유지.</li>
+<li>Key와 Value의 저차원 표현으로 압축하는 방법(예: SVD, PCA).</li>
+</ul>
+</li>
+<li>
+<p><strong>동적 KV 캐시 관리</strong>:</p>
+<ul>
+<li>FastGen (Ge et al., 2024): 특정 위치의 중요도에 따라 KV 캐시를 동적으로 조정.</li>
+<li>토큰 빈도, 위치, 중요도 등 정책을 통해 KV 캐시의 크기를 조절.</li>
+</ul>
+</li>
+<li>
+<p><strong>학습 기반 압축</strong>:</p>
+<ul>
+<li>학습 중 KV 캐시의 불필요한 정보를 제거하는 손실 함수를 추가하여 효율성을 높임.</li>
+</ul>
+</li>
+</ol>
+<h4 id="b-cross-layer-attention-cla">B. <strong>Cross-Layer Attention (CLA)</strong></h4>
+<ol>
+<li>
+<p><strong>CLA의 접근 방식</strong>:</p>
+<ul>
+<li>Brandon et al. (2024): MLKV와 유사하게 Key와 Value를 레이어 간에 공유하되, 각 레이어마다 다른 가중치로 Key와 Value를 조정.</li>
+<li>이 접근법은 모델의 표현력 손실을 줄이면서 메모리를 절약.</li>
+</ul>
+</li>
+<li>
+<p><strong>CLA와 MLKV의 통합 가능성</strong>:</p>
+<ul>
+<li>MLKV의 간단한 구조를 CLA의 비선형적인 레이어별 조정 방식과 결합하면 성능 향상 가능.</li>
+</ul>
+</li>
+</ol>
+<h4 id="c-low-rank-attention">C. <strong>Low-Rank Attention</strong></h4>
+<ol>
+<li>
+<p><strong>MLA (Multi-Latent Attention)</strong>:</p>
+<ul>
+<li>DeepSeek-V2 (2024): Attention에서 Key와 Value를 저차원 공간에 투영하고, 필요한 경우 고차원으로 복원.</li>
+<li>메모리 사용량을 줄이면서도 표현력을 유지.</li>
+</ul>
+</li>
+<li>
+<p><strong>YOCO (You Only Cache Once)</strong>:</p>
+<ul>
+<li>Key-Value 캐시를 모든 레이어에 동일하게 사용하도록 조정.</li>
+<li>인코더-디코더 구조에도 적합하며, 디코더에서 모든 KV를 재사용.</li>
+</ul>
+</li>
+</ol>
+<h4 id="d-트랜스포머-구조-수정">D. <strong>트랜스포머 구조 수정</strong></h4>
+<ol>
+<li>
+<p><strong>Sparse Attention</strong>:</p>
+<ul>
+<li>Attention 메커니즘에서 모든 Query-Key 쌍을 계산하지 않고, 중요도가 높은 토큰만 선택적으로 계산(예: Longformer, BigBird).</li>
+</ul>
+</li>
+<li>
+<p><strong>모듈식 구조로 전환</strong>:</p>
+<ul>
+<li>Key-Value 메모리를 레이어별로 모듈화하여 재사용 가능성을 높임.</li>
+<li>모델의 표현력을 유지하면서 메모리 최적화.</li>
+</ul>
+</li>
+</ol>
+<h4 id="e-대규모-모델-검증-및-확장">E. <strong>대규모 모델 검증 및 확장</strong></h4>
+<ol>
+<li>
+<p><strong>Billion-Scale 모델 적용</strong>:</p>
+<ul>
+<li>GPT-3(175B)나 PaLM(540B)와 같은 초대규모 모델에서 MLKV의 성능을 검증.</li>
+<li>이러한 모델에서는 KV 캐시가 메모리 병목이 되므로, MLKV의 효과를 극대화할 가능성이 큼.</li>
+</ul>
+</li>
+<li>
+<p><strong>멀티모달 트랜스포머</strong>:</p>
+<ul>
+<li>텍스트 외에도 이미지, 오디오를 처리하는 멀티모달 모델에서 MLKV와 유사한 KV 공유 기법을 적용.</li>
+</ul>
+</li>
+</ol>
+<h4 id="f-추론-속도-최적화">F. <strong>추론 속도 최적화</strong></h4>
+<ol>
+<li>
+<p><strong>캐시 액세스 최적화</strong>:</p>
+<ul>
+<li>MLKV에서 캐시된 Key와 Value를 병렬적으로 불러오도록 메모리 구조 최적화.</li>
+<li>GPU/TPU의 캐시 적중률(Cache Hit)을 높이는 커스텀 연산 개발.</li>
+</ul>
+</li>
+<li>
+<p><strong>하드웨어 가속 최적화</strong>:</p>
+<ul>
+<li>MLKV를 위해 특정 하드웨어(예: NVIDIA Tensor Core, Google TPU)에 맞춘 최적화 연산 개발.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="3-내-생각">3. <strong>내 생각</strong></h3>
+<ul>
+<li>
+<p><strong>기존 연구 흐름의 장점</strong>:</p>
+<ul>
+<li>CLA 및 Low-Rank Attention은 모델 성능 손실을 최소화하면서 메모리 절약을 강화하는 실질적인 대안입니다.</li>
+<li>대규모 모델에서 MLKV와 CLA 같은 기법이 적용된다면, KV 캐시 문제를 크게 완화할 것으로 예상됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>통합 연구 방향 제안</strong>:</p>
+<ul>
+<li><strong>MLKV와 CLA의 결합</strong>: 레이어 간 공유를 동적 조정 방식과 통합.</li>
+<li><strong>압축 기반 연구 병합</strong>: MLKV의 공유 방식을 저차원 표현과 결합하여, Key와 Value를 더 효율적으로 저장.</li>
+<li><strong>하드웨어 협력</strong>: MLKV를 고려한 하드웨어 설계(예: Key-Value 캐시에 최적화된 GPU 연산).</li>
+</ul>
+</li>
+<li>
+<p><strong>장기적 비전</strong>:</p>
+<ul>
+<li>메모리 최적화 기법은 단순히 NLP에만 국한되지 않고, 음성 인식, 이미지 생성, 멀티모달 AI 등 모든 Transformer 기반 기술에 응용될 가능성이 큽니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결론-3">결론</h3>
+<p>MLKV의 한계를 극복하기 위한 연구 흐름은 캐시 압축, Cross-Layer Attention, Low-Rank Attention, Sparse Attention 등으로 나뉩니다. 특히, 이러한 방법론들은 메모리 효율성과 성능 간의 균형을 찾는 데 중점을 두며, MLKV와의 통합 가능성이 높습니다. 이를 통해 더 크고 효율적인 트랜스포머 모델이 구현될 것으로 기대됩니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/MLKVMulti-Layer-Key-Value-Heads-for-Memory-Efficient-Transformer-Decoding/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/MLKVMulti-Layer-Key-Value-Heads-for-Memory-Efficient-Transformer-Decoding/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Benchmark-of-Long-Context-Capable-Approaches/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                Benchmark of Long Context Capable Approaches
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-11-27">
+                11月27日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Effectively-Compress-KV-Heads-for-LLM/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Effectively Compress KV Heads for LLM
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-11-28">
+                11月28日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-요약">논문의 요약</a></li>
+        <li><a href="#논문의-강점">논문의 강점</a></li>
+        <li><a href="#독창적인-지점">독창적인 지점</a></li>
+        <li><a href="#핵심-알고리즘-및-예시">핵심 알고리즘 및 예시</a>
+          <ul>
+            <li><a href="#mlkv-작동-방식">MLKV 작동 방식:</a></li>
+            <li><a href="#예시-입력">예시 입력:</a></li>
+          </ul>
+        </li>
+        <li><a href="#논문의-한계점">논문의 한계점</a></li>
+        <li><a href="#결론">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-핵심-알고리즘-mlkv-multi-layer-key-value-sharing">논문의 핵심 알고리즘: MLKV (Multi-Layer Key-Value Sharing)</a></li>
+        <li><a href="#1-핵심-아이디어">1. <strong>핵심 아이디어</strong></a></li>
+        <li><a href="#2-수학적-표현">2. <strong>수학적 표현</strong></a></li>
+        <li><a href="#3-mlkv의-예시">3. <strong>MLKV의 예시</strong></a>
+          <ul>
+            <li><a href="#설정"><strong>설정</strong>:</a></li>
+            <li><a href="#단계별-계산"><strong>단계별 계산</strong>:</a></li>
+            <li><a href="#결과"><strong>결과</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#4-mlkv의-장점">4. <strong>MLKV의 장점</strong></a></li>
+        <li><a href="#5-정리">5. <strong>정리</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문에서-제시한-결과-및-분석">논문에서 제시한 결과 및 분석</a>
+          <ul>
+            <li><a href="#1-결과-요약">1. <strong>결과 요약</strong></a></li>
+            <li><a href="#2-다른-방법론과의-비교">2. <strong>다른 방법론과의 비교</strong></a></li>
+            <li><a href="#3-mlkv의-결과를-도출한-핵심-기법">3. <strong>MLKV의 결과를 도출한 핵심 기법</strong></a></li>
+            <li><a href="#4-mlkv의-효과에-대한-논문의-주장">4. <strong>MLKV의 효과에 대한 논문의 주장</strong></a></li>
+            <li><a href="#5-내-생각과-평가">5. <strong>내 생각과 평가</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-1">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#입력-데이터와-추론-과정">입력 데이터와 추론 과정</a>
+          <ul>
+            <li><a href="#입력-데이터"><strong>입력 데이터</strong></a></li>
+            <li><a href="#추론-과정-예시"><strong>추론 과정 예시</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#모델-아키텍처-구성">모델 아키텍처 구성</a></li>
+        <li><a href="#메모리-요구량-및-컴퓨팅-요구량">메모리 요구량 및 컴퓨팅 요구량</a>
+          <ul>
+            <li><a href="#메모리-요구량"><strong>메모리 요구량</strong></a></li>
+            <li><a href="#컴퓨팅-요구량"><strong>컴퓨팅 요구량</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-2">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-한계-및-이를-극복하기-위한-연구-흐름">논문의 한계 및 이를 극복하기 위한 연구 흐름</a></li>
+        <li><a href="#1-한계점-요약">1. <strong>한계점 요약</strong></a></li>
+        <li><a href="#2-이를-극복하기-위한-연구-흐름">2. <strong>이를 극복하기 위한 연구 흐름</strong></a>
+          <ul>
+            <li><a href="#a-kv-캐시-압축-및-동적-관리">A. <strong>KV 캐시 압축 및 동적 관리</strong></a></li>
+            <li><a href="#b-cross-layer-attention-cla">B. <strong>Cross-Layer Attention (CLA)</strong></a></li>
+            <li><a href="#c-low-rank-attention">C. <strong>Low-Rank Attention</strong></a></li>
+            <li><a href="#d-트랜스포머-구조-수정">D. <strong>트랜스포머 구조 수정</strong></a></li>
+            <li><a href="#e-대규모-모델-검증-및-확장">E. <strong>대규모 모델 검증 및 확장</strong></a></li>
+            <li><a href="#f-추론-속도-최적화">F. <strong>추론 속도 최적화</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-내-생각">3. <strong>내 생각</strong></a></li>
+        <li><a href="#결론-3">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,451 @@
+<!doctype html><html lang=ko-kr data-theme=claude><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta http-equiv=X-UA-Compatible content="IE=edge"><title>Star Attention: Efficient LLM Inference over Long Sequences | Jaehun's Blog</title><meta name=description content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 결론 요약
+논문은 긴 시퀀스에 대한 Transformer 기반 대형 언어 모..."><meta name=keywords content="개발,프로그래밍,에세이"><meta name=author content><meta name=language content="ko"><meta name=robots content="index, follow"><link rel=canonical href=https://jaehun.me/ko/ko/posts/2024-12-20-paper-2411.17116v1/><link rel=icon type=image/svg+xml href=/favicon.svg><link rel=manifest href=/site.webmanifest><meta property="og:url" content="https://jaehun.me/ko/ko/posts/2024-12-20-paper-2411.17116v1/"><meta property="og:site_name" content="Jaehun's Blog"><meta property="og:title" content="Star Attention: Efficient LLM Inference over Long Sequences"><meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 결론 요약"><meta property="og:locale" content="ko_kr"><meta property="og:type" content="article"><meta property="article:section" content="ko"><meta property="article:published_time" content="2024-12-20T00:00:00+00:00"><meta property="article:modified_time" content="2024-12-20T00:00:00+00:00"><meta property="og:image" content="https://jaehun.me/images/og-default.avif"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://jaehun.me/images/og-default.avif"><meta name=twitter:title content="Star Attention: Efficient LLM Inference over Long Sequences"><meta name=twitter:description content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 결론 요약"><meta itemprop=name content="Star Attention: Efficient LLM Inference over Long Sequences"><meta itemprop=description content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 결론 요약"><meta itemprop=datePublished content="2024-12-20T00:00:00+00:00"><meta itemprop=dateModified content="2024-12-20T00:00:00+00:00"><meta itemprop=wordCount content="11091"><meta itemprop=image content="https://jaehun.me/images/og-default.avif"><meta itemprop=keywords content="Paper-Review,With-Gpt"><script>window.HUGO_SEARCH_CONFIG={searchIndexURL:'"/ko/index.json"'}</script><script>window.HUGO_GALLERY_CONFIG={justified_gallery:!1,lightbox:!1,justified:"{}",lightbox_options:"{}"}</script><link rel=stylesheet href=/css/compiled.min.9165cace5b80a5be5daad6ea96eb2abc20a18a3f41d7fed7f0335b689fdf7883.css integrity="sha256-kWXKzluApb5dqtbqlusqvCChij9B1/7X8DNbaJ/feIM=" crossorigin=anonymous><link rel=stylesheet href=/css/chroma.min.491df36221f739b5948a747a0351f100ee7ccaaf466d9f46288bf06de1d59123.css integrity="sha256-SR3zYiH3ObWUinR6A1HxAO58yq9GbZ9GKIvwbeHVkSM=" crossorigin=anonymous><script src=/js/main.ba969e49a7a874e6938fe689a7dcaa00cb64cb4d429c2cf98d09bde512a16c6d.js integrity="sha256-upaeSaeodOaTj+aJp9yqAMtky01CnCz5jQm95RKhbG0=" crossorigin=anonymous></script><script src=/js/gumshoe.polyfills.min.js></script><script src=/js/toc.70654aebf0b738a78ae2df95297cc10ebc6e590f3c942dd1325fa852f50038b2.js integrity="sha256-cGVK6/C3OKeK4t+VKXzBDrxuWQ88lC3RMl+oUvUAOLI=" crossorigin=anonymous defer></script><script src=/js/search.de3eba3540834efb8328121784bff4774e06362412ee41eee665f5b4f987f393.js integrity="sha256-3j66NUCDTvuDKBIXhL/0d04GNiQS7kHu5mX1tPmH85M=" crossorigin=anonymous defer></script><script src=/js/dock.e02f422517e001d9fb6bea1e9e8b0e89e9d2e486ad4641f275bb3e36ce2ae79f.js integrity="sha256-4C9CJRfgAdn7a+oenosOienS5IatRkHydbs+Ns4q558=" crossorigin=anonymous defer></script><script>(function(){const e=localStorage.getItem("theme")||"system",n=localStorage.getItem("colorScheme")||"claude";document.documentElement.setAttribute("data-theme",n);function t(){e==="dark"||e==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches?document.documentElement.classList.add("dark"):document.documentElement.classList.remove("dark")}t(),e==="system"&&window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",t)})()</script></head><body class="bg-background text-foreground min-h-screen antialiased"><div id=reading-progress-container class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out" data-height=3 data-smooth-scroll=true data-hide-on-complete=false><div class="reading-progress-bg w-full"></div><div id=reading-progress-bar class="from-primary to-primary/80 reading-progress-bar
+transition-all duration-150 ease-out
+absolute top-0 left-0 w-0 bg-gradient-to-r"></div></div><script>(function(){"use strict";const t=document.getElementById("reading-progress-container"),o=document.getElementById("reading-progress-bar");if(!t||!o)return;const a={smoothScroll:t.dataset.smoothScroll==="true",hideOnComplete:t.dataset.hideOnComplete==="true"};let n=!0,l=null;function r(){const t=window.pageYOffset||document.documentElement.scrollTop,n=document.documentElement.scrollHeight,s=window.innerHeight,e=n-s;return e<=0?0:Math.min(Math.max(t/e*100,0),100)}function c(){const e=r();o.style.width=e+"%",a.hideOnComplete&&e>=99.5?n&&(t.style.opacity="0",n=!1):n||(t.style.opacity="1",n=!0)}let s=!1;function e(){s||(requestAnimationFrame(()=>{c(),s=!1}),s=!0)}function i(){window.addEventListener("scroll",e,{passive:!0}),window.addEventListener("resize",e,{passive:!0}),document.addEventListener("visibilitychange",()=>{document.hidden||e()}),e(),window.addEventListener("beforeunload",()=>{window.removeEventListener("scroll",e),window.removeEventListener("resize",e)})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",i):i()})()</script><header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6"><div class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm"><div class="hidden w-full items-center md:flex"><div class="flex items-center"><a href=/ko/ class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full transition-transform duration-200 hover:scale-105" aria-label="Jaehun's Blog"><img src=/images/logo.svg alt="Jaehun's Blog" class="h-full w-full object-cover"></a></div><nav class="mx-8 flex flex-1 items-center justify-center"><div class="flex items-center space-x-1"><a href=/ko/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.posts"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+<span>게시글
+</span></a><a href=/ko/categories/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.categories"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+<span>카테고리
+</span></a><a href=/ko/tags/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.tags"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512.0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828.0l-7-7A1.994 1.994.0 013 12V7a4 4 0 014-4z"/></svg>
+<span>태그
+</span></a><a href=/ko/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.archives"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+<span>아카이브</span></a></div></nav><div class="flex items-center space-x-2"><div class=relative><button id=language-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95" data-dropdown-type=language aria-label="언어 변경" aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="언어 변경"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8 6 6m-7 0 6-6 2-3M2 5h12M7 2h1m14 20-5-10-5 10m2-4h6"/></svg></button><div id=language-dropdown class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out" data-dropdown-type=language role=menu aria-labelledby=language-toggle><a href=/ko/ class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role=menuitem aria-current=true><span class=font-medium>한국어</span></a><a href=/en/ class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role=menuitem><span class=font-medium>English</span></a></div></div><div class=relative><button id=color-scheme-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95" data-dropdown-type=color-scheme aria-label="테마 변경" aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="테마 변경"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z"/></svg></button><div id=color-scheme-dropdown class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out" data-dropdown-type=color-scheme><button data-color-scheme=claude class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme=default class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme=bumblebee class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme=emerald class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme=nord class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme=sunset class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme=abyss class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme=dracula class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme=amethyst class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme=slate class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme=twitter class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div></div><div class=relative><button id=theme-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95" data-dropdown-type=theme aria-label="테마 변경" aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5 sun-icon hidden relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="라이트"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+<svg class="h-5 w-5 moon-icon hidden relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="다크"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg>
+<svg class="h-5 w-5 system-icon hidden relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="시스템"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17 9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5A2 2 0 003 5v10a2 2 0 002 2z"/></svg></button><div id=theme-dropdown class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out" data-dropdown-type=theme><button data-theme=light class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+<svg class="h-5 w-5 mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="라이트"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg><span>라이트</span></button><button data-theme=dark class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+<svg class="h-5 w-5 mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="다크"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg><span>다크</span></button><button data-theme=system class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+<svg class="h-5 w-5 mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="시스템"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17 9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5A2 2 0 003 5v10a2 2 0 002 2z"/></svg><span>시스템</span></button></div></div></div></div><div class="flex w-full items-center justify-between md:hidden"><div class=relative><button id=mobile-menu-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200" data-dropdown-type=mobile-menu aria-label=메뉴 aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="메뉴"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button><div id=mobile-menu class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden" data-dropdown-type=mobile-menu role=menu aria-labelledby=mobile-menu-toggle><nav class="flex flex-col"><a href=/ko/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none" role=menuitem><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.posts"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+<span>게시글
+</span></a><a href=/ko/categories/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none" role=menuitem><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.categories"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+<span>카테고리
+</span></a><a href=/ko/tags/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none" role=menuitem><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.tags"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512.0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828.0l-7-7A1.994 1.994.0 013 12V7a4 4 0 014-4z"/></svg>
+<span>태그
+</span></a><a href=/ko/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none" role=menuitem><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.archives"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+<span>아카이브</span></a></nav></div></div><div class="flex items-center space-x-2"><div class=relative><button id=language-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95" data-dropdown-type=language aria-label="언어 변경" aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="언어 변경"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8 6 6m-7 0 6-6 2-3M2 5h12M7 2h1m14 20-5-10-5 10m2-4h6"/></svg></button><div id=language-dropdown class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out" data-dropdown-type=language role=menu aria-labelledby=language-toggle><a href=/ko/ class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role=menuitem aria-current=true><span class=font-medium>한국어</span></a><a href=/en/ class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role=menuitem><span class=font-medium>English</span></a></div></div><div class=relative><button id=color-scheme-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95" data-dropdown-type=color-scheme aria-label="테마 변경" aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="테마 변경"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z"/></svg></button><div id=color-scheme-dropdown class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out" data-dropdown-type=color-scheme><button data-color-scheme=claude class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme=default class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme=bumblebee class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme=emerald class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme=nord class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme=sunset class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme=abyss class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme=dracula class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme=amethyst class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme=slate class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme=twitter class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div></div><div class=relative><button id=theme-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95" data-dropdown-type=theme aria-label="테마 변경" aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5 sun-icon hidden relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="라이트"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+<svg class="h-5 w-5 moon-icon hidden relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="다크"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg>
+<svg class="h-5 w-5 system-icon hidden relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="시스템"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17 9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5A2 2 0 003 5v10a2 2 0 002 2z"/></svg></button><div id=theme-dropdown class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out" data-dropdown-type=theme><button data-theme=light class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+<svg class="h-5 w-5 mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="라이트"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg><span>라이트</span></button><button data-theme=dark class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+<svg class="h-5 w-5 mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="다크"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg><span>다크</span></button><button data-theme=system class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+<svg class="h-5 w-5 mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="시스템"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17 9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5A2 2 0 003 5v10a2 2 0 002 2z"/></svg><span>시스템</span></button></div></div></div></div></div></header><main class="mx-auto max-w-4xl px-4 py-6"><nav class="breadcrumb mb-4 md:mb-6 py-1" aria-label=경로><ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1"><li class=flex-shrink-0><a href=/ko/ class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="홈"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11 2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+<span class="max-w-[4rem] md:max-w-none truncate">홈</span></a></li><li class="flex items-center gap-1 md:gap-2 min-w-0"><span class="text-muted-foreground/50 flex-shrink-0"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></span><div class="flex items-center gap-1 md:gap-2 min-w-0"><a href=/ko class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5A2 2 0 003 7z"/></svg>
+<span class="max-w-[4rem] md:max-w-none truncate">Ko</span>
+</a><span class="text-muted-foreground/50 flex-shrink-0"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></span>
+<span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+<span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">Star Attention: Efficient LLM Inference over Long Sequences</span></span></div></li></ol></nav><header class=mb-8><h1 class="text-foreground mb-4 text-3xl font-bold md:text-4xl">Star Attention: Efficient LLM Inference over Long Sequences</h1></header><article class="prose prose-neutral dark:prose-invert max-w-none"><p><a href=https://arxiv.org/abs/2411.17116v1>논문 링크</a></p><h1 id=q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘>Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1><p>결론 요약</p><p>논문은 긴 시퀀스에 대한 Transformer 기반 대형 언어 모델(LLM)의 추론 효율성을 크게 개선하는 Star Attention이라는 알고리즘을 제안했습니다. 기존 Ring Attention 대비 최대 11배의 추론 속도를 제공하면서도 정확도를 95~100% 수준으로 유지합니다. Star Attention은 두 단계로 작동하며, 로컬 블록-기반 주의 메커니즘과 글로벌 주의 메커니즘을 조합하여 계산 비용과 메모리 사용량을 줄이면서 긴 문맥 길이를 지원합니다.</p><p>강점 및 독창적인 지점
+1. 효율적인 추론
+• 기존의 Ring Attention과 비교해 속도가 최대 11배 빨라졌으며, 메모리 사용량도 대폭 절감되었습니다.
+• 긴 시퀀스(128K~1M 토큰)를 지원하면서도 정확도가 유지됩니다.
+2. 호환성
+• 기존 Transformer 기반 LLM과 쉽게 통합되며, 추가적인 모델 튜닝 없이 사용할 수 있습니다.
+3. 독창적인 구조
+• 두 단계의 분리된 처리를 통해 로컬 및 글로벌 주의 메커니즘을 효과적으로 조합:
+• 1단계: 문맥을 블록 단위로 분리하고, 각 블록은 Anchor 블록과 함께 로컬 주의 처리를 수행.
+• 2단계: 쿼리를 통해 글로벌 주의를 수행하며, 최소한의 통신 비용으로 전체 정보를 통합.
+4. 범용성
+• Flash Attention, KV Cache Compression 등 기존 최적화 기술과 결합해 추가적인 속도 향상이 가능합니다.</p><p>핵심 알고리즘 설명 (예시 포함)</p><p>Star Attention은 두 가지 주요 단계로 이루어져 있습니다:</p><ol><li>Context Encoding (문맥 인코딩)
+• 입력 시퀀스를 블록 단위로 분리하고, 각 블록에 첫 번째 블록(Anchor 블록)을 추가하여 블록당 2개의 키-값(KV) 벡터를 생성.
+• Anchor 블록은 글로벌 정보를 유지하며, 로컬 블록 내에서 주의 메커니즘을 통해 계산 비용을 선형으로 축소.</li></ol><p>예시:
+• 입력: [c1, c2, c3] (블록 크기 4, Anchor 블록: c1).
+• 분리 결과:
+• c1&rsquo; = [c1, c1]
+• c2&rsquo; = [c1, c2]
+• c3&rsquo; = [c1, c3]
+• 각 블록은 병렬적으로 처리되고, Anchor 블록의 KV 캐시는 삭제됨.</p><ol start=2><li>Query Encoding & Token Generation
+• 쿼리를 모든 호스트에 브로드캐스트하고, 각 호스트에서 로컬 KV 캐시를 사용해 로컬 주의 출력을 계산.
+• 로컬 출력을 Query Host에서 통합해 최종 글로벌 주의를 수행.</li></ol><p>예시:
+• 입력 쿼리: [q1, q2]
+• 각 호스트의 로컬 주의: [A1, A2, &mldr;, An]
+• 글로벌 통합 결과: A_global = Softmax(normalized[A1, &mldr;, An])</p><p>논문의 한계점
+1. 블록 크기에 따른 정확도 저하
+• 블록 크기가 작아질수록 성능 저하가 발생. 긴 시퀀스에서는 블록 크기 설정이 성능과 속도의 균형을 맞추는 중요한 과제가 됨.
+2. 다중 홉(Multi-Hop) 추론의 한계
+• 상호 블록 간 통신이 없기 때문에 Multi-Hop Tracing과 같은 복잡한 작업에서는 글로벌 주의 방식에 비해 성능이 떨어짐.
+3. 앵커 블록(Anchor Block) 의존성
+• 앵커 블록의 위치와 내용 설정에 따라 성능이 크게 달라질 수 있어 사용자가 최적 설정을 찾아야 하는 부담이 있음.
+4. 긴 문맥에서의 데이터 전송 비용
+• 글로벌 주의 계산 단계에서 최소한의 통신 비용을 유지하려 하지만, GPU 간의 통신 비용이 완전히 제거되지는 않음.</p><p>비교 테이블 (Star Attention vs Ring Attention)</p><p>모델 문맥 길이 정확도(%) 속도 개선(배)
+Ring Attention 128K 95.0 1.0
+Star Attention 128K 94.5~95.0 2.7
+Ring Attention 512K 89.0 1.0
+Star Attention 512K 87.3 16.2</p><p>요약</p><p>Star Attention은 긴 문맥을 가진 LLM 추론에서 계산 효율성과 메모리 효율성을 크게 향상시킨 혁신적인 방법입니다. 하지만 복잡한 작업에서의 성능 저하와 앵커 블록 설정의 민감성 등 해결해야 할 과제가 남아 있습니다. Future Work에서는 이러한 한계점을 극복하며 성능과 효율성을 동시에 개선할 수 있는 방향으로 연구가 진행될 것으로 보입니다.</p><h1 id=q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘>Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1><p>핵심 알고리즘: Star Attention</p><p>Star Attention은 긴 시퀀스를 효율적으로 처리하기 위해 두 단계(문맥 인코딩, 쿼리 인코딩 및 토큰 생성)로 나뉩니다. 블록 기반 접근 방식을 통해 계산 효율성을 개선하며, Anchor 블록과 로컬 KV 캐시를 활용하여 글로벌 주의와 유사한 성능을 유지합니다.</p><p>1단계: Context Encoding (문맥 인코딩)</p><p>과정:
+1. 입력 분리 및 블록화
+• 입력 시퀀스를 고정된 블록 크기로 나누고, 각 블록을 별도의 호스트에서 병렬 처리합니다.
+• 각 블록은 Anchor 블록(첫 번째 블록)을 포함하여 KV 벡터를 생성합니다.
+2. Anchor 블록 추가
+• 각 블록의 앞부분에 Anchor 블록을 추가합니다. 이를 통해 글로벌 정보의 일부가 블록 내에서도 반영될 수 있습니다.
+• Anchor 블록의 KV 캐시는 최종적으로 삭제되어 메모리 사용량을 줄입니다.
+3. 로컬 블록 주의 계산
+• 블록 단위로 로컬 주의 메커니즘을 적용해 KV 캐시를 생성하고, Anchor 블록의 KV 캐시는 제외합니다.</p><p>예시:
+• 입력: [c1, c2, c3] (문맥은 12 토큰, 블록 크기 4로 설정)
+• c1 = [a, b, c, d]
+• c2 = [e, f, g, h]
+• c3 = [i, j, k, l]</p><pre><code>1.	Anchor 블록 추가:
+•	c1' = [a, b, c, d] (Anchor 블록 유지)
+•	c2' = [a, b, c, d, e, f, g, h]
+•	c3' = [a, b, c, d, i, j, k, l]
+2.	로컬 주의 계산:
+•	각 블록은 로컬로 주의를 계산:
+•	c1' → KV 생성 (a-d)
+•	c2' → KV 생성 (e-h)
+•	c3' → KV 생성 (i-l)
+•	Anchor 블록 (a-d)의 KV는 삭제.
+3.	출력 KV 캐시:
+•	KV_cache = [e-h, i-l] (각 블록의 나머지 부분만 KV 캐시에 저장)
+</code></pre><p>2단계: Query Encoding & Token Generation (쿼리 인코딩 및 토큰 생성)</p><p>과정:
+1. 쿼리 브로드캐스트
+• 쿼리 토큰이 모든 호스트에 전달됩니다.
+• 각 호스트는 자신의 로컬 KV 캐시를 사용해 로컬 주의 점수를 계산합니다.
+2. 로컬 주의 계산
+• 쿼리와 각 호스트의 KV 캐시를 사용해 로컬 주의를 계산.
+• Softmax를 이용해 점수와 정규화를 수행합니다.
+3. 글로벌 주의 점수 통합
+• 각 호스트는 자신의 로컬 점수와 Softmax 통계만 Query Host로 전송.
+• Query Host는 이 정보를 통합해 글로벌 주의 점수를 생성합니다.
+4. 토큰 생성
+• Query Host는 글로벌 주의 점수를 기반으로 다음 토큰을 생성하고, 이를 반복합니다.</p><p>예시:
+• 입력 쿼리: [q1, q2] (쿼리는 2개의 토큰, 문맥 KV 캐시는 [e-h, i-l])</p><pre><code>1.	로컬 계산:
+•	Host 1은 KV 캐시 [e-h]를 사용해:
+•	A1 = Attention([q1, q2], [e-h])
+•	Host 2는 KV 캐시 [i-l]를 사용해:
+•	A2 = Attention([q1, q2], [i-l])
+2.	Query Host 통합:
+•	Query Host는 각 호스트에서 받은 로컬 점수 A1, A2를 Softmax로 통합:
+•	A_global = Softmax([A1, A2])
+3.	토큰 생성:
+•	글로벌 주의 점수를 기반으로 [t1, t2] 토큰 생성.
+•	새 토큰의 KV는 Query Host의 KV 캐시에 추가.
+</code></pre><p>Star Attention 요약</p><p>단계 설명
+1단계: 문맥 인코딩 문맥을 블록 단위로 나누고 Anchor 블록과 함께 로컬 주의를 계산하여 효율성을 높임.
+2단계: 쿼리 인코딩 쿼리와 KV 캐시를 사용해 로컬 점수를 계산하고 Query Host에서 글로벌 주의를 통합.
+효율성 블록 단위 병렬 처리 및 최소 통신으로 계산 비용을 선형으로 줄임.
+정확도 유지 Anchor 블록이 글로벌 정보를 유지하여 95~100% 정확도를 달성.</p><p>Star Attention은 기존의 전역 주의 메커니즘과 유사한 성능을 제공하면서도 계산 복잡성을 크게 낮춘 독창적인 알고리즘입니다.</p><h1 id=q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘>Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1><p>논문의 결과와 다른 방법론 대비 특출난 점</p><p>결과 요약
+1. 추론 속도
+• Star Attention은 Ring Attention 대비 최대 11배 빠른 속도를 기록.
+• 긴 시퀀스(16K<del>1M 토큰)에서도 성능을 유지하며, 특히 128K 이상의 시퀀스에서 지수적으로 높은 속도 개선을 보임.
+• 예: 512K 토큰 처리 시 Ring Attention은 약 16.2배 느림.
+2. 정확도
+• 대부분의 태스크에서 95</del>100% 정확도 유지.
+• 특히, Retrieval(NIAH) 태스크에서 Star Attention은 Ring Attention과 유사하거나 더 높은 정확도를 달성.
+• Multi-Hop Tracing과 같은 복잡한 태스크에서는 다소 성능 저하가 있지만, Aggregation 태스크에서는 개선된 성능을 보임.
+3. 결과 비교 (Ring Attention vs Star Attention)</p><p>모델 문맥 길이 Ring Attention 정확도(%) Star Attention 정확도(%) 속도 개선
+Llama-3.1-8B 128K 92.54 91.25 2.7배
+Llama-3.1-8B 512K 69.30 67.15 16.2배
+Llama-3.1-70B 128K 65.29 65.80 8.7배</p><p>Star Attention이 특출난 이유</p><ol><li><p>효율적인 로컬-글로벌 주의 메커니즘
+• Star Attention은 두 단계의 병렬 처리를 통해 계산 복잡도를 선형으로 줄이면서도 글로벌 주의의 효과를 거의 유지.
+• 로컬 블록 주의:
+• 문맥을 블록으로 나누고, Anchor 블록을 추가해 각 블록 내 정보를 강화.
+• 계산이 병렬적으로 수행되므로 확장성이 뛰어남.
+• 글로벌 주의 통합:
+• 각 블록의 결과를 Query Host에서 통합하며, 통신 비용을 최소화.</p></li><li><p>Anchor 블록의 활용
+• Anchor 블록은 문맥 전역 정보를 유지하면서, 각 블록의 독립적인 계산으로 인한 정보 손실을 방지.
+• 이를 통해 전역 주의와 유사한 성능을 보임.</p></li><li><p>병렬화와 통신 최소화
+• KV 캐시를 블록 단위로 분산 저장하며, 로컬 계산 후 최소한의 통신(Softmax 통계 및 점수)만 수행.
+• GPU 간 통신 병목을 줄이며 속도 향상을 가능케 함.</p></li></ol><p>논문에서 제기하는 성능 도출 이유
+1. Anchor 블록
+• 논문은 Anchor 블록이 전역 주의를 흉내 내는 데 핵심 역할을 한다고 주장:
+• Anchor 블록은 전역 컨텍스트를 보존하고, 블록 간 연결성을 간접적으로 제공.
+• 예: Anchor 블록이 없을 경우, Attention Sink 현상이 발생하며 정확도가 25% 이상 하락.
+2. 로컬 주의로 글로벌 주의를 근사
+• 블록 단위로 로컬 주의를 계산하되, Anchor 블록으로 각 블록에 전역 정보를 간접 전달.
+• 글로벌 주의와 유사한 패턴을 재현할 수 있었던 이유로, Anchor 블록이 전역 정보를 블록 내부로 제한적으로 전달하기 때문이라고 논문은 설명.
+3. 병렬 및 분산 처리
+• 각 블록을 병렬로 처리하며, 통신 부담을 줄여 긴 시퀀스를 효율적으로 처리.
+• 논문은 특히 GPU 자원을 최대로 활용할 수 있는 아키텍처 설계 덕분에 긴 문맥에서도 성능 저하 없이 빠른 처리 속도를 유지했다고 설명.</p><p>내 생각과 추가적인 의견</p><ol><li><p>Anchor 블록의 중요성
+• Anchor 블록은 단순히 전역 정보를 유지하는 역할 이상으로, Attention Sink 문제를 완화하는 데 중요한 역할을 한다고 생각함.
+• Anchor 블록이 없으면 블록마다 독립적인 처리로 인해 전역 컨텍스트 정보가 손실되며, 이는 긴 문맥에서는 심각한 성능 저하로 이어질 수 있음.</p></li><li><p>추가적인 효율성 가능성
+• Anchor 블록 크기를 블록 크기와 동일하게 설정하는 것이 성능 유지의 핵심이라고 설명되었지만, Anchor 블록 크기를 점진적으로 줄이거나 적응적으로 설정하는 방법도 고려할 수 있음.</p></li><li><p>복잡한 태스크에 대한 한계
+• Multi-Hop Tracing과 같은 태스크에서 성능 저하가 발생하는 이유는 블록 간 상호작용이 없기 때문.
+• 이를 보완하려면 Anchor 블록 외에 상위 레벨에서의 블록 간 간접 통신 구조를 추가해 복잡한 논리적 추론이 가능하도록 설계해야 할 것으로 보임.</p></li></ol><p>결론</p><p>Star Attention은 병렬화와 효율적인 Anchor 블록 사용을 통해 긴 시퀀스 처리에서 특출난 성능을 보여줍니다. 특히, Anchor 블록이 전역 정보를 유지하며 성능을 보존하는 데 중요한 역할을 합니다. 하지만 복잡한 태스크에서의 성능 저하와 Anchor 블록 크기 조정의 한계는 향후 연구에서 개선이 필요한 부분으로 보입니다.</p><h1 id=q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘>Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1><p>입력 데이터와 추론 과정</p><ol><li>입력 데이터</li></ol><p>Star Attention이 처리하는 데이터는 긴 문맥(Context)과 짧은 쿼리(Query)로 구성됩니다.</p><p>입력 형식
+• 문맥(Context): 긴 입력 시퀀스, 일반적으로 16K~1M 토큰. 예를 들어, 책의 챕터나 문서 전체.
+• 쿼리(Query): 짧은 입력 시퀀스, 예를 들어 질문 형태의 텍스트.
+• 출력(Output): 쿼리에 대한 모델의 응답.</p><p>예시
+• 문맥(Context):</p><p>[c1, c2, c3, &mldr;, cN] # 각 ci는 블록(예: 4K 토큰)</p><pre><code>•	예: “이 책은 자연어 처리에 대한 내용을 다루고 있습니다. Transformer는 주목받는 아키텍처입니다.”
+
+•	쿼리(Query):
+</code></pre><p>&ldquo;Transformer의 주요 특징은 무엇인가요?&rdquo;</p><pre><code>•	출력(Output):
+</code></pre><p>&ldquo;Transformer의 주요 특징은 병렬 처리와 셀프 어텐션입니다.&rdquo;</p><ol start=2><li>추론 과정</li></ol><p>Star Attention은 추론을 두 단계로 나눕니다.</p><p>2.1. Phase 1: Context Encoding
+• 긴 문맥을 블록 단위로 나누어 병렬로 처리.
+• Anchor 블록을 각 블록에 추가하여 블록 단위로 로컬 주의를 계산.</p><p>과정
+1. 입력 시퀀스를 블록으로 나눔.
+• 예: [c1, c2, c3]로 나눈 후 각 블록의 크기는 4K 토큰.
+2. Anchor 블록(c1) 추가:
+• c1&rsquo; = [c1]
+• c2&rsquo; = [c1, c2]
+• c3&rsquo; = [c1, c3]
+3. 로컬 주의 계산:
+• c2&rsquo;에 대해:
+• Attention(c2&rsquo;, c2&rsquo;) = Key-Value(KV) 벡터 생성
+• Anchor 블록의 KV 삭제.</p><p>출력
+• 로컬 KV 캐시:</p><p>[KV2, KV3]</p><p>2.2. Phase 2: Query Encoding and Token Generation
+• 쿼리를 모든 호스트에 브로드캐스트하고, 로컬 KV 캐시를 사용해 글로벌 주의를 계산.</p><p>과정
+1. 쿼리와 KV 캐시 입력:
+• 쿼리: [q1, q2]
+• KV 캐시: [KV2, KV3]
+2. 로컬 주의 계산:
+• Host 1에서:
+• A1 = Attention(q, KV2)
+• Host 2에서:
+• A2 = Attention(q, KV3)
+3. 글로벌 통합:
+• Query Host에서:</p><p>A_global = Softmax([A1, A2])</p><pre><code>4.	토큰 생성:
+•	출력: &quot;Transformer의 주요 특징은 병렬 처리와 셀프 어텐션입니다.&quot;
+</code></pre><p>모델 아키텍처 구성 및 연산</p><ol><li>모델 아키텍처</li></ol><p>Star Attention은 Transformer 기반 모델(Llama, GPT 등)과 호환되며, 주요 특징은 기존 모델의 Self-Attention 레이어를 수정한 것입니다.</p><p>구성 요소
+1. 로컬 Self-Attention (Phase 1)
+• 블록 단위로 Anchor 블록을 포함한 KV 생성.
+• 계산 비용: 선형 ￼ (블록 크기 ￼, 블록 수 ￼).
+2. 글로벌 Self-Attention (Phase 2)
+• 각 블록의 로컬 주의 결과를 통합해 글로벌 주의를 계산.
+• 계산 비용: ￼ (쿼리 크기 ￼, 블록 수 ￼).
+3. Query Host
+• 각 로컬 계산 결과를 수집하고 Softmax로 글로벌 주의 통합.</p><ol start=2><li>연산 및 메모리 요구량</li></ol><p>2.1. 메모리 요구량
+1. Anchor 블록 메모리
+• Anchor 블록은 각 블록에 복사되므로 메모리 사용량 증가.
+• ￼: ￼는 블록 크기, ￼은 블록 수.
+2. KV 캐시
+• Anchor 블록의 KV는 삭제되므로 메모리 최적화.
+• 저장된 KV 크기: ￼.</p><p>2.2. 계산 비용
+1. 로컬 Attention
+• 각 블록에서 Anchor 블록 포함 계산.
+• ￼.
+2. 글로벌 Attention
+• Query Host에서 Softmax를 사용한 글로벌 통합.
+• ￼: ￼은 쿼리 크기.</p><p>2.3. GPU 요구량
+• 8 A100 GPU 기준:
+• 128K 토큰: ￼초 (Ring Attention: ￼초).
+• 512K 토큰: Star Attention은 처리 가능, Ring Attention은 불가능.</p><ol start=3><li>컴퓨팅 요구량<ol><li>Anchor 블록 추가
+• Anchor 블록은 각 블록에 복사되므로 병렬 계산 가능.
+• 각 블록은 독립적으로 처리되며, GPU 간 통신이 필요 없음.</li><li>Query Host 통합
+• 각 호스트의 로컬 결과(A1, A2, …)와 Softmax 통계를 수집.
+• 통신 최소화: 벡터 ￼와 스칼라 통계만 전송.</li></ol></li></ol><p>결론</p><p>Star Attention은 입력 데이터(문맥과 쿼리)를 블록 단위로 나누고 Anchor 블록과 로컬 주의를 활용해 계산 효율성을 크게 개선합니다. 모델 아키텍처는 기존 Transformer의 Self-Attention 레이어를 수정한 형태이며, 계산 복잡도를 선형으로 줄이면서도 글로벌 정보 유지를 가능하게 합니다. 메모리 요구량은 블록 크기와 수에 따라 선형적으로 증가하며, GPU 병렬 처리를 최적화하여 긴 시퀀스에서도 빠르고 효율적인 추론이 가능합니다.</p><h1 id=q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘>Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1><p>논문의 한계와 이를 극복하기 위한 연구 흐름</p><ol><li><p>논문의 주요 한계</p><ol><li>블록 간 상호작용 부족
+• 블록 단위로 독립적인 처리를 하므로, 블록 간 정보 교환이 제한적입니다.
+• 복잡한 태스크(Multi-Hop Tracing, Aggregation)에서는 성능 저하가 발생.</li><li>Anchor 블록 의존성
+• Anchor 블록의 크기와 내용이 성능에 중요한 영향을 미칩니다.
+• Anchor 블록의 최적 크기와 구성 방법에 대한 추가 연구가 필요.</li><li>긴 시퀀스에서 정확도 저하
+• 긴 시퀀스(512K~1M 토큰)에서는 블록 크기를 줄일수록 정확도가 하락.
+• 이는 블록 내 정보 밀도가 낮아지고 글로벌 정보 연결이 약화되기 때문입니다.</li><li>복잡한 상호 의존성 태스크에서 성능 저하
+• Multi-Hop Tracing과 같은 태스크는 블록 간 정보 전달과 종합이 필요하나, Star Attention은 이를 지원하지 못함.</li><li>모델 튜닝의 필요성
+• 다양한 태스크와 데이터에 따라 Anchor 블록 구성 및 블록 크기 조정이 필요하여 추가적인 설계 비용이 발생.</li></ol></li><li><p>한계를 극복하기 위한 연구 흐름</p></li></ol><p>2.1. 블록 간 상호작용을 강화하는 방법</p><p>(1) Cross-Block Communication (블록 간 통신 강화)
+• 개념: 블록 간 정보를 교환하는 새로운 연결 구조를 도입.
+• 방법:
+• 각 블록의 요약(예: 평균 벡터)을 다른 블록에 전달.
+• 블록 간 순환 연결(Cross-Block Recurrent Attention)을 통해 정보 교환.
+• 기대 효과:
+• 복잡한 상호 의존성 태스크에서 성능 향상.
+• Multi-Hop Tracing과 같은 태스크에서도 더 나은 결과를 도출.</p><p>(2) Hierarchical Attention (계층적 주의 메커니즘)
+• 개념: 블록 단위에서 로컬 정보를 요약한 후, 글로벌 주의로 통합.
+• 방법:
+• 블록 내부에서는 로컬 주의 수행.
+• 상위 계층에서 블록 간 요약 정보를 활용한 글로벌 주의 수행.
+• 기대 효과:
+• 글로벌 정보 보존과 로컬 정보의 상세 처리를 동시에 달성.</p><p>2.2. Anchor 블록 최적화를 위한 연구</p><p>(1) Adaptive Anchor Mechanism (적응형 앵커 블록)
+• 개념: Anchor 블록의 크기와 위치를 동적으로 조정.
+• 방법:
+• 각 블록의 중요도(예: Attention Score)에 따라 Anchor 블록의 크기를 조정.
+• 학습 과정에서 Anchor 블록의 위치를 자동으로 선택.
+• 기대 효과:
+• Anchor 블록의 과도한 메모리 사용을 줄이면서 정확도 유지.</p><p>(2) Semantic Anchors (의미 기반 앵커)
+• 개념: Anchor 블록을 단순한 처음 블록이 아닌, 문맥에서 중요한 정보만 포함하도록 재구성.
+• 방법:
+• 학습 데이터를 기반으로 중요한 정보 추출(예: 키워드 기반).
+• Anchor 블록에 중요한 토큰만 포함.
+• 기대 효과:
+• Anchor 블록의 정보 밀도가 증가해 글로벌 정보의 연결 강화.</p><p>2.3. 긴 시퀀스에서 정확도 저하 해결</p><p>(1) Sparse Attention Mechanisms (희소 주의 메커니즘)
+• 개념: 긴 시퀀스에서 중요한 토큰 간 연결만 집중적으로 계산.
+• 방법:
+• Sliding Window Attention: 인접 토큰 간 주의 계산.
+• Sink Tokens: 긴 시퀀스에서 전역적으로 중요한 토큰을 정의.
+• 기대 효과:
+• 불필요한 계산을 줄이면서 전역 정보 연결 유지.</p><p>(2) Memory Compression (메모리 압축)
+• 개념: 긴 시퀀스의 KV 캐시를 압축하여 메모리 사용량 감소.
+• 방법:
+• Low-Rank Approximation: KV 캐시를 저차원으로 압축.
+• Key-Value Pooling: 비슷한 키-값 쌍을 클러스터링하여 저장.
+• 기대 효과:
+• 긴 시퀀스에서도 메모리 효율성을 유지하며 정확도 손실 최소화.</p><p>2.4. 모델 튜닝 자동화</p><p>(1) Task-Aware Optimization (태스크 기반 최적화)
+• 개념: 태스크의 특성에 따라 모델의 블록 크기와 Anchor 블록을 자동으로 설정.
+• 방법:
+• Meta-Learning: 다양한 태스크에서 학습한 메타 모델을 활용.
+• Reinforcement Learning: Anchor 블록과 블록 크기를 동적으로 조정.
+• 기대 효과:
+• 다양한 태스크에 최적화된 구성 제공.</p><p>(2) Multi-Objective Optimization (다중 목적 최적화)
+• 개념: 속도와 정확도 간 균형을 자동으로 맞추는 최적화.
+• 방법:
+• Pareto Frontier: 속도와 정확도의 상충 관계를 모델링.
+• 기대 효과:
+• 사용자 요구에 따라 속도와 정확도의 균형을 선택 가능.</p><ol start=3><li>결론 및 앞으로의 방향</li></ol><p>Star Attention의 한계를 극복하기 위한 연구 흐름은 다음과 같은 방향으로 전개될 수 있습니다:
+1. 블록 간 상호작용 강화:
+• Cross-Block Communication과 계층적 주의 메커니즘은 복잡한 태스크에서 성능을 개선하는 중요한 도구가 될 것입니다.
+2. Anchor 블록 최적화:
+• Adaptive Anchor Mechanism과 Semantic Anchors는 Anchor 블록의 메모리 효율성을 높이고 정확도를 유지하는 데 도움을 줄 것입니다.
+3. 긴 시퀀스에서의 성능 개선:
+• Sparse Attention과 Memory Compression은 긴 시퀀스 처리의 병목 문제를 해결할 수 있습니다.
+4. 모델 튜닝 자동화:
+• 태스크와 사용자 요구에 맞는 최적화를 통해 Star Attention의 활용도를 더욱 넓힐 수 있습니다.</p><p>이러한 방향은 Star Attention의 강점을 보완하고, 긴 시퀀스와 복잡한 태스크에서도 뛰어난 성능을 발휘하는 모델로 발전시키는 데 기여할 것입니다.</p><h1 id=q-star-attention에서-anchor-블록이-전역-정보를-유지하면서-성능-향상에-기여하는-메커니즘은-무엇이며-anchor-블록-없이-발생하는-attention-sink-문제를-어떻게-해결했는가>Q: Star Attention에서 Anchor 블록이 전역 정보를 유지하면서 성능 향상에 기여하는 메커니즘은 무엇이며, Anchor 블록 없이 발생하는 Attention Sink 문제를 어떻게 해결했는가?</h1><h1 id=a>A:</h1><p>Anchor 블록의 역할 및 전역 정보 유지 메커니즘
+1. Anchor 블록의 정의
+• Anchor 블록은 입력 시퀀스의 첫 번째 블록으로, 각 블록의 앞부분에 추가되어 해당 블록에 전역 정보를 제공합니다.
+• 예: 입력 시퀀스 [c1, c2, c3]에서 c1은 Anchor 블록으로 모든 블록에 포함됩니다.
+• c2&rsquo; = [c1, c2]
+• c3&rsquo; = [c1, c3]
+2. Anchor 블록이 성능 향상에 기여하는 메커니즘
+• 글로벌 정보의 유지:
+• 각 블록은 Anchor 블록을 통해 시퀀스의 처음 부분 정보를 항상 포함합니다.
+• 이는 글로벌 주의에서 중요한 정보가 손실되지 않도록 보장합니다.
+• 주의 분포 안정화:
+• Anchor 블록은 각 블록의 시작 지점에 주의를 집중시켜, 불안정한 주의 패턴(Attention Sink 현상)을 완화합니다.
+• 효율적인 계산:
+• Anchor 블록의 KV 캐시는 블록 처리 이후 삭제되므로 메모리 사용량이 증가하지 않습니다.</p><p>Attention Sink 문제와 해결
+1. Attention Sink 문제
+• Anchor 블록이 없을 경우, 블록 단위로 독립적인 로컬 주의를 계산하므로 각 블록의 시작 위치에 주의 집중 현상(Attention Sink)이 발생합니다.
+• 이 현상은 전역 정보를 포함하지 못해 중요한 컨텍스트를 놓칠 가능성이 높아지며, 정확도가 크게 저하됩니다.
+2. Anchor 블록을 통한 해결
+• Anchor 블록 추가:
+• 각 블록의 앞부분에 Anchor 블록을 추가하여 Attention Sink를 Anchor 블록으로 집중시킵니다.
+• 결과적으로, Attention Sink가 블록의 시작 지점이 아닌 Anchor 블록으로 이동하며 전역 정보를 효과적으로 유지.
+• Anchor 블록의 KV 삭제:
+• Anchor 블록의 KV 캐시는 계산 후 삭제되므로 Anchor 블록의 반복적인 사용이 메모리 부담을 증가시키지 않습니다.</p><p>실험 결과 및 효과
+1. Anchor 블록의 효과
+• Anchor 블록 없이 처리한 경우 정확도는 약 25% 이상 감소하였으나, Anchor 블록을 추가한 후 정확도가 95~100%로 회복되었습니다.
+• Attention Sink 문제를 Anchor 블록이 효과적으로 완화했음을 실험적으로 확인.
+2. Attention 분포 분석
+• Anchor 블록이 없는 경우:
+• 여러 블록에서 주의가 분산되며, 시작 지점마다 Attention Sink가 발생.
+• Anchor 블록이 있는 경우:
+• Anchor 블록으로 주의가 집중되며, 전역 주의와 유사한 분포를 나타냄.</p><p>결론</p><p>Anchor 블록은 전역 정보를 각 블록에 전달함으로써 Star Attention의 성능을 크게 향상시킵니다. 이를 통해 Attention Sink 문제를 완화하고, 글로벌 주의 메커니즘을 효과적으로 근사화합니다. Anchor 블록은 효율적인 메모리 사용과 계산 비용 절감이라는 추가적인 이점도 제공합니다.</p><h1 id=q-star-attention은-블록-간-상호작용이-없는-상태에서-어떻게-글로벌-주의-성능을-근사화했으며-multi-hop-tracing과-같은-복잡한-태스크에서-성능-저하를-해결하기-위한-확장-가능성은-무엇인가>Q: Star Attention은 블록 간 상호작용이 없는 상태에서 어떻게 글로벌 주의 성능을 근사화했으며, Multi-Hop Tracing과 같은 복잡한 태스크에서 성능 저하를 해결하기 위한 확장 가능성은 무엇인가?</h1><h1 id=a-1>A:</h1><p>Star Attention이 블록 간 상호작용 없이 글로벌 주의 성능을 근사화한 방법</p><pre><code>1.	Anchor 블록을 활용한 전역 정보 유지
+•	Anchor 블록은 각 블록의 앞부분에 추가되어 전역 정보를 간접적으로 유지합니다.
+•	예: 입력 시퀀스 [c1, c2, c3]에서 c1(Anchor 블록)을 모든 블록에 추가:
+•	c2' = [c1, c2], c3' = [c1, c3].
+•	Anchor 블록은 긴 시퀀스에서 중요한 첫 번째 블록의 정보를 각 블록으로 전달하여, 전역 주의 메커니즘을 근사화합니다.
+2.	블록 단위 처리와 Attention Sink의 완화
+•	각 블록은 독립적으로 로컬 주의를 계산하지만, Anchor 블록이 포함되어 있어 Attention Sink 문제를 최소화합니다.
+•	Anchor 블록 덕분에 각 블록의 계산은 전역 정보(Anchor 블록)에 기반을 두어 이루어지며, 블록 간 상호작용 없이도 글로벌 주의의 효과를 흉내냅니다.
+3.	쿼리 기반의 글로벌 통합
+•	Query Host가 각 블록의 로컬 주의 결과를 통합하여 글로벌 주의를 계산합니다.
+•	Query Host는 Softmax 기반의 통합을 통해 블록 간 상호작용을 대신하며, 최소한의 통신으로 전역 정보를 결합합니다.
+4.	Anchor 블록에 의한 정보 연결
+•	Anchor 블록은 블록 내부의 Attention 분포를 안정화하고, 블록 간 간접적인 연결성을 제공합니다.
+•	이는 전역 주의 패턴을 근사화하고 긴 시퀀스에서도 정확도를 유지하는 데 기여합니다.
+</code></pre><p>Multi-Hop Tracing과 같은 복잡한 태스크에서의 성능 저하 문제</p><p>문제의 원인
+• Multi-Hop Tracing은 서로 다른 블록 간의 정보 전이가 필수적이며, Star Attention은 블록 간 상호작용이 없기 때문에 성능 저하가 발생합니다.
+• Anchor 블록만으로는 복잡한 정보 흐름을 전달하는 데 한계가 있습니다.</p><p>복잡한 태스크에서 성능 개선을 위한 확장 가능성</p><ol><li><p>Cross-Block Communication (블록 간 정보 교환)
+• 개념: 블록 간의 정보를 교환하는 메커니즘을 추가하여 Multi-Hop과 같은 복잡한 태스크에서도 성능을 향상.
+• 방법:
+• 각 블록의 요약 정보를 다른 블록에 전달.
+• 요약 정보는 평균 벡터, Attention Score, 또는 학습 기반 요약 값으로 표현.
+• 기대 효과:
+• 블록 간 상호작용을 통한 정보 흐름 개선으로 복잡한 논리적 태스크에서도 성능이 향상.</p></li><li><p>Hierarchical Attention (계층적 주의 메커니즘)
+• 개념: 두 단계의 Attention 구조를 도입:
+• 블록 내부에서는 로컬 주의를 계산.
+• 블록 간에는 요약된 정보를 바탕으로 글로벌 주의를 수행.
+• 방법:
+• Anchor 블록의 요약 벡터를 상위 계층으로 전달하여 계층적 정보를 결합.
+• 기대 효과:
+• 로컬 정보 처리의 효율성을 유지하면서 전역 정보 연결성 강화.</p></li><li><p>Adaptive Anchor Mechanism (적응형 앵커 메커니즘)
+• 개념: Anchor 블록의 크기와 위치를 태스크 요구에 맞게 동적으로 조정.
+• 방법:
+• 중요도가 높은 블록에 Anchor 블록의 크기를 조정.
+• Anchor 블록 위치를 변경하거나 추가 Anchor 블록을 배치.
+• 기대 효과:
+• 복잡한 태스크에서도 적응적으로 정보 연결성을 제공하여 성능 향상.</p></li></ol><p>결론</p><p>Star Attention은 Anchor 블록과 Query Host 통합을 통해 블록 간 상호작용 없이도 글로벌 주의 성능을 근사화합니다. 하지만 Multi-Hop Tracing과 같은 복잡한 태스크에서의 성능 저하는 여전히 한계로 남아 있습니다. 이를 해결하기 위해 블록 간 상호작용을 도입하거나, 계층적 주의 메커니즘을 활용하고, Anchor 블록을 동적으로 최적화하는 연구 방향이 필요합니다. 이러한 확장은 Star Attention의 효율성과 범용성을 더욱 강화할 수 있을 것입니다.</p><h1 id=q-긴-시퀀스-처리-시-블록-크기와-anchor-블록-크기의-설정이-성능과-효율성에-미치는-영향을-구체적으로-분석하고-이를-동적으로-최적화할-수-있는-방법은-무엇인가>Q: 긴 시퀀스 처리 시 블록 크기와 Anchor 블록 크기의 설정이 성능과 효율성에 미치는 영향을 구체적으로 분석하고, 이를 동적으로 최적화할 수 있는 방법은 무엇인가?</h1><h1 id=a-2>A:</h1><p>블록 크기와 Anchor 블록 크기의 설정이 성능과 효율성에 미치는 영향</p><ol><li>블록 크기(Block Size)의 영향</li></ol><p>성능에 미치는 영향
+• 작은 블록 크기:
+• 정보 밀도가 높아 로컬 주의 계산이 정밀해짐.
+• 하지만 전역 컨텍스트를 고려할 수 있는 범위가 좁아져 전반적인 정확도가 저하될 가능성 증가.
+• 긴 시퀀스에서 Multi-Hop과 같은 복잡한 태스크에서는 성능 하락.
+• 큰 블록 크기:
+• 전역 정보를 블록 내부에서 더 많이 유지 가능.
+• 로컬 주의 계산의 정보 손실이 줄어들어 성능이 개선.
+• 그러나 메모리 사용량과 계산 비용이 증가.</p><p>효율성에 미치는 영향
+• 작은 블록 크기:
+• 블록 수가 많아져 병렬 처리 비용과 통신 부담 증가.
+• 큰 블록 크기:
+• 병렬 처리 효율성이 증가하지만, 각 블록 처리에 필요한 메모리와 계산 자원 증가.</p><ol start=2><li>Anchor 블록 크기(Anchor Block Size)의 영향</li></ol><p>성능에 미치는 영향
+• 작은 Anchor 블록 크기:
+• Anchor 블록에 포함된 전역 정보가 제한적이므로 전역 주의를 충분히 근사하지 못함.
+• Attention Sink 문제를 완화하는 데 한계.
+• 큰 Anchor 블록 크기:
+• Anchor 블록이 충분한 전역 정보를 포함하여 Attention Sink 문제를 효과적으로 해결.
+• 하지만 Anchor 블록 복사가 빈번해 메모리와 계산 비용 증가.</p><p>효율성에 미치는 영향
+• 작은 Anchor 블록 크기:
+• 메모리 사용량과 계산 비용 감소.
+• 하지만 성능 손실로 이어질 가능성이 있음.
+• 큰 Anchor 블록 크기:
+• Anchor 블록 크기가 블록 크기에 비례할수록 메모리 사용량 증가.
+• 긴 시퀀스에서는 Anchor 블록이 차지하는 메모리 비중이 커짐.</p><ol start=3><li>블록 크기와 Anchor 블록 크기의 상호작용</li></ol><p>비율의 중요성
+• Anchor 블록 크기와 블록 크기의 비율이 성능과 효율성을 결정.
+• 논문에서 제시된 최적 비율: Anchor 블록 크기 ≈ 블록 크기.
+• Anchor 블록 크기가 줄어들수록 정확도 저하가 가속화됨.</p><p>긴 시퀀스에서의 트레이드오프
+• 블록 크기와 Anchor 블록 크기의 크기를 조정하여 긴 시퀀스에서의 성능과 효율성 간 균형을 맞춰야 함.
+• 작은 블록 크기: 더 많은 계산 및 통신 비용 발생.
+• 큰 Anchor 블록 크기: 성능 향상을 위한 필요 조건.</p><p>동적으로 최적화하는 방법</p><ol><li><p>Adaptive Block Size (적응형 블록 크기)
+• 개념: 입력 시퀀스의 특성과 태스크 요구에 따라 블록 크기를 동적으로 조정.
+• 방법:
+• 중요한 정보 밀도가 높은 구간은 블록 크기를 작게 설정.
+• 덜 중요한 구간은 블록 크기를 크게 설정.
+• Gradient-based Optimization을 통해 블록 크기 자동 학습.
+• 기대 효과:
+• 중요한 정보는 세밀히 처리하고, 전체 효율성도 유지.</p></li><li><p>Adaptive Anchor Mechanism (적응형 Anchor 메커니즘)
+• 개념: Anchor 블록 크기를 입력 시퀀스와 태스크에 맞게 동적으로 최적화.
+• 방법:
+• Anchor 블록 크기를 동적으로 조정하는 Attention Score 기반 알고리즘 도입.
+• 중요도가 높은 구간에 Anchor 블록 크기 증가.
+• 학습 과정에서 최적 Anchor 블록 크기를 찾는 메타 러닝(Meta-Learning) 기법 활용.
+• 기대 효과:
+• 메모리 효율성과 정확도 모두 최적화 가능.</p></li><li><p>Task-Aware Optimization (태스크 기반 최적화)
+• 개념: 특정 태스크 요구 사항에 따라 블록 크기와 Anchor 블록 크기를 조정.
+• 방법:
+• Multi-Objective Optimization: 속도와 정확도의 균형을 자동 조정.
+• Reinforcement Learning: 각 태스크에서 최적 크기 설정을 학습.
+• 기대 효과:
+• 태스크 특화된 설정으로 정확도와 효율성의 균형 달성.</p></li><li><p>Hierarchical Dynamic Attention (계층적 동적 주의)
+• 개념: 블록 크기와 Anchor 블록 크기를 계층적으로 최적화.
+• 방법:
+• 저수준(Local) 블록에서는 작은 Anchor 블록.
+• 고수준(Global) 요약에서는 큰 Anchor 블록 사용.
+• 기대 효과:
+• 태스크 난이도와 시퀀스 길이에 따른 적응형 최적화 가능.</p></li></ol><p>결론</p><p>블록 크기와 Anchor 블록 크기는 성능과 효율성 모두에 중요한 영향을 미칩니다. 이를 동적으로 최적화하기 위해 입력 데이터의 특성, 태스크의 요구 사항, 모델의 학습 과정을 기반으로 한 적응형 전략이 필요합니다. Adaptive Block Size와 Anchor Mechanism, 태스크 기반 최적화는 성능과 효율성을 동시에 개선할 수 있는 유망한 방법입니다. 이러한 접근은 긴 시퀀스 처리와 복잡한 태스크에서도 Star Attention의 한계를 극복하는 데 기여할 것입니다.</p></article></main><footer class="mx-auto max-w-4xl px-4 py-8"><div class="px-6 py-6"><nav class=mb-6><div class="flex flex-wrap items-center justify-center gap-1"><a href=/index.xml class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="RSS Feed"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18.0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
+<span>RSS Feed</span></a></div></nav><div class="border-border mb-6 border-t"></div><div class="flex flex-col items-center justify-between gap-4 md:flex-row"><div class="text-muted-foreground text-sm"><p>&copy; 2025 Jaehun's Blog.
+모든 권리 보유.</p></div><div class="flex items-center gap-3"><a href=https://github.com/ryujaehun target=_blank rel="noopener noreferrer" class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none" title=GitHub aria-label=GitHub><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8.0 00-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35.0-3.5.0.0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35.0 3.5A5.4 5.4.0 004 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+</a><a href=https://www.linkedin.com/in/jaehunryu/ target=_blank rel="noopener noreferrer" class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none" title=Linkedin aria-label=Linkedin><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+</a><a href=mailto:jaehunryu@icloud.com class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none" title=Email aria-label=Email><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="Email"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22.0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5A2 2 0 003 7v10a2 2 0 002 2z"/></svg></a></div></div></div></footer><div id=dock class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0" role=toolbar aria-label="바로가기 도구 모음"><nav class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3"><button id=dock-back class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2" title=뒤로 aria-label=뒤로>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+<span class="hidden sm:inline">뒤로</span></button><div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div><button id=dock-toc class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2" title=목차 aria-label=목차>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+<span class="hidden sm:inline">목차</span></button><div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div><button id=dock-search class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2" title=검색 aria-label=검색>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5A7 7 0 113 10a7 7 0 0114 0z"/></svg>
+<span class="hidden md:inline">검색</span></button><div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div><button id=dock-top class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2" title="맨 위로" aria-label="맨 위로">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+<span class="hidden sm:inline">맨 위로</span></button></nav></div><div id=toc-overlay class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300" role=dialog aria-modal=true aria-labelledby=toc-title></div><div id=toc-card class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2" role=dialog aria-modal=true aria-labelledby=toc-title><div class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md"><div class="border-border bg-muted/30 flex items-center justify-between border-b p-4"><div class="flex items-center gap-3"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg><h2 id=toc-title class="text-foreground text-lg font-semibold">목차</h2></div><button id=toc-close class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none" title=닫기 aria-label=닫기>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/></svg></button></div><div class="max-h-96 overflow-y-auto p-4"><nav id=toc-nav class=toc-scrollbar aria-label="글 목차"><div id=toc-content><nav id=TableOfContents></nav></div></nav></div><div class="border-border bg-muted/20 border-t px-4 py-3"><div class="text-muted-foreground text-center text-xs"><span>제목을 클릭하면 해당 위치로 이동합니다</span></div></div></div></div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css integrity=sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js integrity=sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6 crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js integrity=sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh crossorigin=anonymous></script><script>function initKaTeX(){if(typeof renderMathInElement=="undefined"){setTimeout(initKaTeX,100);return}var e=[{display:!0,left:"$$",right:"$$"},{display:!1,left:"$",right:"$"}];renderMathInElement(document.body,{delimiters:e,throwOnError:!1,errorColor:"#cc0000",fleqn:!1,leqno:!1,trust:!1})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",initKaTeX):initKaTeX()</script><div id=search-overlay class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div><div id=search-modal class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300"><div class="border-border flex items-center gap-3 border-b p-4"><div class="text-muted-foreground h-5 w-5 flex-shrink-0"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5A7 7 0 113 10a7 7 0 0114 0z"/></svg></div><div class="relative flex-1"><button id=search-clear class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200" title=지우기 aria-label=지우기>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/></svg>
+</button>
+<input id=search-input type=text placeholder="게시글 검색..." class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none" autocomplete=off spellcheck=false></div><button id=search-close class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200" title=닫기 aria-label=닫기>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/></svg></button></div><div id=search-results class="max-h-96 overflow-y-auto"><div id=search-empty class="flex flex-col items-center justify-center py-12 text-center"><div class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5A7 7 0 113 10a7 7 0 0114 0z"/></svg></div><h3 class="text-foreground mb-2 text-lg font-semibold">검색 시작</h3><p class="text-muted-foreground text-sm">검색어를 입력하세요</p></div><div id=search-loading class="flex hidden items-center justify-center py-8"><div class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div><span class=text-muted-foreground>검색 중...</span></div><div id=search-no-results class="flex hidden flex-col items-center justify-center py-12 text-center"><div class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg></div><h3 class="text-foreground mb-2 text-lg font-semibold">검색 결과 없음</h3><p class="text-muted-foreground text-sm">다른 검색어로 시도해보세요</p></div><div id=search-results-list class=hidden><div id=search-stats class="text-muted-foreground border-border border-b px-4 py-3 text-sm" data-template="%d개의 결과 찾음"></div><div id=search-items class="divide-border divide-y"></div></div></div><div class="border-border bg-muted/20 border-t px-4 py-3"><div class="text-muted-foreground flex items-center justify-between text-xs"><div class="flex items-center gap-2 md:gap-4"><div class="flex items-center gap-1"><kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs">↑↓</kbd>
+<span class="hidden sm:inline">이동</span></div><div class="flex items-center gap-1"><kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs">↵</kbd>
+<span class="hidden sm:inline">선택</span></div><div class="flex items-center gap-1"><kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs">ESC</kbd>
+<span class="hidden sm:inline">닫기</span></div></div><div class="search-hint-desktop flex items-center gap-1"><kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs">⌘K</kbd>
+<span>단축키</span></div></div></div></div></body></html>

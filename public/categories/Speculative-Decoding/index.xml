@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Speculative Decoding on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/categories/Speculative-Decoding/</link>
+    <description>Recent content in Speculative Decoding on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Fri, 06 Dec 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/categories/Speculative-Decoding/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Fast Inference from Transformers via Speculative Decoding</title>
+      <link>http://192.168.1.11:1314/posts/Fast-Inference-from-Transformers-via-Speculative-Decoding/</link>
+      <pubDate>Fri, 06 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Fast-Inference-from-Transformers-via-Speculative-Decoding/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2211.17192v2&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h3 id=&#34;논문-분석-fast-inference-from-transformers-via-speculative-decoding&#34;&gt;논문 분석: &lt;strong&gt;Fast Inference from Transformers via Speculative Decoding&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;h4 id=&#34;1-논문의-강점&#34;&gt;1. &lt;strong&gt;논문의 강점&lt;/strong&gt;&lt;/h4&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;속도 향상&lt;/strong&gt;: Speculative Decoding 기법을 통해 기존의 T5-XXL과 같은 대규모 모델보다 2배에서 3배 빠른 추론 속도를 달성.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;모델 수정 불필요&lt;/strong&gt;: 모델 아키텍처나 재학습 없이도 기존 모델에서 바로 적용 가능.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;출력 보존&lt;/strong&gt;: 출력의 분포가 변경되지 않음을 보장, 기존의 정확도를 유지.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;범용성&lt;/strong&gt;: 다양한 어플리케이션(번역, 요약 등)에 대해 동일한 방법론 적용 가능.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;효율성&lt;/strong&gt;: 메모리 대역폭이 병목현상이 되는 환경에서 추가적인 계산 자원을 활용하여 병렬화를 효과적으로 구현.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h4 id=&#34;2-독창적인-지점&#34;&gt;2. &lt;strong&gt;독창적인 지점&lt;/strong&gt;&lt;/h4&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Speculative Sampling&lt;/strong&gt;: 큰 모델(T5-XXL, LaMDA 등)의 출력 분포를 보존하면서 작은 근사 모델을 사용해 미리 예측을 생성하고, 이를 검증 후 필요하면 보정.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;병렬 처리&lt;/strong&gt;: 각 단계에서 여러 토큰을 동시에 처리할 수 있는 방식으로 병렬성을 높임.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;새로운 확률 추출 방식&lt;/strong&gt;: Speculative Sampling을 통해 불필요한 계산 낭비를 줄이면서도 정확성을 유지.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;학습 필요 없음&lt;/strong&gt;: 근사 모델(Mq)을 이미 존재하는 작은 모델로 설정하여 추가적인 학습 없이 구현 가능.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h4 id=&#34;3-핵심-알고리즘-설명&#34;&gt;3. &lt;strong&gt;핵심 알고리즘 설명&lt;/strong&gt;&lt;/h4&gt;&#xA;&lt;p&gt;논문에 제시된 Speculative Decoding 알고리즘의 주요 과정은 다음과 같습니다:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

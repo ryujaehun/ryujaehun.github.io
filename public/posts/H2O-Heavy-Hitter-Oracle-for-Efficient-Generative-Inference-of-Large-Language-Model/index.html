@@ -1,0 +1,3151 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>H2O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Model | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점 및 독창성 효율적인 KV 캐시 관리:
+H2O(H2..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/H2O-Heavy-Hitter-Oracle-for-Efficient-Generative-Inference-of-Large-Language-Model/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/H2O-Heavy-Hitter-Oracle-for-Efficient-Generative-Inference-of-Large-Language-Model/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="H2O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Model">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점 및 독창성 효율적인 KV 캐시 관리:">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-12-13T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-12-13T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="H2O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Model">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점 및 독창성 효율적인 KV 캐시 관리:">
+
+
+  <meta itemprop="name" content="H2O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Model">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점 및 독창성 효율적인 KV 캐시 관리:">
+  <meta itemprop="datePublished" content="2024-12-13T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-12-13T00:00:00+00:00">
+  <meta itemprop="wordCount" content="8253">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">H2O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Model</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    H2O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Model
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-12-13">
+          2024년 12월 13일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >17 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>8253 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2306.14048">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h3 id="논문의-강점-및-독창성">논문의 강점 및 독창성</h3>
+<ol>
+<li>
+<p><strong>효율적인 KV 캐시 관리</strong>:</p>
+<ul>
+<li>H2O(H2 Heavy-Hitter Oracle)라는 새로운 캐시 제거 정책을 통해, LLM의 KV 캐시 크기를 줄이면서도 성능을 유지할 수 있는 방법을 제안합니다. 이는 기존 LRU 또는 LFU와는 차별화된 접근법으로, 중요한 토큰(Heavy Hitters)을 선별하고 유지함으로써 캐시 사용량을 크게 줄입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>이론적 보장</strong>:</p>
+<ul>
+<li>H2O 알고리즘은 동적 부분모듈 최적화(dynamically submodular maximization)에 기반하며, 이론적으로 근사 최적성을 보장하는 알고리즘임을 증명했습니다. 이를 통해 단순히 실험 결과에 의존하지 않고도 해당 알고리즘의 신뢰성을 강화합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>성능 개선</strong>:</p>
+<ul>
+<li>H2O는 GPT-NeoX, LLaMA, OPT와 같은 다양한 LLM에서 테스트되었으며, 메모리 사용량을 5배까지 감소시키고도 성능 유지 혹은 개선을 달성하였습니다.</li>
+<li>특히, FlexGen, DeepSpeed, Hugging Face Accelerate와 비교하여 최대 29배의 처리량 증가를 달성했습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>현실적 구현</strong>:</p>
+<ul>
+<li>H2O는 이미 존재하는 시스템(FlexGen 등) 위에 쉽게 통합 가능하며, 실제 응용에서 사용하기 용이한 구조를 가지고 있습니다.</li>
+</ul>
+</li>
+</ol>
+<h3 id="핵심-알고리즘-설명">핵심 알고리즘 설명</h3>
+<h4 id="h2o-eviction-policy">H2O Eviction Policy</h4>
+<ul>
+<li><strong>핵심 개념</strong>:
+<ul>
+<li>Heavy Hitters (H2): 각 생성 단계에서 높은 주의(attention) 점수를 가진 중요한 토큰 집합입니다.</li>
+<li>Greedy Algorithm: H2O는 각 단계에서 주의 점수를 기반으로 토큰을 추가하거나 제거하여 캐시를 동적으로 관리합니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="알고리즘-예시">알고리즘 예시</h4>
+<ol>
+<li>
+<p><strong>입력</strong>:</p>
+<ul>
+<li>쿼리 <code>Q</code>, 키 <code>K</code>, 캐시 크기 <code>k</code>.</li>
+<li>문장: &ldquo;Children laughed and in the sunny park played.&rdquo;</li>
+</ul>
+</li>
+<li>
+<p><strong>동작 과정</strong>:</p>
+<ul>
+<li><strong>단계 1</strong>: 첫 번째 3개의 토큰(&ldquo;Children&rdquo;, &ldquo;laughed&rdquo;, &ldquo;and&rdquo;)는 캐시에 추가됩니다.</li>
+<li><strong>단계 2</strong>: 네 번째 토큰 &ldquo;in&quot;이 추가될 때 캐시 크기 제한으로 인해 가장 중요도가 낮은 토큰이 제거됩니다.
+<ul>
+<li>중요도는 <code>Attention Score</code>의 합을 기반으로 계산합니다.</li>
+</ul>
+</li>
+<li><strong>결과</strong>: 중요도가 높은 토큰(&ldquo;Children&rdquo;, &ldquo;sunny&rdquo;, &ldquo;park&rdquo;)이 유지됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>출력</strong>:</p>
+<ul>
+<li>캐시에는 중요한 토큰만 남아 효율적으로 사용됩니다.</li>
+</ul>
+</li>
+</ol>
+<h3 id="한계점">한계점</h3>
+<ol>
+<li>
+<p><strong>데이터 편향</strong>:</p>
+<ul>
+<li>Heavy Hitters는 기존 데이터셋의 빈도 및 상관성에 기반하기 때문에, 다양한 데이터에서 일관된 성능 보장이 어려울 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>미래 토큰 정보 부족</strong>:</p>
+<ul>
+<li>미래에 생성될 토큰 정보를 사용할 수 없는 제한이 있어, 일부 상황에서 성능 저하 가능성이 존재합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>복잡한 환경에서의 실용성</strong>:</p>
+<ul>
+<li>알고리즘이 단순하지만, 실제 대규모 분산 시스템에서 통합 시 추가적인 최적화가 필요할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>구체적 활용 제한</strong>:</p>
+<ul>
+<li>제안된 방법은 주로 특정 구조의 LLM에 최적화되어 있으며, 다른 유형의 모델에는 적합하지 않을 수 있습니다.</li>
+</ul>
+</li>
+</ol>
+<p>이 논문은 LLM의 실용성을 높이는 데 중요한 기여를 했으며, 제안된 H2O는 이론적으로나 실험적으로 강력한 결과를 제공합니다. 그러나, 다양한 데이터 환경에서의 성능과 범용성을 추가로 검증할 필요가 있습니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<h3 id="h2oh2-heavy-hitter-oracle-알고리즘-핵심-설명-및-예시">H2O(H2 Heavy-Hitter Oracle) 알고리즘: 핵심 설명 및 예시</h3>
+<p>H2O 알고리즘은 LLM의 <strong>KV 캐시 메모리</strong>를 효율적으로 관리하는 방법을 제안합니다. 이를 위해 각 생성 단계에서 **중요한 토큰(Heavy Hitters)**를 선택하고 캐시에 유지하며, 메모리 크기를 제한하면서도 성능 저하를 최소화하는 캐시 제거 정책을 설계했습니다. 아래는 알고리즘의 주요 개념과 이를 구체적인 예시로 설명한 내용입니다.</p>
+<hr>
+<h4 id="핵심-개념"><strong>핵심 개념</strong></h4>
+<ol>
+<li>
+<p><strong>Heavy Hitters(H2)</strong>:</p>
+<ul>
+<li>주의(attention) 계산에서 중요한 기여를 하는 토큰입니다.</li>
+<li>중요도는 <strong>누적된 Attention Score</strong>를 기반으로 계산됩니다.</li>
+<li>H2는 일반적으로 문맥에서 높은 빈도 또는 강한 상관성을 가진 토큰입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Eviction Policy</strong>:</p>
+<ul>
+<li>캐시에 저장할 토큰을 제한된 크기(<code>k</code>)로 유지합니다.</li>
+<li>새 토큰이 추가될 때, 기존 토큰 중 하나를 제거해야 한다면 가장 중요도가 낮은 토큰을 제거합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Greedy Algorithm</strong>:</p>
+<ul>
+<li>각 단계에서 <strong>현재 토큰 및 이전 토큰</strong>의 중요도를 계산하고, 중요한 토큰(H2)을 유지합니다.</li>
+<li>계산된 점수를 기반으로 캐시에서 제거할 토큰을 결정합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="h2o-알고리즘의-단계별-설명"><strong>H2O 알고리즘의 단계별 설명</strong></h3>
+<h4 id="입력"><strong>입력</strong></h4>
+<ol>
+<li><strong>Query(Q)</strong>: 현재 생성 단계의 쿼리 벡터.</li>
+<li><strong>Key(K)</strong>: 이전 단계에서 생성된 키 벡터.</li>
+<li><strong>Cache Size(k)</strong>: 캐시에 저장할 수 있는 최대 토큰 수.</li>
+<li><strong>문장 예시</strong>:
+<ul>
+<li>&ldquo;Children laughed and in the sunny park played.&rdquo;</li>
+</ul>
+</li>
+</ol>
+<h4 id="단계-1-초기-설정"><strong>단계 1: 초기 설정</strong></h4>
+<ul>
+<li>첫 번째 <code>k</code>개의 토큰을 캐시에 추가합니다.</li>
+<li>예시:
+<ul>
+<li>초기 토큰 <code>&quot;Children&quot;</code>, <code>&quot;laughed&quot;</code>, <code>&quot;and&quot;</code> 추가.</li>
+<li>캐시 상태: <code>[&quot;Children&quot;, &quot;laughed&quot;, &quot;and&quot;]</code>.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="단계-2-새-토큰-추가"><strong>단계 2: 새 토큰 추가</strong></h4>
+<ul>
+<li>
+<p>네 번째 토큰 <code>&quot;in&quot;</code>이 생성됩니다.</p>
+<ul>
+<li><code>&quot;in&quot;</code>의 Attention Score를 계산:
+<ul>
+<li>이전 토큰들에 대한 Attention Score: <code>&quot;Children&quot;=1.0</code>, <code>&quot;laughed&quot;=0.6</code>, <code>&quot;and&quot;=0.4</code>.</li>
+<li><code>&quot;in&quot;</code>의 중요도를 이전 토큰의 Attention Score 합으로 표현: <code>1.0 + 0.6 + 0.4 = 2.0</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>캐시에 추가하려면 공간을 확보해야 하므로 가장 중요도가 낮은 토큰 제거.</p>
+<ul>
+<li><code>&quot;and&quot;</code>의 중요도(0.4)가 가장 낮아 제거.</li>
+<li>캐시 상태: <code>[&quot;Children&quot;, &quot;laughed&quot;, &quot;in&quot;]</code>.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="단계-3-h2-기반-캐시-유지"><strong>단계 3: H2 기반 캐시 유지</strong></h4>
+<ul>
+<li>
+<p>다섯 번째 토큰 <code>&quot;the&quot;</code>가 생성됩니다.</p>
+<ul>
+<li><code>&quot;the&quot;</code>의 Attention Score를 계산:
+<ul>
+<li>이전 토큰들에 대한 Attention Score: <code>&quot;Children&quot;=0.9</code>, <code>&quot;laughed&quot;=0.7</code>, <code>&quot;in&quot;=0.5</code>.</li>
+<li><code>&quot;the&quot;</code>의 중요도: <code>0.9 + 0.7 + 0.5 = 2.1</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><code>&quot;the&quot;</code> 추가 시 가장 중요도가 낮은 토큰 제거:</p>
+<ul>
+<li><code>&quot;in&quot;</code>의 중요도(0.5)가 가장 낮아 제거.</li>
+<li>캐시 상태: <code>[&quot;Children&quot;, &quot;laughed&quot;, &quot;the&quot;]</code>.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="단계-4-반복"><strong>단계 4: 반복</strong></h4>
+<ul>
+<li>동일한 과정을 반복하여 새로운 토큰이 생성될 때마다 캐시 크기를 유지.</li>
+<li>마지막 생성된 문장 <code>&quot;Children laughed and in the sunny park played.&quot;</code>에 대해:
+<ul>
+<li>캐시 최종 상태: <code>[&quot;Children&quot;, &quot;sunny&quot;, &quot;park&quot;]</code>.</li>
+<li>중요도가 높은 토큰만 캐시에 남아 성능 유지.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="알고리즘-구현-pseudocode"><strong>알고리즘 구현 (Pseudocode)</strong></h3>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PYTHON
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-0"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-0"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-0">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">def</span> <span class="nf">H2O_Eviction</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="n">cache</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># KV 캐시 초기화</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">query</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Q</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">        <span class="c1"># Attention Score 계산</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">        <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">attention</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">K</span><span class="p">[:</span><span class="n">i</span><span class="p">]]</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">        
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">        <span class="c1"># 새로운 토큰 추가</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">k</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">            <span class="n">cache</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">scores</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">        <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">            <span class="c1"># 가장 낮은 중요도의 토큰 제거</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">            <span class="n">min_score_idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cache</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">idx</span><span class="p">:</span> <span class="n">cache</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">            <span class="n">cache</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">min_score_idx</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">            <span class="n">cache</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">scores</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">    <span class="k">return</span> <span class="n">cache</span></span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-0';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<hr>
+<h3 id="알고리즘-요약"><strong>알고리즘 요약</strong></h3>
+<ol>
+<li>각 생성 단계에서 <strong>현재 토큰의 Attention Score</strong>를 계산.</li>
+<li>**Heavy Hitters(H2)**로 간주되는 중요한 토큰은 유지하고, 중요도가 낮은 토큰은 제거.</li>
+<li><strong>Greedy Algorithm</strong>으로 간단하면서도 효율적으로 캐시 크기를 유지.</li>
+</ol>
+<hr>
+<h3 id="장점"><strong>장점</strong></h3>
+<ul>
+<li><strong>효율성</strong>: 캐시 크기를 최대 <code>1/k</code>로 줄이면서 성능 유지.</li>
+<li><strong>일반화 가능성</strong>: OPT, LLaMA, GPT-NeoX 등 다양한 모델에서 동작 가능.</li>
+<li><strong>이론적 보장</strong>: 근사 최적성을 제공하며 성능 저하를 최소화.</li>
+</ul>
+<hr>
+<h3 id="결론"><strong>결론</strong></h3>
+<p>H2O 알고리즘은 메모리 사용량을 줄이면서도 LLM의 성능을 유지하는 혁신적인 접근법입니다. 이 알고리즘은 실제 대규모 시스템에서 LLM을 더 경제적으로 사용할 수 있도록 돕습니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h3 id="논문-결과와-비교-분석"><strong>논문 결과와 비교 분석</strong></h3>
+<p>H2O(H2 Heavy-Hitter Oracle) 알고리즘은 기존의 KV 캐시 관리 방법론보다 다음과 같은 특출난 성과를 보였습니다:</p>
+<hr>
+<h3 id="1-주요-결과"><strong>1. 주요 결과</strong></h3>
+<ol>
+<li>
+<p><strong>KV 캐시 메모리 절감</strong>:</p>
+<ul>
+<li>최대 <strong>5~10배</strong> 메모리 절감을 실현하며, 성능 저하 없이 대규모 언어 모델(LLM)을 실행.</li>
+<li>예: KV 캐시 사용량이 20%로 줄었음에도 원래의 풀 캐시와 유사한 성능을 유지.</li>
+</ul>
+</li>
+<li>
+<p><strong>처리량(Throughput) 향상</strong>:</p>
+<ul>
+<li>다른 시스템 대비 <strong>최대 29배</strong> 높은 처리량.
+<ul>
+<li>FlexGen 대비 최대 3배.</li>
+<li>DeepSpeed 및 Hugging Face Accelerate 대비 최대 29배.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>레이턴시(Latency) 감소</strong>:</p>
+<ul>
+<li>같은 배치 크기에서 FlexGen 대비 최대 <strong>1.9배 더 빠른 응답 시간</strong>을 보임.</li>
+</ul>
+</li>
+<li>
+<p><strong>성능 유지</strong>:</p>
+<ul>
+<li>다양한 벤치마크(HELM, lm-eval-harness)에서 기존의 풀 KV 캐시를 사용한 시스템과 유사한 정확도를 달성.</li>
+<li>장문의 생성 작업에서도 성능 저하 없이 효과적인 결과를 도출.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-비교-분석-다른-방법론과의-차별성"><strong>2. 비교 분석: 다른 방법론과의 차별성</strong></h3>
+<h4 id="1-sparse-transformer"><strong>(1) Sparse Transformer</strong></h4>
+<ul>
+<li>
+<p><strong>문제점</strong>:</p>
+<ul>
+<li>Sparse Transformer는 주의(attention) 구조의 스파스를 도입해 캐시 크기를 줄이지만, 20% 이하의 캐시 예산에서는 성능 저하가 두드러짐.</li>
+<li>KV 캐시 관리가 아닌 구조 자체를 변경해야 하므로, 사전 학습된 모델에 직접 적용하기 어렵다.</li>
+</ul>
+</li>
+<li>
+<p><strong>H2O의 우위</strong>:</p>
+<ul>
+<li>Sparse Transformer와 다르게 기존 모델 구조를 변경하지 않고 KV 캐시 관리 정책만 최적화.</li>
+<li>Heavy Hitters(H2)와 최신 토큰을 조합해 성능을 유지함.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-gisting-tokens"><strong>(2) Gisting Tokens</strong></h4>
+<ul>
+<li>
+<p><strong>문제점</strong>:</p>
+<ul>
+<li>Gisting Tokens는 KV 캐시를 압축하는 방법으로 높은 계산 비용과 추가적인 모델 재학습 과정이 필요함.</li>
+<li>실시간 사용에 부적합.</li>
+</ul>
+</li>
+<li>
+<p><strong>H2O의 우위</strong>:</p>
+<ul>
+<li>Gisting Tokens처럼 압축을 하지 않고, 실시간 동작 가능한 저비용 정책(Greedy Algorithm)으로 캐시를 관리.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-lru-lfu-전통적-캐시-정책"><strong>(3) LRU, LFU (전통적 캐시 정책)</strong></h4>
+<ul>
+<li>
+<p><strong>문제점</strong>:</p>
+<ul>
+<li>LRU(Latest Recently Used), LFU(Least Frequently Used)는 일반적인 캐시 정책이지만, LLM의 경우 Sequential Dependency로 인해 중요도가 높은 토큰을 제거할 가능성이 큼.</li>
+</ul>
+</li>
+<li>
+<p><strong>H2O의 우위</strong>:</p>
+<ul>
+<li>Heavy Hitters와 Attention Score를 기반으로 캐시를 유지해 Sequential Dependency를 더 잘 반영.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-논문이-제시하는-결과-도출의-주요-원인"><strong>3. 논문이 제시하는 결과 도출의 주요 원인</strong></h3>
+<h4 id="1-attention-sparsity"><strong>(1) Attention Sparsity</strong></h4>
+<ul>
+<li><strong>논문 설명</strong>: LLM의 Attention Score는 95% 이상 스파스한 성질을 보임.
+<ul>
+<li>즉, 대부분의 주의 계산에서 특정 토큰만 중요하게 작용.</li>
+</ul>
+</li>
+<li><strong>기여</strong>: 스파스를 활용해 KV 캐시에서 불필요한 정보를 제거, 메모리를 절약.</li>
+</ul>
+<h4 id="2-heavy-hittersh2의-발견"><strong>(2) Heavy Hitters(H2)의 발견</strong></h4>
+<ul>
+<li><strong>논문 설명</strong>:
+<ul>
+<li>Attention Score가 높은 소수의 토큰(H2)이 생성 과정에 결정적 역할.</li>
+<li>H2를 유지하면 캐시 크기를 줄이더라도 성능이 유지됨.</li>
+</ul>
+</li>
+<li><strong>기여</strong>:
+<ul>
+<li>중요도가 낮은 토큰을 제거하여 캐시 크기를 효율적으로 관리.</li>
+<li>H2 기반으로 캐시의 Miss Rate를 줄임.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-greedy-algorithm"><strong>(3) Greedy Algorithm</strong></h4>
+<ul>
+<li><strong>논문 설명</strong>:
+<ul>
+<li>Greedy 알고리즘으로 실시간으로 Attention Score를 계산하여 중요한 토큰을 유지.</li>
+</ul>
+</li>
+<li><strong>기여</strong>:
+<ul>
+<li>단순한 계산으로 저비용 운영 가능.</li>
+<li>동적 부분모듈 최적화 이론에 기반한 이론적 보장을 통해 설득력 강화.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-개인적인-평가-및-생각"><strong>4. 개인적인 평가 및 생각</strong></h3>
+<h4 id="1-독창성"><strong>(1) 독창성</strong></h4>
+<ul>
+<li>기존 캐시 관리 방법론과 차별화된 H2 기반 접근법은 캐시 메모리 문제를 해결하는 혁신적인 방법론으로 보임.</li>
+<li>특히, 단순한 Greedy Algorithm을 사용하여 실시간 구현 가능성을 높인 점이 매우 현실적임.</li>
+</ul>
+<h4 id="2-성능-보장"><strong>(2) 성능 보장</strong></h4>
+<ul>
+<li>H2O가 Sparse Transformer 및 기존 캐시 정책 대비 더 나은 성능을 보이는 이유는 H2가 LLM의 Sequential Dependency를 잘 반영하기 때문.</li>
+<li>이론적 분석을 통해 H2 기반 정책의 최적성을 보장한 점이 신뢰도를 높임.</li>
+</ul>
+<h4 id="3-잠재적-한계"><strong>(3) 잠재적 한계</strong></h4>
+<ul>
+<li>H2O는 Attention Score 계산에 의존하기 때문에 LLM 모델의 특정 데이터 분포에 적응하도록 설계됨. 이는 데이터 편향(bias)에 취약할 가능성이 있음.</li>
+<li>추가적인 실험으로 다양한 데이터와 모델에서의 일반화 성능을 확인할 필요가 있음.</li>
+</ul>
+<hr>
+<h3 id="결론-1"><strong>결론</strong></h3>
+<p>H2O의 성과는 기존 방법론과 비교해 매우 두드러지며, 이는 Attention Sparsity와 Heavy Hitters라는 중요한 관찰에서 비롯된 결과입니다. 이 알고리즘은 이론적 근거와 실험적 검증을 통해 높은 효율성과 성능을 입증했으며, 실제 대규모 LLM 시스템에서 사용하기에 적합한 방법론이라고 평가됩니다.</p>
+<h1 id="q--이-논문에서-제시된-방법을-실제로-사용하려면-기존-방법에서-어떠한-구현이-추가적으로-필요하고-이러한-구현에-소모되는-공수-및-연산에-필요한-컴퓨팅-자원의-크기에-대해서-계산해줄-수-있겠니">Q : 이 논문에서 제시된 방법을 실제로 사용하려면 기존 방법에서 어떠한 구현이 추가적으로 필요하고 이러한 구현에 소모되는 공수 및 연산에 필요한 컴퓨팅 자원의 크기에 대해서 계산해줄 수 있겠니?</h1>
+<h3 id="h2o를-실제로-구현하기-위해-필요한-추가-작업과-요구-사항-분석">H2O를 실제로 구현하기 위해 필요한 추가 작업과 요구 사항 분석</h3>
+<p>H2O 알고리즘은 기존 LLM 시스템에 통합하기 위해 몇 가지 새로운 구현 요소를 추가로 요구합니다. 아래는 H2O 구현을 위한 구체적인 작업 목록, 필요한 연산, 그리고 예상되는 컴퓨팅 자원의 크기와 비용에 대한 분석입니다.</p>
+<hr>
+<h3 id="1-추가-구현-요소"><strong>1. 추가 구현 요소</strong></h3>
+<h4 id="1-heavy-hitters-식별"><strong>(1) Heavy Hitters 식별</strong></h4>
+<ul>
+<li><strong>필요 작업</strong>:
+<ul>
+<li>각 생성 단계에서 Attention Score를 계산하고, Heavy Hitters(H2)를 식별.</li>
+<li>H2는 이전 단계에서의 Attention Matrix에서 높은 점수를 가진 토큰을 선택함.</li>
+</ul>
+</li>
+<li><strong>기존 방법과 차이</strong>:
+<ul>
+<li>기존에는 모든 KV 캐시를 유지하거나 단순한 LRU/LFU 정책을 사용.</li>
+<li>H2O는 Attention Score를 기반으로 동적 제거 정책이 필요.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-캐시-관리-알고리즘"><strong>(2) 캐시 관리 알고리즘</strong></h4>
+<ul>
+<li><strong>필요 작업</strong>:
+<ul>
+<li>기존 KV 캐시를 업데이트하는 로직에 <strong>H2 기반 Greedy 알고리즘</strong>을 통합.</li>
+<li>가장 중요도가 낮은 토큰을 제거하고 새 토큰을 추가하는 작업 수행.</li>
+</ul>
+</li>
+<li><strong>구현 방식</strong>:
+<ul>
+<li>현재 캐시 상태와 새 토큰의 점수를 비교하여 업데이트 수행.</li>
+<li>Greedy 알고리즘으로 캐시 크기를 제한.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-연산-최적화"><strong>(3) 연산 최적화</strong></h4>
+<ul>
+<li><strong>필요 작업</strong>:
+<ul>
+<li>Attention Score 계산 및 캐시 업데이트를 실시간으로 수행하기 위한 최적화 필요.</li>
+<li>GPU에서 병렬 처리 가능성을 극대화해야 함.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-구현에-필요한-연산-및-계산-복잡도-분석"><strong>2. 구현에 필요한 연산 및 계산 복잡도 분석</strong></h3>
+<h4 id="1-attention-score-계산"><strong>(1) Attention Score 계산</strong></h4>
+<ul>
+<li><strong>연산 요구</strong>:
+<ul>
+<li>각 생성 단계에서 쿼리 벡터(<code>Q</code>)와 캐시된 키 벡터(<code>K</code>) 간의 내적(dot product)을 계산.</li>
+<li>Attention Score는 $O(k \cdot d)$ 복잡도를 가짐.
+<ul>
+<li>$k$: 캐시 크기 (H2 유지 크기).</li>
+<li>$d$: 벡터 차원 (예: 1024).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>추가 연산</strong>:
+<ul>
+<li>각 생성 단계마다 $O(k)$로 가장 중요도가 낮은 항목을 제거.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-캐시-관리-정책"><strong>(2) 캐시 관리 정책</strong></h4>
+<ul>
+<li><strong>복잡도</strong>:
+<ul>
+<li>캐시에 새로운 토큰을 추가하고 기존 토큰을 제거하는 연산: $O(k)$.</li>
+<li>H2를 식별하고 유지하기 위한 작업: $O(k)$.</li>
+</ul>
+</li>
+</ul>
+<h4 id="총-복잡도"><strong>총 복잡도</strong>:</h4>
+<ul>
+<li>$O(n \cdot (k \cdot d))$: $n$은 생성 단계 수, $k$는 캐시 크기, $d$는 벡터 차원.</li>
+</ul>
+<hr>
+<h3 id="3-컴퓨팅-자원-요구-사항-분석"><strong>3. 컴퓨팅 자원 요구 사항 분석</strong></h3>
+<h4 id="1-메모리"><strong>(1) 메모리</strong></h4>
+<ul>
+<li><strong>기존 방식</strong>:
+<ul>
+<li>모든 KV 캐시를 유지하기 때문에, 메모리 사용량은 $O(n \cdot d)$.</li>
+</ul>
+</li>
+<li><strong>H2O 방식</strong>:
+<ul>
+<li>H2와 최신 토큰만 유지하므로 메모리 사용량은 $O(k \cdot d)$.</li>
+<li>예를 들어, $k = 0.2n$이라면 최대 5배 메모리 절약 가능.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-계산-비용"><strong>(2) 계산 비용</strong></h4>
+<ul>
+<li><strong>추가 계산 비용</strong>:
+<ul>
+<li>Attention Score 계산과 캐시 업데이트에 필요한 연산이 추가됨.</li>
+<li>기존 대비 $O(k \cdot d)$ 정도의 추가 연산 필요.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-gpucpu-사용량"><strong>(3) GPU/CPU 사용량</strong></h4>
+<ul>
+<li><strong>GPU</strong>:
+<ul>
+<li>Attention Score 계산은 GPU에서 병렬 처리 가능.</li>
+<li>작은 캐시 크기(<code>k</code>)와 병렬 연산을 고려하면 추가 연산 비용은 비교적 낮음.</li>
+</ul>
+</li>
+<li><strong>CPU</strong>:
+<ul>
+<li>캐시 관리 알고리즘은 CPU에서 병렬화 없이 처리 가능하며, 매우 가벼운 작업으로 간주됨.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-실제-구현에-필요한-공수-및-리소스-분석"><strong>4. 실제 구현에 필요한 공수 및 리소스 분석</strong></h3>
+<h4 id="1-공수"><strong>(1) 공수</strong></h4>
+<ul>
+<li><strong>추가 개발 시간</strong>:
+<ul>
+<li>H2O 구현 및 최적화: 약 2~4주.
+<ul>
+<li>Attention Score 계산 통합: 1~2주.</li>
+<li>Greedy 캐시 관리 정책 구현: 1주.</li>
+<li>GPU 병렬 처리 최적화: 1주.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-리소스-비용"><strong>(2) 리소스 비용</strong></h4>
+<ul>
+<li><strong>GPU 비용</strong>:
+<ul>
+<li>NVIDIA A100(80GB) 기준:
+<ul>
+<li>메모리 절약으로 인해 동일 작업에서 더 큰 배치(batch) 처리가 가능.</li>
+<li>기존 대비 처리량 증가로 연산 비용 효율성 증가.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>추가 연산 비용</strong>:
+<ul>
+<li>$k \cdot d$에 비례하는 추가 계산이 발생하지만, 캐시 크기(<code>k</code>)가 작으므로 실질적 비용은 기존 대비 10~20% 내외로 예상.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="5-구현-후-효과"><strong>5. 구현 후 효과</strong></h3>
+<ul>
+<li><strong>처리량 증가</strong>: FlexGen 대비 최대 3배 처리량 증가.</li>
+<li><strong>메모리 효율</strong>: 5~10배의 메모리 절약.</li>
+<li><strong>레이턴시 감소</strong>: FlexGen 대비 1.5~1.9배 빠른 응답 시간.</li>
+</ul>
+<hr>
+<h3 id="결론-2"><strong>결론</strong></h3>
+<p>H2O를 구현하기 위해 기존 방법론에 비해 Attention Score 계산과 Greedy 캐시 관리 정책이 추가됩니다. GPU를 활용한 병렬 처리를 통해 연산 비용은 크게 증가하지 않으며, 메모리 절약 및 처리량 증가로 인해 총체적인 컴퓨팅 자원 효율성이 높아질 것입니다. 이러한 추가 구현은 현실적으로 실현 가능하며, 실제 대규모 LLM 시스템에 통합할 만한 가치가 있습니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="논문의-입력-데이터와-추론-과정"><strong>논문의 입력 데이터와 추론 과정</strong></h3>
+<h4 id="1-입력-데이터"><strong>1. 입력 데이터</strong></h4>
+<ul>
+<li>
+<p><strong>형식</strong>: 대규모 언어 모델(LLM)은 토큰 단위로 입력 데이터를 처리합니다. 입력 데이터는 일반적으로 다음과 같은 형태를 가집니다.</p>
+<ul>
+<li>예시: <code>&quot;Children laughed and in the sunny park played.&quot;</code></li>
+<li>이 문장은 토큰화되어 각 단어가 개별 토큰으로 처리됩니다.
+<ul>
+<li>예시 토큰: <code>[Children, laughed, and, in, the, sunny, park, played]</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>초기 설정</strong>:</p>
+<ul>
+<li><code>KV 캐시</code>는 빈 상태에서 시작합니다.</li>
+<li>모델은 각 생성 단계에서 이전 단계의 KV 캐시를 사용해 새로운 토큰을 생성합니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="2-추론-과정-예시"><strong>2. 추론 과정: 예시</strong></h4>
+<ol>
+<li>
+<p><strong>단계 1: 초기 토큰 입력</strong></p>
+<ul>
+<li><strong>입력 토큰</strong>: <code>[Children]</code></li>
+<li><strong>생성 과정</strong>:
+<ul>
+<li>입력 토큰 <code>&quot;Children&quot;</code>에 대해 쿼리(<code>Q</code>), 키(<code>K</code>), 값(<code>V</code>)를 계산.</li>
+<li>생성된 <code>Q, K, V</code>는 KV 캐시에 저장.</li>
+</ul>
+</li>
+<li><strong>출력 토큰</strong>: <code>&quot;laughed&quot;</code> 생성.
+<ul>
+<li>Attention Score를 기반으로 <code>&quot;laughed&quot;</code>를 예측.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>단계 2: 새 토큰 추가</strong></p>
+<ul>
+<li><strong>입력 토큰</strong>: <code>[Children, laughed]</code></li>
+<li><strong>KV 캐시</strong>:
+<ul>
+<li>캐시된 이전 키-값 쌍(<code>K, V</code>)와 새 입력 토큰 <code>&quot;laughed&quot;</code>의 <code>Q, K, V</code>를 사용해 Attention Score 계산.</li>
+</ul>
+</li>
+<li><strong>캐시 업데이트</strong>:
+<ul>
+<li>H2O 알고리즘에 따라 중요도가 낮은 토큰이 캐시에서 제거됨.</li>
+</ul>
+</li>
+<li><strong>출력 토큰</strong>: <code>&quot;and&quot;</code> 생성.</li>
+</ul>
+</li>
+<li>
+<p><strong>단계 3: 반복</strong></p>
+<ul>
+<li>위 과정을 반복하여 다음 토큰 <code>&quot;in&quot;</code>, <code>&quot;the&quot;</code>, <code>&quot;sunny&quot;</code> 등을 생성.</li>
+<li>각 단계에서:
+<ul>
+<li>현재 입력 토큰과 캐시된 KV 쌍으로 Attention Score를 계산.</li>
+<li>중요도가 낮은 토큰은 캐시에서 제거되고, 중요한 토큰(H2)은 유지됨.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>최종 결과</strong>:</p>
+<ul>
+<li>생성된 문장: <code>&quot;Children laughed and in the sunny park played.&quot;</code></li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="모델-아키텍처-및-주요-구성-요소"><strong>모델 아키텍처 및 주요 구성 요소</strong></h3>
+<h4 id="1-모델-아키텍처"><strong>1. 모델 아키텍처</strong></h4>
+<ul>
+<li>
+<p><strong>기본 구조</strong>: Transformer 기반 언어 모델</p>
+<ul>
+<li>이 논문은 OPT, LLaMA, GPT-NeoX와 같은 대규모 Transformer 모델을 실험 대상으로 사용.</li>
+</ul>
+</li>
+<li>
+<p><strong>구성 요소</strong>:</p>
+<ol>
+<li><strong>입력 임베딩</strong>:
+<ul>
+<li>입력 토큰을 고차원 벡터로 변환.</li>
+</ul>
+</li>
+<li><strong>Self-Attention</strong>:
+<ul>
+<li>쿼리(<code>Q</code>), 키(<code>K</code>), 값(<code>V</code>) 계산.</li>
+<li>Attention Score 계산 후 가중 평균을 통해 출력 생성.</li>
+</ul>
+</li>
+<li><strong>FFN(Fully Connected Layer)</strong>:
+<ul>
+<li>Attention 출력 후 비선형 변환을 수행.</li>
+</ul>
+</li>
+<li><strong>출력 임베딩</strong>:
+<ul>
+<li>출력 토큰의 확률 분포 계산.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="2-주요-연산-및-메모리-요구량"><strong>2. 주요 연산 및 메모리 요구량</strong></h4>
+<h5 id="1-연산-요구량"><strong>(1) 연산 요구량</strong></h5>
+<ul>
+<li>
+<p><strong>Self-Attention 계산</strong>:</p>
+<ul>
+<li>$Q$, $K$, $V$의 계산:
+<ul>
+<li>$O(n \cdot d^2)$, $n$: 시퀀스 길이, $d$: 임베딩 차원.</li>
+</ul>
+</li>
+<li>Attention Score 계산:
+<ul>
+<li>$O(n^2 \cdot d)$.</li>
+<li>이 논문은 $n$을 줄이기 위해 KV 캐시 크기를 제한.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>FFN 계산</strong>:</p>
+<ul>
+<li>$O(n \cdot d^2)$.</li>
+</ul>
+</li>
+<li>
+<p><strong>H2O 추가 연산</strong>:</p>
+<ul>
+<li>각 단계에서 KV 캐시 크기 제한을 위해 Greedy 알고리즘 수행:
+<ul>
+<li>$O(k \cdot d)$, $k$: 캐시 크기.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h5 id="2-메모리-요구량"><strong>(2) 메모리 요구량</strong></h5>
+<ul>
+<li>
+<p><strong>기존 방법</strong>:</p>
+<ul>
+<li>모든 KV 쌍을 캐시에 저장.</li>
+<li>메모리 요구량: $O(n \cdot d)$.
+<ul>
+<li>예: $n=1024$, $d=1024$일 때 약 180GB(OPT-30B 기준).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>H2O 방법</strong>:</p>
+<ul>
+<li>캐시 크기 제한($k$)으로 메모리 사용량 감소.</li>
+<li>메모리 요구량: $O(k \cdot d)$.
+<ul>
+<li>$k=0.2n$으로 가정하면, 약 36GB로 감소.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="3-컴퓨팅-자원-요구량"><strong>3. 컴퓨팅 자원 요구량</strong></h4>
+<ul>
+<li><strong>GPU</strong>:
+<ul>
+<li>Transformer 연산은 병렬 처리에 최적화되어 있으므로, GPU 사용이 필수적.</li>
+<li>H2O는 추가 연산이 비교적 작아 GPU 병렬 처리의 성능에 큰 영향을 미치지 않음.</li>
+</ul>
+</li>
+<li><strong>추가 연산 비용</strong>:
+<ul>
+<li>기존 대비 약 10~20%의 추가 연산이 예상되지만, 메모리 절약으로 인해 효율성이 증가.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결론-3"><strong>결론</strong></h3>
+<p>H2O는 입력 데이터에서 Heavy Hitters를 식별하고 이를 유지하며 메모리 효율성을 극대화하는 방법론입니다. 기존 추론 과정에 비해 Attention Score 기반의 추가 연산이 필요하지만, 병렬 처리로 인해 연산 비용은 낮게 유지됩니다. 이 논문의 방법은 대규모 모델에서 메모리 사용량을 획기적으로 줄이고, 동시에 추론 성능을 유지하거나 향상시키는 데 적합한 솔루션입니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<h3 id="이-논문의-한계와-이를-극복하기-위한-연구-흐름"><strong>이 논문의 한계와 이를 극복하기 위한 연구 흐름</strong></h3>
+<p>H2O 알고리즘은 KV 캐시 관리의 효율성을 높이고 메모리 사용량을 줄이는 데 강력한 성능을 보여주지만, 여전히 몇 가지 한계가 존재합니다. 이러한 한계를 극복하기 위해 학계와 산업에서 탐구할 수 있는 연구 방향을 아래와 같이 정리하였습니다.</p>
+<hr>
+<h3 id="1-한계와-극복-방향"><strong>1. 한계와 극복 방향</strong></h3>
+<h4 id="1-데이터-및-모델-편향"><strong>(1) 데이터 및 모델 편향</strong></h4>
+<ul>
+<li><strong>한계</strong>:
+<ul>
+<li>H2O는 Heavy Hitters(H2)라는 중요 토큰 집합을 정의하는 데 있어 데이터와 모델의 편향에 의존합니다.</li>
+<li>특정 데이터셋이나 언어 모델에서 학습된 H2가 새로운 도메인 데이터에서는 적합하지 않을 수 있음.</li>
+</ul>
+</li>
+<li><strong>극복 방향</strong>:
+<ol>
+<li><strong>도메인 적응 캐시 관리</strong>:
+<ul>
+<li>새로운 도메인에 대해 Heavy Hitters를 재학습하거나, 캐시 관리 정책을 미세 조정하는 메커니즘 도입.</li>
+<li>예: Domain-adaptive Fine-tuning 및 Few-shot Learning 활용.</li>
+</ul>
+</li>
+<li><strong>Meta-Learning 기반 캐시 정책</strong>:
+<ul>
+<li>다양한 도메인에서 일반화 가능한 캐시 관리 정책을 학습.</li>
+<li>Meta-Learning 접근법을 통해 여러 데이터셋에서 H2를 효과적으로 식별.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="2-캐시-관리-정책의-복잡성"><strong>(2) 캐시 관리 정책의 복잡성</strong></h4>
+<ul>
+<li><strong>한계</strong>:
+<ul>
+<li>Attention Score 기반의 Greedy Algorithm은 단순하지만, $O(k \cdot d)$의 연산 비용이 추가됨.</li>
+<li>대규모 모델에서 배치 크기와 시퀀스 길이가 증가하면 연산량이 크게 늘어날 가능성이 있음.</li>
+</ul>
+</li>
+<li><strong>극복 방향</strong>:
+<ol>
+<li><strong>Approximate Attention Scores</strong>:
+<ul>
+<li>Attention Score 계산을 근사화하여 연산량 감소.</li>
+<li>예: Low-rank Approximation, Randomized Attention 등의 방법 적용.</li>
+</ul>
+</li>
+<li><strong>Predictive Cache Replacement</strong>:
+<ul>
+<li>H2를 예측하는 경량 예측 모델을 도입하여 실시간 계산 필요성을 줄임.</li>
+<li>예: Reinforcement Learning(RL) 기반으로 캐시 교체를 학습.</li>
+</ul>
+</li>
+<li><strong>Sparse Matrix 연산 활용</strong>:
+<ul>
+<li>Attention Score를 Sparse Matrix 연산으로 최적화하여 연산 효율을 높임.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="3-미래-토큰-정보의-부재"><strong>(3) 미래 토큰 정보의 부재</strong></h4>
+<ul>
+<li><strong>한계</strong>:
+<ul>
+<li>H2O는 미래에 생성될 토큰의 정보를 알 수 없으므로, 일부 중요한 토큰이 캐시에서 제거될 가능성이 있음.</li>
+</ul>
+</li>
+<li><strong>극복 방향</strong>:
+<ol>
+<li><strong>Lookahead Mechanism</strong>:
+<ul>
+<li>미래 토큰을 예측하기 위한 Lookahead Mechanism 도입.</li>
+<li>예: 모델이 생성 과정에서 가장 가능성이 높은 토큰을 예측하여 H2를 조정.</li>
+</ul>
+</li>
+<li><strong>Long-term Dependency 모델링</strong>:
+<ul>
+<li>Attention 메커니즘에 Long-term Dependency를 학습시키는 추가 모듈 도입.</li>
+<li>예: Recurrent Neural Network(RNN) 기반 Memory Augmentation.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="4-실시간-시스템에서의-통합"><strong>(4) 실시간 시스템에서의 통합</strong></h4>
+<ul>
+<li><strong>한계</strong>:
+<ul>
+<li>H2O는 Greedy 알고리즘을 실시간으로 실행해야 하므로 대규모 분산 시스템에서의 통합이 어려울 수 있음.</li>
+<li>GPU와 CPU 간의 데이터 전송 병목현상도 문제.</li>
+</ul>
+</li>
+<li><strong>극복 방향</strong>:
+<ol>
+<li><strong>Edge Computing 활용</strong>:
+<ul>
+<li>GPU 외부의 Edge Device에서 간단한 캐시 관리 정책을 실행하여 병목을 줄임.</li>
+</ul>
+</li>
+<li><strong>Pipeline Parallelism</strong>:
+<ul>
+<li>캐시 관리 작업을 병렬화하여 대규모 시스템에서의 부하를 분산.</li>
+</ul>
+</li>
+<li><strong>Hardware Optimization</strong>:
+<ul>
+<li>H2O를 위한 전용 하드웨어 가속기 설계.</li>
+<li>예: Attention Score 계산 및 캐시 관리에 특화된 ASIC(주문형 반도체) 도입.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="2-관련-연구-흐름"><strong>2. 관련 연구 흐름</strong></h3>
+<h4 id="1-sparse-attention-연구"><strong>(1) Sparse Attention 연구</strong></h4>
+<ul>
+<li>Sparse Transformer, Longformer 등은 Attention 계산의 복잡성을 줄이기 위한 대안으로 제안됨.</li>
+<li><strong>관련 연구</strong>:
+<ul>
+<li><code>Reformer</code>: Attention Score 계산을 locality-sensitive hashing으로 근사화.</li>
+<li><code>Linformer</code>: 선형 복잡도의 Attention 계산.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-token-selection-및-압축-기법"><strong>(2) Token Selection 및 압축 기법</strong></h4>
+<ul>
+<li>토큰 중요도를 평가하고, 중요도가 낮은 토큰을 제거하는 방법론.</li>
+<li><strong>관련 연구</strong>:
+<ul>
+<li><code>Gisting Tokens</code>: 중요한 정보를 압축하여 KV 캐시 크기를 줄임.</li>
+<li><code>Dynamic Context Pruning</code>: 현재 문맥에서 불필요한 토큰을 제거.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-학습-기반-캐시-관리"><strong>(3) 학습 기반 캐시 관리</strong></h4>
+<ul>
+<li>Reinforcement Learning(RL) 및 Supervised Learning을 활용한 캐시 관리 정책 학습.</li>
+<li><strong>관련 연구</strong>:
+<ul>
+<li>RL 기반 Least Recently Used(LRU) 대안 학습.</li>
+<li>Attention Score를 기반으로 한 예측 기반 캐시 관리.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-결론-및-제안"><strong>3. 결론 및 제안</strong></h3>
+<p>H2O 알고리즘은 LLM의 KV 캐시 효율성을 높이는 데 성공적인 방법론이지만, 도메인 편향, 연산 복잡성, 미래 토큰 정보 부족과 같은 한계가 있습니다. 이를 극복하기 위해 다음과 같은 연구 흐름이 유망합니다:</p>
+<ol>
+<li>도메인 적응과 Meta-Learning을 통한 캐시 정책의 일반화.</li>
+<li>Approximation과 Predictive Replacement를 통한 연산 효율성 개선.</li>
+<li>Long-term Dependency를 고려한 Lookahead Mechanism 설계.</li>
+<li>분산 시스템 및 하드웨어 최적화를 통한 실시간 통합.</li>
+</ol>
+<p>이러한 방향은 H2O의 성능과 적용성을 더욱 확대하여 대규모 언어 모델의 효율적인 운영을 가능하게 할 것입니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/H2O-Heavy-Hitter-Oracle-for-Efficient-Generative-Inference-of-Large-Language-Model/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/H2O-Heavy-Hitter-Oracle-for-Efficient-Generative-Inference-of-Large-Language-Model/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Scissorhands-Exploiting-the-Persistence-of-Importance-Hypothesis-for-LLM-KV-Cache-Compression-at-Test-Time/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                Scissorhands: Exploiting the Persistence of Importance Hypothesis for LLM KV Cache Compression at Test Time
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-12-13">
+                12月13日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/GQATraining-Generalized-Multi-Query-Transformer-Models-from-Multi-Head-Checkpoints/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                GQA:Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-12-13">
+                12月13日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-강점-및-독창성">논문의 강점 및 독창성</a></li>
+        <li><a href="#핵심-알고리즘-설명">핵심 알고리즘 설명</a>
+          <ul>
+            <li><a href="#h2o-eviction-policy">H2O Eviction Policy</a></li>
+            <li><a href="#알고리즘-예시">알고리즘 예시</a></li>
+          </ul>
+        </li>
+        <li><a href="#한계점">한계점</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#h2oh2-heavy-hitter-oracle-알고리즘-핵심-설명-및-예시">H2O(H2 Heavy-Hitter Oracle) 알고리즘: 핵심 설명 및 예시</a>
+          <ul>
+            <li><a href="#핵심-개념"><strong>핵심 개념</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#h2o-알고리즘의-단계별-설명"><strong>H2O 알고리즘의 단계별 설명</strong></a>
+          <ul>
+            <li><a href="#입력"><strong>입력</strong></a></li>
+            <li><a href="#단계-1-초기-설정"><strong>단계 1: 초기 설정</strong></a></li>
+            <li><a href="#단계-2-새-토큰-추가"><strong>단계 2: 새 토큰 추가</strong></a></li>
+            <li><a href="#단계-3-h2-기반-캐시-유지"><strong>단계 3: H2 기반 캐시 유지</strong></a></li>
+            <li><a href="#단계-4-반복"><strong>단계 4: 반복</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#알고리즘-구현-pseudocode"><strong>알고리즘 구현 (Pseudocode)</strong></a></li>
+        <li><a href="#알고리즘-요약"><strong>알고리즘 요약</strong></a></li>
+        <li><a href="#장점"><strong>장점</strong></a></li>
+        <li><a href="#결론"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문-결과와-비교-분석"><strong>논문 결과와 비교 분석</strong></a></li>
+        <li><a href="#1-주요-결과"><strong>1. 주요 결과</strong></a></li>
+        <li><a href="#2-비교-분석-다른-방법론과의-차별성"><strong>2. 비교 분석: 다른 방법론과의 차별성</strong></a>
+          <ul>
+            <li><a href="#1-sparse-transformer"><strong>(1) Sparse Transformer</strong></a></li>
+            <li><a href="#2-gisting-tokens"><strong>(2) Gisting Tokens</strong></a></li>
+            <li><a href="#3-lru-lfu-전통적-캐시-정책"><strong>(3) LRU, LFU (전통적 캐시 정책)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-논문이-제시하는-결과-도출의-주요-원인"><strong>3. 논문이 제시하는 결과 도출의 주요 원인</strong></a>
+          <ul>
+            <li><a href="#1-attention-sparsity"><strong>(1) Attention Sparsity</strong></a></li>
+            <li><a href="#2-heavy-hittersh2의-발견"><strong>(2) Heavy Hitters(H2)의 발견</strong></a></li>
+            <li><a href="#3-greedy-algorithm"><strong>(3) Greedy Algorithm</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-개인적인-평가-및-생각"><strong>4. 개인적인 평가 및 생각</strong></a>
+          <ul>
+            <li><a href="#1-독창성"><strong>(1) 독창성</strong></a></li>
+            <li><a href="#2-성능-보장"><strong>(2) 성능 보장</strong></a></li>
+            <li><a href="#3-잠재적-한계"><strong>(3) 잠재적 한계</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-1"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#h2o를-실제로-구현하기-위해-필요한-추가-작업과-요구-사항-분석">H2O를 실제로 구현하기 위해 필요한 추가 작업과 요구 사항 분석</a></li>
+        <li><a href="#1-추가-구현-요소"><strong>1. 추가 구현 요소</strong></a>
+          <ul>
+            <li><a href="#1-heavy-hitters-식별"><strong>(1) Heavy Hitters 식별</strong></a></li>
+            <li><a href="#2-캐시-관리-알고리즘"><strong>(2) 캐시 관리 알고리즘</strong></a></li>
+            <li><a href="#3-연산-최적화"><strong>(3) 연산 최적화</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-구현에-필요한-연산-및-계산-복잡도-분석"><strong>2. 구현에 필요한 연산 및 계산 복잡도 분석</strong></a>
+          <ul>
+            <li><a href="#1-attention-score-계산"><strong>(1) Attention Score 계산</strong></a></li>
+            <li><a href="#2-캐시-관리-정책"><strong>(2) 캐시 관리 정책</strong></a></li>
+            <li><a href="#총-복잡도"><strong>총 복잡도</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#3-컴퓨팅-자원-요구-사항-분석"><strong>3. 컴퓨팅 자원 요구 사항 분석</strong></a>
+          <ul>
+            <li><a href="#1-메모리"><strong>(1) 메모리</strong></a></li>
+            <li><a href="#2-계산-비용"><strong>(2) 계산 비용</strong></a></li>
+            <li><a href="#3-gpucpu-사용량"><strong>(3) GPU/CPU 사용량</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-실제-구현에-필요한-공수-및-리소스-분석"><strong>4. 실제 구현에 필요한 공수 및 리소스 분석</strong></a>
+          <ul>
+            <li><a href="#1-공수"><strong>(1) 공수</strong></a></li>
+            <li><a href="#2-리소스-비용"><strong>(2) 리소스 비용</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#5-구현-후-효과"><strong>5. 구현 후 효과</strong></a></li>
+        <li><a href="#결론-2"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-입력-데이터와-추론-과정"><strong>논문의 입력 데이터와 추론 과정</strong></a>
+          <ul>
+            <li><a href="#1-입력-데이터"><strong>1. 입력 데이터</strong></a></li>
+            <li><a href="#2-추론-과정-예시"><strong>2. 추론 과정: 예시</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#모델-아키텍처-및-주요-구성-요소"><strong>모델 아키텍처 및 주요 구성 요소</strong></a>
+          <ul>
+            <li><a href="#1-모델-아키텍처"><strong>1. 모델 아키텍처</strong></a></li>
+            <li><a href="#2-주요-연산-및-메모리-요구량"><strong>2. 주요 연산 및 메모리 요구량</strong></a></li>
+            <li><a href="#3-컴퓨팅-자원-요구량"><strong>3. 컴퓨팅 자원 요구량</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-3"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#이-논문의-한계와-이를-극복하기-위한-연구-흐름"><strong>이 논문의 한계와 이를 극복하기 위한 연구 흐름</strong></a></li>
+        <li><a href="#1-한계와-극복-방향"><strong>1. 한계와 극복 방향</strong></a>
+          <ul>
+            <li><a href="#1-데이터-및-모델-편향"><strong>(1) 데이터 및 모델 편향</strong></a></li>
+            <li><a href="#2-캐시-관리-정책의-복잡성"><strong>(2) 캐시 관리 정책의 복잡성</strong></a></li>
+            <li><a href="#3-미래-토큰-정보의-부재"><strong>(3) 미래 토큰 정보의 부재</strong></a></li>
+            <li><a href="#4-실시간-시스템에서의-통합"><strong>(4) 실시간 시스템에서의 통합</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-관련-연구-흐름"><strong>2. 관련 연구 흐름</strong></a>
+          <ul>
+            <li><a href="#1-sparse-attention-연구"><strong>(1) Sparse Attention 연구</strong></a></li>
+            <li><a href="#2-token-selection-및-압축-기법"><strong>(2) Token Selection 및 압축 기법</strong></a></li>
+            <li><a href="#3-학습-기반-캐시-관리"><strong>(3) 학습 기반 캐시 관리</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-결론-및-제안"><strong>3. 결론 및 제안</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

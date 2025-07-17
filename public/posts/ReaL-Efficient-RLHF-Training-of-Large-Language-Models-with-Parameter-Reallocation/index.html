@@ -1,0 +1,2246 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>ReaL: Efficient RLHF Training of Large Language Models with Parameter Reallocation | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 분석: REAL: 대규모 언어 모델의 효율적인 RLHF 훈련을 위한 매..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/ReaL-Efficient-RLHF-Training-of-Large-Language-Models-with-Parameter-Reallocation/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/ReaL-Efficient-RLHF-Training-of-Large-Language-Models-with-Parameter-Reallocation/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="ReaL: Efficient RLHF Training of Large Language Models with Parameter Reallocation">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 분석: REAL: 대규모 언어 모델의 효율적인 RLHF 훈련을 위한 매개변수 재할당 이 문서는 “REAL: Efficient RLHF Training of Large Language Models with Parameter Reallocation” 논문을 심층적으로 분석하여 논문의 핵심 강점과 독창성, 주요 알고리즘의 작동 방식, 그리고 잠재적인 한계점을 설명합니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-06-10T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-06-10T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="ReaL: Efficient RLHF Training of Large Language Models with Parameter Reallocation">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 분석: REAL: 대규모 언어 모델의 효율적인 RLHF 훈련을 위한 매개변수 재할당 이 문서는 “REAL: Efficient RLHF Training of Large Language Models with Parameter Reallocation” 논문을 심층적으로 분석하여 논문의 핵심 강점과 독창성, 주요 알고리즘의 작동 방식, 그리고 잠재적인 한계점을 설명합니다.">
+
+
+  <meta itemprop="name" content="ReaL: Efficient RLHF Training of Large Language Models with Parameter Reallocation">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 분석: REAL: 대규모 언어 모델의 효율적인 RLHF 훈련을 위한 매개변수 재할당 이 문서는 “REAL: Efficient RLHF Training of Large Language Models with Parameter Reallocation” 논문을 심층적으로 분석하여 논문의 핵심 강점과 독창성, 주요 알고리즘의 작동 방식, 그리고 잠재적인 한계점을 설명합니다.">
+  <meta itemprop="datePublished" content="2025-06-10T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-06-10T00:00:00+00:00">
+  <meta itemprop="wordCount" content="14844">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gemini-2.5-Pro(preview),MLSYS2025">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">ReaL: Efficient RLHF Training of Large Language Models with Parameter Reallocation</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    ReaL: Efficient RLHF Training of Large Language Models with Parameter Reallocation
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2025-06-10">
+          2025년 06월 10일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >30 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>14844 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gemini-2.5-propreview/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gemini-2.5-pro(preview)
+                </a>
+              
+                <a
+                  href="/categories/MLSYS2025/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  MLSYS2025
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://openreview.net/pdf?id=yLU1zRf95d">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h2 id="논문-분석-real-대규모-언어-모델의-효율적인-rlhf-훈련을-위한-매개변수-재할당">논문 분석: REAL: 대규모 언어 모델의 효율적인 RLHF 훈련을 위한 매개변수 재할당</h2>
+<p>이 문서는 &ldquo;REAL: Efficient RLHF Training of Large Language Models with Parameter Reallocation&rdquo; 논문을 심층적으로 분석하여 논문의 핵심 강점과 독창성, 주요 알고리즘의 작동 방식, 그리고 잠재적인 한계점을 설명합니다.</p>
+<h3 id="논문의-강점과-독창적인-지점">논문의 강점과 독창적인 지점</h3>
+<p>[cite_start]이 논문의 가장 큰 독창성이자 강점은 RLHF(인간 피드백 기반 강화학습) 훈련 과정의 비효율성을 해결하기 위해 **&lsquo;동적 매개변수 재할당(Dynamic Parameter Reallocation)&rsquo;**이라는 새로운 개념을 제안하고 이를 성공적으로 구현한 시스템 &lsquo;REAL&rsquo;을 개발한 것입니다[cite: 1, 4, 54].</p>
+<p>기존 RLHF 시스템들의 문제점은 다음과 같이 요약할 수 있습니다.</p>
+<ol>
+<li><strong>대칭적 병렬화(Symmetric Parallelization):</strong> 모든 모델(Actor, Critic 등)에 동일한 병렬화 전략을 클러스터 전체에 적용하는 방식입니다. [cite_start]이 경우, 작업(task)의 특성에 따라 요구되는 리소스가 다름에도 불구하고 일괄적인 전략을 사용하기 때문에, 특정 단계에서는 불필요한 통신 오버헤드가 발생하는 &lsquo;과잉 병렬화(over-parallelization)&rsquo; 문제가 생깁니다[cite: 33, 34, 35].</li>
+<li><strong>비대칭적 병렬화(Asymmetric Parallelization):</strong> 모델별로 각기 다른 GPU 그룹을 할당하는 방식입니다. [cite_start]이 방식은 모델 간의 데이터 의존성 때문에 한 모델이 작업을 마칠 때까지 다른 모델의 GPU가 유휴 상태(idle)로 대기하는 &lsquo;GPU 저활용(under-utilization)&rsquo; 문제를 야기합니다[cite: 38, 40].</li>
+</ol>
+<p>[cite_start]REAL은 이러한 문제의 근본 원인이 훈련 내내 모델의 리소스 할당과 병렬화 전략이 **&lsquo;고정&rsquo;**되어 있다는 점에 있다고 지적합니다[cite: 41]. 이에 대한 해결책으로 REAL은 다음과 같은 독창적인 접근법을 제시합니다.</p>
+<ul>
+<li>[cite_start]<strong>동적 매개변수 재할당:</strong> 훈련 과정 중 각 &lsquo;모델 함수 호출(model function call)&rsquo; 즉, 개별 작업(예: Actor의 생성, Critic의 추론) 단위로 최적의 병렬화 전략과 GPU 리소스를 동적으로 할당합니다[cite: 4, 85]. [cite_start]예를 들어, &lsquo;생성&rsquo; 작업에는 텐서 병렬화(TP)가 유리하고, &lsquo;훈련&rsquo; 작업에는 파이프라인 병렬화(PP)가 유리할 수 있는데, REAL은 작업이 바뀔 때마다 GPU들 간에 모델 매개변수를 재분배하여 각 작업에 가장 효율적인 구성으로 전환합니다[cite: 91, 254, 266].</li>
+<li>[cite_start]<strong>실행 계획(Execution Plan) 개념 도입:</strong> 각 작업에 어떤 GPU 그룹(Device Mesh)을 할당하고, 어떤 병렬화 전략(TP, PP, DP 등)을 사용할지를 정의하는 &lsquo;실행 계획&rsquo;이라는 개념을 도입했습니다[cite: 6, 47]. [cite_start]이를 통해 복잡한 RLHF 워크플로우를 최적화 가능한 탐색 문제로 정형화했습니다[cite: 106, 107].</li>
+<li>[cite_start]<strong>자동화된 탐색 및 실행:</strong> 최적의 &lsquo;실행 계획&rsquo;을 사람이 수동으로 찾는 것은 거의 불가능합니다[cite: 154]. [cite_start]REAL은 가벼운 런타임 예측기(Cost Estimator)와 MCMC(마르코프 연쇄 몬테카를로) 탐색 알고리즘을 사용하여 주어진 환경(모델 크기, 클러스터 사양)에 가장 효율적인 실행 계획을 자동으로 탐색합니다[cite: 7, 98, 99]. [cite_start]탐색된 계획은 런타임 엔진에 의해 실제 훈련에 배포됩니다[cite: 8].</li>
+</ul>
+<p>[cite_start]이러한 접근법을 통해 REAL은 기존 방식 대비 <strong>최대 3.58배의 처리량 향상</strong>을 달성했으며, 특히 긴 컨텍스트(long-context) 시나리오에서 뛰어난 성능을 보였습니다[cite: 10, 11].</p>
+<h3 id="핵심-알고리즘-설명-예시-포함">핵심 알고리즘 설명 (예시 포함)</h3>
+<p>[cite_start]REAL의 핵심은 **&lsquo;실행 계획 생성기(Execution Plan Generator)&rsquo;**와 <strong>&lsquo;런타임 엔진(Runtime Engine)&rsquo;</strong> 두 부분으로 나뉩니다[cite: 97]. 전체 과정은 다음과 같습니다.</p>
+<h4 id="예시-상황">예시 상황</h4>
+<ul>
+<li><strong>하드웨어:</strong> 16개의 GPU가 장착된 클러스터</li>
+<li><strong>모델:</strong> 70B Actor 모델, 7B Critic 모델</li>
+<li><strong>워크플로우:</strong> PPO 알고리즘 (Actor 생성 → Critic/Reward 추론 → Actor/Critic 훈련)</li>
+</ul>
+<h4 id="1단계-입력-및-데이터플로우-그래프-생성">1단계: 입력 및 데이터플로우 그래프 생성</h4>
+<p>[cite_start]사용자는 훈련 설정(모델 크기, 배치 사이즈 등)과 클러스터 사양을 시스템에 입력합니다[cite: 127]. REAL은 PPO 알고리즘의 작업 흐름을 &lsquo;데이터플로우 그래프&rsquo;로 파싱합니다. [cite_start]이 그래프의 각 노드는 &lsquo;Actor 생성&rsquo;, &lsquo;Critic 추론&rsquo;과 같은 개별 &lsquo;모델 함수 호출&rsquo;을 나타내며, 엣지는 데이터 의존성을 의미합니다[cite: 94, 108].</p>
+<h4 id="2단계-최적-실행-계획-탐색-execution-plan-generator">2단계: 최적 실행 계획 탐색 (Execution Plan Generator)</h4>
+<p>이 단계가 REAL의 &ldquo;두뇌&quot;에 해당합니다.</p>
+<ol>
+<li>[cite_start]<strong>탐색 공간 정의:</strong> 시스템은 각 작업(그래프의 노드)에 할당할 수 있는 모든 가능한 (GPU 그룹, 병렬화 전략) 조합의 거대한 공간을 정의합니다[cite: 153].</li>
+<li><strong>비용 예측기(Cost Estimator):</strong> 모든 계획을 실제로 실행해보는 것은 비효율적이므로, REAL은 경량 예측기를 사용합니다.
+<ul>
+<li>[cite_start]먼저 프로파일러가 특정 병렬화 설정 하에서 단일 레이어의 연산(forward, backward 등)에 걸리는 시간을 미리 측정해 둡니다[cite: 131, 134].</li>
+<li>[cite_start]탐색 엔진이 새로운 실행 계획을 제안하면, 비용 예측기는 이 프로파일링된 통계치를 바탕으로 전체 계획을 실행했을 때의 총 소요 시간과 메모리 사용량을 매우 빠르게 **&lsquo;추정&rsquo;**합니다[cite: 128, 132]. [cite_start]이때, 병렬 실행과 데이터 종속성으로 인한 대기 시간까지 시뮬레이션하여 계산합니다[cite: 140, 141].</li>
+</ul>
+</li>
+<li><strong>MCMC 탐색:</strong>
+<ul>
+<li>[cite_start]초기 실행 계획(예: 모든 작업을 전체 16개 GPU에 할당하는 단순한 계획)에서 탐색을 시작합니다[cite: 160].</li>
+<li>[cite_start]현재 계획을 약간 수정한 새로운 계획(예: &lsquo;Actor 생성&rsquo; 작업의 TP(텐서 병렬화) 차수를 4에서 8로 변경)을 무작위로 제안합니다[cite: 162].</li>
+<li>비용 예측기로 두 계획의 예상 시간을 비교합니다. [cite_start]새 계획이 더 빠르면 수용하고, 더 느리더라도 특정 확률로 수용하여 지역 최적해(local optima)에 빠지는 것을 방지합니다[cite: 162].</li>
+<li>[cite_start]이 과정을 수 분 내에 수천 번 반복하여 가장 우수한 실행 계획을 찾아냅니다[cite: 100].</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li><strong>탐색 결과(예시):</strong>
+<ul>
+<li><strong>Actor 생성:</strong> 16개 GPU 전체 사용, (TP=8, PP=2, DP=1) 구성이 가장 빠름.</li>
+<li><strong>Actor/Critic 훈련:</strong> Actor와 Critic 훈련은 데이터 의존성이 없으므로 동시 실행. Actor 훈련은 GPU 0-7 (8개)에 (TP=2, PP=4, DP=1) 구성으로, Critic 훈련은 GPU 8-15 (8개)에 (TP=4, PP=2, DP=1) 구성으로 할당하는 것이 최적.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3단계-실행-계획-배포-runtime-engine">3단계: 실행 계획 배포 (Runtime Engine)</h4>
+<p>[cite_start]탐색된 최상의 계획은 런타임 엔진으로 전달되어 실제 훈련을 수행합니다[cite: 100].</p>
+<ol>
+<li>[cite_start]<strong>작업 지시:</strong> 중앙의 마스터 워커(CPU)가 실행 계획에 따라 각 GPU에 위치한 모델 워커들에게 작업을 지시합니다[cite: 101, 102].</li>
+<li><strong>Actor 생성:</strong> 마스터가 16개 GPU 전체에 &lsquo;Actor 생성&rsquo; 작업을 (TP=8, PP=2, DP=1) 구성으로 실행하라고 명령합니다.</li>
+<li><strong>매개변수 재할당:</strong> &lsquo;생성&rsquo;이 끝나고 &lsquo;훈련&rsquo; 단계로 넘어갈 때, 마스터는 실행 계획에 따라 매개변수 재할당을 지시합니다. Actor 모델의 매개변수가 16개 GPU에 퍼져있던 상태에서, GPU 0-7 그룹으로 (TP=2, PP=4, DP=1) 구성에 맞게 재배치됩니다. [cite_start]이 과정에서 GPU 간 통신이 발생합니다[cite: 172, 173]. 동시에 Critic 모델은 GPU 8-15 그룹으로 로드됩니다.</li>
+<li>[cite_start]<strong>동시 훈련:</strong> 재할당이 완료되면, 마스터는 두 GPU 그룹에 각각 Actor와 Critic 훈련을 동시에 시작하라고 명령합니다[cite: 249].</li>
+</ol>
+<p>이처럼 각 작업 단계마다 최적의 병렬화 구성을 동적으로 적용함으로써 REAL은 GPU 유휴 시간을 최소화하고 통신 오버헤드를 줄여 전체 처리량을 극대화합니다.</p>
+<h3 id="논문의-한계점">논문의 한계점</h3>
+<p>논문은 스스로 몇 가지 한계점을 명확히 밝히고 있습니다.</p>
+<ul>
+<li>[cite_start]<strong>예측 가능성 요구:</strong> 비용 예측기는 프로파일링에 기반하므로 워크플로우가 예측 가능하다고 가정합니다[cite: 191]. [cite_start]만약 훈련 중에 생성되는 텍스트의 길이가 매번 크게 달라지는 등 작업 부하가 매우 동적이고 불안정하다면, 예측기의 정확도가 떨어져 최적이 아닌 실행 계획을 선택할 수 있습니다[cite: 192].</li>
+<li>[cite_start]<strong>탐색의 최적성 미보장:</strong> MCMC 기반 탐색은 거대한 탐색 공간에서 실용적으로 빠른 시간 안에 &ldquo;충분히 좋은&rdquo; 해를 찾는 휴리스틱(heuristic) 방법입니다[cite: 193]. 따라서 찾아낸 실행 계획이 이론적으로 가능한 절대적인 최적의 해라고 보장할 수는 없습니다. [cite_start](단, 소규모 실험에서는 거의 최적에 가까운 성능을 보였습니다 [cite: 294]).</li>
+<li>[cite_start]<strong>재할당 오버헤드:</strong> 매개변수 재할당 자체가 통신 비용을 발생시킵니다[cite: 31]. REAL의 성능 향상은 이 재할당 비용보다 각 작업을 최적의 구성으로 실행해서 얻는 시간적 이득이 더 크다는 전제에 기반합니다. [cite_start]논문의 실험 결과에 따르면 이 오버헤드는 미미했지만[cite: 269], 특정 상황에서는 성능에 영향을 줄 수 있는 요인입니다.</li>
+<li><strong>구현의 복잡성:</strong> 동적 재할당, 자동 탐색 등 REAL 시스템의 개념은 정적인 병렬화 시스템에 비해 구현이 훨씬 복잡합니다. 마스터-워커 구조, 비용 예측기, MCMC 탐색기, 파라미터 재분배 로직 등은 상당한 엔지니어링 노력을 요구합니다.</li>
+</ul>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>REAL 논문의 핵심 알고리즘은 **&lsquo;실행 계획 생성기&rsquo;**가 최적의 실행 계획을 탐색하고, **&lsquo;런타임 엔진&rsquo;**이 그 계획에 따라 동적으로 모델 매개변수를 재할당하며 훈련을 실행하는 두 단계로 구성됩니다.</p>
+<hr>
+<h3 id="핵심-알고리즘-상세-설명-예시-포함">핵심 알고리즘 상세 설명 (예시 포함)</h3>
+<p>알고리즘의 전체 과정을 70B Actor 모델과 7B Critic 모델을 128개 GPU 클러스터에서 PPO 알고리즘으로 훈련하는 상황을 예시로 들어 설명하겠습니다.</p>
+<h4 id="1단계-입력-및-데이터플로우-그래프-생성-1"><strong>1단계: 입력 및 데이터플로우 그래프 생성</strong></h4>
+<p>[cite_start]사용자는 훈련할 모델(70B Actor, 7B Critic), 클러스터 사양(128 H100 GPUs), 배치 사이즈 등 기본 설정을 입력합니다[cite: 438, 442]. [cite_start]REAL 시스템은 PPO 알고리즘의 작업 흐름을 분석하여 다음과 같은 <strong>데이터플로우 그래프</strong>를 생성합니다[cite: 61, 94].</p>
+<ul>
+<li><strong><code>Actor 생성</code></strong> → <strong><code>Critic/Reward/Reference 추론</code></strong> → <strong><code>Actor/Critic 훈련</code></strong></li>
+</ul>
+<p>[cite_start]이 그래프의 각 노드는 &lsquo;모델 함수 호출&rsquo;이라는 개별 작업이며, 화살표는 데이터 의존성을 나타냅니다[cite: 108].</p>
+<hr>
+<h4 id="2단계-최적-실행-계획-탐색-실행-계획-생성기"><strong>2단계: 최적 실행 계획 탐색 (실행 계획 생성기)</strong></h4>
+<p>이 단계는 REAL 시스템의 &ldquo;두뇌&rdquo; 역할을 하며, 가장 효율적인 훈련 방법을 찾아냅니다.</p>
+<ol>
+<li>
+<p><strong>비용 예측 (Cost Estimation)</strong></p>
+<ul>
+<li>[cite_start]<strong>사전 프로파일링:</strong> 먼저, 실제 하드웨어에서 단일 레이어의 연산(forward/backward), 통신(all-reduce 등)에 걸리는 시간을 다양한 병렬화 설정(TP, PP, DP 차수)별로 미리 측정합니다[cite: 131, 134]. [cite_start]이 과정은 몇 분밖에 걸리지 않습니다[cite: 132, 276].</li>
+<li>[cite_start]<strong>시간/메모리 추정:</strong> 이 프로파일링 데이터를 기반으로, 특정 실행 계획(예: &lsquo;Actor 생성&rsquo;은 A 구성, &lsquo;Actor 훈련&rsquo;은 B 구성으로 실행)의 총 소요 시간과 최대 메모리 사용량을 시뮬레이션을 통해 매우 빠르게 추정합니다[cite: 133, 141].</li>
+</ul>
+</li>
+<li>
+<p><strong>MCMC 기반 탐색 (Execution Plan Search)</strong></p>
+<ul>
+<li>[cite_start]탐색 공간은 각 작업에 할당할 수 있는 (GPU 그룹, 병렬화 전략)의 모든 조합으로, 매우 방대합니다[cite: 153].</li>
+<li>[cite_start]REAL은 MCMC(마르코프 연쇄 몬테카를로) 탐색 알고리즘을 사용하여 이 공간을 효율적으로 탐색합니다[cite: 98, 155].</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>
+<p><strong>탐색 과정 예시:</strong></p>
+<ol>
+<li>[cite_start]<strong>초기 계획:</strong> 모든 작업을 128개 GPU 전체에 동일한 병렬화 전략(예: TP=8, PP=4, DP=4)으로 할당하는 단순한 계획으로 시작합니다[cite: 160, 470].</li>
+<li><strong>새로운 계획 제안:</strong> 현재 계획을 무작위로 약간 수정합니다. [cite_start]예를 들어, <code>Actor 훈련</code> 작업의 파이프라인 병렬화(PP) 차수를 4에서 16으로 변경하고, 텐서 병렬화(TP) 차수를 8에서 2로 변경하는 새 계획을 제안합니다[cite: 162].</li>
+<li><strong>비용 비교:</strong> 비용 예측기를 통해 두 계획의 예상 실행 시간을 비교합니다.
+<ul>
+<li>[cite_start]<strong>분석:</strong> <code>Actor 훈련</code>은 연산 집약적이므로, TP를 줄이고 PP를 늘리면 TP의 All-Reduce 통신 오버헤드가 줄어들어 더 효율적일 수 있습니다[cite: 266, 267].</li>
+<li><strong>결정:</strong> 새 계획의 예상 시간이 더 짧으면 수용합니다. [cite_start]더 길더라도, 지역 최적해(local optima)에 빠지는 것을 막기 위해 낮은 확률로 수용할 수 있습니다[cite: 162].</li>
+</ul>
+</li>
+<li>[cite_start]<strong>반복 및 선택:</strong> 이 과정을 정해진 시간(예: 150초) 동안 반복하며, 가장 빠를 것으로 예측된 실행 계획을 최종 선택합니다[cite: 281].</li>
+</ol>
+</li>
+<li>
+<p>[cite_start]<strong>최종 탐색된 실행 계획 (예시)</strong>[cite: 468]:</p>
+<ul>
+<li><strong><code>Actor 생성 (70B)</code></strong>: 128개 GPU, (DP=16, TP=2, PP=4) 구성</li>
+<li><strong><code>Actor 훈련 (70B)</code></strong>: 128개 GPU, (DP=4, TP=2, PP=16) 구성</li>
+<li><strong><code>Critic 훈련 (7B)</code></strong>: 128개 GPU, (DP=4, TP=8, PP=4) 구성</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="3단계-계획-실행-및-매개변수-재할당-런타임-엔진"><strong>3단계: 계획 실행 및 매개변수 재할당 (런타임 엔진)</strong></h4>
+<p>탐색된 최적 계획은 런타임 엔진에 의해 실제 훈련에 적용됩니다.</p>
+<ol>
+<li>[cite_start]<strong><code>Actor 생성</code> 실행</strong>: 마스터 워커(CPU)가 128개 GPU의 모델 워커들에게 <code>Actor 생성</code>을 (DP=16, TP=2, PP=4) 구성으로 실행하라고 지시합니다[cite: 102, 166].</li>
+<li>[cite_start]<strong>매개변수 재할당 (Parameter Reallocation)</strong>: <code>Actor 생성</code> 작업이 끝나면, 런타임 엔진은 다음 작업인 <code>Actor 훈련</code>에 최적화된 (DP=4, TP=2, PP=16) 구성으로 <strong>Actor 모델의 매개변수를 GPU들 간에 동적으로 재배치</strong>합니다[cite: 85, 172]. [cite_start]이 과정에서 GPU 간 통신이 발생하여 파라미터의 분할 방식이 변경됩니다[cite: 173].</li>
+<li><strong><code>Actor 훈련</code> 실행</strong>: 재할당이 완료되면, 마스터 워커는 변경된 구성으로 <code>Actor 훈련</code>을 실행하라고 지시합니다.</li>
+</ol>
+<hr>
+<h3 id="알고리즘-요약">알고리즘 요약</h3>
+<p>REAL의 핵심 알고리즘은 RLHF 훈련의 복잡한 워크플로우를 <strong>자동화된 탐색 문제</strong>로 전환합니다.</p>
+<ul>
+<li><strong>탐색 단계</strong>: <strong>실행 계획 생성기</strong>가 경량 프로파일링과 비용 예측기를 활용하여, MCMC 알고리즘을 통해 각 개별 작업(생성, 추론, 훈련)에 가장 효율적인 GPU 할당 및 병렬화 전략의 조합인 **&lsquo;최적 실행 계획&rsquo;**을 신속하게 찾아냅니다.</li>
+<li><strong>실행 단계</strong>: <strong>런타임 엔진</strong>이 이 계획에 따라 훈련을 수행하며, 작업이 전환될 때마다 **&lsquo;동적 매개변수 재할당&rsquo;**을 통해 모델의 병렬화 구성을 변경합니다.</li>
+</ul>
+<p>이러한 동적 접근 방식을 통해 REAL은 각 작업의 특성에 맞는 최적의 실행 환경을 제공하여 GPU 유휴 시간과 통신 오버헤드를 극적으로 줄이고, 결과적으로 전체 훈련 처리량을 극대화합니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h2 id="real-논문-결과-분석-및-평가">REAL 논문 결과 분석 및 평가</h2>
+<p>[cite_start]이 논문에서 제시된 결과는 **처리량(Throughput)**을 핵심 성능 지표로 사용하여 REAL 시스템의 우수성을 입증합니다[cite: 232]. 실험 결과는 REAL이 기존의 다른 RLHF 훈련 시스템들보다 월등히 뛰어나다는 것을 보여주며, 그 원인은 논문이 제안하는 독창적인 방법론에 있습니다.</p>
+<hr>
+<h3 id="논문에서-제시된-결과">논문에서 제시된 결과</h3>
+<ol>
+<li>[cite_start]<strong>압도적인 성능 향상</strong>: REAL은 기존의 오픈소스 RLHF 시스템들(DeepSpeed-Chat, OpenRLHF, NeMo-Aligner 등)과 비교했을 때 <strong>최대 3.58배 더 높은 처리량</strong>을 달성했습니다[cite: 52, 236].</li>
+<li>[cite_start]<strong>휴리스틱 대비 성능 우위</strong>: 단순히 전문가가 설정한 3D 병렬화(Megatron-LM 기반) 계획인 <code>REAL-Heuristic</code>과 비교해도, REAL이 자동으로 탐색한 실행 계획은 <strong>평균 54% 더 높은 성능</strong>을 보였습니다[cite: 53, 237]. [cite_start]특히, 입력 텍스트의 길이가 긴 <strong>&lsquo;롱 컨텍스트(long-context)&rsquo; 시나리오에서는 그 격차가 81%까지 벌어져</strong> 특정 환경에서의 강점을 명확히 보여주었습니다[cite: 53, 238].</li>
+<li>[cite_start]<strong>다양한 알고리즘으로의 확장성</strong>: REAL의 방법론은 PPO 알고리즘에만 국한되지 않습니다[cite: 189]. [cite_start]DPO, GRPO, ReMax와 같은 다른 최신 RLHF 알고리즘에 적용했을 때도 <code>REAL-Heuristic</code> 대비 각각 **53.4%, 16.67%, 190.84%**의 상당한 성능 향상을 기록했습니다[cite: 282].</li>
+</ol>
+<hr>
+<h3 id="다른-방법론에-비해-특출난-점">다른 방법론에 비해 특출난 점</h3>
+<p>REAL이 다른 방법론에 비해 갖는 가장 특출난 차이점은 <strong>&lsquo;정적(Static)&rsquo; 할당 방식의 틀을 깼다</strong>는 것입니다.</p>
+<ul>
+<li>[cite_start]<strong>기존 방법론</strong>: RLHF 훈련 시작부터 끝까지 <strong>고정된 병렬화 전략과 GPU 할당</strong>을 사용합니다[cite: 41]. 예를 들어, 128개 GPU를 Actor 모델 훈련과 생성에 모두 동일한 방식으로 사용하거나(대칭적), Actor용 64개, Critic용 64개로 나눠서 고정적으로 사용합니다(비대칭적).</li>
+<li>[cite_start]<strong>REAL의 접근법</strong>: RLHF 워크플로우를 &lsquo;생성&rsquo;, &lsquo;추론&rsquo;, &lsquo;훈련&rsquo; 등 여러 개의 <strong>개별 &lsquo;모델 함수 호출&rsquo; 단위로 분해</strong>하고, 각 작업의 특성에 맞춰 <strong>실시간으로 GPU 할당과 병렬화 전략을 동적으로 변경</strong>합니다[cite: 4, 85]. 이는 &ldquo;하나의 전략으로 모든 것을 해결하려는&rdquo; 기존 방식에서 벗어나, &ldquo;각 작업에 맞는 최적의 도구를 사용하는&rdquo; 패러다임의 전환입니다.</li>
+</ul>
+<p>[cite_start]이러한 유연성은 수동으로 관리하기 불가능하므로, REAL은 <strong>&lsquo;실행 계획 생성기&rsquo;를 통해 이 과정을 자동화</strong>했다는 점도 독창적입니다[cite: 6, 7].</p>
+<hr>
+<h3 id="결과-도출의-원인">결과 도출의 원인</h3>
+<p>이러한 뛰어난 결과는 REAL이 제안하는 핵심 방법론인 **&lsquo;동적 매개변수 재할당&rsquo;**과 이를 통해 가능해진 <strong>&lsquo;최적화된 실행 계획&rsquo;</strong> 덕분입니다.</p>
+<h4 id="논문에서-제시하는-이유">논문에서 제시하는 이유</h4>
+<p>논문은 성능 향상의 원인을 두 가지로 설명합니다.</p>
+<ol>
+<li>[cite_start]<strong>GPU 활용률 극대화 (Maximized GPU Utilization)</strong>: 정적 할당 방식에서는 데이터 의존성 때문에 특정 모델이 유휴 상태(idle)가 되는 구간이 필연적으로 발생합니다[cite: 40]. [cite_start]REAL은 독립적으로 실행 가능한 작업들을 서로 다른 GPU 그룹에 동시에 할당하여 <strong>GPU 유휴 시간을 최소화</strong>합니다[cite: 45, 272]. [cite_start]예를 들어, 7B 모델 훈련 시 Actor 훈련과 Critic 훈련을 별도의 GPU 그룹에서 완벽하게 동시에 실행하여 성능을 극대화했습니다[cite: 249, 250].</li>
+<li>[cite_start]<strong>통신 및 I/O 오버헤드 최소화 (Minimized Communication &amp; I/O Overhead)</strong>: 각 작업에 최적화된 병렬화 전략을 사용함으로써 불필요한 통신 비용을 줄입니다[cite: 271].
+<ul>
+<li><strong>생성(Decoding) 작업 시</strong>: 파이프라인 병렬화(PP)는 단계 간 동기화 대기 시간 때문에 비효율적입니다. [cite_start]REAL은 이 작업에 텐서 병렬화(TP)를 우선적으로 사용하여 오버헤드를 줄입니다[cite: 254].</li>
+<li><strong>훈련(Training) 작업 시</strong>: 텐서 병렬화(TP)는 레이어마다 All-Reduce 통신을 유발하여 비용이 큽니다. [cite_start]REAL은 이 작업에 파이프라인 병렬화(PP) 비중을 높여 통신을 최소화합니다[cite: 267].</li>
+</ul>
+</li>
+</ol>
+<h4 id="개인적인-견해-추가-분석">개인적인 견해 (추가 분석)</h4>
+<p>논문의 분석은 매우 정확하며, 핵심 성공 요인은 **&ldquo;RLHF 워크플로우의 이질성(Heterogeneity)을 정확히 이해하고 공략했다&rdquo;**는 점에 있습니다. RLHF 훈련은 단일한 작업이 아니라, 다음과 같이 계산 특성이 완전히 다른 작업들의 조합입니다.</p>
+<ul>
+<li><strong>생성 (Generation)</strong>: 한 번에 한 토큰씩 순차적으로 생성하므로 <strong>메모리 대역폭과 지연 시간(Latency)에 민감</strong>합니다.</li>
+<li><strong>훈련 (Training)</strong>: 대규모 행렬 곱셈이 반복되므로 <strong>연산 성능(Compute-bound)이 중요</strong>합니다.</li>
+<li><strong>추론 (Inference)</strong>: 단일 순방향 패스이므로 상대적으로 <strong>가벼운 작업</strong>입니다.</li>
+</ul>
+<p>기존 시스템들은 이 모든 이질적인 작업에 하나의 고정된 잣대(병렬화 전략)를 들이댔습니다. 반면, REAL은 각 작업의 특성에 맞는 &lsquo;맞춤 정장&rsquo; 같은 병렬화 전략을 동적으로 입히는 것과 같습니다. **&lsquo;동적 매개변수 재할당&rsquo;**은 이 &lsquo;맞춤 정장&rsquo;을 실시간으로 갈아입을 수 있게 해주는 <strong>핵심 메커니즘</strong>이며, **&lsquo;자동화된 탐색&rsquo;**은 가장 잘 맞는 옷을 찾아주는 <strong>스타일리스트</strong> 역할을 하는 것입니다. 이 근본적인 접근법의 차이가 REAL의 특출난 성능을 만들어냈다고 분석할 수 있습니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>REAL 논문이 제시한 한계들을 극복하기 위한 연구는 크게 <strong>(1) 동적 워크로드에 대응하는 적응형 계획, (2) 더 빠르고 최적화된 탐색 알고리즘, (3) 재할당 오버헤드를 최소화하는 통신 최적화</strong>라는 세 가지 흐름으로 진행될 수 있습니다.</p>
+<hr>
+<h3 id="1-동적-워크로드-대응-온라인-적응형-계획-online-adaptive-planning">1. 동적 워크로드 대응: 온라인 적응형 계획 (Online Adaptive Planning)</h3>
+<p>[cite_start]REAL의 비용 예측기는 훈련 워크로드가 예측 가능하다는 가정에 기반합니다[cite: 192]. 하지만 실제 훈련에서는 생성되는 텍스트 길이가 유동적으로 변하는 등 워크로드가 동적으로 변할 수 있습니다. 이를 해결하기 위해 정적 계획에서 벗어나 실시간으로 계획을 수정하는 연구가 필요합니다.</p>
+<ul>
+<li>
+<p><strong>실시간 성능 모니터링 기반 재계획 (Re-planning based on Real-time Monitoring)</strong></p>
+<ul>
+<li><strong>방법</strong>: 훈련 중 GPU 활용률, 실제 작업 완료 시간, 통신 지연 등 핵심 성능 지표(KPI)를 지속적으로 모니터링합니다. 만약 현재 실행 계획의 실제 성능이 비용 예측기의 예상과 크게 벗어나는 경우(예: 생성 작업 시간이 예상보다 20% 이상 증가)를 감지합니다.</li>
+<li><strong>효과</strong>: 이러한 편차를 트리거로 삼아, 전체 훈련을 중단하지 않고 현재 상황에 더 적합한 새로운 실행 계획을 <strong>온라인으로 재탐색하고 적용</strong>합니다. 이를 통해 예측 불가능한 워크로드 변화에 동적으로 대응하여 꾸준히 높은 효율을 유지할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>워크로드 예측 모델 도입 (Workload Prediction Models)</strong></p>
+<ul>
+<li><strong>방법</strong>: 최근 몇 번의 훈련 반복(iteration)에서 관찰된 생성 길이, 배치 처리 시간 등의 데이터를 기반으로, 앞으로의 워크로드 변화를 예측하는 간단한 시계열 모델이나 학습 모델을 도입합니다.</li>
+<li><strong>효과</strong>: 이 예측된 미래 워크로드 정보를 비용 예측기에 입력하여, 더욱 강건하고 미래지향적인 실행 계획을 사전에 수립할 수 있습니다. 이는 시스템이 변화에 수동적으로 대응하는 것을 넘어, 능동적으로 대비하게 만듭니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-탐색-효율-및-최적성-강화-차세대-탐색-알고리즘-및-비용-모델">2. 탐색 효율 및 최적성 강화: 차세대 탐색 알고리즘 및 비용 모델</h3>
+<p>[cite_start]REAL은 MCMC라는 휴리스틱 탐색을 사용하므로, 찾아낸 계획이 절대적인 최적임을 보장하지 않으며 대규모 클러스터에서는 탐색 시간이 길어질 수 있습니다[cite: 193, 285].</p>
+<ul>
+<li>
+<p><strong>강화학습(RL) 기반 탐색 에이전트 개발 (RL-based Search Agent)</strong></p>
+<ul>
+<li><strong>방법</strong>: 실행 계획을 찾는 과정 자체를 강화학습 문제로 정의합니다. RL 에이전트는 현재 클러스터 상태(가용 GPU, 모델 구성)를 &lsquo;상태(state)&lsquo;로 인지하고, 최적의 실행 계획을 &lsquo;행동(action)&lsquo;으로 출력하도록 학습합니다. 보상(reward)은 해당 계획의 실행 시간(짧을수록 높은 보상)이 됩니다.</li>
+<li><strong>효과</strong>: 한 번 잘 학습된 에이전트는 MCMC와 같은 반복적인 탐색 과정 없이도, 주어진 상황에 대한 최적의 계획을 거의 즉시 추론해낼 수 있습니다. 이는 탐색 시간을 획기적으로 단축시키고, 더 복잡한 상황에서도 일관된 고품질의 계획을 생성할 가능성을 엽니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>학습 기반 비용 모델 (Learning-based Cost Model)</strong></p>
+<ul>
+<li><strong>방법</strong>: 현재의 프로파일링 및 보간(interpolation) 기반 비용 예측기를 더욱 정교한 <strong>신경망 기반의 예측 모델로 대체</strong>합니다. 이전 훈련 실행에서 수집된 방대한 (실행 계획, 실제 실행 시간) 데이터를 학습하여, 특정 계획의 성능을 훨씬 더 정확하게 예측하는 모델을 만듭니다.</li>
+<li><strong>효과</strong>: 학습 기반 모델은 하드웨어와 소프트웨어 간의 복잡하고 비선형적인 상호작용까지 포착할 수 있어 예측 정확도를 높입니다. 이는 탐색 알고리즘이 더 나은 결정을 내리도록 유도하여 최종적으로 더 우수한 실행 계획을 찾는 데 기여합니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-재할당-오버헤드-최소화-통신-계산-중첩-및-최적화">3. 재할당 오버헤드 최소화: 통신-계산 중첩 및 최적화</h3>
+<p>매개변수 재할당은 필연적으로 통신 오버헤드를 유발합니다. [cite_start]논문에서는 이 비용이 크지 않다고 밝혔지만[cite: 186], 이마저도 최소화하여 성능을 극한으로 끌어올리는 연구가 가능합니다.</p>
+<ul>
+<li>
+<p><strong>통신과 계산의 중첩 (Communication-Computation Overlap)</strong></p>
+<ul>
+<li><strong>방법</strong>: 런타임 엔진의 스케줄러를 고도화하여, 현재 작업의 마지막 단계가 실행되는 동안 다음 작업에 필요한 매개변수를 <strong>미리 비동기적으로 가져오고 재배치</strong>하는 기법을 도입합니다. 예를 들어, &lsquo;Actor 훈련&rsquo;의 마지막 미니배치가 처리되는 동안, 다음 반복의 &lsquo;Actor 생성&rsquo;에 필요한 병렬화 구성으로 파라미터를 미리 변환하기 시작합니다.</li>
+<li><strong>효과</strong>: 통신에 소요되는 시간을 계산 시간 뒤에 숨김으로써, 재할당으로 인한 유휴 시간을 사실상 제거할 수 있습니다. 이는 전체 파이프라인의 효율을 높여 처리량을 직접적으로 향상시킵니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>재할당을 위한 통신 알고리즘 최적화 (Optimized Communication Primitives)</strong></p>
+<ul>
+<li>[cite_start]<strong>방법</strong>: 논문은 브로드캐스트 기반의 범용적인 알고리즘을 사용한다고 언급했습니다[cite: 180, 184]. 여기서 더 나아가, <code>(TP, DP, PP)</code> 조합 간의 변환이라는 특정 시나리오에 고도로 최적화된 새로운 통신 알고리즘(예: 맞춤형 All-to-All, All-gather 패턴)을 개발합니다.</li>
+<li><strong>효과</strong>: 데이터 이동 경로와 방식을 최적화하여 재할당에 필요한 순수 통신 시간을 줄입니다. 이는 특히 GPU 수가 매우 많은 대규모 클러스터 환경에서 병목 현상을 완화하는 데 중요한 역할을 할 수 있습니다.</li>
+</ul>
+</li>
+</ul>
+<h1 id="q--rlhf-훈련에서-기존의-정적-병렬화symmetric-asymmetric-방식이-가지는-근본적인-한계는-무엇이며-real의-동적-매개변수-재할당은-이-문제들을-어떻게-해결하나요">Q : RLHF 훈련에서 기존의 정적 병렬화(Symmetric, Asymmetric) 방식이 가지는 근본적인 한계는 무엇이며, REAL의 &lsquo;동적 매개변수 재할당&rsquo;은 이 문제들을 어떻게 해결하나요?</h1>
+<p>RLHF 훈련에서 기존의 정적 병렬화 방식은 과잉 병렬화로 인한 통신 오버헤드와 GPU 저활용이라는 근본적인 한계를 가집니다. REAL의 &lsquo;동적 매개변수 재할당&rsquo;은 각 작업에 최적화된 병렬화 전략을 동적으로 적용하여 이러한 문제들을 해결합니다.</p>
+<hr>
+<h3 id="기존-정적-병렬화-방식의-한계">기존 정적 병렬화 방식의 한계</h3>
+<p>[cite_start]기존 RLHF 시스템들의 비효율은 훈련 내내 리소스 할당과 병렬화 전략이 <strong>고정</strong>되어 있다는 점에서 비롯됩니다[cite: 41].</p>
+<ul>
+<li>
+<p><strong>대칭적 병렬화 (Symmetric Parallelization)의 한계: 과잉 병렬화</strong>
+[cite_start]RLHF에 사용되는 모든 모델(Actor, Critic 등)에 대해 클러스터 전체에 동일한 병렬화 전략을 적용하는 방식입니다[cite: 33, 34]. [cite_start]하지만 RLHF의 각 작업(생성, 추론, 훈련)은 계산 특성이 달라 요구하는 최적의 병렬화 방식이 다릅니다[cite: 36]. [cite_start]단일 전략을 일괄 적용하면 특정 작업에서는 불필요하게 많은 GPU가 동원되어 과도한 통신 및 동기화 오버헤드가 발생하는 <strong>&lsquo;과잉 병렬화(over-parallelization)&rsquo;</strong> 문제가 생겨 시스템 성능이 저하됩니다[cite: 35, 37].</p>
+</li>
+<li>
+<p><strong>비대칭적 병렬화 (Asymmetric Parallelization)의 한계: GPU 저활용</strong>
+[cite_start]모델별로 각기 다른 GPU 그룹을 할당하여 동시에 여러 작업을 처리하려는 방식입니다[cite: 38, 39]. [cite_start]이 경우, 작업 간의 데이터 의존성 때문에 한 작업이 끝날 때까지 다른 GPU 그룹이 대기해야 하는 상황이 발생합니다[cite: 40]. [cite_start]이는 결국 GPU가 아무 일도 하지 않고 유휴 상태로 남게 되는 <strong>&lsquo;GPU 저활용(under-utilization)&rsquo;</strong> 문제로 이어집니다[cite: 40].</p>
+</li>
+</ul>
+<hr>
+<h3 id="real의-동적-매개변수-재할당을-통한-해결책">REAL의 &lsquo;동적 매개변수 재할당&rsquo;을 통한 해결책</h3>
+<p>REAL은 &lsquo;동적 매개변수 재할당&rsquo;이라는 핵심 아이디어를 통해 위 두 가지 한계를 모두 해결합니다.</p>
+<ul>
+<li>
+<p>[cite_start]<strong>해결 방식</strong>: REAL은 훈련 과정 중 &lsquo;모델 함수 호출&rsquo;, 즉 개별 작업 단위마다 가장 효율적인 병렬화 전략과 GPU 리소스를 <strong>동적으로 할당</strong>합니다[cite: 42]. [cite_start]예를 들어, &lsquo;생성&rsquo; 작업에는 A라는 병렬화 구성을 적용하고, 바로 다음 &lsquo;훈련&rsquo; 작업에는 B라는 다른 구성이 더 효율적이라면, GPU 간에 모델 매개변수를 재배치하여 즉시 구성을 변경합니다[cite: 42, 44].</p>
+</li>
+<li>
+<p><strong>기대 효과</strong>:</p>
+<ol>
+<li>[cite_start]<strong>과잉 병렬화 해결</strong>: 각 작업에 꼭 필요한 만큼의 GPU와 최적의 병렬화 차수(degree)를 할당함으로써, 불필요한 통신 오버헤드를 최소화합니다[cite: 44, 45].</li>
+<li>[cite_start]<strong>GPU 저활용 해결</strong>: 독립적으로 실행 가능한 작업들을 서로 다른 GPU 그룹에서 동시에 실행하고, 한 작업이 끝나면 유휴 GPU 없이 즉시 다음 작업에 재할당하여 전체 GPU 활용률을 극대화합니다[cite: 45].</li>
+</ol>
+</li>
+</ul>
+<p>결론적으로, REAL은 고정된 전략의 틀에서 벗어나 각 작업의 특성에 맞게 실시간으로 자원을 재구성함으로써, 기존 방식들이 가졌던 비효율을 근본적으로 해결하고 훈련 성능을 극대화합니다.</p>
+<h1 id="q--real의-실행-계획-생성기는-어떤-과정을-통해-최적의-실행-계획을-찾아내나요-특히-비용-예측기와-mcmc-탐색-알고리즘은-각각-어떤-역할을-수행하며-어떻게-상호작용하는지-설명해-주세요">Q : REAL의 &lsquo;실행 계획 생성기&rsquo;는 어떤 과정을 통해 최적의 실행 계획을 찾아내나요? 특히, &lsquo;비용 예측기&rsquo;와 &lsquo;MCMC 탐색 알고리즘&rsquo;은 각각 어떤 역할을 수행하며 어떻게 상호작용하는지 설명해 주세요.</h1>
+<p>REAL의 &lsquo;실행 계획 생성기&rsquo;는 <strong>MCMC 탐색 알고리즘</strong>이 수많은 실행 계획 후보를 제안하고, <strong>비용 예측기</strong>가 각 후보를 신속하게 평가하는 상호작용을 통해 최적의 계획을 찾아냅니다. 🕵️‍♂️</p>
+<hr>
+<h3 id="실행-계획-생성-과정">실행 계획 생성 과정</h3>
+<p>[cite_start]&lsquo;실행 계획 생성기&rsquo;의 목표는 주어진 하드웨어와 모델 구성에 대해 RLHF 훈련을 가장 빠르게 완료할 수 있는 &lsquo;실행 계획(Execution Plan)&lsquo;을 찾는 것입니다. [cite: 127] [cite_start]실행 계획이란 각 작업(생성, 훈련 등)에 어떤 GPU 그룹을 할당하고 어떤 병렬화 전략(TP, PP, DP 등)을 적용할지 정의한 상세한 설계도입니다. [cite: 106, 115] 이 과정은 다음과 같이 두 핵심 구성요소의 긴밀한 협력으로 이루어집니다.</p>
+<h3 id="1-비용-예측기-cost-estimator의-역할-빠른-평가관">1. 비용 예측기 (Cost Estimator)의 역할: &ldquo;빠른 평가관&rdquo;</h3>
+<p>[cite_start]비용 예측기의 역할은 특정 실행 계획을 실제로 실행하지 않고도, 그 계획의 예상 소요 시간과 메모리 사용량을 매우 빠르게 예측하는 것입니다. [cite: 128]</p>
+<ul>
+<li><strong>작동 방식</strong>:
+<ul>
+<li>[cite_start]<strong>사전 프로파일링</strong>: 먼저, 시스템은 단일 레이어의 연산이나 통신 같은 기본 작업들의 비용을 실제 하드웨어에서 미리 측정하여 통계 데이터베이스를 구축합니다. [cite: 131, 134]</li>
+<li>[cite_start]<strong>시뮬레이션</strong>: 탐색 알고리즘이 새로운 실행 계획을 제안하면, 비용 예측기는 이 프로파일링된 데이터를 바탕으로 전체 작업의 의존성과 동시 실행을 고려한 시뮬레이션을 수행합니다. [cite: 139, 141] [cite_start]이를 통해 전체 실행 시간과 최대 메모리 사용량을 수백 마이크로초(µs) 만에 계산해냅니다. [cite: 132]</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-mcmc-탐색-알고리즘의-역할-효율적인-탐험가">2. MCMC 탐색 알고리즘의 역할: &ldquo;효율적인 탐험가&rdquo;</h3>
+<p>[cite_start]RLHF 훈련의 실행 계획 조합은 수조 개가 넘어가므로(예: 10^16 이상) 모든 경우를 따져보는 것은 불가능합니다. [cite: 154] [cite_start]MCMC 탐색 알고리즘은 이 거대한 탐색 공간을 효율적으로 탐험하여 좋은 계획을 찾는 역할을 합니다. [cite: 98, 155]</p>
+<ul>
+<li><strong>작동 방식</strong>:
+<ul>
+<li>[cite_start]초기 계획에서 시작하여, 현재 계획을 무작위로 약간 수정하여 새로운 후보 계획을 계속해서 제안합니다. [cite: 160, 162]</li>
+<li>제안된 새 계획이 현재 계획보다 더 좋을지 나쁠지를 판단해야 하는데, 이때 <strong>비용 예측기</strong>를 호출하여 예상 비용을 얻습니다.</li>
+<li>[cite_start]예상 비용이 더 낮은 (더 좋은) 계획은 수용하고, 더 나쁜 계획이라도 특정 확률로 수용하여 &lsquo;지역 최적해&rsquo;에 갇히지 않고 더 넓은 가능성을 탐색합니다. [cite: 162]</li>
+<li>[cite_start]이 과정을 정해진 시간 동안 반복하여, 그동안 발견된 가장 좋은 계획을 최종 결과로 선택합니다. [cite: 163]</li>
+</ul>
+</li>
+</ul>
+<h3 id="상호작용-요약">상호작용 요약</h3>
+<p>두 구성요소의 상호작용은 &lsquo;탐험가와 안내인&rsquo; 관계로 비유할 수 있습니다.</p>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p>**MCMC 탐색 알고리즘(탐험가)**이 &ldquo;이 길은 어떨까?&ldquo;라며 새로운 경로(실행 계획)를 계속해서 제안하면, **비용 예측기(안내인)**는 그 길을 직접 가보지 않고도 &ldquo;그 길은 약 10분이 걸리고, 매우 험난할 것입니다&quot;라고 즉시 알려줍니다. 탐험가는 이 정보를 바탕으로 더 나은 경로를 효율적으로 찾아 나가는 것입니다.</p>
+    </div>
+  </blockquote>
+
+<p>이러한 빠른 피드백 루프 덕분에 REAL은 방대한 선택지 속에서도 실용적인 시간 내에 고성능의 실행 계획을 자동으로 찾아낼 수 있습니다.</p>
+<h1 id="q--real의-동적-매개변수-재할당-전략이-가지는-성능적-이점은-무엇이며-이로-인해-발생하는-잠재적인-오버헤드나-한계점은-무엇인가요-이-트레이드오프trade-off-관계를-고려할-때-어떤-유형의-rlhf-워크로드에서-real이-가장-큰-효과를-발휘할-것으로-예상되나요">Q : REAL의 &lsquo;동적 매개변수 재할당&rsquo; 전략이 가지는 성능적 이점은 무엇이며, 이로 인해 발생하는 잠재적인 오버헤드나 한계점은 무엇인가요? 이 트레이드오프(trade-off) 관계를 고려할 때, 어떤 유형의 RLHF 워크로드에서 REAL이 가장 큰 효과를 발휘할 것으로 예상되나요?</h1>
+<p>REAL의 &lsquo;동적 매개변수 재할당&rsquo; 전략은 각 작업에 최적화된 병렬 실행을 통해 GPU 활용률을 극대화하고 통신 오버헤드를 최소화하는 강력한 성능적 이점을 제공합니다. 하지만 이 유연성을 확보하기 위해 매개변수를 재배치하는 데 드는 약간의 오버헤드를 감수해야 하는 트레이드오프 관계가 존재합니다.</p>
+<hr>
+<h3 id="성능적-이점">성능적 이점</h3>
+<ol>
+<li>
+<p>[cite_start]<strong>GPU 활용률 극대화</strong>: 기존의 정적 방식에서는 특정 GPU 그룹이 다른 그룹의 작업이 끝나기를 기다리며 유휴 상태(idle)에 빠지는 경우가 많았습니다[cite: 40]. [cite_start]REAL은 Actor와 Critic 훈련처럼 데이터 의존성이 없는 독립적인 작업들을 서로 다른 GPU 그룹에서 동시에 실행하여 이러한 유휴 시간을 최소화하고 클러스터 전체의 GPU 활용률을 극대화합니다[cite: 45, 249, 272].</p>
+</li>
+<li>
+<p>[cite_start]<strong>통신 오버헤드 최소화</strong>: RLHF의 각 작업(생성, 훈련 등)은 최적의 병렬화 방식이 다릅니다[cite: 36]. REAL은 각 작업에 맞는 최적의 병렬화 전략(TP, PP, DP의 조합)을 동적으로 적용합니다. [cite_start]예를 들어, 훈련 시에는 통신량이 많은 텐서 병렬화(TP)를 줄이고, 생성 시에는 지연 시간을 유발하는 파이프라인 병렬화(PP)를 줄이는 방식으로 불필요한 통신 비용을 획기적으로 감소시킵니다[cite: 254, 266, 271]. [cite_start]실험 결과, REAL은 기존 방식의 병렬화 오버헤드를 효과적으로 제거하는 것으로 나타났습니다[cite: 259].</p>
+</li>
+<li>
+<p>[cite_start]<strong>메모리 I/O 감소</strong>: 최적화된 병렬화 전략은 더 적은 수의 CUDA 커널을 호출하게 만들어 메모리 I/O 부담을 줄여줍니다[cite: 256, 271]. 이는 전체적인 연산 효율성을 높이는 데 기여합니다.</p>
+</li>
+</ol>
+<hr>
+<h3 id="잠재적-오버헤드-및-한계점">잠재적 오버헤드 및 한계점</h3>
+<ol>
+<li>
+<p>[cite_start]<strong>매개변수 재할당 비용 (Reallocation Cost)</strong>: 동적 전략의 핵심인 &lsquo;매개변수 재할당&rsquo; 과정 자체는 GPU 간 데이터 통신을 유발하므로 시간과 네트워크 대역폭을 소모하는 오버헤드입니다[cite: 87]. [cite_start]논문에 따르면 이 비용은 전체 작업 시간에 비해 미미한 수준이지만[cite: 269], 매우 짧은 작업들이 반복되는 극단적인 환경에서는 무시할 수 없는 비용이 될 수 있습니다.</p>
+</li>
+<li>
+<p>[cite_start]<strong>실행 계획 탐색 시간 (Search Time)</strong>: 훈련 시작 전에 최적의 실행 계획을 찾기 위한 탐색 과정에 수 분의 시간이 소요됩니다[cite: 281]. 이는 즉각적인 훈련 시작을 원하는 사용자에게는 단점으로 느껴질 수 있습니다.</p>
+</li>
+<li>
+<p><strong>예측 불가능한 워크로드의 한계</strong>: REAL이 찾아낸 실행 계획은 훈련 시작 시점의 워크로드를 기반으로 한 &lsquo;정적&rsquo; 계획입니다. [cite_start]만약 훈련 도중 생성 길이 변화 등으로 인해 워크로드의 특성이 크게 달라지면, 초기에 수립된 계획이 더 이상 최적이 아니게 될 수 있습니다[cite: 191, 192].</p>
+</li>
+</ol>
+<hr>
+<h3 id="트레이드오프-분석-및-최적-활용-시나리오">트레이드오프 분석 및 최적 활용 시나리오</h3>
+<p>REAL의 전략은 &lsquo;약간의 준비 비용(탐색 및 재할당)을 투자하여 전체 훈련 시간을 대폭 단축하는&rsquo; 트레이드오프 관계를 가집니다. 대부분의 RLHF 시나리오에서 최적화를 통한 이득이 오버헤드보다 훨씬 크기 때문에 이 전략은 매우 효과적입니다.</p>
+<p>REAL이 가장 큰 효과를 발휘할 것으로 예상되는 워크로드는 다음과 같습니다.</p>
+<ol>
+<li>
+<p>[cite_start]<strong>모델/작업 간 계산 복잡도 차이가 큰 경우</strong>: 70B 크기의 거대한 Actor 모델과 7B 크기의 작은 Critic 모델을 함께 훈련하는 경우처럼, 모델의 크기나 작업의 종류(생성 vs 훈련)가 매우 이질적일 때 REAL의 효과는 극대화됩니다[cite: 251, 252]. 각기 다른 특성에 맞춰 개별 최적화가 가능하기 때문입니다.</p>
+</li>
+<li>
+<p>[cite_start]<strong>롱 컨텍스트(Long-Context) 훈련 시나리오</strong>: 논문은 긴 컨텍스트 길이(8192 토큰)에서 REAL의 성능 향상 폭이 평균(54%)보다 훨씬 높은 81%에 달했다고 보고했습니다[cite: 238]. 이는 긴 컨텍스트 환경이 메모리 사용량에 매우 민감하여, 최적의 병렬화 전략을 찾는 것이 더욱 중요해지기 때문입니다.</p>
+</li>
+<li>
+<p>[cite_start]<strong>독립적인 병렬 실행 기회가 많은 복잡한 알고리즘</strong>: ReMax 알고리즘처럼 워크플로우 내에 독립적으로 병렬 실행할 수 있는 무거운 작업(예: 2개의 동시 생성)이 여러 개 포함된 경우, REAL의 동시 실행 능력은 엄청난 성능 향상(ReMax에서 190.84% 향상)을 가져옵니다[cite: 302].</p>
+</li>
+</ol>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/ReaL-Efficient-RLHF-Training-of-Large-Language-Models-with-Parameter-Reallocation/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/ReaL-Efficient-RLHF-Training-of-Large-Language-Models-with-Parameter-Reallocation/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Rubick-Exploiting-Job-Reconfigurability-for-Deep-Learning-Cluster-Scheduling/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                Rubick: Exploiting Job Reconfigurability for Deep Learning Cluster Scheduling
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2025-06-10">
+                06月10日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Know-Where-Youre-Uncertain-When-Planning-with-Multimodal-Foundation-Models-A-Formal-Framework/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Know Where You&#39;re Uncertain When Planning with Multimodal Foundation Models: A Formal Framework
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2025-06-10">
+                06月10日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#논문-분석-real-대규모-언어-모델의-효율적인-rlhf-훈련을-위한-매개변수-재할당">논문 분석: REAL: 대규모 언어 모델의 효율적인 RLHF 훈련을 위한 매개변수 재할당</a>
+      <ul>
+        <li><a href="#논문의-강점과-독창적인-지점">논문의 강점과 독창적인 지점</a></li>
+        <li><a href="#핵심-알고리즘-설명-예시-포함">핵심 알고리즘 설명 (예시 포함)</a>
+          <ul>
+            <li><a href="#예시-상황">예시 상황</a></li>
+            <li><a href="#1단계-입력-및-데이터플로우-그래프-생성">1단계: 입력 및 데이터플로우 그래프 생성</a></li>
+            <li><a href="#2단계-최적-실행-계획-탐색-execution-plan-generator">2단계: 최적 실행 계획 탐색 (Execution Plan Generator)</a></li>
+            <li><a href="#3단계-실행-계획-배포-runtime-engine">3단계: 실행 계획 배포 (Runtime Engine)</a></li>
+          </ul>
+        </li>
+        <li><a href="#논문의-한계점">논문의 한계점</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#핵심-알고리즘-상세-설명-예시-포함">핵심 알고리즘 상세 설명 (예시 포함)</a>
+          <ul>
+            <li><a href="#1단계-입력-및-데이터플로우-그래프-생성-1"><strong>1단계: 입력 및 데이터플로우 그래프 생성</strong></a></li>
+            <li><a href="#2단계-최적-실행-계획-탐색-실행-계획-생성기"><strong>2단계: 최적 실행 계획 탐색 (실행 계획 생성기)</strong></a></li>
+            <li><a href="#3단계-계획-실행-및-매개변수-재할당-런타임-엔진"><strong>3단계: 계획 실행 및 매개변수 재할당 (런타임 엔진)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#알고리즘-요약">알고리즘 요약</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#real-논문-결과-분석-및-평가">REAL 논문 결과 분석 및 평가</a>
+      <ul>
+        <li><a href="#논문에서-제시된-결과">논문에서 제시된 결과</a></li>
+        <li><a href="#다른-방법론에-비해-특출난-점">다른 방법론에 비해 특출난 점</a></li>
+        <li><a href="#결과-도출의-원인">결과 도출의 원인</a>
+          <ul>
+            <li><a href="#논문에서-제시하는-이유">논문에서 제시하는 이유</a></li>
+            <li><a href="#개인적인-견해-추가-분석">개인적인 견해 (추가 분석)</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-동적-워크로드-대응-온라인-적응형-계획-online-adaptive-planning">1. 동적 워크로드 대응: 온라인 적응형 계획 (Online Adaptive Planning)</a></li>
+        <li><a href="#2-탐색-효율-및-최적성-강화-차세대-탐색-알고리즘-및-비용-모델">2. 탐색 효율 및 최적성 강화: 차세대 탐색 알고리즘 및 비용 모델</a></li>
+        <li><a href="#3-재할당-오버헤드-최소화-통신-계산-중첩-및-최적화">3. 재할당 오버헤드 최소화: 통신-계산 중첩 및 최적화</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#기존-정적-병렬화-방식의-한계">기존 정적 병렬화 방식의 한계</a></li>
+        <li><a href="#real의-동적-매개변수-재할당을-통한-해결책">REAL의 &lsquo;동적 매개변수 재할당&rsquo;을 통한 해결책</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#실행-계획-생성-과정">실행 계획 생성 과정</a></li>
+        <li><a href="#1-비용-예측기-cost-estimator의-역할-빠른-평가관">1. 비용 예측기 (Cost Estimator)의 역할: &ldquo;빠른 평가관&rdquo;</a></li>
+        <li><a href="#2-mcmc-탐색-알고리즘의-역할-효율적인-탐험가">2. MCMC 탐색 알고리즘의 역할: &ldquo;효율적인 탐험가&rdquo;</a></li>
+        <li><a href="#상호작용-요약">상호작용 요약</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#성능적-이점">성능적 이점</a></li>
+        <li><a href="#잠재적-오버헤드-및-한계점">잠재적 오버헤드 및 한계점</a></li>
+        <li><a href="#트레이드오프-분석-및-최적-활용-시나리오">트레이드오프 분석 및 최적 활용 시나리오</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

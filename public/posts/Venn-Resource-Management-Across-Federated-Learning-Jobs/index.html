@@ -1,0 +1,3209 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Venn: Resource Management Across Federated Learning Jobs | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점과 독창적인 지점 이 논문은 연합 학습(Federated..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/Venn-Resource-Management-Across-Federated-Learning-Jobs/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/Venn-Resource-Management-Across-Federated-Learning-Jobs/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="Venn: Resource Management Across Federated Learning Jobs">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점과 독창적인 지점 이 논문은 연합 학습(Federated Learning, FL)의 리소스 관리 문제를 다루며, 특히 다수의 FL 작업이 동일한 디바이스 풀에서 실행될 때 발생하는 자원 경쟁(Resource Contention) 을 해결하는 Venn이라는 새로운 리소스 관리 시스템을 제안합니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-03-18T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-03-18T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="Venn: Resource Management Across Federated Learning Jobs">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점과 독창적인 지점 이 논문은 연합 학습(Federated Learning, FL)의 리소스 관리 문제를 다루며, 특히 다수의 FL 작업이 동일한 디바이스 풀에서 실행될 때 발생하는 자원 경쟁(Resource Contention) 을 해결하는 Venn이라는 새로운 리소스 관리 시스템을 제안합니다.">
+
+
+  <meta itemprop="name" content="Venn: Resource Management Across Federated Learning Jobs">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점과 독창적인 지점 이 논문은 연합 학습(Federated Learning, FL)의 리소스 관리 문제를 다루며, 특히 다수의 FL 작업이 동일한 디바이스 풀에서 실행될 때 발생하는 자원 경쟁(Resource Contention) 을 해결하는 Venn이라는 새로운 리소스 관리 시스템을 제안합니다.">
+  <meta itemprop="datePublished" content="2025-03-18T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-03-18T00:00:00+00:00">
+  <meta itemprop="wordCount" content="8007">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">Venn: Resource Management Across Federated Learning Jobs</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    Venn: Resource Management Across Federated Learning Jobs
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2025-03-18">
+          2025년 03월 18일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >16 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>8007 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2312.08298">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h2 id="논문의-강점과-독창적인-지점">논문의 강점과 독창적인 지점</h2>
+<p>이 논문은 <strong>연합 학습(Federated Learning, FL)의 리소스 관리 문제</strong>를 다루며, 특히 다수의 FL 작업이 동일한 디바이스 풀에서 실행될 때 발생하는 <strong>자원 경쟁(Resource Contention)</strong> 을 해결하는 <strong>Venn</strong>이라는 새로운 리소스 관리 시스템을 제안합니다.</p>
+<h3 id="-강점">🔹 강점</h3>
+<ol>
+<li>
+<p><strong>FL 환경 특화 리소스 관리</strong></p>
+<ul>
+<li>기존 클라우드 ML 리소스 스케줄링과 달리, FL 환경에서는 디바이스의 가용성이 급격하게 변하고, 디바이스의 성능이 이질적이며, 학습 참여 여부가 불확실함.</li>
+<li>기존 FL 리소스 매니저(Apple, Google, Meta 등)는 단순한 랜덤 매칭(random assignment) 방식이라 비효율적.</li>
+<li>Venn은 FL 작업 간의 <strong>자원 경쟁을 고려한 스케줄링 및 매칭 알고리즘</strong>을 도입하여 평균 작업 완료 시간(JCT, Job Completion Time)을 최적화.</li>
+</ul>
+</li>
+<li>
+<p><strong>Intersection Resource Scheduling (IRS)</strong></p>
+<ul>
+<li>FL 작업 간의 <strong>자원 중첩 문제를 수학적으로 모델링</strong>하여 해결.</li>
+<li>기존에는 작업 간의 자원 경쟁을 고려하지 않고 단순 랜덤 할당을 수행했으나, Venn은 <strong>자원의 중첩 정도를 분석하여 우선순위를 부여하는 방식</strong>을 사용.</li>
+</ul>
+</li>
+<li>
+<p><strong>Resource-aware Device-to-Job Matching</strong></p>
+<ul>
+<li><strong>작업에 적합한 디바이스를 선별하여 할당</strong>하는 매칭 알고리즘을 도입.</li>
+<li>기존 FL 매칭 방식은 랜덤 또는 FIFO(선입선출) 방식이었으나, Venn은 <strong>자원의 가용성과 작업의 요구사항을 고려한 최적의 매칭을 수행</strong>하여 성능을 개선.</li>
+</ul>
+</li>
+<li>
+<p><strong>실험 결과: JCT 최대 1.88배 단축</strong></p>
+<ul>
+<li>기존 방법 대비 평균 JCT(작업 완료 시간)를 <strong>최대 1.88배 단축</strong>.</li>
+<li>다양한 FL 작업 시나리오에서 <strong>일관된 성능 향상</strong>을 보임.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="핵심-알고리즘-설명">핵심 알고리즘 설명</h2>
+<h3 id="-문제-정의">🎯 문제 정의</h3>
+<ul>
+<li><strong>목표</strong>: 평균 작업 완료 시간(JCT)을 최소화하기 위해 디바이스를 FL 작업에 효율적으로 할당.</li>
+<li><strong>난제</strong>:
+<ol>
+<li><strong>FL 디바이스의 가용성이 예측 불가</strong> (에너지, 네트워크 상태 변화 등)</li>
+<li><strong>FL 작업 간의 자원 중첩 문제</strong> (서로 다른 작업이 동일한 디바이스를 필요로 함)</li>
+<li><strong>스케줄링 지연 vs 응답 수집 시간 트레이드오프</strong> (빠른 응답을 원하면 지연이 발생하고, 지연을 줄이면 응답 수집 시간이 길어짐)</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="1-intersection-resource-scheduling-irs">1️⃣ <strong>Intersection Resource Scheduling (IRS)</strong></h3>
+<ul>
+<li>FL 작업 간의 <strong>자원 중첩을 분석하여 최적의 스케줄링 순서를 결정</strong>하는 알고리즘.</li>
+<li>특정 작업이 희소한 자원을 필요로 하면, 그 작업을 우선적으로 처리하여 자원 부족으로 인한 병목을 방지.</li>
+</ul>
+<h4 id="예제-입력-및-과정">예제 입력 및 과정</h4>
+<ul>
+<li>
+<p><strong>예제 상황</strong>:</p>
+<ul>
+<li>FL 작업 3개: <code>Job A</code>, <code>Job B</code>, <code>Job C</code></li>
+<li>각 작업의 요구 자원:
+<ul>
+<li><code>Job A</code>: 키보드 입력 데이터를 학습 (참여 가능 디바이스: 100%)</li>
+<li><code>Job B</code>, <code>Job C</code>: 이모지 예측 모델 학습 (참여 가능 디바이스: 50%)</li>
+</ul>
+</li>
+<li><code>Job B</code>, <code>Job C</code>는 동일한 디바이스 자원을 요구하므로, <code>Job A</code>보다 더 큰 자원 경쟁이 발생.</li>
+</ul>
+</li>
+<li>
+<p><strong>기존 방법 (랜덤 할당)</strong></p>
+<ul>
+<li><code>Job A</code>가 모든 디바이스를 사용하게 되어 <code>Job B</code>, <code>Job C</code>가 디바이스를 확보하지 못하는 경우 발생.</li>
+<li>결과적으로 <code>Job B</code>, <code>Job C</code>의 JCT가 증가.</li>
+</ul>
+</li>
+<li>
+<p><strong>Venn의 IRS 적용</strong></p>
+<ul>
+<li><strong>희소 자원을 먼저 할당</strong>하는 방식을 사용.</li>
+<li><code>Job B</code>, <code>Job C</code>를 우선적으로 처리하여 자원 부족으로 인한 지연을 방지.</li>
+<li>이를 통해 전체 JCT를 최소화.</li>
+</ul>
+</li>
+</ul>
+<h4 id="핵심-알고리즘-의사코드">핵심 알고리즘 (의사코드)</h4>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PYTHON
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-0"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-0"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-0">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln">1</span><span class="cl"><span class="mf">1.</span> <span class="n">모든</span> <span class="n">FL</span> <span class="n">작업을</span> <span class="n">요구하는</span> <span class="n">자원</span> <span class="n">기준으로</span> <span class="n">그룹화</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="mf">2.</span> <span class="n">각</span> <span class="n">그룹</span> <span class="n">내에서</span> <span class="n">남은</span> <span class="n">자원</span> <span class="n">수요가</span> <span class="n">적은</span> <span class="n">작업을</span> <span class="n">우선적으로</span> <span class="n">처리</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="mf">3.</span> <span class="n">그룹</span> <span class="n">간에는</span> <span class="n">희소</span> <span class="n">자원을</span> <span class="n">필요로</span> <span class="n">하는</span> <span class="n">작업이</span> <span class="n">먼저</span> <span class="n">실행되도록</span> <span class="n">스케줄링</span></span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-0';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<hr>
+<h3 id="2-resource-aware-device-to-job-matching">2️⃣ <strong>Resource-aware Device-to-Job Matching</strong></h3>
+<ul>
+<li>디바이스 성능을 고려하여 <strong>응답 시간이 짧은 디바이스를 우선적으로 매칭</strong>하는 기법.</li>
+<li>기존 방식은 단순한 랜덤 할당이었지만, Venn은 <strong>디바이스를 성능 등급(Tier)으로 나누어 최적의 디바이스를 선택</strong>.</li>
+</ul>
+<h4 id="예제-입력-및-과정-1">예제 입력 및 과정</h4>
+<ul>
+<li>
+<p><strong>예제 상황</strong>:</p>
+<ul>
+<li><code>Job X</code>는 빠른 응답이 중요한 작업 (예: 실시간 텍스트 입력 예측)</li>
+<li><code>Job Y</code>는 시간이 걸려도 되는 작업 (예: 장기적인 추천 시스템 학습)</li>
+<li>디바이스 3종류:
+<ul>
+<li><code>Tier 1</code>: 고성능 스마트폰 (빠른 처리 가능)</li>
+<li><code>Tier 2</code>: 중간 성능 스마트폰</li>
+<li><code>Tier 3</code>: 저성능 스마트폰 (응답 지연 가능)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>기존 방식 (랜덤 할당)</strong></p>
+<ul>
+<li><code>Job X</code>에 저성능 디바이스가 배정되면 응답 지연이 발생하여 전체 JCT 증가.</li>
+</ul>
+</li>
+<li>
+<p><strong>Venn의 Matching 적용</strong></p>
+<ul>
+<li><code>Job X</code>에는 <code>Tier 1</code> 디바이스를 우선 배정하여 빠른 응답 확보.</li>
+<li><code>Job Y</code>에는 <code>Tier 3</code> 디바이스를 배정하여 고성능 디바이스의 낭비를 방지.</li>
+</ul>
+</li>
+</ul>
+<h4 id="핵심-알고리즘-의사코드-1">핵심 알고리즘 (의사코드)</h4>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PYTHON
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-1"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-1"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-1">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln">1</span><span class="cl"><span class="mf">1.</span> <span class="n">디바이스를</span> <span class="n">성능</span> <span class="n">등급</span> <span class="p">(</span><span class="n">Tier</span><span class="p">)</span><span class="n">으로</span> <span class="n">분류</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="mf">2.</span> <span class="n">각</span> <span class="n">작업의</span> <span class="n">요구</span> <span class="n">사항을</span> <span class="n">분석하여</span> <span class="n">최적의</span> <span class="n">Tier를</span> <span class="n">선택</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="mf">3.</span> <span class="n">응답</span> <span class="n">지연과</span> <span class="n">스케줄링</span> <span class="n">지연</span> <span class="n">간의</span> <span class="n">균형을</span> <span class="n">맞춰</span> <span class="n">최적화</span></span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-1';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<hr>
+<h2 id="논문의-한계점">논문의 한계점</h2>
+<ol>
+<li>
+<p><strong>실제 환경에서의 테스트 부족</strong></p>
+<ul>
+<li>논문의 실험은 시뮬레이션 기반이며, 실제 대규모 FL 환경(예: Google, Meta)의 <strong>실제 운영 데이터로 검증되지 않음</strong>.</li>
+<li>실전에서 디바이스의 가용성이 더 변동성이 크기 때문에 성능이 다를 가능성 존재.</li>
+</ul>
+</li>
+<li>
+<p><strong>다양한 학습 방식 미반영</strong></p>
+<ul>
+<li>논문에서는 <strong>동기식 FL (Synchronous FL)</strong> 만 고려.</li>
+<li>비동기식 FL(Asynchronous FL)에서도 적용 가능한지 추가 연구가 필요.</li>
+</ul>
+</li>
+<li>
+<p><strong>보안 및 프라이버시 고려 부족</strong></p>
+<ul>
+<li>FL은 <strong>사용자 데이터 보호</strong>가 핵심인데, 논문에서는 리소스 최적화만 다룸.</li>
+<li>디바이스 간 정보 공유 과정에서 <strong>프라이버시 보호 기법</strong> (예: 차등 프라이버시, 보안 집계)과의 충돌 가능성 있음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="결론">결론</h2>
+<p>논문은 <strong>FL 환경에서 다중 작업을 위한 최적의 리소스 관리 기법</strong>을 제안하며, 특히 <strong>자원 중첩을 고려한 스케줄링(IRS) 및 성능 기반 디바이스 매칭</strong>이 주요 기여점이다. 기존 랜덤 방식 대비 JCT를 최대 1.88배 단축하는 성과를 보여주며, <strong>실제 FL 시스템에서 성능을 크게 향상시킬 가능성이 높음</strong>.</p>
+<p>하지만 <strong>실제 대규모 FL 환경에서의 검증 부족, 비동기식 학습 미반영, 보안 문제 고려 부족</strong> 등의 한계도 존재. 향후 연구에서는 <strong>실제 기업 환경에서의 테스트 및 프라이버시 보호 기법과의 결합</strong>이 필요할 것으로 보임.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<h2 id="-논문의-핵심-알고리즘-상세-설명">📌 논문의 핵심 알고리즘 상세 설명</h2>
+<p>논문 **&ldquo;Venn: Resource Management Across Federated Learning Jobs&rdquo;**에서는 다중 FL(Federated Learning) 작업이 동일한 디바이스 풀을 사용할 때 발생하는 <strong>자원 경쟁(Resource Contention) 문제를 해결하는 알고리즘</strong>을 제안합니다.<br>
+핵심 알고리즘은 크게 <strong>두 가지</strong>로 구성됩니다.</p>
+<ol>
+<li>
+<p><strong>Intersection Resource Scheduling (IRS)</strong><br>
+→ <strong>FL 작업 간의 자원 경쟁을 해결하는 스케줄링 알고리즘</strong></p>
+</li>
+<li>
+<p><strong>Resource-aware Device-to-Job Matching</strong><br>
+→ <strong>디바이스의 성능과 특성을 고려하여 최적의 매칭을 수행하는 알고리즘</strong></p>
+</li>
+</ol>
+<p>이제 각 알고리즘을 <strong>구체적인 예제</strong>와 함께 설명하겠습니다.</p>
+<hr>
+<h1 id="1-intersection-resource-scheduling-irs-1">1️⃣ <strong>Intersection Resource Scheduling (IRS)</strong></h1>
+<p>📌 <strong>목표:</strong></p>
+<ul>
+<li>FL 작업이 필요로 하는 자원이 겹칠 경우, 이를 효율적으로 배분하여 <strong>작업 완료 시간(JCT, Job Completion Time)을 최소화</strong>하는 것.</li>
+<li>기존 랜덤 매칭 방식(각 작업이 디바이스를 랜덤하게 할당받음)은 효율성이 떨어지므로 <strong>자원 희소성(scarcity)과 중첩(overlap)을 고려한 우선순위 기반 할당 방식을 사용</strong>.</li>
+</ul>
+<hr>
+<h2 id="-예제-1-3개의-fl-작업-job-a-job-b-job-c">📍 <strong>예제 1: 3개의 FL 작업 (Job A, Job B, Job C)</strong></h2>
+<p>💡 <strong>설정:</strong></p>
+<ul>
+<li>세 개의 FL 작업이 있고, 각 작업은 특정 데이터 유형을 학습함.</li>
+<li>일부 디바이스는 특정 작업에만 참여 가능하며, 디바이스 수는 한정되어 있음.</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>Job ID</th>
+          <th>데이터 유형</th>
+          <th>요구 디바이스 수</th>
+          <th>참여 가능한 디바이스</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Job A</strong></td>
+          <td>키보드 입력</td>
+          <td>2</td>
+          <td>모든 디바이스 (100%)</td>
+      </tr>
+      <tr>
+          <td><strong>Job B</strong></td>
+          <td>이모지 예측</td>
+          <td>3</td>
+          <td>일부 디바이스 (50%)</td>
+      </tr>
+      <tr>
+          <td><strong>Job C</strong></td>
+          <td>이모지 예측</td>
+          <td>2</td>
+          <td>일부 디바이스 (50%)</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>Job B, Job C는 동일한 디바이스 집합을 사용해야 하지만, Job A는 모든 디바이스를 사용할 수 있음.</li>
+</ul>
+<hr>
+<h2 id="-기존-방식-랜덤-할당">📍 <strong>기존 방식 (랜덤 할당)</strong></h2>
+<ul>
+<li>Job A가 먼저 실행되고, 2개의 디바이스를 차지함.</li>
+<li>나머지 디바이스는 Job B, Job C가 랜덤으로 나눠 가짐.</li>
+<li>Job B와 Job C는 경쟁 때문에 필요한 디바이스를 확보하지 못하고 지연됨.</li>
+<li><strong>결과적으로 전체 JCT 증가</strong> (불균형한 자원 배분).</li>
+</ul>
+<hr>
+<h2 id="-venn의-irs-적용">📍 <strong>Venn의 IRS 적용</strong></h2>
+<ul>
+<li><strong>우선순위 결정:</strong> 희소한 자원을 필요로 하는 작업을 먼저 실행<br>
+→ <strong>Job B, Job C를 먼저 실행</strong>하여 이모지 예측 작업이 디바이스를 확보하도록 함.</li>
+<li><strong>자원 배분 전략:</strong>
+<ul>
+<li>Job B와 Job C의 요청이 먼저 처리되도록 우선 배정.</li>
+<li>Job A는 남는 자원을 사용하도록 지연.</li>
+</ul>
+</li>
+</ul>
+<h3 id="-최종-배정-결과">✨ <strong>최종 배정 결과:</strong></h3>
+<ul>
+<li><strong>Job B (이모지 예측):</strong> 3개의 디바이스 확보 → 실행 시작 ✅</li>
+<li><strong>Job C (이모지 예측):</strong> 2개의 디바이스 확보 → 실행 시작 ✅</li>
+<li><strong>Job A (키보드 입력):</strong> 나머지 디바이스를 사용 → 실행 시작 ✅</li>
+</ul>
+<p>➡️ <strong>최적화 결과: Job Completion Time (JCT) 단축!</strong></p>
+<hr>
+<h2 id="-irs-알고리즘-정리">✅ <strong>IRS 알고리즘 정리</strong></h2>
+<h3 id="1-fl-작업을-요구하는-자원-특성에-따라-그룹화"><strong>1. FL 작업을 요구하는 자원 특성에 따라 그룹화</strong></h3>
+<ul>
+<li>같은 자원을 필요로 하는 작업들을 <strong>Resource-Homogeneous Job Group</strong>으로 묶음.</li>
+</ul>
+<h3 id="2-각-그룹-내에서-남은-작업량이-적은-작업을-우선-처리"><strong>2. 각 그룹 내에서 남은 작업량이 적은 작업을 우선 처리</strong></h3>
+<ul>
+<li><strong>Shortest Job First 방식</strong>으로, 적은 자원을 필요로 하는 작업을 먼저 실행.</li>
+</ul>
+<h3 id="3-그룹-간에는-희소한-자원을-필요로-하는-작업을-우선-배정"><strong>3. 그룹 간에는 희소한 자원을 필요로 하는 작업을 우선 배정</strong></h3>
+<ul>
+<li>특정 자원이 부족하면 그 자원을 먼저 사용하는 작업을 처리하여 병목 현상을 해결.</li>
+</ul>
+<hr>
+<h1 id="2-resource-aware-device-to-job-matching-1">2️⃣ <strong>Resource-aware Device-to-Job Matching</strong></h1>
+<p>📌 <strong>목표:</strong></p>
+<ul>
+<li><strong>디바이스의 성능 및 응답 속도를 고려하여 최적의 작업 할당</strong></li>
+<li>기존 방식은 <strong>랜덤 매칭</strong>이라 비효율적</li>
+<li>Venn은 <strong>디바이스 성능(Tier)을 고려한 매칭 방식을 도입</strong>하여 작업의 응답 수집 시간을 최소화</li>
+</ul>
+<hr>
+<h2 id="-예제-2-디바이스-성능별-매칭">📍 <strong>예제 2: 디바이스 성능별 매칭</strong></h2>
+<p>💡 <strong>설정:</strong></p>
+<ul>
+<li>
+<p>3개의 FL 작업이 있음:</p>
+<ul>
+<li><strong>Job X</strong>: 실시간 예측 (빠른 응답 필수)</li>
+<li><strong>Job Y</strong>: 배치 학습 (긴 응답 시간 허용)</li>
+<li><strong>Job Z</strong>: 중간 수준의 학습 (일반적인 응답 시간)</li>
+</ul>
+</li>
+<li>
+<p>디바이스 성능별로 그룹화:</p>
+<table>
+  <thead>
+      <tr>
+          <th>디바이스 Tier</th>
+          <th>CPU 성능</th>
+          <th>응답 속도</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Tier 1</strong> (고성능)</td>
+          <td>2.5GHz+</td>
+          <td>2초</td>
+      </tr>
+      <tr>
+          <td><strong>Tier 2</strong> (중간 성능)</td>
+          <td>1.8~2.5GHz</td>
+          <td>5초</td>
+      </tr>
+      <tr>
+          <td><strong>Tier 3</strong> (저성능)</td>
+          <td>1.5GHz 이하</td>
+          <td>10초</td>
+      </tr>
+  </tbody>
+</table>
+</li>
+</ul>
+<hr>
+<h2 id="-기존-방식-랜덤-할당-1">📍 <strong>기존 방식 (랜덤 할당)</strong></h2>
+<ul>
+<li>Job X에 저성능 디바이스가 배정되면 응답 속도가 느려서 JCT 증가.</li>
+<li>Job Y에 고성능 디바이스가 배정되면 리소스 낭비 발생.</li>
+</ul>
+<hr>
+<h2 id="-venn의-matching-적용">📍 <strong>Venn의 Matching 적용</strong></h2>
+<ul>
+<li><strong>디바이스 성능별로 그룹화(Tier)</strong> 후, 각 작업의 요구 사항에 맞게 최적의 디바이스를 배정.
+<ul>
+<li>Job X → <strong>Tier 1 디바이스 우선 배정</strong> (응답 속도 향상)</li>
+<li>Job Y → <strong>Tier 3 디바이스 우선 배정</strong> (자원 낭비 방지)</li>
+<li>Job Z → <strong>Tier 2 디바이스 배정</strong></li>
+</ul>
+</li>
+</ul>
+<p>➡️ <strong>결과적으로 작업 완료 속도(JCT)가 최적화됨!</strong></p>
+<hr>
+<h2 id="-resource-aware-matching-알고리즘-정리">✅ <strong>Resource-aware Matching 알고리즘 정리</strong></h2>
+<h3 id="1-디바이스-성능을-여러-개의-tier로-나눔"><strong>1. 디바이스 성능을 여러 개의 Tier로 나눔</strong></h3>
+<ul>
+<li>CPU, 메모리, 네트워크 속도를 기준으로 분류.</li>
+</ul>
+<h3 id="2-각-fl-작업의-요구사항-분석"><strong>2. 각 FL 작업의 요구사항 분석</strong></h3>
+<ul>
+<li>빠른 응답이 필요한 작업 vs. 긴 응답이 허용되는 작업.</li>
+</ul>
+<h3 id="3-각-작업에-가장-적절한-tier를-매칭"><strong>3. 각 작업에 가장 적절한 Tier를 매칭</strong></h3>
+<ul>
+<li>Job X (빠른 응답 필수) → <strong>고성능 디바이스 우선 배정</strong></li>
+<li>Job Y (긴 응답 가능) → <strong>저성능 디바이스 배정</strong></li>
+<li>Job Z (중간 성능) → <strong>중간 성능 디바이스 배정</strong></li>
+</ul>
+<p>➡️ <strong>결과: 응답 지연 최소화 &amp; 작업 처리 속도 향상!</strong></p>
+<hr>
+<h1 id="-결론-venn-알고리즘이-기존-방식보다-뛰어난-이유">🔥 <strong>결론: Venn 알고리즘이 기존 방식보다 뛰어난 이유</strong></h1>
+<table>
+  <thead>
+      <tr>
+          <th>기존 방법</th>
+          <th>문제점</th>
+          <th>Venn의 개선점</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>랜덤 매칭</td>
+          <td>자원 낭비, JCT 증가</td>
+          <td><strong>IRS를 통해 희소 자원 최적 배분</strong></td>
+      </tr>
+      <tr>
+          <td>FIFO 스케줄링</td>
+          <td>일부 작업이 과도하게 지연됨</td>
+          <td><strong>Shortest Job First로 작업 우선순위 조정</strong></td>
+      </tr>
+      <tr>
+          <td>무작위 디바이스 할당</td>
+          <td>응답 속도 불균형</td>
+          <td><strong>성능별 Tier 기반 최적 디바이스 매칭</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>➡️ <strong>결과적으로, Venn은 JCT를 최대 1.88배 단축!</strong><br>
+➡️ <strong>FL 시스템에서 자원을 효율적으로 활용 가능!</strong> 🚀</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h2 id="-논문에서-제시한-실험-결과-분석">🔍 <strong>논문에서 제시한 실험 결과 분석</strong></h2>
+<p>논문에서는 <strong>Venn</strong>이 기존 방법들(FIFO, SRSF, 랜덤 매칭) 대비 <strong>연합 학습(Federated Learning, FL) 작업의 평균 완료 시간(JCT)을 크게 단축</strong>한다는 점을 실험을 통해 증명했다.<br>
+가장 핵심적인 실험 결과를 요약하면 다음과 같다.</p>
+<hr>
+<h3 id="-1-venn의-jct-개선-성능-기존-방법과-비교">📌 <strong>1. Venn의 JCT 개선 성능 (기존 방법과 비교)</strong></h3>
+<table>
+  <thead>
+      <tr>
+          <th><strong>워크로드 유형</strong></th>
+          <th><strong>FIFO 대비 JCT 개선</strong></th>
+          <th><strong>SRSF 대비 JCT 개선</strong></th>
+          <th><strong>랜덤 매칭 대비 JCT 개선</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Even (일반적인 FL 작업 분포)</strong></td>
+          <td>1.38×</td>
+          <td>1.69×</td>
+          <td><strong>1.87×</strong></td>
+      </tr>
+      <tr>
+          <td><strong>Small (작은 작업 중심)</strong></td>
+          <td>1.48×</td>
+          <td>1.68×</td>
+          <td><strong>1.78×</strong></td>
+      </tr>
+      <tr>
+          <td><strong>Large (큰 작업 중심)</strong></td>
+          <td>1.64×</td>
+          <td>1.57×</td>
+          <td><strong>1.72×</strong></td>
+      </tr>
+      <tr>
+          <td><strong>Low (라운드당 작은 자원 필요)</strong></td>
+          <td>1.55×</td>
+          <td>1.66×</td>
+          <td><strong>1.88×</strong></td>
+      </tr>
+      <tr>
+          <td><strong>High (라운드당 많은 자원 필요)</strong></td>
+          <td>1.42×</td>
+          <td>1.41×</td>
+          <td><strong>1.63×</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>✅ <strong>핵심 성과:</strong></p>
+<ul>
+<li>Venn은 모든 실험에서 <strong>기존 방법 대비 평균 JCT를 1.63×~1.88× 단축</strong>.</li>
+<li>특히 <strong>작은 작업(Small)과 적은 자원을 필요로 하는 작업(Low)에서 가장 높은 성능 향상</strong>을 보임.</li>
+</ul>
+<hr>
+<h3 id="-2-응답-속도--리소스-활용도-개선">📌 <strong>2. 응답 속도 &amp; 리소스 활용도 개선</strong></h3>
+<p>논문에서는 <strong>응답 수집 시간(Response Collection Time)과 스케줄링 지연(Scheduling Delay) 사이의 트레이드오프</strong>를 해결한 것이 JCT 개선의 주요 원인이라고 분석했다.</p>
+<h4 id="-1-기존-방법의-문제점">⏳ <strong>(1) 기존 방법의 문제점</strong></h4>
+<ul>
+<li>랜덤 매칭 방식(FIFO, SRSF)은 디바이스를 고려하지 않고 <strong>작업을 무작위로 할당</strong>.</li>
+<li>디바이스마다 응답 속도가 다르기 때문에 <strong>저성능 디바이스가 많을 경우 응답 시간이 길어져 작업이 늦어짐</strong>.</li>
+<li><strong>특정 작업이 희소한 자원을 필요로 하면, 필요한 디바이스를 확보하지 못하고 지연 발생</strong>.</li>
+</ul>
+<h4 id="-2-venn이-제안한-해결책">🚀 <strong>(2) Venn이 제안한 해결책</strong></h4>
+<ul>
+<li><strong>자원 중첩(Resource Contention)을 고려한 스케줄링</strong><br>
+→ FL 작업 간의 디바이스 경쟁을 분석하여 <strong>희소 자원을 필요로 하는 작업을 우선 배정</strong>하여 병목 해결.</li>
+<li><strong>디바이스 성능을 고려한 매칭 (Resource-aware Matching)</strong><br>
+→ 응답 시간이 짧은 디바이스를 작업에 맞게 배치하여 <strong>응답 수집 시간을 단축</strong>.</li>
+</ul>
+<hr>
+<h3 id="-3-venn의-개선-성과-fl-학습-정확도accuracy-유지">📌 <strong>3. Venn의 개선 성과: FL 학습 정확도(Accuracy) 유지</strong></h3>
+<ul>
+<li>FL 모델 성능(정확도)을 기존 방법과 비교하여 <strong>JCT 단축이 모델 성능에 영향을 미치지 않음을 검증</strong>.</li>
+<li>즉, <strong>Venn은 학습 성능을 유지하면서도 처리 속도를 높이는 데 성공</strong>.</li>
+</ul>
+<p>✅ <strong>핵심 결론:</strong><br>
+<strong>Venn은 모델 성능을 유지하면서도 JCT를 단축하여 FL 시스템의 효율성을 극대화했다.</strong></p>
+<hr>
+<h2 id="-기존-방법-대비-venn의-특출난-점">🎯 <strong>기존 방법 대비 Venn의 특출난 점</strong></h2>
+<table>
+  <thead>
+      <tr>
+          <th><strong>기능 비교</strong></th>
+          <th><strong>랜덤 매칭 (기존 방법)</strong></th>
+          <th><strong>FIFO, SRSF</strong></th>
+          <th><strong>Venn (제안 방법)</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>자원 중첩 해결</strong></td>
+          <td>❌ 무시</td>
+          <td>❌ 일부 해결</td>
+          <td>✅ <strong>완전 해결</strong></td>
+      </tr>
+      <tr>
+          <td><strong>디바이스 성능 고려</strong></td>
+          <td>❌ 무작위 할당</td>
+          <td>❌ 무작위 할당</td>
+          <td>✅ <strong>성능 기반 매칭</strong></td>
+      </tr>
+      <tr>
+          <td><strong>JCT 단축 효과</strong></td>
+          <td>낮음</td>
+          <td>보통</td>
+          <td>✅ <strong>최대 1.88× 단축</strong></td>
+      </tr>
+      <tr>
+          <td><strong>모델 성능 유지</strong></td>
+          <td>보장되지 않음</td>
+          <td>보장됨</td>
+          <td>✅ <strong>보장됨</strong></td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-논문에서-제시한-이유-vs-나의-의견">🤔 <strong>논문에서 제시한 이유 vs. 나의 의견</strong></h2>
+<h3 id="-논문에서-제시한-venn의-성능-개선-이유">📌 <strong>논문에서 제시한 Venn의 성능 개선 이유</strong></h3>
+<ol>
+<li>
+<p><strong>자원 희소성(Resource Scarcity) 문제 해결</strong></p>
+<ul>
+<li>기존 방식은 <strong>작업 간 디바이스 중첩을 고려하지 않음</strong> → 희소한 자원을 비효율적으로 할당.</li>
+<li>Venn은 <strong>자원 희소성을 고려하여 먼저 처리해야 할 작업을 우선 배치</strong>하여 지연을 최소화.</li>
+</ul>
+</li>
+<li>
+<p><strong>응답 속도(Response Collection Time) 최적화</strong></p>
+<ul>
+<li>기존 방식은 무작위로 디바이스를 매칭하여 <strong>느린 응답 디바이스가 많으면 전체 작업 속도가 느려짐</strong>.</li>
+<li>Venn은 **성능 기반 디바이스 매칭(Tier-based Matching)**을 사용하여 빠른 디바이스를 적절히 배치.</li>
+</ul>
+</li>
+<li>
+<p><strong>스케줄링 지연(Scheduling Delay) 감소</strong></p>
+<ul>
+<li>기존 방식은 <strong>디바이스를 무작위로 할당하여 일부 작업이 자원을 확보하지 못하는 경우 발생</strong>.</li>
+<li>Venn은 <strong>자원 사용 패턴을 고려하여 희소한 자원을 먼저 사용하도록 최적화</strong>하여 JCT 단축.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="-나의-생각-venn의-추가적인-강점">🤔 <strong>나의 생각: Venn의 추가적인 강점</strong></h3>
+<p>✅ <strong>1. 현실적인 FL 환경을 고려한 설계</strong></p>
+<ul>
+<li>FL은 클라우드 ML과 다르게 <strong>디바이스 가용성이 예측 불가능</strong>하다.</li>
+<li>Venn은 <strong>FL 환경에서의 비동기적, 동적 특성을 고려한 최적의 리소스 관리 방법을 제안</strong>.</li>
+</ul>
+<p>✅ <strong>2. 확장성(Scalability)이 뛰어남</strong></p>
+<ul>
+<li>논문에서 Venn이 <strong>50개 이상의 FL 작업을 동시에 처리하면서도 성능을 유지</strong>하는 것을 보여줌.</li>
+<li>이론적으로 <strong>더 많은 작업이 추가되더라도 일정 수준의 성능 향상이 유지될 가능성 높음</strong>.</li>
+</ul>
+<p>✅ <strong>3. 현실 적용 가능성이 높음</strong></p>
+<ul>
+<li>Apple, Google, Meta 등 기존 FL 리소스 매니저는 단순한 랜덤 매칭을 사용 중.</li>
+<li>논문의 결과에 따르면, <strong>Venn을 적용하면 현재 FL 시스템의 리소스 활용도를 크게 개선할 수 있음</strong>.</li>
+</ul>
+<hr>
+<h2 id="-결론">🔥 <strong>결론</strong></h2>
+<h3 id="venn이-뛰어난-이유"><strong>Venn이 뛰어난 이유</strong></h3>
+<p>1️⃣ <strong>FL 환경의 특성을 반영한 리소스 관리 기법을 도입했다.</strong><br>
+2️⃣ <strong>자원 희소성 문제를 해결하여 JCT를 기존 대비 최대 1.88배 단축했다.</strong><br>
+3️⃣ <strong>디바이스 성능을 고려한 매칭을 통해 응답 속도를 최적화했다.</strong><br>
+4️⃣ <strong>FL 모델 성능을 유지하면서도 학습 속도를 향상시켰다.</strong><br>
+5️⃣ <strong>확장성이 뛰어나 현실적인 FL 환경에서도 적용 가능하다.</strong></p>
+<h3 id="한계점-및-향후-연구-방향"><strong>한계점 및 향후 연구 방향</strong></h3>
+<ul>
+<li><strong>비동기식 FL(Asynchronous FL) 환경에서도 Venn이 효과적인지 검증 필요.</strong></li>
+<li><strong>FL 보안(프라이버시 보호)과 결합된 최적화 연구가 추가될 필요 있음.</strong></li>
+<li><strong>실제 Google, Apple 등의 FL 인프라에서의 실전 테스트 필요.</strong></li>
+</ul>
+<p>✅ <strong>최종 결론:</strong><br>
+📌 Venn은 현재 FL 시스템에서 발생하는 <strong>리소스 할당 문제를 획기적으로 개선하는 방법론</strong>이며, 실제 산업 환경에서도 적용할 가치가 높다. 🚀</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<h2 id="-논문의-한계-및-이를-극복하기-위한-연구-흐름">🔍 <strong>논문의 한계 및 이를 극복하기 위한 연구 흐름</strong></h2>
+<p>논문 *&ldquo;Venn: Resource Management Across Federated Learning Jobs&rdquo;*는 <strong>FL(Federated Learning) 환경에서의 리소스 관리 최적화</strong>를 위한 강력한 기법을 제안하지만, 여전히 해결되지 않은 몇 가지 한계가 존재한다.<br>
+이를 해결하기 위한 연구 흐름을 크게 <strong>5가지 방향</strong>으로 정리할 수 있다.</p>
+<hr>
+<h2 id="-1-비동기식asynchronous-fl-환경에서의-최적화"><strong>📌 1. 비동기식(Asynchronous) FL 환경에서의 최적화</strong></h2>
+<h3 id="-한계점">🔹 <strong>한계점</strong></h3>
+<ul>
+<li>논문은 <strong>동기식(Synchronous) FL 환경만 고려</strong>하고 있다.</li>
+<li>하지만 현실적인 FL 시스템에서는 <strong>비동기식 FL(Asynchronous FL)이 더 일반적</strong>이다.
+<ul>
+<li>디바이스의 연결 상태가 다르기 때문에 모든 참여자의 응답을 기다리면 비효율적임.</li>
+<li>비동기식 FL에서는 각 디바이스가 자신의 속도에 맞춰 업데이트를 수행하고, 서버가 이를 통합.</li>
+</ul>
+</li>
+<li><strong>Venn이 동기식 FL에 맞춰 설계되었기 때문에 비동기 FL에서는 효과가 저하될 가능성이 있음.</strong></li>
+</ul>
+<h3 id="-연구-흐름">🔹 <strong>연구 흐름</strong></h3>
+<p>✅ <strong>1) 비동기식 FL을 위한 동적 리소스 관리</strong></p>
+<ul>
+<li>기존 FL 연구에서는 <strong>비동기 학습을 위한 리소스 재할당(dynamic reallocation) 기법</strong>이 연구됨.</li>
+<li>예) 느린 디바이스는 적은 연산량을 할당하고, 빠른 디바이스는 더 많은 연산을 수행하도록 조정.</li>
+<li>대표 연구: <strong>FedAsync (Xie et al., 2021)</strong>, <strong>FedNova (Wang et al., 2020)</strong></li>
+</ul>
+<p>✅ <strong>2) 적응형 FL 스케줄링</strong></p>
+<ul>
+<li>디바이스의 응답 속도를 학습하여, <strong>느린 디바이스는 중요하지 않은 작업을 배정하고, 빠른 디바이스는 핵심 작업을 맡도록 하는 방법</strong>.</li>
+<li>최근 연구: <strong>Elastic FL (Hwang et al., 2021)</strong>, <strong>Hierarchical FL (Yang et al., 2022)</strong></li>
+</ul>
+<p>✅ <strong>3) 비동기 리소스 경합 해결</strong></p>
+<ul>
+<li>기존의 Venn은 &ldquo;모든 디바이스가 동기적으로 참여&quot;할 때 최적의 스케줄링을 수행.</li>
+<li>하지만 <strong>비동기적 참여 환경에서는 디바이스별 가용성이 예측 불가능</strong>하므로,
+<ul>
+<li>자원의 도착 확률을 모델링하는 <strong>확률적 자원 스케줄링(Stochastic Resource Scheduling)</strong> 접근이 필요함.</li>
+</ul>
+</li>
+<li>대표 연구: <strong>FedProx (Li et al., 2020)</strong></li>
+</ul>
+<hr>
+<h2 id="-2-fl-환경에서의-보안-및-프라이버시-문제-해결"><strong>📌 2. FL 환경에서의 보안 및 프라이버시 문제 해결</strong></h2>
+<h3 id="-한계점-1">🔹 <strong>한계점</strong></h3>
+<ul>
+<li>논문은 <strong>FL 리소스 최적화만 집중</strong>했으며, 보안 및 프라이버시 관련 고려가 부족함.</li>
+<li>현실적인 FL 환경에서는 보안이 필수적이며, 특히 다음과 같은 문제가 존재함:
+<ul>
+<li><strong>디바이스 간 신뢰 문제</strong>: 일부 디바이스가 **악의적인 공격(Malicious Attack)**을 수행할 가능성 있음.</li>
+<li><strong>연합 학습의 프라이버시 문제</strong>: 디바이스가 모델을 학습하는 과정에서, <strong>사용자의 데이터가 간접적으로 유출될 위험</strong>이 존재.</li>
+</ul>
+</li>
+</ul>
+<h3 id="-연구-흐름-1">🔹 <strong>연구 흐름</strong></h3>
+<p>✅ <strong>1) Differential Privacy (DP) 기반 FL 보안</strong></p>
+<ul>
+<li><strong>연합 학습에서 개인 데이터 보호를 보장하는 DP 기법이 연구되고 있음.</strong></li>
+<li>예) 각 디바이스에서 데이터를 학습한 후 <strong>노이즈 추가(DP-SGD)</strong> 를 통해 개별 사용자의 정보가 유출되지 않도록 함.</li>
+<li>대표 연구: <strong>Federated Learning with Differential Privacy (McMahan et al., 2017)</strong></li>
+</ul>
+<p>✅ <strong>2) Secure Aggregation (암호화된 모델 업데이트)</strong></p>
+<ul>
+<li>서버가 디바이스로부터 모델 업데이트를 수집할 때, <strong>암호화된 방식으로 집계하여 개인 데이터를 보호하는 방법</strong>.</li>
+<li>Google의 FL 인프라에서도 사용되는 방식이며, 최근 연구에서는 <strong>양자 암호화(Quantum Secure FL) 적용 연구도 진행 중</strong>.</li>
+<li>대표 연구: <strong>Bonawitz et al. (2019), Papaya (Meta, 2022)</strong></li>
+</ul>
+<p>✅ <strong>3) FL에서의 Byzantine Attack 방어</strong></p>
+<ul>
+<li>악의적인 디바이스가 FL 모델을 조작하려는 시도 (예: <strong>모델 중독 공격, 백도어 공격</strong>)를 방어하는 연구.</li>
+<li>예) <strong>Byzantine-Resilient FL (Chen et al., 2021)</strong> 은 <strong>이상치 탐지를 기반으로 악의적인 업데이트를 거부</strong>하는 알고리즘을 개발.</li>
+</ul>
+<hr>
+<h2 id="-3-fl-환경에서의-에너지-효율성-및-지속-가능성-연구"><strong>📌 3. FL 환경에서의 에너지 효율성 및 지속 가능성 연구</strong></h2>
+<h3 id="-한계점-2">🔹 <strong>한계점</strong></h3>
+<ul>
+<li>FL은 많은 디바이스에서 분산 학습을 수행하지만, <strong>디바이스의 배터리 소모가 크다는 문제</strong>가 있음.</li>
+<li>논문에서는 <strong>디바이스의 에너지 상태를 고려한 리소스 할당 방안이 부족</strong>.</li>
+<li>현실적으로 <strong>FL이 지속 가능(Sustainable FL)</strong> 하려면, <strong>배터리 효율을 고려한 리소스 최적화 연구</strong>가 필요함.</li>
+</ul>
+<h3 id="-연구-흐름-2">🔹 <strong>연구 흐름</strong></h3>
+<p>✅ <strong>1) 배터리 기반 디바이스 스케줄링</strong></p>
+<ul>
+<li>배터리가 적은 디바이스에는 <strong>연산량이 적은 작업을 할당하고, 충전 중인 디바이스는 더 많은 학습을 담당하도록 설계</strong>.</li>
+<li>대표 연구: <strong>Energy-aware Federated Learning (Yu et al., 2022)</strong></li>
+</ul>
+<p>✅ <strong>2) Edge Computing 기반 최적화</strong></p>
+<ul>
+<li><strong>클라우드 대신 Edge 서버에서 일부 연산을 수행하여 디바이스의 연산 부담을 줄이는 연구</strong>.</li>
+<li>대표 연구: <strong>FedEdge (Park et al., 2021), EdgeFL (Huang et al., 2021)</strong></li>
+</ul>
+<p>✅ <strong>3) 저전력 FL 모델 경량화</strong></p>
+<ul>
+<li><strong>경량 모델(Pruning, Quantization)을 적용하여 FL 디바이스의 연산량을 줄이는 연구</strong>.</li>
+<li>대표 연구: <strong>FedLite (Yang et al., 2022)</strong></li>
+</ul>
+<hr>
+<h2 id="-4-대규모-fl-환경에서의-확장성scalability-문제-해결"><strong>📌 4. 대규모 FL 환경에서의 확장성(Scalability) 문제 해결</strong></h2>
+<h3 id="-한계점-3">🔹 <strong>한계점</strong></h3>
+<ul>
+<li>논문의 실험에서는 최대 50개 정도의 FL 작업을 다룸.</li>
+<li>그러나 <strong>실제 대규모 환경(수천~수만 개 디바이스)에서는 성능이 보장될지 검증되지 않음</strong>.</li>
+</ul>
+<h3 id="-연구-흐름-3">🔹 <strong>연구 흐름</strong></h3>
+<p>✅ <strong>1) 분산 FL 리소스 관리 시스템 개발</strong></p>
+<ul>
+<li>중앙 서버가 아닌, <strong>여러 개의 지역 서버(Local Server)를 활용하여 분산적으로 FL 작업을 관리하는 방법</strong>.</li>
+<li>대표 연구: <strong>Hierarchical Federated Learning (Liu et al., 2022)</strong></li>
+</ul>
+<p>✅ <strong>2) 동적인 작업 조정(Dynamic Job Scheduling)</strong></p>
+<ul>
+<li><strong>FL 작업이 많은 경우, 중요도가 높은 작업을 먼저 실행하도록 조정하는 방법</strong>.</li>
+<li>대표 연구: <strong>FedScale (Lai et al., 2021)</strong></li>
+</ul>
+<hr>
+<h2 id="-결론-향후-연구-방향"><strong>🔥 결론: 향후 연구 방향</strong></h2>
+<p>논문의 한계를 해결하기 위해, 다음과 같은 연구 흐름이 활발히 진행 중이다.</p>
+<table>
+  <thead>
+      <tr>
+          <th>연구 방향</th>
+          <th>해결하려는 문제</th>
+          <th>대표 연구</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>비동기 FL 최적화</strong></td>
+          <td>디바이스 가용성이 변하는 환경 대응</td>
+          <td><strong>FedAsync, FedNova</strong></td>
+      </tr>
+      <tr>
+          <td><strong>보안 및 프라이버시 강화</strong></td>
+          <td>데이터 유출 및 악성 공격 방어</td>
+          <td><strong>DP-FL, Secure Aggregation</strong></td>
+      </tr>
+      <tr>
+          <td><strong>에너지 효율 최적화</strong></td>
+          <td>디바이스 배터리 소모 문제 해결</td>
+          <td><strong>FedEdge, FedLite</strong></td>
+      </tr>
+      <tr>
+          <td><strong>확장성 연구</strong></td>
+          <td>대규모 FL 환경에서 성능 보장</td>
+          <td><strong>Hierarchical FL, FedScale</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>✅ <strong>결론:</strong><br>
+향후 연구는 <strong>비동기 FL 최적화, 보안 강화, 에너지 효율 개선, 확장성 보장</strong>과 같은 방향으로 발전할 것이며, Venn을 이러한 연구들과 결합하면 더욱 강력한 FL 리소스 관리 시스템을 구축할 수 있을 것이다. 🚀</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/Venn-Resource-Management-Across-Federated-Learning-Jobs/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/Venn-Resource-Management-Across-Federated-Learning-Jobs/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/AI-Metropolis-Scaling-Large-Language-Model-based-Multi-Agent-Simulation-with-Out-of-order-Execution/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                AI Metropolis: Scaling Large Language Model-based Multi-Agent Simulation with Out-of-order Execution
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2025-03-17">
+                03月17日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/QServe-W4A8KV4-Quantization-and-System-Co-design-for-Efficient-LLM-Serving/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                QServe: W4A8KV4 Quantization and System Co-design for Efficient LLM Serving
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2025-03-18">
+                03月18日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#논문의-강점과-독창적인-지점">논문의 강점과 독창적인 지점</a>
+      <ul>
+        <li><a href="#-강점">🔹 강점</a></li>
+      </ul>
+    </li>
+    <li><a href="#핵심-알고리즘-설명">핵심 알고리즘 설명</a>
+      <ul>
+        <li><a href="#-문제-정의">🎯 문제 정의</a></li>
+        <li><a href="#1-intersection-resource-scheduling-irs">1️⃣ <strong>Intersection Resource Scheduling (IRS)</strong></a>
+          <ul>
+            <li><a href="#예제-입력-및-과정">예제 입력 및 과정</a></li>
+            <li><a href="#핵심-알고리즘-의사코드">핵심 알고리즘 (의사코드)</a></li>
+          </ul>
+        </li>
+        <li><a href="#2-resource-aware-device-to-job-matching">2️⃣ <strong>Resource-aware Device-to-Job Matching</strong></a>
+          <ul>
+            <li><a href="#예제-입력-및-과정-1">예제 입력 및 과정</a></li>
+            <li><a href="#핵심-알고리즘-의사코드-1">핵심 알고리즘 (의사코드)</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#논문의-한계점">논문의 한계점</a></li>
+    <li><a href="#결론">결론</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-논문의-핵심-알고리즘-상세-설명">📌 논문의 핵심 알고리즘 상세 설명</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-예제-1-3개의-fl-작업-job-a-job-b-job-c">📍 <strong>예제 1: 3개의 FL 작업 (Job A, Job B, Job C)</strong></a></li>
+    <li><a href="#-기존-방식-랜덤-할당">📍 <strong>기존 방식 (랜덤 할당)</strong></a></li>
+    <li><a href="#-venn의-irs-적용">📍 <strong>Venn의 IRS 적용</strong></a>
+      <ul>
+        <li><a href="#-최종-배정-결과">✨ <strong>최종 배정 결과:</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-irs-알고리즘-정리">✅ <strong>IRS 알고리즘 정리</strong></a>
+      <ul>
+        <li><a href="#1-fl-작업을-요구하는-자원-특성에-따라-그룹화"><strong>1. FL 작업을 요구하는 자원 특성에 따라 그룹화</strong></a></li>
+        <li><a href="#2-각-그룹-내에서-남은-작업량이-적은-작업을-우선-처리"><strong>2. 각 그룹 내에서 남은 작업량이 적은 작업을 우선 처리</strong></a></li>
+        <li><a href="#3-그룹-간에는-희소한-자원을-필요로-하는-작업을-우선-배정"><strong>3. 그룹 간에는 희소한 자원을 필요로 하는 작업을 우선 배정</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#-예제-2-디바이스-성능별-매칭">📍 <strong>예제 2: 디바이스 성능별 매칭</strong></a></li>
+    <li><a href="#-기존-방식-랜덤-할당-1">📍 <strong>기존 방식 (랜덤 할당)</strong></a></li>
+    <li><a href="#-venn의-matching-적용">📍 <strong>Venn의 Matching 적용</strong></a></li>
+    <li><a href="#-resource-aware-matching-알고리즘-정리">✅ <strong>Resource-aware Matching 알고리즘 정리</strong></a>
+      <ul>
+        <li><a href="#1-디바이스-성능을-여러-개의-tier로-나눔"><strong>1. 디바이스 성능을 여러 개의 Tier로 나눔</strong></a></li>
+        <li><a href="#2-각-fl-작업의-요구사항-분석"><strong>2. 각 FL 작업의 요구사항 분석</strong></a></li>
+        <li><a href="#3-각-작업에-가장-적절한-tier를-매칭"><strong>3. 각 작업에 가장 적절한 Tier를 매칭</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#-논문에서-제시한-실험-결과-분석">🔍 <strong>논문에서 제시한 실험 결과 분석</strong></a>
+      <ul>
+        <li><a href="#-1-venn의-jct-개선-성능-기존-방법과-비교">📌 <strong>1. Venn의 JCT 개선 성능 (기존 방법과 비교)</strong></a></li>
+        <li><a href="#-2-응답-속도--리소스-활용도-개선">📌 <strong>2. 응답 속도 &amp; 리소스 활용도 개선</strong></a>
+          <ul>
+            <li><a href="#-1-기존-방법의-문제점">⏳ <strong>(1) 기존 방법의 문제점</strong></a></li>
+            <li><a href="#-2-venn이-제안한-해결책">🚀 <strong>(2) Venn이 제안한 해결책</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#-3-venn의-개선-성과-fl-학습-정확도accuracy-유지">📌 <strong>3. Venn의 개선 성과: FL 학습 정확도(Accuracy) 유지</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-기존-방법-대비-venn의-특출난-점">🎯 <strong>기존 방법 대비 Venn의 특출난 점</strong></a></li>
+    <li><a href="#-논문에서-제시한-이유-vs-나의-의견">🤔 <strong>논문에서 제시한 이유 vs. 나의 의견</strong></a>
+      <ul>
+        <li><a href="#-논문에서-제시한-venn의-성능-개선-이유">📌 <strong>논문에서 제시한 Venn의 성능 개선 이유</strong></a></li>
+        <li><a href="#-나의-생각-venn의-추가적인-강점">🤔 <strong>나의 생각: Venn의 추가적인 강점</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-결론">🔥 <strong>결론</strong></a>
+      <ul>
+        <li><a href="#venn이-뛰어난-이유"><strong>Venn이 뛰어난 이유</strong></a></li>
+        <li><a href="#한계점-및-향후-연구-방향"><strong>한계점 및 향후 연구 방향</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#-논문의-한계-및-이를-극복하기-위한-연구-흐름">🔍 <strong>논문의 한계 및 이를 극복하기 위한 연구 흐름</strong></a></li>
+    <li><a href="#-1-비동기식asynchronous-fl-환경에서의-최적화"><strong>📌 1. 비동기식(Asynchronous) FL 환경에서의 최적화</strong></a>
+      <ul>
+        <li><a href="#-한계점">🔹 <strong>한계점</strong></a></li>
+        <li><a href="#-연구-흐름">🔹 <strong>연구 흐름</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-2-fl-환경에서의-보안-및-프라이버시-문제-해결"><strong>📌 2. FL 환경에서의 보안 및 프라이버시 문제 해결</strong></a>
+      <ul>
+        <li><a href="#-한계점-1">🔹 <strong>한계점</strong></a></li>
+        <li><a href="#-연구-흐름-1">🔹 <strong>연구 흐름</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-3-fl-환경에서의-에너지-효율성-및-지속-가능성-연구"><strong>📌 3. FL 환경에서의 에너지 효율성 및 지속 가능성 연구</strong></a>
+      <ul>
+        <li><a href="#-한계점-2">🔹 <strong>한계점</strong></a></li>
+        <li><a href="#-연구-흐름-2">🔹 <strong>연구 흐름</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-4-대규모-fl-환경에서의-확장성scalability-문제-해결"><strong>📌 4. 대규모 FL 환경에서의 확장성(Scalability) 문제 해결</strong></a>
+      <ul>
+        <li><a href="#-한계점-3">🔹 <strong>한계점</strong></a></li>
+        <li><a href="#-연구-흐름-3">🔹 <strong>연구 흐름</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-결론-향후-연구-방향"><strong>🔥 결론: 향후 연구 방향</strong></a></li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

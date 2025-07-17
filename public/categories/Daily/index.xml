@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Daily on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/categories/Daily/</link>
+    <description>Recent content in Daily on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Thu, 31 Oct 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/categories/Daily/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>블로그 다시 시작..</title>
+      <link>http://192.168.1.11:1314/posts/%EB%B8%94%EB%A1%9C%EA%B7%B8-%EB%8B%A4%EC%8B%9C-%EC%8B%9C%EC%9E%91../</link>
+      <pubDate>Thu, 31 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/%EB%B8%94%EB%A1%9C%EA%B7%B8-%EB%8B%A4%EC%8B%9C-%EC%8B%9C%EC%9E%91../</guid>
+      <description>&lt;p&gt;처음 블로그를 만든 날짜를 보니 포항에서 열심히 대학원을 다닐떄 였군요&#xA;아마 첫논문을 작성할 때 쯤부터 너무 정신이 없어서 간간히 작성하던 블로그가 멈춰있었던것 같습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>블로그 시작..</title>
+      <link>http://192.168.1.11:1314/posts/%EB%B8%94%EB%A1%9C%EA%B7%B8-%EC%8B%9C%EC%9E%91../</link>
+      <pubDate>Sun, 03 Jan 2021 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/%EB%B8%94%EB%A1%9C%EA%B7%B8-%EC%8B%9C%EC%9E%91../</guid>
+      <description>&lt;p&gt;지금것 wordpress를 이용하여 블로그를 운영했으나, 2021년 부터 Github blog로 이전을 합니다.&#xA;글을 쓰는 빈도가 높지 않았는데 열심히 써보도록 하곘습니다.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

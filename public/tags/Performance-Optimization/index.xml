@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Performance Optimization on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/Performance-Optimization/</link>
+    <description>Recent content in Performance Optimization on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Thu, 26 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/Performance-Optimization/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Accelerated Test-Time Scaling with Model-Free Speculative Sampling</title>
+      <link>http://192.168.1.11:1314/posts/Accelerated-Test-Time-Scaling-with-Model-Free-Speculative-Sampling/</link>
+      <pubDate>Thu, 26 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Accelerated-Test-Time-Scaling-with-Model-Free-Speculative-Sampling/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2506.04708v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;code&gt;STAND (STochastic Adaptive N-gram Drafting)&lt;/code&gt;은 &lt;strong&gt;추가 학습이나 별도 드래프트 모델 없이&lt;/strong&gt;도 대규모 LLM의 테스트-타임 스케일링(Test-Time Scaling)을 가속한다. 표준 오토리그레시브 디코딩 대비 &lt;strong&gt;추론 지연을 60 ~ 65 % 줄이고 처리량을 14 ~ 28 % 높이며 정확도는 유지&lt;/strong&gt;한다.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Efficient Inference on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/Efficient-Inference/</link>
+    <description>Recent content in Efficient Inference on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Tue, 24 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/Efficient-Inference/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mamba Drafters for Speculative Decoding</title>
+      <link>http://192.168.1.11:1314/posts/Mamba-Drafters-for-Speculative-Decoding/</link>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Mamba-Drafters-for-Speculative-Decoding/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2506.01206v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;-mamba-drafters-선형-ssm으로-외부-speculative-decoding-sota-다시-쓰기&#34;&gt;📝 Mamba Drafters: 선형 SSM으로 외부 Speculative Decoding SOTA 다시 쓰기&lt;/h1&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;Transformer 대신 &lt;strong&gt;Mamba SSM&lt;/strong&gt;을 외부 드래프터로 쓰고, &lt;strong&gt;트리 초안 + UCB 탐색&lt;/strong&gt;을 결합해 &lt;em&gt;재학습 없이&lt;/em&gt;도 Self-spec(EAGLE) 수준 속도·품질을 달성하며 메모리까지 절감했다.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

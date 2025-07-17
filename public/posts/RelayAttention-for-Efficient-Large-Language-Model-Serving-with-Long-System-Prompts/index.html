@@ -1,0 +1,5366 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>RelayAttention for Efficient Large Language Model Serving with Long System Prompts | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 요약과 분석 핵심 내용 요약 문제 정의:..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/RelayAttention-for-Efficient-Large-Language-Model-Serving-with-Long-System-Prompts/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/RelayAttention-for-Efficient-Large-Language-Model-Serving-with-Long-System-Prompts/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="RelayAttention for Efficient Large Language Model Serving with Long System Prompts">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 요약과 분석 핵심 내용 요약 문제 정의: 긴 시스템 프롬프트를 포함하는 대규모 언어 모델(LLM)의 추론 효율성 문제. 기존 접근법은 메모리 접근의 비효율성으로 인해 처리 속도와 레이턴시가 저하됨. 기술적 기여: RelayAttention이라는 새로운 알고리즘을 제안하여 공유 시스템 프롬프트의 캐시된 키-값(KV) 상태를 한 번만 메모리에서 읽도록 하여 불필요한 메모리 접근 제거. 결과: RelayAttention은 모델 재훈련 없이도 처리 효율성을 크게 개선했으며, 최대 2.2배 요청 처리율 증가 및 최대 76%의 처리 시간 감소를 달성함. 논문의 강점 독창적 접근: 기존 FlashAttention 및 PagedAttention과는 달리, RelayAttention은 시스템 프롬프트의 불필요한 메모리 접근을 제거하여 근본적인 I/O 병목 문제를 해결. 폭넓은 호환성: 모델 재훈련 없이 기존 추론 시스템(vLLM)과 쉽게 통합 가능. 효율성 입증: 여러 GPU 환경(A40, A100) 및 다양한 모델(Llama2-7B, Llama-30B)에서 성능 개선을 실험적으로 검증. 이론적 뒷받침: 메모리 접근 감소와 관련된 이론적 속도 향상을 수식으로 분석하여 신뢰성을 높임. 핵심 알고리즘 설명 (예시 입력 기반) 기존 문제: 긴 시스템 프롬프트를 포함한 배치 요청 처리 시, 각 요청마다 시스템 프롬프트의 KV 상태를 메모리에서 반복적으로 읽어 I/O 병목 발생. RelayAttention 프로세스: 입력: 시스템 프롬프트 (Shared KV) 길이: 512 사용자 프롬프트 (User KV) 길이: 128 생성 토큰 길이: 64 단계: 시스템 주의(System Attention): 시스템 프롬프트와 Query를 매핑하여 중간 출력을 계산. 문맥 주의(Context Attention): 사용자 프롬프트와 현재까지 생성된 토큰에 대해 주의 계산. 릴레이 융합(Relay Fusion): 시스템 주의 결과와 문맥 주의 결과를 가중 평균(Convex Combination)하여 최종 결과를 생성. 산출물: 현재 배치의 모든 요청에서 공유 시스템 프롬프트를 단 한 번 메모리에서 읽고, 최적화된 토큰 생성 속도를 달성. 결과 분석 GPU vLLM vLLM-PS vLLM-RA A40 (5-shot) 2660초 850초 (↓68%) 641초 (↓76%) A100 (5-shot) 1308초 432초 (↓67%) 316초 (↓76%) RelayAttention은 긴 프롬프트에서도 처리 효율을 극대화하며, 특히 배치 크기가 클수록(예: 32) 더 큰 성능 향상을 보임.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-12-14T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-12-14T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="RelayAttention for Efficient Large Language Model Serving with Long System Prompts">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 요약과 분석 핵심 내용 요약 문제 정의: 긴 시스템 프롬프트를 포함하는 대규모 언어 모델(LLM)의 추론 효율성 문제. 기존 접근법은 메모리 접근의 비효율성으로 인해 처리 속도와 레이턴시가 저하됨. 기술적 기여: RelayAttention이라는 새로운 알고리즘을 제안하여 공유 시스템 프롬프트의 캐시된 키-값(KV) 상태를 한 번만 메모리에서 읽도록 하여 불필요한 메모리 접근 제거. 결과: RelayAttention은 모델 재훈련 없이도 처리 효율성을 크게 개선했으며, 최대 2.2배 요청 처리율 증가 및 최대 76%의 처리 시간 감소를 달성함. 논문의 강점 독창적 접근: 기존 FlashAttention 및 PagedAttention과는 달리, RelayAttention은 시스템 프롬프트의 불필요한 메모리 접근을 제거하여 근본적인 I/O 병목 문제를 해결. 폭넓은 호환성: 모델 재훈련 없이 기존 추론 시스템(vLLM)과 쉽게 통합 가능. 효율성 입증: 여러 GPU 환경(A40, A100) 및 다양한 모델(Llama2-7B, Llama-30B)에서 성능 개선을 실험적으로 검증. 이론적 뒷받침: 메모리 접근 감소와 관련된 이론적 속도 향상을 수식으로 분석하여 신뢰성을 높임. 핵심 알고리즘 설명 (예시 입력 기반) 기존 문제: 긴 시스템 프롬프트를 포함한 배치 요청 처리 시, 각 요청마다 시스템 프롬프트의 KV 상태를 메모리에서 반복적으로 읽어 I/O 병목 발생. RelayAttention 프로세스: 입력: 시스템 프롬프트 (Shared KV) 길이: 512 사용자 프롬프트 (User KV) 길이: 128 생성 토큰 길이: 64 단계: 시스템 주의(System Attention): 시스템 프롬프트와 Query를 매핑하여 중간 출력을 계산. 문맥 주의(Context Attention): 사용자 프롬프트와 현재까지 생성된 토큰에 대해 주의 계산. 릴레이 융합(Relay Fusion): 시스템 주의 결과와 문맥 주의 결과를 가중 평균(Convex Combination)하여 최종 결과를 생성. 산출물: 현재 배치의 모든 요청에서 공유 시스템 프롬프트를 단 한 번 메모리에서 읽고, 최적화된 토큰 생성 속도를 달성. 결과 분석 GPU vLLM vLLM-PS vLLM-RA A40 (5-shot) 2660초 850초 (↓68%) 641초 (↓76%) A100 (5-shot) 1308초 432초 (↓67%) 316초 (↓76%) RelayAttention은 긴 프롬프트에서도 처리 효율을 극대화하며, 특히 배치 크기가 클수록(예: 32) 더 큰 성능 향상을 보임.">
+
+
+  <meta itemprop="name" content="RelayAttention for Efficient Large Language Model Serving with Long System Prompts">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 요약과 분석 핵심 내용 요약 문제 정의: 긴 시스템 프롬프트를 포함하는 대규모 언어 모델(LLM)의 추론 효율성 문제. 기존 접근법은 메모리 접근의 비효율성으로 인해 처리 속도와 레이턴시가 저하됨. 기술적 기여: RelayAttention이라는 새로운 알고리즘을 제안하여 공유 시스템 프롬프트의 캐시된 키-값(KV) 상태를 한 번만 메모리에서 읽도록 하여 불필요한 메모리 접근 제거. 결과: RelayAttention은 모델 재훈련 없이도 처리 효율성을 크게 개선했으며, 최대 2.2배 요청 처리율 증가 및 최대 76%의 처리 시간 감소를 달성함. 논문의 강점 독창적 접근: 기존 FlashAttention 및 PagedAttention과는 달리, RelayAttention은 시스템 프롬프트의 불필요한 메모리 접근을 제거하여 근본적인 I/O 병목 문제를 해결. 폭넓은 호환성: 모델 재훈련 없이 기존 추론 시스템(vLLM)과 쉽게 통합 가능. 효율성 입증: 여러 GPU 환경(A40, A100) 및 다양한 모델(Llama2-7B, Llama-30B)에서 성능 개선을 실험적으로 검증. 이론적 뒷받침: 메모리 접근 감소와 관련된 이론적 속도 향상을 수식으로 분석하여 신뢰성을 높임. 핵심 알고리즘 설명 (예시 입력 기반) 기존 문제: 긴 시스템 프롬프트를 포함한 배치 요청 처리 시, 각 요청마다 시스템 프롬프트의 KV 상태를 메모리에서 반복적으로 읽어 I/O 병목 발생. RelayAttention 프로세스: 입력: 시스템 프롬프트 (Shared KV) 길이: 512 사용자 프롬프트 (User KV) 길이: 128 생성 토큰 길이: 64 단계: 시스템 주의(System Attention): 시스템 프롬프트와 Query를 매핑하여 중간 출력을 계산. 문맥 주의(Context Attention): 사용자 프롬프트와 현재까지 생성된 토큰에 대해 주의 계산. 릴레이 융합(Relay Fusion): 시스템 주의 결과와 문맥 주의 결과를 가중 평균(Convex Combination)하여 최종 결과를 생성. 산출물: 현재 배치의 모든 요청에서 공유 시스템 프롬프트를 단 한 번 메모리에서 읽고, 최적화된 토큰 생성 속도를 달성. 결과 분석 GPU vLLM vLLM-PS vLLM-RA A40 (5-shot) 2660초 850초 (↓68%) 641초 (↓76%) A100 (5-shot) 1308초 432초 (↓67%) 316초 (↓76%) RelayAttention은 긴 프롬프트에서도 처리 효율을 극대화하며, 특히 배치 크기가 클수록(예: 32) 더 큰 성능 향상을 보임.">
+  <meta itemprop="datePublished" content="2024-12-14T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-12-14T00:00:00+00:00">
+  <meta itemprop="wordCount" content="25923">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">RelayAttention for Efficient Large Language Model Serving with Long System Prompts</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    RelayAttention for Efficient Large Language Model Serving with Long System Prompts
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-12-14">
+          2024년 12월 14일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >52 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>25923 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2402.14808">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h3 id="논문-요약과-분석">논문 요약과 분석</h3>
+<h4 id="핵심-내용-요약"><strong>핵심 내용 요약</strong></h4>
+<ul>
+<li><strong>문제 정의</strong>: 긴 시스템 프롬프트를 포함하는 대규모 언어 모델(LLM)의 추론 효율성 문제. 기존 접근법은 메모리 접근의 비효율성으로 인해 처리 속도와 레이턴시가 저하됨.</li>
+<li><strong>기술적 기여</strong>: RelayAttention이라는 새로운 알고리즘을 제안하여 공유 시스템 프롬프트의 캐시된 키-값(KV) 상태를 한 번만 메모리에서 읽도록 하여 불필요한 메모리 접근 제거.</li>
+<li><strong>결과</strong>: RelayAttention은 모델 재훈련 없이도 처리 효율성을 크게 개선했으며, 최대 2.2배 요청 처리율 증가 및 최대 76%의 처리 시간 감소를 달성함.</li>
+</ul>
+<h4 id="논문의-강점"><strong>논문의 강점</strong></h4>
+<ol>
+<li><strong>독창적 접근</strong>: 기존 FlashAttention 및 PagedAttention과는 달리, RelayAttention은 시스템 프롬프트의 불필요한 메모리 접근을 제거하여 근본적인 I/O 병목 문제를 해결.</li>
+<li><strong>폭넓은 호환성</strong>: 모델 재훈련 없이 기존 추론 시스템(vLLM)과 쉽게 통합 가능.</li>
+<li><strong>효율성 입증</strong>: 여러 GPU 환경(A40, A100) 및 다양한 모델(Llama2-7B, Llama-30B)에서 성능 개선을 실험적으로 검증.</li>
+<li><strong>이론적 뒷받침</strong>: 메모리 접근 감소와 관련된 이론적 속도 향상을 수식으로 분석하여 신뢰성을 높임.</li>
+</ol>
+<h4 id="핵심-알고리즘-설명-예시-입력-기반"><strong>핵심 알고리즘 설명 (예시 입력 기반)</strong></h4>
+<h5 id="기존-문제"><strong>기존 문제:</strong></h5>
+<ul>
+<li>긴 시스템 프롬프트를 포함한 배치 요청 처리 시, 각 요청마다 시스템 프롬프트의 KV 상태를 메모리에서 반복적으로 읽어 I/O 병목 발생.</li>
+</ul>
+<h5 id="relayattention-프로세스"><strong>RelayAttention 프로세스</strong>:</h5>
+<ol>
+<li><strong>입력</strong>:
+<ul>
+<li>시스템 프롬프트 (<code>Shared KV</code>) 길이: 512</li>
+<li>사용자 프롬프트 (<code>User KV</code>) 길이: 128</li>
+<li>생성 토큰 길이: 64</li>
+</ul>
+</li>
+<li><strong>단계</strong>:
+<ol>
+<li><strong>시스템 주의(System Attention)</strong>:
+<ul>
+<li>시스템 프롬프트와 Query를 매핑하여 중간 출력을 계산.</li>
+</ul>
+</li>
+<li><strong>문맥 주의(Context Attention)</strong>:
+<ul>
+<li>사용자 프롬프트와 현재까지 생성된 토큰에 대해 주의 계산.</li>
+</ul>
+</li>
+<li><strong>릴레이 융합(Relay Fusion)</strong>:
+<ul>
+<li>시스템 주의 결과와 문맥 주의 결과를 가중 평균(Convex Combination)하여 최종 결과를 생성.</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><strong>산출물</strong>:
+<ul>
+<li>현재 배치의 모든 요청에서 공유 시스템 프롬프트를 단 한 번 메모리에서 읽고, 최적화된 토큰 생성 속도를 달성.</li>
+</ul>
+</li>
+</ol>
+<h4 id="결과-분석"><strong>결과 분석</strong></h4>
+<table>
+  <thead>
+      <tr>
+          <th><strong>GPU</strong></th>
+          <th><strong>vLLM</strong></th>
+          <th><strong>vLLM-PS</strong></th>
+          <th><strong>vLLM-RA</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>A40 (5-shot)</strong></td>
+          <td>2660초</td>
+          <td>850초 (↓68%)</td>
+          <td>641초 (↓76%)</td>
+      </tr>
+      <tr>
+          <td><strong>A100 (5-shot)</strong></td>
+          <td>1308초</td>
+          <td>432초 (↓67%)</td>
+          <td>316초 (↓76%)</td>
+      </tr>
+  </tbody>
+</table>
+<p>RelayAttention은 긴 프롬프트에서도 처리 효율을 극대화하며, 특히 배치 크기가 클수록(예: 32) 더 큰 성능 향상을 보임.</p>
+<h4 id="한계점"><strong>한계점</strong></h4>
+<ol>
+<li><strong>단일 요청 제한</strong>: 단일 요청 처리에는 메모리 접근 최적화가 적용되지 않아 성능 향상이 없음.</li>
+<li><strong>문맥 길이 제한</strong>: 사용자 프롬프트와 생성 응답이 지나치게 길어지면, 전체 계산 시간에서 시스템 프롬프트의 비중이 작아져 효과 감소.</li>
+<li><strong>멀티 애플리케이션 제약</strong>: 단일 시스템 프롬프트에 의존하므로, 여러 애플리케이션에서 동일 시스템 프롬프트를 사용하는 배치 처리에만 적합.</li>
+</ol>
+<h4 id="결론"><strong>결론</strong></h4>
+<p>RelayAttention은 LLM 서비스에서 긴 시스템 프롬프트 처리 효율성을 크게 개선한 혁신적인 알고리즘입니다. 이 기술은 기존 방법들과의 결합 가능성이 높으며, 클라우드 기반 LLM 서비스에 적합한 솔루션으로 보입니다. 단, 단일 요청 처리나 극단적인 사용자 프롬프트 길이 환경에서는 성능 이점이 제한적일 수 있습니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<h3 id="relayattention-알고리즘-예시를-통한-상세-설명">RelayAttention 알고리즘: 예시를 통한 상세 설명</h3>
+<p>RelayAttention은 긴 시스템 프롬프트와 사용자 프롬프트를 효과적으로 처리하여 대규모 언어 모델(LLM)의 추론 효율성을 극대화하는 새로운 방식입니다. 이 알고리즘은 기존의 반복적인 메모리 접근 문제를 수학적으로 재구성하여 해결합니다.</p>
+<hr>
+<h4 id="핵심-문제"><strong>핵심 문제</strong></h4>
+<p>긴 시스템 프롬프트가 포함된 요청 배치에서, 기존 방법들은 각 요청마다 시스템 프롬프트의 키-값(KV) 캐시를 반복적으로 메모리에서 읽어와 처리 효율성을 떨어뜨렸습니다. RelayAttention은 <strong>&ldquo;시스템 프롬프트의 KV를 한 번만 읽는&rdquo;</strong> 방식으로 이 문제를 해결합니다.</p>
+<hr>
+<h3 id="예시-relayattention의-전체-과정">예시: RelayAttention의 전체 과정</h3>
+<h4 id="예시-입력"><strong>예시 입력</strong></h4>
+<ol>
+<li><strong>시스템 프롬프트</strong> (Shared KV):
+<ul>
+<li>길이 = 512 (시스템에 저장된 공통 지침)</li>
+</ul>
+</li>
+<li><strong>사용자 프롬프트</strong> (User KV):
+<ul>
+<li>길이 = 128 (사용자가 제공한 요청)</li>
+</ul>
+</li>
+<li><strong>생성 토큰</strong> (Generated Tokens):
+<ul>
+<li>길이 = 64 (현재 생성된 텍스트)</li>
+</ul>
+</li>
+</ol>
+<h4 id="relayattention-단계"><strong>RelayAttention 단계</strong></h4>
+<hr>
+<h5 id="1단계-시스템-주의-계산-system-attention"><strong>1단계: 시스템 주의 계산 (System Attention)</strong></h5>
+<ul>
+<li><strong>목적</strong>: 시스템 프롬프트의 정보만을 기반으로 주의(attention)를 계산.</li>
+<li><strong>처리 과정</strong>:
+<ul>
+<li>시스템 프롬프트에서 각 토큰의 키(Key)와 값(Value)을 읽어 저장.</li>
+<li>Query(현재 생성 중인 토큰)를 사용해 시스템 프롬프트와의 유사성을 계산.</li>
+<li>결과를 &ldquo;시스템 주의 출력(System Attention Output)&ldquo;으로 저장.</li>
+</ul>
+</li>
+</ul>
+<p><strong>수식</strong>:
+[ O_{\text{sys}} = \text{Attention}(Q_t, K_{\text{sys}}, V_{\text{sys}}) ]
+여기서 ( Q_t )는 현재 생성 중인 토큰의 Query, ( K_{\text{sys}} )와 ( V_{\text{sys}} )는 시스템 프롬프트의 키와 값입니다.</p>
+<hr>
+<h5 id="2단계-문맥-주의-계산-context-attention"><strong>2단계: 문맥 주의 계산 (Context Attention)</strong></h5>
+<ul>
+<li><strong>목적</strong>: 사용자 프롬프트와 이전에 생성된 토큰들에 기반한 주의를 계산.</li>
+<li><strong>처리 과정</strong>:
+<ul>
+<li>사용자 프롬프트 및 생성된 토큰에서 키와 값을 읽어 저장.</li>
+<li>Query와 비교하여 사용자 컨텍스트와의 유사성을 계산.</li>
+<li>결과를 &ldquo;문맥 주의 출력(Context Attention Output)&ldquo;으로 저장.</li>
+</ul>
+</li>
+</ul>
+<p><strong>수식</strong>:
+[ O_{\text{ctx}} = \text{Attention}(Q_t, K_{\text{ctx}}, V_{\text{ctx}}) ]
+여기서 ( K_{\text{ctx}} )와 ( V_{\text{ctx}} )는 사용자 프롬프트와 생성된 토큰의 키와 값입니다.</p>
+<hr>
+<h5 id="3단계-relay-fusion"><strong>3단계: Relay Fusion</strong></h5>
+<ul>
+<li><strong>목적</strong>: 시스템 주의와 문맥 주의 출력을 결합하여 최종 출력 계산.</li>
+<li><strong>처리 과정</strong>:
+<ol>
+<li>시스템 주의와 문맥 주의에 각각 가중치를 할당:
+<ul>
+<li>가중치 ( \alpha_{\text{sys}} ): 시스템 프롬프트의 중요도.</li>
+<li>가중치 ( \alpha_{\text{ctx}} ): 사용자 컨텍스트의 중요도.</li>
+</ul>
+</li>
+<li>( \alpha_{\text{sys}} )와 ( \alpha_{\text{ctx}} )는 두 주의의 Softmax 확률로 계산:
+[
+\alpha_{\text{sys}} = \frac{\sigma_{1 \to s}}{\sigma_{1 \to s} + \sigma_{s+1 \to l}}
+]
+[
+\alpha_{\text{ctx}} = 1 - \alpha_{\text{sys}}
+]
+여기서 ( \sigma_{b \to e} )는 ( b )부터 ( e )까지의 Softmax 합입니다.</li>
+<li>두 주의 결과를 가중 평균(Convex Combination)하여 최종 결과 생성:
+[
+O_t = \alpha_{\text{sys}} O_{\text{sys}} + \alpha_{\text{ctx}} O_{\text{ctx}}
+]</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="relayattention의-처리-흐름"><strong>RelayAttention의 처리 흐름</strong></h4>
+<ol>
+<li><strong>Shared KV의 메모리 접근 최소화</strong>: 시스템 프롬프트는 한 번만 읽어 여러 요청의 Query와 동시에 처리.</li>
+<li><strong>결합 결과 생성</strong>: 시스템 프롬프트와 사용자 프롬프트의 중요도를 반영한 최종 출력 계산.</li>
+</ol>
+<hr>
+<h3 id="relayattention의-주요-특징-요약">RelayAttention의 주요 특징 요약</h3>
+<table>
+  <thead>
+      <tr>
+          <th><strong>단계</strong></th>
+          <th><strong>기존 방식</strong></th>
+          <th><strong>RelayAttention</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>메모리 접근</strong></td>
+          <td>시스템 프롬프트 KV를 요청마다 반복적으로 읽음</td>
+          <td>시스템 프롬프트 KV를 배치마다 한 번만 읽음</td>
+      </tr>
+      <tr>
+          <td><strong>계산 효율성</strong></td>
+          <td>Matrix-Vector 연산 반복으로 메모리 병목 발생</td>
+          <td>Matrix-Matrix 연산으로 효율 극대화</td>
+      </tr>
+      <tr>
+          <td><strong>결합 방식</strong></td>
+          <td>시스템과 문맥 주의를 개별적으로 처리</td>
+          <td>수학적 재구성을 통해 두 주의 결합</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h4 id="relayattention의-장점"><strong>RelayAttention의 장점</strong></h4>
+<ol>
+<li><strong>효율성 극대화</strong>: 불필요한 메모리 접근 제거로 처리 속도 최대 2.2배 향상.</li>
+<li><strong>모델 재훈련 불필요</strong>: 기존 LLM에 바로 통합 가능.</li>
+<li><strong>스케일러빌리티</strong>: 긴 프롬프트가 포함된 대규모 배치에서도 성능 유지.</li>
+</ol>
+<h4 id="결론-1"><strong>결론</strong></h4>
+<p>RelayAttention은 긴 시스템 프롬프트와 사용자 프롬프트를 효율적으로 결합하는 혁신적인 알고리즘입니다. 핵심 아이디어는 메모리 접근을 최소화하고 계산 효율성을 극대화하는 방식으로, 클라우드 기반의 대규모 LLM 추론 서비스에 적합합니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h3 id="논문-결과-및-분석-relayattention의-성과와-특출난-점">논문 결과 및 분석: RelayAttention의 성과와 특출난 점</h3>
+<hr>
+<h3 id="1-논문에서-제시한-결과"><strong>1. 논문에서 제시한 결과</strong></h3>
+<h4 id="11-주요-결과-요약"><strong>1.1 주요 결과 요약</strong></h4>
+<p>RelayAttention을 vLLM 시스템에 통합한 성능은 다음과 같은 결과를 보여줍니다:</p>
+<ol>
+<li>
+<p><strong>추론 처리 속도 개선 (Throughput)</strong>:</p>
+<ul>
+<li>긴 시스템 프롬프트의 처리 속도가 기존 vLLM 대비 최대 <strong>4.36배 향상</strong>.</li>
+<li>ShareGPTv3와 MMLU 데이터셋을 기반으로, 시스템 프롬프트가 길어질수록 RelayAttention의 성능 이점이 증가함.</li>
+</ul>
+</li>
+<li>
+<p><strong>처리 시간 감소 (Processing Time)</strong>:</p>
+<ul>
+<li>MMLU 데이터셋 기준, 5-shot 테스트에서 기존 방법 대비 <strong>76%의 처리 시간 감소</strong>.</li>
+<li>A40 GPU에서 기존 2660초 → RelayAttention 641초로 대폭 단축.</li>
+</ul>
+</li>
+<li>
+<p><strong>실시간 대화(Interactive Serving)에서 레이턴시 개선</strong>:</p>
+<ul>
+<li>사용자 경험에 중요한 단일 토큰 생성 레이턴시를 줄임.</li>
+<li>시스템 프롬프트 길이 2048 토큰에서 최대 <strong>2.2배 더 높은 요청 처리율</strong>을 달성.</li>
+</ul>
+</li>
+</ol>
+<h4 id="12-결과-비교"><strong>1.2 결과 비교</strong></h4>
+<p>RelayAttention의 성능은 기존 방법론들과 다음과 같이 비교됩니다:</p>
+<table>
+  <thead>
+      <tr>
+          <th><strong>방법론</strong></th>
+          <th><strong>주요 특징</strong></th>
+          <th><strong>Throughput 개선</strong></th>
+          <th><strong>Latency 개선</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>vLLM</strong></td>
+          <td>기존 배치 기반 추론 시스템</td>
+          <td>기준값</td>
+          <td>기준값</td>
+      </tr>
+      <tr>
+          <td><strong>vLLM-PS</strong></td>
+          <td>PagedAttention 및 PromptCache 통합</td>
+          <td>최대 1.08배 향상</td>
+          <td>일부 개선</td>
+      </tr>
+      <tr>
+          <td><strong>vLLM-RA</strong> (제안)</td>
+          <td>RelayAttention 통합, 불필요한 메모리 접근 제거</td>
+          <td>최대 4.36배 향상</td>
+          <td>최대 2.2배 향상</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="2-특출난-점"><strong>2. 특출난 점</strong></h3>
+<p>RelayAttention은 기존 방법론과 비교했을 때 다음과 같은 독창적인 접근 방식과 개선을 제시합니다.</p>
+<h4 id="21-불필요한-메모리-접근-제거"><strong>2.1 불필요한 메모리 접근 제거</strong></h4>
+<ul>
+<li><strong>기존 방식 문제</strong>: 긴 시스템 프롬프트는 배치 요청의 각 요청마다 메모리에서 반복적으로 읽어야 했음.
+<ul>
+<li>메모리 접근은 I/O 병목을 유발하고 처리 속도를 저하시킴.</li>
+</ul>
+</li>
+<li><strong>RelayAttention의 개선</strong>: 시스템 프롬프트의 KV 상태를 한 번만 메모리에서 읽도록 설계.
+<ul>
+<li>이는 Matrix-Vector 연산을 Matrix-Matrix 연산으로 변환해, GPU 메모리 접근을 최소화하고 계산 효율성을 극대화함.</li>
+</ul>
+</li>
+</ul>
+<h4 id="22-모델-재훈련-없이-통합-가능"><strong>2.2 모델 재훈련 없이 통합 가능</strong></h4>
+<ul>
+<li>RelayAttention은 모델의 구조적 변경 없이 기존 시스템에 플러그앤플레이 방식으로 통합 가능.</li>
+<li>모델 학습 재조정(finetuning) 없이도 최적의 성능을 유지.</li>
+</ul>
+<h4 id="23-긴-프롬프트에서-효율성-극대화"><strong>2.3 긴 프롬프트에서 효율성 극대화</strong></h4>
+<ul>
+<li>긴 시스템 프롬프트를 다룰 때 성능 이점이 두드러짐.
+<ul>
+<li>시스템 프롬프트의 길이가 2048 토큰인 경우 최대 <strong>2.2배 요청 처리율 증가</strong>.</li>
+</ul>
+</li>
+<li>긴 프롬프트가 포함된 대규모 배치에서 더욱 효과적.</li>
+</ul>
+<hr>
+<h3 id="3-relayattention이-이러한-결과를-도출한-방법과-논문의-논리"><strong>3. RelayAttention이 이러한 결과를 도출한 방법과 논문의 논리</strong></h3>
+<p>RelayAttention이 성능 개선을 이끌어낸 핵심 이유는 다음과 같습니다:</p>
+<h4 id="31-수학적-재구성"><strong>3.1 수학적 재구성</strong></h4>
+<ul>
+<li>기존의 반복적인 메모리 접근을 수학적으로 재구성:
+<ul>
+<li>시스템 프롬프트와 사용자 프롬프트를 별도로 처리한 뒤, 가중 평균(Convex Combination)으로 결합.</li>
+<li>이를 통해 시스템 프롬프트의 KV 캐시에 대한 단일 메모리 접근만 필요.</li>
+</ul>
+</li>
+</ul>
+<h4 id="32-io-병목-해소"><strong>3.2 I/O 병목 해소</strong></h4>
+<ul>
+<li>현대 GPU는 메모리 접근 속도(오프칩 DRAM)보다 계산 속도(온칩 SRAM)가 훨씬 빠름.</li>
+<li>RelayAttention은 시스템 프롬프트를 DRAM에서 SRAM으로 한 번만 읽음으로써 I/O 병목을 해소.</li>
+</ul>
+<h4 id="33-이론적-속도-향상-분석"><strong>3.3 이론적 속도 향상 분석</strong></h4>
+<ul>
+<li>이론적으로 RelayAttention은 메모리 접근량 감소로 처리 속도를 다음처럼 개선:
+[
+\text{속도 향상 비율 (p)} = \frac{s+c+2}{s/b + c + 7}
+]
+<ul>
+<li>( s ): 시스템 프롬프트 길이</li>
+<li>( c ): 사용자 프롬프트 및 컨텍스트 길이</li>
+<li>( b ): 배치 크기</li>
+</ul>
+</li>
+<li>배치 크기와 시스템 프롬프트 길이가 클수록 RelayAttention의 속도 향상이 극대화됨.</li>
+</ul>
+<hr>
+<h3 id="4-내-의견-논문의-논리와-구현에-대한-평가"><strong>4. 내 의견: 논문의 논리와 구현에 대한 평가</strong></h3>
+<h4 id="41-뛰어난-점"><strong>4.1 뛰어난 점</strong></h4>
+<ol>
+<li><strong>실질적 성능 개선</strong>:
+<ul>
+<li>RelayAttention은 추론 효율성을 실제로 개선하며, 특히 긴 프롬프트를 다루는 클라우드 기반 LLM 서비스에서 매우 유용함.</li>
+</ul>
+</li>
+<li><strong>모듈화된 설계</strong>:
+<ul>
+<li>기존 LLM 시스템에 쉽게 통합할 수 있어 상용화 가능성이 높음.</li>
+</ul>
+</li>
+<li><strong>폭넓은 검증</strong>:
+<ul>
+<li>다양한 GPU 환경과 데이터셋(MMLU, ShareGPTv3)을 통해 성능을 입증.</li>
+</ul>
+</li>
+</ol>
+<h4 id="42-한계-및-보완점"><strong>4.2 한계 및 보완점</strong></h4>
+<ol>
+<li><strong>단일 요청 처리에 한계</strong>:
+<ul>
+<li>RelayAttention은 배치 크기 ( b &gt; 1 )에서만 효과적이며, 단일 요청 처리에는 기여하지 못함.</li>
+<li>이를 개선하기 위해 단일 요청 시에도 메모리 접근 효율성을 높이는 추가 설계가 필요.</li>
+</ul>
+</li>
+<li><strong>긴 사용자 컨텍스트의 경우 성능 저하</strong>:
+<ul>
+<li>사용자 프롬프트와 생성된 응답의 길이가 과도하게 길어질 경우 성능 이점이 줄어듦.</li>
+<li>이 문제를 해결하려면 사용자 프롬프트 길이에 따라 연산을 동적으로 최적화할 필요가 있음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="5-결론"><strong>5. 결론</strong></h3>
+<p>RelayAttention은 긴 시스템 프롬프트를 다루는 LLM 서비스의 추론 효율성을 크게 개선하며, 특히 클라우드 기반 서비스에서 효과적입니다. 메모리 접근의 효율성을 극대화한 설계는 논리적으로도 탄탄하며, 실험 결과로 뒷받침됩니다. 하지만 단일 요청 처리 및 긴 사용자 프롬프트 처리의 한계는 향후 개선의 여지를 남깁니다.</p>
+<h1 id="q--이-논문에서-제시된-방법을-실제로-사용하려면-기존-방법에서-어떠한-구현이-추가적으로-필요하고-이러한-구현에-소모되는-공수-및-연산에-필요한-컴퓨팅-자원의-크기에-대해서-계산해줄-수-있겠니">Q : 이 논문에서 제시된 방법을 실제로 사용하려면 기존 방법에서 어떠한 구현이 추가적으로 필요하고 이러한 구현에 소모되는 공수 및 연산에 필요한 컴퓨팅 자원의 크기에 대해서 계산해줄 수 있겠니?</h1>
+<p>RelayAttention을 실제로 기존 LLM 시스템에 통합하려면 몇 가지 구현 작업이 필요합니다. 여기에서는 <strong>구현 단계</strong>, <strong>필요한 추가 작업</strong>, 그리고 <strong>컴퓨팅 자원의 크기 및 공수</strong>를 분석하겠습니다.</p>
+<hr>
+<h2 id="1-기존-시스템에서-필요한-추가-구현"><strong>1. 기존 시스템에서 필요한 추가 구현</strong></h2>
+<p>RelayAttention은 기존 LLM 시스템의 <code>PagedAttention</code>이나 <code>FlashAttention</code>과 통합 가능합니다. 그러나 추가적인 데이터 구조와 연산 단계가 요구됩니다.</p>
+<h3 id="11-주요-구현-단계"><strong>1.1 주요 구현 단계</strong></h3>
+<h4 id="1단계-별도-시스템-프롬프트-캐시-생성"><strong>1단계: 별도 시스템 프롬프트 캐시 생성</strong></h4>
+<ul>
+<li>기존 방식: 시스템 프롬프트와 사용자 프롬프트가 동일한 캐시에 저장.</li>
+<li>RelayAttention 방식:
+<ul>
+<li>시스템 프롬프트에 대해 별도의 **&ldquo;시스템 KV 캐시&rdquo;**를 생성하고 미리 채워둠.</li>
+<li>이 캐시는 프롬프트 처리 시 한 번만 메모리에 로드되므로 추가 메모리 구조 필요.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2단계-연산-흐름-분리"><strong>2단계: 연산 흐름 분리</strong></h4>
+<ul>
+<li>연산은 크게 3단계로 분리:
+<ol>
+<li><strong>시스템 프롬프트 주의(System Attention)</strong>: 시스템 KV 캐시와 Query를 활용.</li>
+<li><strong>문맥 주의(Context Attention)</strong>: 사용자 프롬프트 및 생성된 응답 기반.</li>
+<li><strong>릴레이 융합(Relay Fusion)</strong>: 두 주의 출력을 결합.</li>
+</ol>
+</li>
+<li>이를 위해, 기존 <code>multi-head attention</code> 구현을 수정하여 두 단계로 나눠 처리하고, 가중 평균 연산을 추가.</li>
+</ul>
+<h4 id="3단계-가중치-계산-및-결합"><strong>3단계: 가중치 계산 및 결합</strong></h4>
+<ul>
+<li>RelayAttention의 릴레이 융합 단계는 시스템과 문맥 주의의 결과를 Softmax 기반의 가중 평균으로 결합.</li>
+<li><strong>추가 연산</strong>:
+<ul>
+<li>( \alpha_{\text{sys}} )와 ( \alpha_{\text{ctx}} )를 계산하기 위한 Log-Sum-Exp 연산 추가.</li>
+<li>이 연산은 메모리 I/O 대신 GPU의 연산 유닛 사용을 증가시킴.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="12-필요-리소스-분석"><strong>1.2 필요 리소스 분석</strong></h3>
+<h4 id="1-메모리-리소스"><strong>1) 메모리 리소스</strong></h4>
+<p>RelayAttention의 시스템 캐시는 기존 캐시에서 분리되어야 하며, 이는 GPU 메모리 사용량 증가를 초래합니다.</p>
+<ul>
+<li><strong>시스템 KV 캐시 메모리 필요량</strong>:
+<ul>
+<li>시스템 프롬프트 길이 (s), 히든 차원 (d), 계층 수 (L), 헤드 수 (H)라 할 때:
+[
+\text{Memory} = 2 \cdot L \cdot H \cdot s \cdot d
+]
+<ul>
+<li>예: L=24, H=16, (s=1024), (d=1024)인 경우:
+[
+\text{Memory} = 2 \cdot 24 \cdot 16 \cdot 1024 \cdot 1024 \approx 768 , \text{MB}
+]</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>기존 <code>PagedAttention</code> 대비 약간의 메모리 오버헤드가 발생.</li>
+</ul>
+<h4 id="2-연산량-증가"><strong>2) 연산량 증가</strong></h4>
+<p>RelayAttention은 추가 연산(릴레이 융합)과 단계적 처리로 연산량이 증가하지만, 병렬화로 오버헤드를 상쇄합니다.</p>
+<ul>
+<li><strong>추가 연산량</strong>:
+<ul>
+<li>릴레이 융합에서 (2 \cdot \text{Batch Size} \cdot H \cdot d)의 Log-Sum-Exp 연산.</li>
+<li>예: 배치 크기 (B=32), (H=16), (d=1024):
+[
+\text{추가 연산량} = 2 \cdot 32 \cdot 16 \cdot 1024 \approx 1 , \text{MFLOP}
+]</li>
+<li>이는 현대 GPU의 연산 능력에서 무시할 수 있는 수준.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-공수"><strong>3) 공수</strong></h4>
+<ul>
+<li>구현 작업은 중간 수준의 난이도로, 다음을 요구:
+<ul>
+<li><strong>Attention 구현 수정</strong>: 약 2-3주.</li>
+<li><strong>메모리 관리 로직 추가</strong>: 1-2주.</li>
+<li><strong>테스트 및 최적화</strong>: 약 1-2주.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="2-구현-공수-및-리소스-요약"><strong>2. 구현 공수 및 리소스 요약</strong></h2>
+<table>
+  <thead>
+      <tr>
+          <th><strong>항목</strong></th>
+          <th><strong>추가 요구사항</strong></th>
+          <th><strong>공수(인력/시간)</strong></th>
+          <th><strong>리소스 증가</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>시스템 프롬프트 캐시</strong></td>
+          <td>시스템 KV 캐시 추가</td>
+          <td>2주</td>
+          <td>메모리 768MB 증가 (L=24, (s=1024))</td>
+      </tr>
+      <tr>
+          <td><strong>멀티헤드 어텐션 수정</strong></td>
+          <td>시스템/문맥 주의 계산 분리 및 융합 구현</td>
+          <td>2-3주</td>
+          <td>연산량: Log-Sum-Exp 연산 추가</td>
+      </tr>
+      <tr>
+          <td><strong>테스트 및 최적화</strong></td>
+          <td>GPU 성능 프로파일링 및 최적화</td>
+          <td>1-2주</td>
+          <td>효율성 개선으로 추가 I/O 감소 상쇄 가능</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="3-relayattention의-추가-구현이-도출하는-효율성의-근거"><strong>3. RelayAttention의 추가 구현이 도출하는 효율성의 근거</strong></h2>
+<p>논문에서 강조한 대로, RelayAttention의 추가 구현은 메모리 I/O 감소가 주요 성능 향상 요인입니다.</p>
+<ol>
+<li><strong>효율성 근거</strong>:
+<ul>
+<li>시스템 프롬프트 KV 캐시를 한 번만 읽고 재활용함으로써 DRAM 접근을 최소화.</li>
+<li>기존 Matrix-Vector 연산을 Matrix-Matrix 연산으로 대체해 병렬 처리 효율 증가.</li>
+</ul>
+</li>
+<li><strong>연산량 증가의 상쇄</strong>:
+<ul>
+<li>추가된 Log-Sum-Exp 연산량은 메모리 접근 감소로 인한 성능 향상으로 상쇄됨.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="4-relayattention의-실현-가능성에-대한-의견"><strong>4. RelayAttention의 실현 가능성에 대한 의견</strong></h2>
+<p>RelayAttention은 구현 복잡도가 중간 정도이며, 클라우드 기반 LLM 서비스에 적합합니다. 특히 배치 크기가 큰 환경에서 효율성이 극대화되므로, 긴 시스템 프롬프트를 자주 사용하는 상용 시스템에 도입 가치가 높습니다. 추가되는 연산과 메모리 요구량은 현대 GPU에서 충분히 처리 가능하므로 실현 가능성이 높습니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="논문의-입력-데이터-추론-과정-및-모델-아키텍처-분석">논문의 입력 데이터, 추론 과정 및 모델 아키텍처 분석</h3>
+<hr>
+<h2 id="1-입력-데이터"><strong>1. 입력 데이터</strong></h2>
+<p>RelayAttention 논문은 긴 시스템 프롬프트와 사용자 프롬프트를 처리하는 LLM의 성능을 개선하기 위한 알고리즘을 제안합니다. 주요 데이터 유형과 입력 구조는 다음과 같습니다:</p>
+<h3 id="11-입력-데이터"><strong>1.1 입력 데이터</strong></h3>
+<ul>
+<li><strong>시스템 프롬프트</strong>:
+<ul>
+<li>시스템에서 사전에 정의된 공통 정보로, 지침, 샘플 예제 또는 도메인별 지식을 포함.</li>
+<li>길이 (s): 보통 512에서 2048 토큰까지.</li>
+</ul>
+</li>
+<li><strong>사용자 프롬프트</strong>:
+<ul>
+<li>사용자 요청으로, 작업을 수행하기 위한 구체적 질문이나 설명.</li>
+<li>길이 (u): 일반적으로 64에서 512 토큰.</li>
+</ul>
+</li>
+<li><strong>생성된 토큰</strong>:
+<ul>
+<li>모델이 이전 단계에서 생성한 응답 토큰.</li>
+<li>길이 (t): 각 단계에서 한 번에 한 토큰씩 생성되며, 최종 응답 길이에 따라 달라짐.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="12-입력-예시"><strong>1.2 입력 예시</strong></h3>
+<h4 id="예시-입력-1">예시 입력:</h4>
+<ol>
+<li><strong>시스템 프롬프트</strong>:
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-0"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-0"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-0">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">시스템 프롬프트:
+</span></span><span class="line"><span class="ln">2</span><span class="cl">[지침: 제품 추천. 사용자는 예산 및 요구 사항을 제공하며, 시스템은 적합한 GPU를 추천합니다.]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-0';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+길이: 512 토큰</li>
+<li><strong>사용자 프롬프트</strong>:
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-1"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-1"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-1">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">사용자 프롬프트:
+</span></span><span class="line"><span class="ln">2</span><span class="cl">[내 예산은 $500입니다. 딥러닝에 적합한 GPU를 추천해 주세요.]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-1';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+길이: 128 토큰</li>
+<li><strong>생성된 토큰</strong>:
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-2"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-2"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-2">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">생성된 토큰:
+</span></span><span class="line"><span class="ln">2</span><span class="cl">[추천: NVIDIA RTX 4060 Ti (16GB)]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-2';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+길이: 64 토큰</li>
+</ol>
+<hr>
+<h2 id="2-추론-과정"><strong>2. 추론 과정</strong></h2>
+<p>RelayAttention은 긴 시스템 프롬프트와 사용자 프롬프트를 효과적으로 처리하기 위해 다음과 같은 3단계로 추론을 수행합니다:</p>
+<h3 id="21-단계별-추론-과정"><strong>2.1 단계별 추론 과정</strong></h3>
+<h4 id="1단계-시스템-주의-system-attention"><strong>1단계: 시스템 주의 (System Attention)</strong></h4>
+<ul>
+<li><strong>역할</strong>: 시스템 프롬프트의 정보를 활용해 모델의 초기 컨텍스트를 설정.</li>
+<li><strong>과정</strong>:
+<ol>
+<li>시스템 프롬프트에서 Query ((Q))를 계산.</li>
+<li>시스템 프롬프트의 키 ((K))와 값 ((V))을 활용해 시스템 주의 결과 ((O_{\text{sys}})) 계산.</li>
+</ol>
+</li>
+<li><strong>수식</strong>:
+[
+O_{\text{sys}} = \text{Attention}(Q, K_{\text{sys}}, V_{\text{sys}})
+]</li>
+</ul>
+<h4 id="2단계-문맥-주의-context-attention"><strong>2단계: 문맥 주의 (Context Attention)</strong></h4>
+<ul>
+<li><strong>역할</strong>: 사용자 프롬프트와 이전 단계에서 생성된 토큰의 정보를 활용해 응답 생성.</li>
+<li><strong>과정</strong>:
+<ol>
+<li>사용자 프롬프트와 생성된 토큰에서 키 ((K_{\text{ctx}}))와 값 ((V_{\text{ctx}})) 계산.</li>
+<li>Query ((Q))를 기반으로 문맥 주의 결과 ((O_{\text{ctx}})) 계산.</li>
+</ol>
+</li>
+<li><strong>수식</strong>:
+[
+O_{\text{ctx}} = \text{Attention}(Q, K_{\text{ctx}}, V_{\text{ctx}})
+]</li>
+</ul>
+<h4 id="3단계-릴레이-융합-relay-fusion"><strong>3단계: 릴레이 융합 (Relay Fusion)</strong></h4>
+<ul>
+<li><strong>역할</strong>: 시스템 주의 결과와 문맥 주의 결과를 가중 평균(Convex Combination)하여 최종 출력 생성.</li>
+<li><strong>과정</strong>:
+<ol>
+<li>시스템 주의와 문맥 주의의 중요도를 각각 계산 ((\alpha_{\text{sys}}), (\alpha_{\text{ctx}})).</li>
+<li>두 결과를 결합하여 최종 출력 ((O_t)) 생성.</li>
+</ol>
+</li>
+<li><strong>수식</strong>:
+[
+O_t = \alpha_{\text{sys}} O_{\text{sys}} + \alpha_{\text{ctx}} O_{\text{ctx}}
+]</li>
+</ul>
+<hr>
+<h2 id="3-모델-아키텍처-및-구성"><strong>3. 모델 아키텍처 및 구성</strong></h2>
+<p>RelayAttention은 Transformer 기반 LLM에 적용됩니다. 기본적인 모델 구성 요소는 다음과 같습니다:</p>
+<h3 id="31-transformer-아키텍처"><strong>3.1 Transformer 아키텍처</strong></h3>
+<ul>
+<li><strong>입력 임베딩</strong>:
+<ul>
+<li>토큰 입력을 고차원 임베딩 ((d = 1024))으로 변환.</li>
+<li>각 입력 토큰에는 위치 임베딩(Position Embedding) 추가.</li>
+</ul>
+</li>
+<li><strong>멀티헤드 어텐션 (Multi-Head Attention)</strong>:
+<ul>
+<li>각 계층(layer)은 여러 주의(attention) 헤드 ((H = 16))로 구성.</li>
+<li>각 헤드는 고유한 Query, Key, Value를 계산.</li>
+</ul>
+</li>
+<li><strong>피드포워드 네트워크 (Feed-Forward Network)</strong>:
+<ul>
+<li>각 계층에서 어텐션 결과를 비선형 활성화(ReLU)와 함께 추가 변환.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="32-relayattention의-구성-변경"><strong>3.2 RelayAttention의 구성 변경</strong></h3>
+<p>RelayAttention의 주요 변경점:</p>
+<ol>
+<li><strong>시스템 KV 캐시 분리</strong>:
+<ul>
+<li>시스템 프롬프트에 대해 별도의 KV 캐시를 유지.</li>
+<li>프롬프트 길이에 비례한 메모리 사용 증가.</li>
+</ul>
+</li>
+<li><strong>릴레이 융합 추가</strong>:
+<ul>
+<li>시스템 주의와 문맥 주의를 결합하기 위한 추가 연산.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="4-연산량-및-메모리-요구량-분석"><strong>4. 연산량 및 메모리 요구량 분석</strong></h2>
+<p>RelayAttention을 기반으로 한 LLM의 연산 및 메모리 요구량은 다음과 같습니다:</p>
+<h3 id="41-연산량"><strong>4.1 연산량</strong></h3>
+<ul>
+<li>
+<p><strong>시스템 주의 연산량</strong>:</p>
+<ul>
+<li>시스템 프롬프트 길이 (s), 배치 크기 (B), 히든 차원 (d), 계층 수 (L), 헤드 수 (H)일 때:
+[
+\text{연산량} = B \cdot H \cdot s \cdot d^2
+]
+예: (B=32), (H=16), (s=1024), (d=1024)일 경우:
+[
+\text{연산량} \approx 536 , \text{GFLOPs}
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>릴레이 융합 추가 연산량</strong>:</p>
+<ul>
+<li>(B \cdot H \cdot d)의 Log-Sum-Exp 연산.</li>
+</ul>
+</li>
+</ul>
+<h3 id="42-메모리-요구량"><strong>4.2 메모리 요구량</strong></h3>
+<ul>
+<li>시스템 KV 캐시는 히든 차원 (d), 계층 수 (L), 헤드 수 (H)에 따라 결정:
+[
+\text{Memory} = 2 \cdot L \cdot H \cdot s \cdot d
+]
+예: (L=24), (H=16), (s=1024), (d=1024):
+[
+\text{Memory} \approx 768 , \text{MB}
+]</li>
+</ul>
+<hr>
+<h2 id="5-결론-1"><strong>5. 결론</strong></h2>
+<p>RelayAttention은 기존 Transformer 기반 LLM에 최소한의 변경만으로 긴 시스템 프롬프트 처리 효율성을 대폭 향상시킵니다. 시스템 주의 및 릴레이 융합 단계는 I/O 병목을 줄이고, GPU 계산 자원을 최대한 활용하도록 설계되었습니다. 그러나 긴 프롬프트와 대규모 배치 환경에서 추가적인 메모리 사용과 연산량 증가는 반드시 고려해야 합니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<h3 id="relayattention-논문의-한계와-이를-극복하기-위한-연구-흐름">RelayAttention 논문의 한계와 이를 극복하기 위한 연구 흐름</h3>
+<hr>
+<h2 id="1-논문의-한계"><strong>1. 논문의 한계</strong></h2>
+<p>RelayAttention이 성능 개선에 있어 혁신적임에도 불구하고, 특정 사용 사례나 조건에서 한계가 존재합니다. 논문에서 언급된 한계와 이를 해결하기 위한 가능성을 아래와 같이 정리할 수 있습니다:</p>
+<h3 id="11-배치-크기-의존성"><strong>1.1 배치 크기 의존성</strong></h3>
+<ul>
+<li><strong>한계</strong>: RelayAttention은 배치 크기 (b &gt; 1)인 경우에서만 효과적입니다. 단일 요청 처리((b = 1))에서는 메모리 접근 이점이 없어 성능 향상이 없습니다.</li>
+<li><strong>원인</strong>:
+<ul>
+<li>RelayAttention은 배치 내 시스템 프롬프트를 한 번만 읽도록 설계되었으므로, 단일 요청의 경우 메모리 I/O 최적화가 의미가 없습니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="12-긴-사용자-컨텍스트-의존성"><strong>1.2 긴 사용자 컨텍스트 의존성</strong></h3>
+<ul>
+<li><strong>한계</strong>: 사용자 프롬프트와 생성된 토큰이 시스템 프롬프트보다 2배 이상 길어질 경우, RelayAttention의 효과가 감소합니다.</li>
+<li><strong>원인</strong>:
+<ul>
+<li>사용자 프롬프트와 응답 처리 시간이 시스템 프롬프트 처리 시간을 압도하기 때문에, 시스템 프롬프트 최적화의 이점이 희석됩니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="13-멀티-애플리케이션-환경-부적합"><strong>1.3 멀티 애플리케이션 환경 부적합</strong></h3>
+<ul>
+<li><strong>한계</strong>: RelayAttention은 단일 시스템 프롬프트를 전제로 동작합니다. 따라서 여러 애플리케이션에서 다양한 시스템 프롬프트를 사용하는 환경에서는 효과적이지 않습니다.</li>
+<li><strong>원인</strong>:
+<ul>
+<li>각 애플리케이션이 다른 시스템 프롬프트를 요구할 경우, 시스템 KV 캐시를 공유할 수 없기 때문입니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="14-메모리-및-연산량-증가"><strong>1.4 메모리 및 연산량 증가</strong></h3>
+<ul>
+<li><strong>한계</strong>: RelayAttention은 추가적인 시스템 KV 캐시와 연산 단계를 요구하므로, GPU 메모리 사용량 및 계산 복잡도가 증가합니다.</li>
+<li><strong>원인</strong>:
+<ul>
+<li>시스템 프롬프트 캐시와 릴레이 융합 단계에서 추가 연산이 발생하기 때문입니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="2-한계를-극복하기-위한-연구-흐름"><strong>2. 한계를 극복하기 위한 연구 흐름</strong></h2>
+<p>RelayAttention의 한계를 해결하거나 보완하기 위해 다양한 연구 흐름이 제안될 수 있습니다. 주요 방향은 아래와 같습니다:</p>
+<hr>
+<h3 id="21-단일-요청-처리-최적화"><strong>2.1 단일 요청 처리 최적화</strong></h3>
+<h4 id="연구-방향-1-캐시-공유를-활용한-단일-요청-최적화"><strong>연구 방향 1: 캐시 공유를 활용한 단일 요청 최적화</strong></h4>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>단일 요청에서도 이전 요청의 시스템 프롬프트 KV 캐시를 재활용하여 I/O 비용을 줄임.</li>
+</ul>
+</li>
+<li><strong>방법론</strong>:
+<ul>
+<li>PromptCache와 유사한 기법을 사용해 동일 시스템 프롬프트를 사용하는 요청 간 KV 캐시를 공유.</li>
+<li>과거 응답 데이터를 기반으로 시스템 프롬프트의 중요 키-값만 선택적으로 유지.</li>
+</ul>
+</li>
+<li><strong>기대 효과</strong>:
+<ul>
+<li>단일 요청에서도 메모리 접근 비용이 감소하며 성능 개선.</li>
+</ul>
+</li>
+</ul>
+<h4 id="연구-방향-2-단일-요청을-위한-동적-압축-기법"><strong>연구 방향 2: 단일 요청을 위한 동적 압축 기법</strong></h4>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>시스템 프롬프트의 키-값 쌍을 동적으로 압축하여 단일 요청 처리 시에도 메모리 사용을 줄임.</li>
+</ul>
+</li>
+<li><strong>방법론</strong>:
+<ul>
+<li>중요하지 않은 KV 데이터를 제거하거나 저차원 표현으로 압축(예: SVD 기반).</li>
+</ul>
+</li>
+<li><strong>기대 효과</strong>:
+<ul>
+<li>메모리 사용량을 줄이며 단일 요청 처리 성능을 보완.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="22-긴-사용자-컨텍스트-처리-최적화"><strong>2.2 긴 사용자 컨텍스트 처리 최적화</strong></h3>
+<h4 id="연구-방향-3-컨텍스트-적응형-연산"><strong>연구 방향 3: 컨텍스트 적응형 연산</strong></h4>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>사용자 프롬프트와 생성된 토큰이 긴 경우, 컨텍스트를 동적으로 샘플링하거나 중요 토큰만 사용.</li>
+</ul>
+</li>
+<li><strong>방법론</strong>:
+<ul>
+<li>Long-context 모델에서 사용하는 Sparse Attention 또는 Chunk-wise Attention 기법을 활용.</li>
+<li>사용자 프롬프트에서 중요 토큰만 선택해 KV 캐시 크기를 줄임.</li>
+</ul>
+</li>
+<li><strong>기대 효과</strong>:
+<ul>
+<li>긴 컨텍스트 처리로 인해 발생하는 연산량 증가를 억제.</li>
+</ul>
+</li>
+</ul>
+<h4 id="연구-방향-4-컨텍스트-축소를-위한-메타-데이터-활용"><strong>연구 방향 4: 컨텍스트 축소를 위한 메타 데이터 활용</strong></h4>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>이전 응답의 맥락을 요약해 사용자 프롬프트의 크기를 줄임.</li>
+</ul>
+</li>
+<li><strong>방법론</strong>:
+<ul>
+<li>프롬프트 요약(summarization) 모델을 통해 컨텍스트를 축소.</li>
+<li>사용자 프롬프트를 의미 기반의 짧은 임베딩으로 변환.</li>
+</ul>
+</li>
+<li><strong>기대 효과</strong>:
+<ul>
+<li>긴 사용자 프롬프트를 요약하여 효율성 개선.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="23-멀티-애플리케이션-지원"><strong>2.3 멀티 애플리케이션 지원</strong></h3>
+<h4 id="연구-방향-5-멀티-시스템-프롬프트-캐싱"><strong>연구 방향 5: 멀티 시스템 프롬프트 캐싱</strong></h4>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>여러 애플리케이션에서 사용되는 시스템 프롬프트를 별도로 관리하고, KV 캐시를 애플리케이션별로 분리.</li>
+</ul>
+</li>
+<li><strong>방법론</strong>:
+<ul>
+<li>요청마다 애플리케이션 ID를 태깅하고, 동일한 ID의 요청을 배치로 처리.</li>
+<li>캐시된 시스템 KV를 애플리케이션 ID 기반으로 매핑.</li>
+</ul>
+</li>
+<li><strong>기대 효과</strong>:
+<ul>
+<li>멀티 애플리케이션 환경에서도 시스템 프롬프트 캐시를 효율적으로 관리.</li>
+</ul>
+</li>
+</ul>
+<h4 id="연구-방향-6-프롬프트-공유-최적화"><strong>연구 방향 6: 프롬프트 공유 최적화</strong></h4>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>여러 애플리케이션의 프롬프트에서 중복된 내용을 클러스터링하여 공통 캐시로 사용.</li>
+</ul>
+</li>
+<li><strong>방법론</strong>:
+<ul>
+<li>시스템 프롬프트를 임베딩 공간에서 클러스터링하여 공통 벡터를 생성.</li>
+<li>공통 KV 캐시를 배치로 활용.</li>
+</ul>
+</li>
+<li><strong>기대 효과</strong>:
+<ul>
+<li>프롬프트 중복이 많은 환경에서 메모리 사용량 감소.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="24-메모리-및-연산량-최적화"><strong>2.4 메모리 및 연산량 최적화</strong></h3>
+<h4 id="연구-방향-7-hierarchical-attention-기법"><strong>연구 방향 7: Hierarchical Attention 기법</strong></h4>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>전체 프롬프트를 계층 구조로 분리하여 중요 토큰만 상세히 처리.</li>
+</ul>
+</li>
+<li><strong>방법론</strong>:
+<ul>
+<li>시스템 프롬프트와 사용자 프롬프트를 두 단계로 분리하고, 중요 토큰만 세부적으로 연산.</li>
+</ul>
+</li>
+<li><strong>기대 효과</strong>:
+<ul>
+<li>전체 연산량과 메모리 사용량을 줄임.</li>
+</ul>
+</li>
+</ul>
+<h4 id="연구-방향-8-저차원화-및-양자화"><strong>연구 방향 8: 저차원화 및 양자화</strong></h4>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>시스템 프롬프트의 키-값 쌍을 저차원 표현으로 양자화.</li>
+</ul>
+</li>
+<li><strong>방법론</strong>:
+<ul>
+<li>LoRA와 같은 저차원 표현 학습 기법을 사용해 시스템 프롬프트의 연산 크기 축소.</li>
+<li>KV 캐시를 8비트 또는 4비트 양자화로 저장.</li>
+</ul>
+</li>
+<li><strong>기대 효과</strong>:
+<ul>
+<li>메모리 사용량을 크게 줄이면서 성능 유지.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="3-결론"><strong>3. 결론</strong></h2>
+<p>RelayAttention의 한계를 극복하려면 사용 사례별 최적화와 메모리/연산 효율성을 강화하는 추가 연구가 필요합니다. 위의 제안된 연구 흐름은 한계를 보완하면서도 다양한 환경에서 적용 가능성을 높이는 방법입니다. 특히, 단일 요청 처리 최적화와 긴 컨텍스트 처리 효율화는 RelayAttention의 응용 범위를 더욱 넓히는 중요한 방향이 될 것입니다.</p>
+<p>RelayAttention 논문을 깊이 이해하기 위해 아래와 같은 질문들을 고려할 수 있습니다. 이 질문들은 논문에서 다룬 주요 내용과 한계를 바탕으로 더 깊이 있는 탐구를 촉진합니다.</p>
+<hr>
+<h1 id="q--문제-정의와-필요성에-관한-질문">Q : 문제 정의와 필요성에 관한 질문**</h1>
+<ol>
+<li>긴 시스템 프롬프트에서 발생하는 주요 병목 현상은 기존 LLM 아키텍처에서 정확히 어떤 연산 단계에서 나타나는가? 이를 줄이기 위한 기존 방법론(PagedAttention, FlashAttention)과 RelayAttention의 본질적인 차이점은 무엇인가?</li>
+<li>논문에서 주장하는 시스템 프롬프트의 I/O 병목이 모든 LLM 아키텍처에 동일하게 적용되는가, 아니면 특정 모델이나 GPU 설정에 더 영향을 받는가?</li>
+<li>RelayAttention의 사용이 긴 프롬프트를 다루지 않는 애플리케이션에서는 어떤 한계를 가질 수 있는가?</li>
+</ol>
+<h3 id="q1-문제-정의와-필요성에-관한-질문"><strong>Q1. 문제 정의와 필요성에 관한 질문</strong></h3>
+<hr>
+<h4 id="1-긴-시스템-프롬프트에서-발생하는-주요-병목-현상은-기존-llm-아키텍처에서-정확히-어떤-연산-단계에서-나타나는가-이를-줄이기-위한-기존-방법론pagedattention-flashattention과-relayattention의-본질적인-차이점은-무엇인가"><strong>1. 긴 시스템 프롬프트에서 발생하는 주요 병목 현상은 기존 LLM 아키텍처에서 정확히 어떤 연산 단계에서 나타나는가? 이를 줄이기 위한 기존 방법론(PagedAttention, FlashAttention)과 RelayAttention의 본질적인 차이점은 무엇인가?</strong></h4>
+<h5 id="11-병목-현상이-발생하는-단계"><strong>1.1 병목 현상이 발생하는 단계</strong></h5>
+<p>긴 시스템 프롬프트에서 병목 현상은 <strong>Causal Attention 계산 단계</strong>에서 발생합니다. 구체적으로:</p>
+<ol>
+<li><strong>키-값(KV) 캐시의 반복적 읽기</strong>:
+<ul>
+<li>기존 LLM은 배치 내 각 요청이 동일한 시스템 프롬프트를 사용하더라도, <strong>시스템 프롬프트의 키-값(KV) 캐시</strong>를 각 요청마다 반복적으로 메모리(DRAM)에서 읽어 옵니다.</li>
+<li>이는 GPU의 <strong>메모리 대역폭 제한</strong>으로 인해 병목을 초래합니다.</li>
+</ul>
+</li>
+<li><strong>Matrix-Vector 연산의 비효율성</strong>:
+<ul>
+<li>긴 시스템 프롬프트에서 Causal Attention은 수많은 Matrix-Vector 곱셈을 수행해야 하며, 이는 I/O 바운드(Memory-bound) 연산으로 인해 성능이 저하됩니다.</li>
+<li>GPU의 계산 유닛(SRAM)이 아니라 느린 DRAM 접근이 주요 병목입니다.</li>
+</ul>
+</li>
+</ol>
+<h5 id="12-기존-방법론과-relayattention의-차이점"><strong>1.2 기존 방법론과 RelayAttention의 차이점</strong></h5>
+<table>
+  <thead>
+      <tr>
+          <th><strong>방법론</strong></th>
+          <th><strong>주요 아이디어</strong></th>
+          <th><strong>한계</strong></th>
+          <th><strong>RelayAttention의 개선</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>PagedAttention</strong></td>
+          <td>동일한 프롬프트의 메모리 중복 제거</td>
+          <td>KV 캐시의 메모리 크기를 줄였으나, DRAM에서 반복적 읽기 문제 해결 X</td>
+          <td>DRAM에서 시스템 프롬프트를 배치당 1회만 읽음.</td>
+      </tr>
+      <tr>
+          <td><strong>FlashAttention</strong></td>
+          <td>Attention 연산 중 메모리 접근 최소화</td>
+          <td>Attention Probability Matrix의 읽기/쓰기 최적화가 주요 목표</td>
+          <td>FlashAttention과 결합 가능, RelayAttention은 KV 캐시에 초점.</td>
+      </tr>
+      <tr>
+          <td><strong>RelayAttention</strong></td>
+          <td>KV 캐시 메모리 접근 최적화</td>
+          <td>단일 요청((b=1)) 환경에서 성능 향상 없음</td>
+          <td>긴 시스템 프롬프트의 I/O 비용을 극적으로 줄임.</td>
+      </tr>
+  </tbody>
+</table>
+<p>RelayAttention의 핵심은 <strong>시스템 프롬프트와 문맥 데이터를 분리하여 처리</strong>하며, 시스템 프롬프트의 KV 캐시를 <strong>한 번만 읽는 방식</strong>으로 Matrix-Vector 곱셈을 Matrix-Matrix 곱셈으로 전환해 I/O 병목을 해소한다는 점입니다.</p>
+<hr>
+<h4 id="2-논문에서-주장하는-시스템-프롬프트의-io-병목이-모든-llm-아키텍처에-동일하게-적용되는가-아니면-특정-모델이나-gpu-설정에-더-영향을-받는가"><strong>2. 논문에서 주장하는 시스템 프롬프트의 I/O 병목이 모든 LLM 아키텍처에 동일하게 적용되는가, 아니면 특정 모델이나 GPU 설정에 더 영향을 받는가?</strong></h4>
+<h5 id="21-모든-llm-아키텍처에-동일하게-적용되는-측면"><strong>2.1 모든 LLM 아키텍처에 동일하게 적용되는 측면</strong></h5>
+<ul>
+<li>대부분의 Transformer 기반 LLM은 동일한 Causal Attention 메커니즘을 사용하므로, <strong>긴 시스템 프롬프트</strong>로 인한 메모리 접근 병목은 공통적인 문제입니다.</li>
+<li>특히, **시스템 프롬프트의 KV 캐시 길이 (s)**가 길어질수록 I/O 병목이 발생하며, 이는 모델 크기 및 배치 크기와 무관하게 공통적으로 나타납니다.</li>
+</ul>
+<h5 id="22-모델-및-gpu-설정에-따른-차이"><strong>2.2 모델 및 GPU 설정에 따른 차이</strong></h5>
+<ol>
+<li>
+<p><strong>GPU 메모리 대역폭</strong>:</p>
+<ul>
+<li>메모리 대역폭이 낮은 GPU(A40, RTX 40 시리즈 등)에서는 DRAM 접근이 더 큰 병목을 초래.</li>
+<li>메모리 대역폭이 높은 A100, H100과 같은 데이터센터 GPU에서는 상대적으로 I/O 병목이 덜 심각하지만, 여전히 병목으로 작용.</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 크기</strong>:</p>
+<ul>
+<li>모델 크기가 클수록(예: Llama-30B) 한 번의 Attention 연산당 필요 메모리가 증가하여 I/O 병목이 더 심화.</li>
+<li>작은 모델에서는 I/O 병목 비율이 감소하지만, 긴 프롬프트의 경우 여전히 영향을 받음.</li>
+</ul>
+</li>
+<li>
+<p><strong>배치 크기</strong>:</p>
+<ul>
+<li>배치 크기 (b &gt; 1)에서만 RelayAttention이 병목을 줄이는 효과가 있으므로, 단일 요청((b=1)) 환경에서는 성능 개선이 제한적.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="3-relayattention의-사용이-긴-프롬프트를-다루지-않는-애플리케이션에서는-어떤-한계를-가질-수-있는가"><strong>3. RelayAttention의 사용이 긴 프롬프트를 다루지 않는 애플리케이션에서는 어떤 한계를 가질 수 있는가?</strong></h4>
+<h5 id="31-한계-요약"><strong>3.1 한계 요약</strong></h5>
+<ol>
+<li>
+<p><strong>긴 프롬프트가 없는 환경에서 효율성 감소</strong>:</p>
+<ul>
+<li>RelayAttention은 긴 시스템 프롬프트 처리에 초점이 맞춰져 있으므로, 시스템 프롬프트가 짧거나 배치가 작으면 추가적인 연산 오버헤드만 발생.</li>
+<li>예: 사용자 입력만 처리하는 대화형 모델(짧은 사용자 프롬프트 및 응답)에서는 효과적이지 않음.</li>
+</ul>
+</li>
+<li>
+<p><strong>단일 요청 처리 환경에서 비효율적</strong>:</p>
+<ul>
+<li>단일 요청((b = 1))에서는 DRAM에서 시스템 프롬프트를 반복적으로 읽을 필요가 없으므로 RelayAttention의 I/O 최적화가 기여하지 않음.</li>
+</ul>
+</li>
+<li>
+<p><strong>다중 애플리케이션 환경 부적합</strong>:</p>
+<ul>
+<li>여러 애플리케이션이 각기 다른 시스템 프롬프트를 사용할 경우, KV 캐시를 공유하지 못하므로 효율성이 저하됨.</li>
+</ul>
+</li>
+</ol>
+<h5 id="32-해결-방향"><strong>3.2 해결 방향</strong></h5>
+<ul>
+<li>짧은 프롬프트에서도 효과적으로 동작하도록 KV 캐시 압축 또는 선택적 읽기 기법 도입.</li>
+<li>단일 요청 환경에서는 PromptCache나 FlashAttention과의 결합을 통해 효과 극대화.</li>
+<li>다중 애플리케이션 환경에서는 시스템 프롬프트를 클러스터링하여 공통 KV 캐시를 생성하는 방식 고려.</li>
+</ul>
+<h1 id="q-알고리즘-설계에-관한-질문">Q: 알고리즘 설계에 관한 질문**</h1>
+<ol>
+<li>RelayAttention에서 시스템 주의(System Attention)와 문맥 주의(Context Attention)를 분리 처리한 방식이 기존의 일괄 어텐션 처리(All-to-All Attention)와 비교하여 계산 효율성 및 메모리 사용량에 어떤 이점을 제공하는가?</li>
+<li>릴레이 융합(Relay Fusion) 단계에서 가중 평균(Convex Combination) 계산의 정확도가 결과 품질에 미치는 영향은 무엇인가?</li>
+<li>RelayAttention의 수학적 재구성(Rescaling Approach)이 성능에 미치는 영향을 실험적으로 검증할 추가 방법은 무엇인가?</li>
+</ol>
+<h1 id="a">A:</h1>
+<h3 id="q-알고리즘-설계에-관한-질문-1"><strong>Q: 알고리즘 설계에 관한 질문</strong></h3>
+<hr>
+<h3 id="1-relayattention에서-시스템-주의system-attention와-문맥-주의context-attention를-분리-처리한-방식이-기존의-일괄-어텐션-처리all-to-all-attention와-비교하여-계산-효율성-및-메모리-사용량에-어떤-이점을-제공하는가"><strong>1. RelayAttention에서 시스템 주의(System Attention)와 문맥 주의(Context Attention)를 분리 처리한 방식이 기존의 일괄 어텐션 처리(All-to-All Attention)와 비교하여 계산 효율성 및 메모리 사용량에 어떤 이점을 제공하는가?</strong></h3>
+<h4 id="11-all-to-all-attention의-한계"><strong>1.1 All-to-All Attention의 한계</strong></h4>
+<ol>
+<li>
+<p><strong>계산 효율성 부족</strong>:</p>
+<ul>
+<li>모든 입력 토큰에 대해 Query-Key-Value (QKV) 연산을 수행하며, 시스템 프롬프트와 사용자 프롬프트를 동일하게 처리.</li>
+<li>긴 시스템 프롬프트가 포함된 경우, 각 요청마다 반복적으로 시스템 KV를 메모리에서 읽음.</li>
+<li>연산량 복잡도: ( O(s + u + t)^2 ), (s): 시스템 프롬프트, (u): 사용자 프롬프트, (t): 생성된 토큰.</li>
+</ul>
+</li>
+<li>
+<p><strong>메모리 사용량 증가</strong>:</p>
+<ul>
+<li>모든 KV 데이터를 DRAM에서 SRAM으로 반복적으로 복사하며, 시스템 프롬프트와 사용자 프롬프트의 길이에 따라 메모리 병목이 발생.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="12-relayattention의-분리-처리의-장점"><strong>1.2 RelayAttention의 분리 처리의 장점</strong></h4>
+<p>RelayAttention은 시스템 프롬프트와 사용자 프롬프트를 별도로 처리함으로써 다음과 같은 이점을 제공합니다.</p>
+<ol>
+<li>
+<p><strong>계산 효율성</strong>:</p>
+<ul>
+<li><strong>시스템 프롬프트 KV 캐시를 한 번만 메모리에서 읽음</strong>.</li>
+<li>시스템 주의(System Attention)는 Matrix-Vector 연산을 Matrix-Matrix 연산으로 변환하여 병렬성을 극대화.</li>
+<li>문맥 주의(Context Attention)는 사용자 프롬프트와 생성된 토큰에 대해서만 수행하므로, 불필요한 반복 연산 제거.</li>
+<li>연산량 복잡도:
+[
+O(s \cdot t) + O((u + t)^2)
+]
+이는 All-to-All Attention 대비 (s)의 길이에 비례해 연산량을 크게 줄임.</li>
+</ul>
+</li>
+<li>
+<p><strong>메모리 사용량</strong>:</p>
+<ul>
+<li>시스템 KV는 배치당 한 번만 읽어, DRAM 접근량을 줄임.</li>
+<li>배치 크기 (b)와 시스템 프롬프트 길이 (s)에 비례한 메모리 사용량 감소.</li>
+<li>메모리 효율이 증가하므로 더 큰 배치를 처리할 수 있음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-릴레이-융합relay-fusion-단계에서-가중-평균convex-combination-계산의-정확도가-결과-품질에-미치는-영향은-무엇인가"><strong>2. 릴레이 융합(Relay Fusion) 단계에서 가중 평균(Convex Combination) 계산의 정확도가 결과 품질에 미치는 영향은 무엇인가?</strong></h3>
+<h4 id="21-가중-평균-계산의-역할"><strong>2.1 가중 평균 계산의 역할</strong></h4>
+<ul>
+<li>릴레이 융합 단계는 시스템 주의 출력((O_{\text{sys}}))과 문맥 주의 출력((O_{\text{ctx}}))을 결합하는 단계로, 두 결과의 중요도를 반영해 최종 출력((O_t))을 생성:
+[
+O_t = \alpha_{\text{sys}} \cdot O_{\text{sys}} + \alpha_{\text{ctx}} \cdot O_{\text{ctx}}
+]
+<ul>
+<li>(\alpha_{\text{sys}}), (\alpha_{\text{ctx}}): 시스템/문맥 주의 가중치로 Softmax를 기반으로 계산.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="22-정확도가-결과-품질에-미치는-영향"><strong>2.2 정확도가 결과 품질에 미치는 영향</strong></h4>
+<ol>
+<li>
+<p><strong>부정확한 가중치 계산의 위험</strong>:</p>
+<ul>
+<li>시스템 프롬프트((O_{\text{sys}})) 또는 문맥 주의((O_{\text{ctx}})) 중요도를 잘못 반영하면, 응답 품질이 저하될 수 있음.</li>
+<li>예: 시스템 프롬프트가 매우 긴 경우, 문맥 주의 정보가 과소 반영되어 응답이 비맥락적으로 생성될 수 있음.</li>
+</ul>
+</li>
+<li>
+<p><strong>Log-Sum-Exp 기반 안정성</strong>:</p>
+<ul>
+<li>논문에서 사용된 Log-Sum-Exp 계산은 Softmax의 수치적 안정성을 보장하여, 대규모 시스템 프롬프트에서도 정확한 가중치 계산 가능.</li>
+<li>이로 인해 결과 품질이 안정적으로 유지됨.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="23-품질-검증-시-고려할-사항"><strong>2.3 품질 검증 시 고려할 사항</strong></h4>
+<ul>
+<li>
+<p><strong>시스템 프롬프트 길이 변화</strong>:</p>
+<ul>
+<li>시스템 프롬프트가 매우 긴 경우, (\alpha_{\text{sys}})가 지나치게 커져 문맥 주의가 희석될 가능성.</li>
+<li>이를 방지하기 위해 시스템 프롬프트와 문맥 주의의 상호작용을 분석하는 추가 실험 필요.</li>
+</ul>
+</li>
+<li>
+<p><strong>문맥 복잡성 변화</strong>:</p>
+<ul>
+<li>문맥 주의의 중요도가 높은 질문 응답 작업에서, 릴레이 융합이 문맥 정보를 충분히 반영하는지 평가 필요.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-relayattention의-수학적-재구성rescaling-approach이-성능에-미치는-영향을-실험적으로-검증할-추가-방법은-무엇인가"><strong>3. RelayAttention의 수학적 재구성(Rescaling Approach)이 성능에 미치는 영향을 실험적으로 검증할 추가 방법은 무엇인가?</strong></h3>
+<h4 id="31-수학적-재구성의-핵심"><strong>3.1 수학적 재구성의 핵심</strong></h4>
+<ul>
+<li>RelayAttention은 Causal Attention을 재구성하여 시스템 프롬프트와 문맥 데이터를 독립적으로 처리함.</li>
+<li>주요 속성:
+<ul>
+<li>시스템 KV를 단일 읽기로 처리.</li>
+<li>Log-Sum-Exp 기반 가중 평균 계산으로 수치적 안정성을 유지.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="32-추가-검증-방안"><strong>3.2 추가 검증 방안</strong></h4>
+<ol>
+<li>
+<p><strong>I/O 효율성 실험</strong>:</p>
+<ul>
+<li>DRAM-메모리 접근량을 정확히 측정하여, RelayAttention의 I/O 감소가 실제 하드웨어에서 얼마나 성능 개선을 가져오는지 검증.</li>
+<li>배치 크기 및 시스템 프롬프트 길이에 따른 성능 변화 분석.</li>
+</ul>
+</li>
+<li>
+<p><strong>다양한 작업 도메인 테스트</strong>:</p>
+<ul>
+<li>RelayAttention이 긴 시스템 프롬프트를 사용하는 도메인(예: 법률, 의료)과 짧은 프롬프트를 사용하는 도메인(예: 대화형 응답)에서 성능 차이를 평가.</li>
+<li>결과 품질(GPT 평가) 및 처리 속도 비교.</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 크기 변화 실험</strong>:</p>
+<ul>
+<li>Llama-7B, 30B, 70B 모델에서 RelayAttention의 성능 이점을 분석.</li>
+<li>작은 모델에서 계산 오버헤드가 결과 품질에 미치는 영향 파악.</li>
+</ul>
+</li>
+<li>
+<p><strong>수치적 안정성 평가</strong>:</p>
+<ul>
+<li>매우 긴 시스템 프롬프트((s &gt; 2048))에서 Log-Sum-Exp 계산의 정확성과 수치적 안정성을 검증.</li>
+<li>릴레이 융합의 정확도가 품질 저하 없이 유지되는지 실험.</li>
+</ul>
+</li>
+<li>
+<p><strong>시뮬레이션 기반 검증</strong>:</p>
+<ul>
+<li>시스템 KV를 다양한 길이와 중요도 비율로 시뮬레이션하여, 릴레이 융합 단계가 다양한 시나리오에서 어떻게 동작하는지 분석.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-2"><strong>결론</strong></h3>
+<p>RelayAttention은 기존 All-to-All Attention 방식 대비 계산 효율성과 메모리 사용량을 크게 개선하며, 시스템 주의와 문맥 주의의 분리를 통해 I/O 병목 문제를 해소했습니다. 릴레이 융합 단계의 가중 평균 계산은 결과 품질에 직접적인 영향을 미치므로, 수치적 안정성과 컨텍스트 반영 정확성을 보장하는 추가 실험이 필요합니다. 이를 통해 다양한 시나리오와 모델 크기에서 RelayAttention의 유효성을 검증할 수 있습니다.</p>
+<h1 id="q--구현-및-효율성에-관한-질문">Q : 구현 및 효율성에 관한 질문**</h1>
+<ol>
+<li>시스템 프롬프트의 길이가 매우 긴 상황(예: 2048 토큰 이상)에서 RelayAttention이 얼마나 안정적으로 동작하는가? 메모리 사용량 증가로 인해 생길 수 있는 한계는 무엇인가?</li>
+<li>RelayAttention의 최적화를 위해 GPU 메모리와 연산 유닛을 어떻게 활용하며, 특정 GPU 아키텍처에서의 최적화 전략은 무엇인가?</li>
+<li>단일 요청 처리에서는 RelayAttention이 성능 향상을 제공하지 못한다고 논문에서 언급했는데, 단일 요청 환경에서의 성능 향상을 위해 추가적으로 고려할 수 있는 알고리즘적 개선 방안은 무엇인가?</li>
+</ol>
+<h3 id="q-구현-및-효율성에-관한-질문"><strong>Q: 구현 및 효율성에 관한 질문</strong></h3>
+<hr>
+<h3 id="1-시스템-프롬프트의-길이가-매우-긴-상황예-2048-토큰-이상에서-relayattention이-얼마나-안정적으로-동작하는가-메모리-사용량-증가로-인해-생길-수-있는-한계는-무엇인가"><strong>1. 시스템 프롬프트의 길이가 매우 긴 상황(예: 2048 토큰 이상)에서 RelayAttention이 얼마나 안정적으로 동작하는가? 메모리 사용량 증가로 인해 생길 수 있는 한계는 무엇인가?</strong></h3>
+<h4 id="11-안정성"><strong>1.1 안정성</strong></h4>
+<p>RelayAttention은 긴 시스템 프롬프트에서도 안정적으로 동작하도록 설계되었습니다.</p>
+<ul>
+<li><strong>시스템 KV 캐시 관리</strong>:
+<ul>
+<li>시스템 프롬프트의 키-값(KV) 상태를 한 번만 메모리에서 읽음으로써 DRAM 접근 병목을 줄임.</li>
+<li>긴 프롬프트에서도 계산 정확도가 유지되도록 Log-Sum-Exp 기반의 수학적 안정성을 제공.</li>
+</ul>
+</li>
+<li><strong>배치 크기의 효과</strong>:
+<ul>
+<li>배치 크기 (b &gt; 1)일 때, 시스템 프롬프트 길이에 따라 병렬 처리 효율이 높아짐.</li>
+</ul>
+</li>
+</ul>
+<h4 id="12-메모리-사용량-증가"><strong>1.2 메모리 사용량 증가</strong></h4>
+<p>시스템 프롬프트 길이 (s = 2048)일 때 메모리 사용량은 다음과 같이 증가합니다:</p>
+<ul>
+<li>
+<p><strong>KV 캐시 메모리 요구량</strong>:</p>
+<ul>
+<li>(L): 계층 수, (H): 헤드 수, (d): 히든 차원일 때:
+[
+\text{Memory (MB)} = 2 \cdot L \cdot H \cdot s \cdot d \cdot \text{Data Type Size (Bytes)}
+]
+예: (L=24), (H=16), (d=1024), FP16(2 Bytes/element):
+[
+\text{Memory} = 2 \cdot 24 \cdot 16 \cdot 2048 \cdot 1024 \cdot 2 = 3 , \text{GB}
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>문제점</strong>:</p>
+<ul>
+<li>(s)와 (L)이 증가하면 메모리 사용량도 선형적으로 증가.</li>
+<li>고해상도 GPU(A100, H100)에서는 메모리가 충분하지만, 메모리 대역폭이 낮거나 용량이 제한적인 GPU에서는 병목 발생 가능.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="13-한계-및-대응-방안"><strong>1.3 한계 및 대응 방안</strong></h4>
+<ol>
+<li>
+<p><strong>한계</strong>:</p>
+<ul>
+<li>긴 시스템 프롬프트는 GPU 메모리를 빠르게 소모하여 배치 크기를 제한.</li>
+<li>배치 크기가 줄어들면 RelayAttention의 효율성이 감소.</li>
+</ul>
+</li>
+<li>
+<p><strong>대응 방안</strong>:</p>
+<ul>
+<li><strong>압축 기반 KV 캐시</strong>:
+<ul>
+<li>시스템 프롬프트의 키-값 상태를 압축하여 메모리 요구량 줄이기 (예: SVD, 양자화 적용).</li>
+</ul>
+</li>
+<li><strong>헤드별 동적 분리</strong>:
+<ul>
+<li>헤드 간 상관성이 높은 경우 일부 헤드만 KV 캐시에 저장해 메모리 사용량 최적화.</li>
+</ul>
+</li>
+<li><strong>프롬프트 요약 기법</strong>:
+<ul>
+<li>긴 시스템 프롬프트를 요약해 의미는 유지하면서 KV 캐시 크기를 줄임.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-relayattention의-최적화를-위해-gpu-메모리와-연산-유닛을-어떻게-활용하며-특정-gpu-아키텍처에서의-최적화-전략은-무엇인가"><strong>2. RelayAttention의 최적화를 위해 GPU 메모리와 연산 유닛을 어떻게 활용하며, 특정 GPU 아키텍처에서의 최적화 전략은 무엇인가?</strong></h3>
+<h4 id="21-gpu-메모리-활용"><strong>2.1 GPU 메모리 활용</strong></h4>
+<p>RelayAttention은 시스템 프롬프트 KV 캐시를 DRAM에서 단일 읽기로 처리해 메모리 I/O 효율성을 극대화합니다.</p>
+<ul>
+<li><strong>최적화 전략</strong>:
+<ul>
+<li>KV 캐시 데이터를 배치 크기만큼 병렬 처리하여 SRAM의 활용도를 높임.</li>
+<li>GPU의 Shared Memory(SRAM)를 활용해 DRAM 접근 빈도를 최소화.</li>
+<li>Matrix-Matrix 곱셈으로 전환하여 병렬 처리율 증가.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="22-특정-gpu-아키텍처-최적화"><strong>2.2 특정 GPU 아키텍처 최적화</strong></h4>
+<ol>
+<li>
+<p><strong>NVIDIA A100, H100 (데이터센터 GPU)</strong>:</p>
+<ul>
+<li>높은 메모리 대역폭(1.5TB/s 이상)과 연산 능력을 활용:
+<ul>
+<li>Tensor Core 연산을 통해 KV 캐시와 Query 간 연산 최적화.</li>
+<li>RelayAttention을 FlashAttention과 결합해 DRAM 접근과 연산 오버헤드를 동시에 줄임.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>NVIDIA RTX 시리즈 (소비자 GPU)</strong>:</p>
+<ul>
+<li>메모리 대역폭이 제한적이므로, 시스템 프롬프트 길이를 줄이는 압축 기법이 유효.</li>
+<li>Shared Memory 크기가 작으므로 Matrix-Matrix 곱셈 블록 크기를 조정해 메모리 활용도 증가.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="23-최적화를-위한-추가-고려-사항"><strong>2.3 최적화를 위한 추가 고려 사항</strong></h4>
+<ul>
+<li><strong>다중 스트림 처리</strong>:
+<ul>
+<li>RelayAttention은 긴 시스템 프롬프트와 사용자 프롬프트를 분리 처리하므로, 이를 비동기적으로 실행해 처리 효율성 개선 가능.</li>
+</ul>
+</li>
+<li><strong>Sparse Attention 도입</strong>:
+<ul>
+<li>긴 프롬프트에서 중요하지 않은 키-값 쌍을 제거하여 연산량 감소.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-단일-요청-처리에서는-relayattention이-성능-향상을-제공하지-못한다고-논문에서-언급했는데-단일-요청-환경에서의-성능-향상을-위해-추가적으로-고려할-수-있는-알고리즘적-개선-방안은-무엇인가"><strong>3. 단일 요청 처리에서는 RelayAttention이 성능 향상을 제공하지 못한다고 논문에서 언급했는데, 단일 요청 환경에서의 성능 향상을 위해 추가적으로 고려할 수 있는 알고리즘적 개선 방안은 무엇인가?</strong></h3>
+<h4 id="31-단일-요청-환경에서-relayattention의-한계"><strong>3.1 단일 요청 환경에서 RelayAttention의 한계</strong></h4>
+<ul>
+<li><strong>문제</strong>:
+<ul>
+<li>단일 요청((b = 1))에서는 시스템 KV 캐시를 배치 전체에서 공유하지 않으므로, 메모리 접근 최적화의 이점이 사라짐.</li>
+</ul>
+</li>
+<li><strong>결과</strong>:
+<ul>
+<li>단일 요청의 경우, RelayAttention의 연산량이 기존 방식과 동일하거나 약간 증가.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="32-개선-방안"><strong>3.2 개선 방안</strong></h4>
+<ol>
+<li>
+<p><strong>캐시 재활용</strong>:</p>
+<ul>
+<li>동일한 시스템 프롬프트를 사용하는 이전 요청의 KV 캐시를 저장하고 재활용.</li>
+<li>이를 통해 단일 요청에서도 반복 연산을 최소화.</li>
+</ul>
+</li>
+<li>
+<p><strong>KV 캐시 압축</strong>:</p>
+<ul>
+<li>시스템 프롬프트의 중요하지 않은 토큰을 제거하거나 저차원으로 변환해 KV 캐시 크기 축소.</li>
+<li>예: SVD 기반 압축 또는 Sparse Key-Value 저장.</li>
+</ul>
+</li>
+<li>
+<p><strong>Prompt Tuning</strong>:</p>
+<ul>
+<li>단일 요청에서 긴 시스템 프롬프트를 간결한 요약 형태로 대체.</li>
+<li>RelayAttention을 통해 시스템 프롬프트 대신 요약된 벡터를 재활용.</li>
+</ul>
+</li>
+<li>
+<p><strong>On-the-Fly KV 생성</strong>:</p>
+<ul>
+<li>시스템 KV를 매 요청 시 동적으로 생성하되, 과거 생성된 KV를 Selective Cache로 활용.</li>
+<li>계산량은 약간 증가하지만 DRAM 접근 비용 감소.</li>
+</ul>
+</li>
+<li>
+<p><strong>Hybrid Attention</strong>:</p>
+<ul>
+<li>단일 요청에서는 기존 PagedAttention을 사용하고, 배치 크기가 증가하는 환경에서는 RelayAttention으로 전환하는 하이브리드 접근법.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-3"><strong>결론</strong></h3>
+<ol>
+<li><strong>긴 시스템 프롬프트 처리</strong>: RelayAttention은 메모리 대역폭을 효율적으로 활용하며, GPU 아키텍처와 배치 크기에 따라 성능이 크게 향상됩니다. 그러나 긴 시스템 프롬프트에서는 추가적인 압축 기법을 통해 메모리 사용량 최적화가 필요합니다.</li>
+<li><strong>단일 요청 개선</strong>: 단일 요청에서의 한계를 극복하기 위해 캐시 재활용 및 KV 압축, Prompt Tuning 기법을 적용할 수 있습니다.</li>
+<li><strong>GPU 최적화</strong>: 데이터센터 GPU에서는 Tensor Core와 FlashAttention과의 결합을 활용하며, 소비자 GPU에서는 메모리 사용량을 줄이는 압축 기법이 중요합니다.</li>
+</ol>
+<h1 id="q--실험-설계-및-결과-분석에-관한-질문">Q : 실험 설계 및 결과 분석에 관한 질문**</h1>
+<ol>
+<li>RelayAttention이 다양한 GPU(A40, A100)와 모델(Llama2-7B, Llama-30B)에서 일관된 성능 향상을 보였다고 했는데, 더 작은 모델(예: 1B~2B 파라미터 모델)에서도 동일한 성능 이점을 제공할 수 있는가?</li>
+<li>논문에서 비교한 PagedAttention 및 PromptCache와의 실험은 어떤 조건에서 수행되었으며, 동일한 하드웨어에서 조건이 변경되었을 때 성능 차이는 어떻게 나타나는가?</li>
+<li>긴 시스템 프롬프트 처리에서 RelayAttention의 성능 개선이 가장 크게 나타난 데이터셋(ShareGPT, MMLU)과 유사한 환경이 아닌 데이터셋에서는 어떤 차이가 나타날 수 있는가?</li>
+</ol>
+<h1 id="a-1">A:</h1>
+<h3 id="q-실험-설계-및-결과-분석에-관한-질문"><strong>Q: 실험 설계 및 결과 분석에 관한 질문</strong></h3>
+<hr>
+<h3 id="1-relayattention이-다양한-gpua40-a100와-모델llama2-7b-llama-30b에서-일관된-성능-향상을-보였다고-했는데-더-작은-모델예-1b"><strong>1. RelayAttention이 다양한 GPU(A40, A100)와 모델(Llama2-7B, Llama-30B)에서 일관된 성능 향상을 보였다고 했는데, 더 작은 모델(예: 1B~2B 파라미터 모델)에서도 동일한 성능 이점을 제공할 수 있는가?</strong></h3>
+<h4 id="11-작은-모델에서-relayattention의-기대-효과"><strong>1.1 작은 모델에서 RelayAttention의 기대 효과</strong></h4>
+<p>RelayAttention의 주요 이점은 긴 시스템 프롬프트의 <strong>메모리 접근 최적화</strong> 및 <strong>연산량 감소</strong>입니다. 작은 모델(1B~2B 파라미터)은 다음 특성을 가집니다:</p>
+<ul>
+<li><strong>특징</strong>:
+<ul>
+<li>연산량이 작아 병목 현상은 주로 메모리 대역폭(I/O)에서 발생.</li>
+<li>작은 모델은 전체 연산량이 줄어드는 만큼, RelayAttention의 상대적 이점이 작아질 가능성.</li>
+</ul>
+</li>
+<li><strong>효과 기대</strong>:
+<ul>
+<li>긴 시스템 프롬프트 처리 시 메모리 I/O 병목이 여전히 존재하므로, RelayAttention이 유효.</li>
+<li>그러나 모델 크기가 작아질수록 RelayAttention의 병렬 처리 효과는 감소.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="12-예상되는-성능"><strong>1.2 예상되는 성능</strong></h4>
+<table>
+  <thead>
+      <tr>
+          <th><strong>모델 크기</strong></th>
+          <th><strong>효과</strong></th>
+          <th><strong>이유</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>1B~2B</strong></td>
+          <td>성능 개선 효과 감소</td>
+          <td>모델 자체의 연산량이 적어 병목이 상대적으로 적음.</td>
+      </tr>
+      <tr>
+          <td><strong>7B 이상</strong></td>
+          <td>RelayAttention의 성능 개선 효과 극대화</td>
+          <td>연산량과 메모리 사용량이 많아 병목 현상이 두드러짐.</td>
+      </tr>
+  </tbody>
+</table>
+<h4 id="13-검증-실험-설계"><strong>1.3 검증 실험 설계</strong></h4>
+<ol>
+<li><strong>실험 목표</strong>: 1B~2B 모델에서 RelayAttention이 메모리 I/O 최적화에 미치는 영향을 확인.</li>
+<li><strong>조건</strong>:
+<ul>
+<li>시스템 프롬프트 길이 (s = 1024), (2048).</li>
+<li>배치 크기 (b = 1, 4, 8)로 변화.</li>
+<li>작은 GPU(A40, RTX 3090)에서의 테스트.</li>
+</ul>
+</li>
+<li><strong>결과 분석</strong>:
+<ul>
+<li>RelayAttention의 효과가 GPU 메모리 대역폭과 모델 크기에 어떻게 비례하는지 분석.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-논문에서-비교한-pagedattention-및-promptcache와의-실험은-어떤-조건에서-수행되었으며-동일한-하드웨어에서-조건이-변경되었을-때-성능-차이는-어떻게-나타나는가"><strong>2. 논문에서 비교한 PagedAttention 및 PromptCache와의 실험은 어떤 조건에서 수행되었으며, 동일한 하드웨어에서 조건이 변경되었을 때 성능 차이는 어떻게 나타나는가?</strong></h3>
+<h4 id="21-실험-조건-논문-기준"><strong>2.1 실험 조건 (논문 기준)</strong></h4>
+<p>논문에서는 RelayAttention과 기존 방법론(PagedAttention, PromptCache)의 성능을 비교하기 위해 다음 조건을 설정했습니다:</p>
+<ul>
+<li><strong>모델</strong>: Llama2-7B, Llama-30B.</li>
+<li><strong>GPU 환경</strong>: NVIDIA A40, A100-40GB, A100-80GB.</li>
+<li><strong>시스템 프롬프트 길이</strong>: 512, 1024, 2048 토큰.</li>
+<li><strong>배치 크기</strong>: 1~256 (동적 배치).</li>
+<li><strong>데이터셋</strong>:
+<ul>
+<li><strong>ShareGPT</strong>: 사용자 대화 데이터 (긴 컨텍스트 포함).</li>
+<li><strong>MMLU</strong>: Few-shot 학습 설정 (긴 프롬프트 필수).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="22-결과"><strong>2.2 결과</strong></h4>
+<ol>
+<li>
+<p><strong>PagedAttention과 비교</strong>:</p>
+<ul>
+<li>PagedAttention은 KV 캐시 메모리 사용량 최적화에 초점.</li>
+<li>RelayAttention은 메모리 접근을 줄이는 I/O 최적화로 PagedAttention 대비 최대 <strong>4.36배 처리 속도</strong> 향상.</li>
+</ul>
+</li>
+<li>
+<p><strong>PromptCache와 비교</strong>:</p>
+<ul>
+<li>PromptCache는 KV 캐시 생성 과정을 최적화하지만, 긴 프롬프트의 반복적 메모리 접근 문제를 해결하지 못함.</li>
+<li>RelayAttention은 PromptCache 대비 <strong>최대 2배 처리율 개선</strong>.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="23-조건-변경-시-예상-성능"><strong>2.3 조건 변경 시 예상 성능</strong></h4>
+<p>조건이 변경되었을 때의 성능 차이는 다음과 같습니다:</p>
+<ol>
+<li>
+<p><strong>GPU 대역폭 제한 (낮은 대역폭 GPU)</strong>:</p>
+<ul>
+<li>PagedAttention 및 PromptCache는 성능 저하.</li>
+<li>RelayAttention은 메모리 I/O 감소로 상대적으로 높은 성능 유지.</li>
+</ul>
+</li>
+<li>
+<p><strong>짧은 시스템 프롬프트</strong>:</p>
+<ul>
+<li>PagedAttention 및 PromptCache와 RelayAttention의 성능 차이가 감소.</li>
+<li>RelayAttention의 I/O 최적화 효과가 줄어들기 때문.</li>
+</ul>
+</li>
+<li>
+<p><strong>배치 크기 축소 ((b = 1))</strong>:</p>
+<ul>
+<li>RelayAttention의 효과 감소. 단일 요청에서는 KV 캐시를 재활용할 수 없으므로 성능 개선 없음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="3-긴-시스템-프롬프트-처리에서-relayattention의-성능-개선이-가장-크게-나타난-데이터셋sharegpt-mmlu과-유사한-환경이-아닌-데이터셋에서는-어떤-차이가-나타날-수-있는가"><strong>3. 긴 시스템 프롬프트 처리에서 RelayAttention의 성능 개선이 가장 크게 나타난 데이터셋(ShareGPT, MMLU)과 유사한 환경이 아닌 데이터셋에서는 어떤 차이가 나타날 수 있는가?</strong></h3>
+<h4 id="31-유사하지-않은-환경"><strong>3.1 유사하지 않은 환경</strong></h4>
+<ol>
+<li>
+<p><strong>짧은 프롬프트를 사용하는 데이터셋</strong>:</p>
+<ul>
+<li>예: SQuAD, TriviaQA 등 짧은 질문과 짧은 답변이 필요한 데이터셋.</li>
+<li>RelayAttention의 긴 시스템 프롬프트 최적화가 적용되지 않음.</li>
+<li>기존 방법론(PagedAttention, FlashAttention)과의 성능 차이가 미미.</li>
+</ul>
+</li>
+<li>
+<p><strong>동적인 프롬프트 길이를 가진 데이터셋</strong>:</p>
+<ul>
+<li>예: 대화형 데이터(짧은 초기 프롬프트 + 긴 생성 응답).</li>
+<li>시스템 프롬프트가 아닌 생성된 응답에 따라 병목이 이동.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="32-예상되는-차이점"><strong>3.2 예상되는 차이점</strong></h4>
+<table>
+  <thead>
+      <tr>
+          <th><strong>데이터셋 유형</strong></th>
+          <th><strong>RelayAttention 효과</strong></th>
+          <th><strong>이유</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>긴 시스템 프롬프트 (ShareGPT)</strong></td>
+          <td>성능 개선 극대화</td>
+          <td>긴 시스템 프롬프트 최적화 효과가 큼.</td>
+      </tr>
+      <tr>
+          <td><strong>짧은 프롬프트 (SQuAD)</strong></td>
+          <td>성능 개선 제한적</td>
+          <td>메모리 I/O 병목이 크지 않음.</td>
+      </tr>
+      <tr>
+          <td><strong>혼합 길이 프롬프트</strong></td>
+          <td>결과 품질 및 성능이 데이터셋 길이에 따라 변동</td>
+          <td>사용자 프롬프트 또는 응답의 길이에 따라 효과가 달라짐.</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h4 id="33-개선-방안"><strong>3.3 개선 방안</strong></h4>
+<p>RelayAttention이 유사하지 않은 데이터셋에서도 성능을 높이기 위해 다음을 고려할 수 있습니다:</p>
+<ol>
+<li>
+<p><strong>짧은 프롬프트에 대한 최적화</strong>:</p>
+<ul>
+<li>시스템 프롬프트가 짧은 경우, RelayAttention의 오버헤드를 줄이는 경량화 알고리즘 도입.</li>
+</ul>
+</li>
+<li>
+<p><strong>컨텍스트 중요도 기반 처리</strong>:</p>
+<ul>
+<li>프롬프트 길이와 관계없이 중요도 높은 토큰만 선택적으로 처리해 연산 최적화.</li>
+</ul>
+</li>
+<li>
+<p><strong>응답 길이 중심 최적화</strong>:</p>
+<ul>
+<li>긴 생성 응답이 병목을 초래하는 경우, 생성된 토큰을 위한 RelayAttention 최적화 추가.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-4"><strong>결론</strong></h3>
+<p>RelayAttention은 긴 시스템 프롬프트에서 성능이 극대화되며, 작은 모델이나 짧은 프롬프트 환경에서는 성능 개선이 제한적입니다. 다양한 데이터셋 및 GPU 환경에서 조건을 변경하며 성능을 측정하면 RelayAttention의 최적 적용 환경과 추가적인 개선점을 도출할 수 있습니다.</p>
+<h1 id="q--한계점과-확장-가능성에-관한-질문">Q:  한계점과 확장 가능성에 관한 질문**</h1>
+<ol>
+<li>RelayAttention은 멀티 애플리케이션 환경에서 비효율적이라고 언급했는데, 이를 해결하기 위한 추가적인 캐시 관리 전략이나 스케줄링 방안은 무엇인가?</li>
+<li>긴 사용자 프롬프트와 생성된 응답이 시스템 프롬프트보다 긴 경우 RelayAttention의 효과가 감소한다고 했는데, 이를 완화하기 위한 프롬프트 압축이나 요약 방법은 무엇인가?</li>
+<li>RelayAttention이 적용되지 않는 극단적인 상황(예: 시스템 프롬프트가 짧거나 컨텍스트가 매우 긴 경우)에서 성능을 보완하기 위해 다른 최적화 방법론과의 결합 가능성은 어떤 것이 있는가?</li>
+</ol>
+<h3 id="q-한계점과-확장-가능성에-관한-질문"><strong>Q: 한계점과 확장 가능성에 관한 질문</strong></h3>
+<hr>
+<h3 id="1-relayattention은-멀티-애플리케이션-환경에서-비효율적이라고-언급했는데-이를-해결하기-위한-추가적인-캐시-관리-전략이나-스케줄링-방안은-무엇인가"><strong>1. RelayAttention은 멀티 애플리케이션 환경에서 비효율적이라고 언급했는데, 이를 해결하기 위한 추가적인 캐시 관리 전략이나 스케줄링 방안은 무엇인가?</strong></h3>
+<h4 id="11-멀티-애플리케이션-환경에서의-문제"><strong>1.1 멀티 애플리케이션 환경에서의 문제</strong></h4>
+<p>RelayAttention은 단일 시스템 프롬프트를 가정한 최적화입니다. 그러나 여러 애플리케이션에서 각각 다른 시스템 프롬프트를 사용하는 경우:</p>
+<ul>
+<li>각 요청마다 고유한 시스템 KV 캐시가 필요하므로 메모리 사용량과 관리 복잡도가 증가.</li>
+<li>동일한 캐시를 공유하지 못해 RelayAttention의 I/O 최적화 효과가 줄어듦.</li>
+</ul>
+<hr>
+<h4 id="12-해결을-위한-추가-전략"><strong>1.2 해결을 위한 추가 전략</strong></h4>
+<ol>
+<li>
+<p><strong>애플리케이션별 캐시 분리 및 태깅</strong></p>
+<ul>
+<li><strong>방법</strong>:
+<ul>
+<li>요청마다 고유한 애플리케이션 ID를 태깅하여, 동일한 애플리케이션의 요청을 묶어서 배치 처리.</li>
+<li>애플리케이션 ID 기반으로 시스템 KV 캐시를 분리 관리.</li>
+</ul>
+</li>
+<li><strong>장점</strong>:
+<ul>
+<li>애플리케이션 간 간섭 없이 RelayAttention의 성능 유지 가능.</li>
+</ul>
+</li>
+<li><strong>한계</strong>:
+<ul>
+<li>요청 도착 패턴이 다양할 경우, 배치 처리 효율이 낮아질 수 있음.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>캐시 클러스터링</strong></p>
+<ul>
+<li><strong>방법</strong>:
+<ul>
+<li>시스템 프롬프트를 임베딩 공간에서 클러스터링하여, 유사한 프롬프트를 하나의 캐시로 통합.</li>
+<li>클러스터별 공통 시스템 KV 캐시를 사용.</li>
+</ul>
+</li>
+<li><strong>장점</strong>:
+<ul>
+<li>캐시 중복을 줄이고 메모리 사용량 최적화.</li>
+</ul>
+</li>
+<li><strong>한계</strong>:
+<ul>
+<li>클러스터링 과정에서의 오버헤드 및 유사도 평가의 정확성 문제.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>동적 캐시 재활용</strong></p>
+<ul>
+<li><strong>방법</strong>:
+<ul>
+<li>이전 요청에서 사용된 시스템 KV 캐시를 재활용.</li>
+<li>사용자 요청을 분석해 동일하거나 유사한 시스템 프롬프트를 재사용.</li>
+</ul>
+</li>
+<li><strong>장점</strong>:
+<ul>
+<li>캐시 생성 오버헤드를 줄이고 메모리 사용량 최적화.</li>
+</ul>
+</li>
+<li><strong>한계</strong>:
+<ul>
+<li>동적 재활용에 필요한 캐시 검색 및 관리 비용이 발생.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>스케줄링 기반 배치 최적화</strong></p>
+<ul>
+<li><strong>방법</strong>:
+<ul>
+<li>여러 애플리케이션의 요청을 스케줄링하여 동일 시스템 프롬프트를 사용하는 요청을 우선적으로 배치.</li>
+</ul>
+</li>
+<li><strong>장점</strong>:
+<ul>
+<li>RelayAttention의 메모리 I/O 최적화 효과를 극대화.</li>
+</ul>
+</li>
+<li><strong>한계</strong>:
+<ul>
+<li>요청 지연(latency)가 발생할 수 있음.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-긴-사용자-프롬프트와-생성된-응답이-시스템-프롬프트보다-긴-경우-relayattention의-효과가-감소한다고-했는데-이를-완화하기-위한-프롬프트-압축이나-요약-방법은-무엇인가"><strong>2. 긴 사용자 프롬프트와 생성된 응답이 시스템 프롬프트보다 긴 경우 RelayAttention의 효과가 감소한다고 했는데, 이를 완화하기 위한 프롬프트 압축이나 요약 방법은 무엇인가?</strong></h3>
+<h4 id="21-문제의-원인"><strong>2.1 문제의 원인</strong></h4>
+<ul>
+<li>사용자 프롬프트와 생성된 응답의 길이((u + t))가 시스템 프롬프트((s))보다 길면, 연산량 및 메모리 사용량의 주요 병목이 시스템 프롬프트가 아닌 문맥 주의(Context Attention)로 이동.</li>
+<li>RelayAttention의 시스템 프롬프트 최적화 효과가 감소.</li>
+</ul>
+<hr>
+<h4 id="22-완화-방안-프롬프트-압축-및-요약"><strong>2.2 완화 방안: 프롬프트 압축 및 요약</strong></h4>
+<ol>
+<li>
+<p><strong>프롬프트 압축</strong>:</p>
+<ul>
+<li><strong>방법</strong>:
+<ul>
+<li>사용자 프롬프트에서 중요하지 않은 토큰을 제거하거나 저차원 임베딩으로 압축.</li>
+<li>예: SVD 또는 PCA 기반 압축.</li>
+</ul>
+</li>
+<li><strong>장점</strong>:
+<ul>
+<li>문맥 주의 단계의 연산량 감소.</li>
+</ul>
+</li>
+<li><strong>한계</strong>:
+<ul>
+<li>중요 정보를 손실할 위험.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>요약 기반 컨텍스트 축소</strong>:</p>
+<ul>
+<li><strong>방법</strong>:
+<ul>
+<li>긴 사용자 프롬프트를 요약 모델(Summarization Model)을 사용해 핵심 정보만 포함하도록 변환.</li>
+<li>기존 프롬프트를 의미 표현(semantic representation)으로 대체.</li>
+</ul>
+</li>
+<li><strong>장점</strong>:
+<ul>
+<li>문맥 주의 연산량을 획기적으로 감소.</li>
+</ul>
+</li>
+<li><strong>한계</strong>:
+<ul>
+<li>요약 모델이 모든 작업에 대해 정확하지 않을 수 있음.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Chunk-wise Attention</strong>:</p>
+<ul>
+<li><strong>방법</strong>:
+<ul>
+<li>사용자 프롬프트를 여러 청크로 나누어 각 청크에 대해 독립적으로 Attention 수행.</li>
+<li>Chunk별로 중요도를 평가하고, 중요한 청크만 KV 캐시에 포함.</li>
+</ul>
+</li>
+<li><strong>장점</strong>:
+<ul>
+<li>연산량을 제어 가능하며, 긴 프롬프트에서도 유연하게 동작.</li>
+</ul>
+</li>
+<li><strong>한계</strong>:
+<ul>
+<li>Chunk 간 정보 손실 가능.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Long-context 모델 활용</strong>:</p>
+<ul>
+<li><strong>방법</strong>:
+<ul>
+<li>Longformer, BigBird와 같은 긴 문맥 처리에 최적화된 Sparse Attention 기법을 RelayAttention과 결합.</li>
+</ul>
+</li>
+<li><strong>장점</strong>:
+<ul>
+<li>문맥 길이가 길어도 효율적 연산 가능.</li>
+</ul>
+</li>
+<li><strong>한계</strong>:
+<ul>
+<li>Sparse Attention의 정확성이 All-to-All Attention보다 낮을 수 있음.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="3-relayattention이-적용되지-않는-극단적인-상황예-시스템-프롬프트가-짧거나-컨텍스트가-매우-긴-경우에서-성능을-보완하기-위해-다른-최적화-방법론과의-결합-가능성은-어떤-것이-있는가"><strong>3. RelayAttention이 적용되지 않는 극단적인 상황(예: 시스템 프롬프트가 짧거나 컨텍스트가 매우 긴 경우)에서 성능을 보완하기 위해 다른 최적화 방법론과의 결합 가능성은 어떤 것이 있는가?</strong></h3>
+<h4 id="31-극단적인-상황"><strong>3.1 극단적인 상황</strong></h4>
+<ol>
+<li><strong>시스템 프롬프트가 짧은 경우</strong>:
+<ul>
+<li>시스템 프롬프트가 짧아 RelayAttention의 I/O 최적화 효과가 거의 나타나지 않음.</li>
+</ul>
+</li>
+<li><strong>컨텍스트가 매우 긴 경우</strong>:
+<ul>
+<li>문맥 주의에서 연산량이 급증하여 병목 현상이 문맥 처리로 이동.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="32-결합-가능한-최적화-방법론"><strong>3.2 결합 가능한 최적화 방법론</strong></h4>
+<ol>
+<li>
+<p><strong>FlashAttention</strong>:</p>
+<ul>
+<li><strong>특징</strong>:
+<ul>
+<li>Attention 연산의 메모리 접근 효율을 극대화.</li>
+</ul>
+</li>
+<li><strong>결합 방식</strong>:
+<ul>
+<li>RelayAttention의 시스템 프롬프트 최적화를 유지하면서 문맥 주의 단계에 FlashAttention을 적용.</li>
+</ul>
+</li>
+<li><strong>기대 효과</strong>:
+<ul>
+<li>긴 컨텍스트에서도 메모리 사용량 감소.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>PagedAttention</strong>:</p>
+<ul>
+<li><strong>특징</strong>:
+<ul>
+<li>캐시 크기를 최적화하여 메모리 사용량 감소.</li>
+</ul>
+</li>
+<li><strong>결합 방식</strong>:
+<ul>
+<li>RelayAttention과 결합해 문맥 주의의 캐시 크기를 동적으로 관리.</li>
+</ul>
+</li>
+<li><strong>기대 효과</strong>:
+<ul>
+<li>극단적인 컨텍스트 길이에서도 안정적 동작.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Sparse Attention</strong>:</p>
+<ul>
+<li><strong>특징</strong>:
+<ul>
+<li>중요하지 않은 토큰을 무시하여 연산량을 줄임.</li>
+</ul>
+</li>
+<li><strong>결합 방식</strong>:
+<ul>
+<li>문맥 주의 단계에 Sparse Attention을 사용해 연산량 감소.</li>
+</ul>
+</li>
+<li><strong>기대 효과</strong>:
+<ul>
+<li>문맥 주의가 매우 긴 경우에도 효율적 처리 가능.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>PromptCache</strong>:</p>
+<ul>
+<li><strong>특징</strong>:
+<ul>
+<li>KV 캐시 생성 과정을 최적화.</li>
+</ul>
+</li>
+<li><strong>결합 방식</strong>:
+<ul>
+<li>단일 요청 처리 시 PromptCache로 시스템 KV 캐시를 재활용.</li>
+</ul>
+</li>
+<li><strong>기대 효과</strong>:
+<ul>
+<li>단일 요청 처리 성능 향상.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-5"><strong>결론</strong></h3>
+<ol>
+<li><strong>멀티 애플리케이션 환경</strong>에서는 캐시 클러스터링과 동적 캐시 재활용을 통해 RelayAttention의 효율성을 높일 수 있습니다.</li>
+<li>긴 사용자 프롬프트 문제는 프롬프트 요약, Chunk-wise Attention, Sparse Attention 등의 기법을 통해 완화할 수 있습니다.</li>
+<li>극단적인 상황에서 FlashAttention, Sparse Attention과 같은 기존 방법론과의 결합을 통해 RelayAttention의 유연성과 성능을 강화할 수 있습니다.</li>
+</ol>
+<h1 id="q-추가적인-이론적-및-실험적-검증-질문">Q: 추가적인 이론적 및 실험적 검증 질문**</h1>
+<ol>
+<li>RelayAttention의 수학적 분석(특히 I/O 감소와 연산량 분석)이 실제 실험 결과와 얼마나 일치하는가? 이론적 속도 향상 비율(p)의 분석이 놓치고 있는 실질적인 요소는 무엇인가?</li>
+<li>릴레이 융합에서 Log-Sum-Exp 계산의 수치 안정성이 시스템 크기(Large-scale KV Cache)에서 어떻게 보장되는가?</li>
+<li>RelayAttention의 메모리 사용량 증가와 GPU 연산 능력 간의 균형은 실제 환경(예: 데이터 센터 vs 엣지 디바이스)에서 어떻게 달라지는가?</li>
+</ol>
+<h1 id="a-2">A:</h1>
+<h3 id="q-추가적인-이론적-및-실험적-검증-질문-1"><strong>Q: 추가적인 이론적 및 실험적 검증 질문</strong></h3>
+<hr>
+<h3 id="1-relayattention의-수학적-분석특히-io-감소와-연산량-분석이-실제-실험-결과와-얼마나-일치하는가-이론적-속도-향상-비율p의-분석이-놓치고-있는-실질적인-요소는-무엇인가"><strong>1. RelayAttention의 수학적 분석(특히 I/O 감소와 연산량 분석)이 실제 실험 결과와 얼마나 일치하는가? 이론적 속도 향상 비율(p)의 분석이 놓치고 있는 실질적인 요소는 무엇인가?</strong></h3>
+<h4 id="11-이론적-분석과-실험-결과-비교"><strong>1.1 이론적 분석과 실험 결과 비교</strong></h4>
+<p>논문에서 제시된 이론적 속도 향상 비율:
+[
+p = \frac{s + c + 2}{s/b + c + 7}
+]</p>
+<ul>
+<li><strong>변수</strong>:
+<ul>
+<li>(s): 시스템 프롬프트 길이</li>
+<li>(c): 사용자 컨텍스트 길이</li>
+<li>(b): 배치 크기</li>
+</ul>
+</li>
+</ul>
+<p><strong>이론적 기대치</strong>:</p>
+<ul>
+<li>(b &gt; 1) 및 (s \gg c)인 경우, RelayAttention은 기존 방식 대비 I/O 및 연산량을 대폭 줄여 최대 2.2배~4.36배 속도 향상을 달성.</li>
+</ul>
+<p><strong>실험 결과</strong>:</p>
+<ul>
+<li>논문 실험에서는 (s = 2048), (b = 32) 환경에서 이론적 분석과 유사한 속도 향상을 관찰.</li>
+<li>하지만 (b = 1)과 같이 단일 요청 처리 시, 이론적 분석이 적용되지 않음.</li>
+</ul>
+<hr>
+<h4 id="12-이론적-분석이-놓친-실질적-요소"><strong>1.2 이론적 분석이 놓친 실질적 요소</strong></h4>
+<ol>
+<li>
+<p><strong>GPU 메모리 대역폭의 한계</strong>:</p>
+<ul>
+<li>GPU의 실제 메모리 대역폭이 속도 향상에 영향을 미침.</li>
+<li>고성능 GPU(A100)에서는 대역폭이 높아 I/O 병목 효과가 줄어들며, 이론적 기대치보다 성능 향상이 낮을 가능성.</li>
+</ul>
+</li>
+<li>
+<p><strong>DRAM-SRAM 전송 오버헤드</strong>:</p>
+<ul>
+<li>RelayAttention은 시스템 프롬프트를 DRAM에서 한 번만 읽어도, SRAM과 DRAM 간 데이터 전송 오버헤드가 완전히 제거되지는 않음.</li>
+</ul>
+</li>
+<li>
+<p><strong>매트릭스 곱셈 최적화의 실제 성능</strong>:</p>
+<ul>
+<li>Matrix-Matrix 연산이 이론적으로는 효율적이지만, 실제 GPU에서의 병렬 처리 및 캐시 활용도에 따라 성능이 달라질 수 있음.</li>
+</ul>
+</li>
+<li>
+<p><strong>배치 크기 가변성</strong>:</p>
+<ul>
+<li>실시간 요청 환경에서는 배치 크기가 고정되지 않으며, 작은 배치에서는 이론적 분석보다 낮은 성능 향상.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="13-추가-실험으로-검증할-방법"><strong>1.3 추가 실험으로 검증할 방법</strong></h4>
+<ol>
+<li>
+<p><strong>I/O 프로파일링</strong>:</p>
+<ul>
+<li>DRAM-SRAM 데이터 전송량 및 실제 메모리 대역폭 사용량 측정을 통해 I/O 최적화 효과를 정량적으로 평가.</li>
+</ul>
+</li>
+<li>
+<p><strong>GPU 아키텍처별 테스트</strong>:</p>
+<ul>
+<li>A40, A100, H100 등 다양한 GPU에서 RelayAttention의 이론적 및 실험적 성능을 비교.</li>
+</ul>
+</li>
+<li>
+<p><strong>실시간 배치 환경 실험</strong>:</p>
+<ul>
+<li>동적 배치 크기에서 RelayAttention이 실제로 얼마나 안정적인 성능 향상을 제공하는지 검증.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-릴레이-융합에서-log-sum-exp-계산의-수치-안정성이-시스템-크기large-scale-kv-cache에서-어떻게-보장되는가"><strong>2. 릴레이 융합에서 Log-Sum-Exp 계산의 수치 안정성이 시스템 크기(Large-scale KV Cache)에서 어떻게 보장되는가?</strong></h3>
+<h4 id="21-log-sum-exp-계산의-역할"><strong>2.1 Log-Sum-Exp 계산의 역할</strong></h4>
+<ul>
+<li>릴레이 융합에서 시스템 주의와 문맥 주의를 결합하기 위해 가중치를 Softmax 기반으로 계산:
+[
+\alpha_{\text{sys}} = \frac{\sigma_{1 \to s}}{\sigma_{1 \to s} + \sigma_{s+1 \to l}}
+]
+<ul>
+<li>여기서 (\sigma_{1 \to s}) 및 (\sigma_{s+1 \to l})은 각각 Log-Sum-Exp로 계산.</li>
+<li>Log-Sum-Exp는 매우 큰 값과 매우 작은 값이 동시에 존재할 때 수치 안정성을 보장.</li>
+</ul>
+</li>
+</ul>
+<h4 id="22-수치-안정성을-위한-보장-기법"><strong>2.2 수치 안정성을 위한 보장 기법</strong></h4>
+<ol>
+<li>
+<p><strong>로그 스케일 정규화</strong>:</p>
+<ul>
+<li>Softmax 계산 중 (\max(qk^T))를 기준으로 값을 정규화해 오버플로우와 언더플로우를 방지.</li>
+<li>이를 통해 매우 긴 프롬프트에서도 안정적인 계산 가능.</li>
+</ul>
+</li>
+<li>
+<p><strong>FP16 환경에서의 확장</strong>:</p>
+<ul>
+<li>FP16(16비트 부동소수점) 환경에서 계산 정밀도가 낮아지는 문제를 해결하기 위해 일부 단계에서 FP32로 변환 후 다시 FP16으로 변환.</li>
+</ul>
+</li>
+<li>
+<p><strong>계층별 클리핑 (Gradient Clipping)</strong>:</p>
+<ul>
+<li>매우 긴 시스템 프롬프트에서 Softmax 값이 지나치게 편향되지 않도록 정규화 단계에서 클리핑 사용.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="23-대규모-kv-캐시에서의-검증-실험"><strong>2.3 대규모 KV 캐시에서의 검증 실험</strong></h4>
+<ol>
+<li>
+<p><strong>수치적 오류 감지</strong>:</p>
+<ul>
+<li>매우 긴 프롬프트((s &gt; 2048))에서 Log-Sum-Exp 계산의 출력 값이 ([0, 1]) 범위 내에서 안정적으로 유지되는지 확인.</li>
+</ul>
+</li>
+<li>
+<p><strong>FP16 vs FP32 환경 비교</strong>:</p>
+<ul>
+<li>FP16 환경에서의 수치적 정확성과 FP32 대비 성능 차이를 평가.</li>
+</ul>
+</li>
+<li>
+<p><strong>캐시 크기 변화 실험</strong>:</p>
+<ul>
+<li>KV 캐시 크기를 단계적으로 증가시키며 Log-Sum-Exp 계산의 안정성을 검증.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="3-relayattention의-메모리-사용량-증가와-gpu-연산-능력-간의-균형은-실제-환경예-데이터-센터-vs-엣지-디바이스에서-어떻게-달라지는가"><strong>3. RelayAttention의 메모리 사용량 증가와 GPU 연산 능력 간의 균형은 실제 환경(예: 데이터 센터 vs 엣지 디바이스)에서 어떻게 달라지는가?</strong></h3>
+<h4 id="31-메모리-사용량-증가"><strong>3.1 메모리 사용량 증가</strong></h4>
+<p>RelayAttention은 시스템 프롬프트의 KV 캐시를 별도로 관리하므로, 추가 메모리 사용량이 발생:</p>
+<ul>
+<li>시스템 프롬프트 길이 (s = 2048), 계층 수 (L = 24), 히든 차원 (d = 1024):
+[
+\text{추가 메모리 사용량} = 2 \cdot L \cdot s \cdot d \cdot \text{Data Type Size}
+]
+<ul>
+<li>예: FP16(2바이트) 환경에서는 약 3GB의 추가 메모리 요구.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="32-데이터-센터-vs-엣지-디바이스"><strong>3.2 데이터 센터 vs 엣지 디바이스</strong></h4>
+<ol>
+<li>
+<p><strong>데이터 센터 (Data Center)</strong>:</p>
+<ul>
+<li><strong>GPU 사양</strong>:
+<ul>
+<li>A100, H100과 같은 고성능 GPU는 높은 메모리 용량(40~80GB)과 대역폭(1.5TB/s 이상)을 지원.</li>
+</ul>
+</li>
+<li><strong>RelayAttention의 적합성</strong>:
+<ul>
+<li>추가 메모리 사용량이 크지 않으며, 메모리 대역폭이 높아 성능 향상이 극대화.</li>
+<li>긴 시스템 프롬프트와 대규모 배치 처리에서 최적화 효과가 가장 큼.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>엣지 디바이스 (Edge Device)</strong>:</p>
+<ul>
+<li><strong>GPU 사양</strong>:
+<ul>
+<li>RTX 30 시리즈 또는 40 시리즈와 같은 소비자 GPU는 메모리 용량(8~16GB)과 대역폭이 제한적.</li>
+</ul>
+</li>
+<li><strong>RelayAttention의 제한</strong>:
+<ul>
+<li>메모리 사용량이 제한적이므로 시스템 프롬프트 길이와 배치 크기에 제약.</li>
+<li>압축 기법(SVD, 양자화)을 활용해 추가 메모리 사용량을 최소화해야 함.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="33-최적화를-위한-방향"><strong>3.3 최적화를 위한 방향</strong></h4>
+<ol>
+<li>
+<p><strong>데이터 센터 환경</strong>:</p>
+<ul>
+<li>Tensor Core 연산을 활용해 RelayAttention의 Matrix-Matrix 곱셈 최적화.</li>
+<li>FlashAttention과의 결합으로 DRAM-SRAM 전송 비용 최소화.</li>
+</ul>
+</li>
+<li>
+<p><strong>엣지 디바이스 환경</strong>:</p>
+<ul>
+<li>시스템 프롬프트를 저차원 표현으로 압축하여 KV 캐시 크기 줄이기.</li>
+<li>Sparse Attention 도입으로 긴 문맥을 효율적으로 처리.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-6"><strong>결론</strong></h3>
+<ol>
+<li><strong>이론적 분석과 실험 간 차이</strong>:
+<ul>
+<li>실제 GPU 환경에서는 I/O 대역폭, 배치 크기, 메모리 전송 오버헤드 등의 요인으로 이론적 속도 향상 비율이 제한될 수 있습니다.</li>
+</ul>
+</li>
+<li><strong>수치 안정성</strong>:
+<ul>
+<li>Log-Sum-Exp 계산의 안정성을 위해 로그 스케일 정규화 및 FP32 변환이 필요하며, 이를 대규모 KV 캐시에서 검증해야 합니다.</li>
+</ul>
+</li>
+<li><strong>환경별 최적화</strong>:
+<ul>
+<li>데이터 센터에서는 RelayAttention의 성능이 극대화되지만, 엣지 디바이스에서는 메모리 최적화 기법과 Sparse Attention 도입이 중요합니다.</li>
+</ul>
+</li>
+</ol>
+<h1 id="q--relayattention의-실질적-적용-가능성에-관한-질문">Q:  RelayAttention의 실질적 적용 가능성에 관한 질문**</h1>
+<ol>
+<li>RelayAttention이 클라우드 기반 대규모 LLM 서비스에서 얼마나 비용 절감을 가져올 수 있는가? 이는 실제 인프라에서 측정할 수 있는가?</li>
+<li>RelayAttention이 적용된 시스템을 학습 단계에서 직접 활용할 경우, 훈련 속도나 학습 안정성에 영향을 미칠 가능성은 무엇인가?</li>
+<li>RelayAttention을 적용한 모델이 추론 이외의 다른 작업(예: 피드백 기반 모델 업데이트, 강화 학습)에서도 동일한 성능 이점을 제공할 수 있는가?</li>
+</ol>
+<h3 id="q-relayattention의-실질적-적용-가능성에-관한-질문"><strong>Q: RelayAttention의 실질적 적용 가능성에 관한 질문</strong></h3>
+<hr>
+<h3 id="1-relayattention이-클라우드-기반-대규모-llm-서비스에서-얼마나-비용-절감을-가져올-수-있는가-이는-실제-인프라에서-측정할-수-있는가"><strong>1. RelayAttention이 클라우드 기반 대규모 LLM 서비스에서 얼마나 비용 절감을 가져올 수 있는가? 이는 실제 인프라에서 측정할 수 있는가?</strong></h3>
+<h4 id="11-비용-절감의-주요-요인"><strong>1.1 비용 절감의 주요 요인</strong></h4>
+<p>RelayAttention은 다음 요인에서 클라우드 기반 LLM 서비스의 비용을 절감할 가능성이 있습니다:</p>
+<ol>
+<li><strong>GPU 효율성 증가</strong>:
+<ul>
+<li>긴 시스템 프롬프트를 다룰 때 DRAM 접근을 최소화하여 메모리 대역폭 병목을 완화.</li>
+<li>동일한 하드웨어에서 더 많은 요청을 처리할 수 있어 GPU 사용 비용 절감.</li>
+</ul>
+</li>
+<li><strong>추론 속도 향상</strong>:
+<ul>
+<li>처리 속도를 최대 4배까지 향상하여 서비스 응답 시간을 단축.</li>
+<li>서비스 응답 시간이 짧아질수록 더 적은 GPU 자원으로 동일한 작업량 처리 가능.</li>
+</ul>
+</li>
+<li><strong>에너지 소비 감소</strong>:
+<ul>
+<li>GPU가 I/O 작업 대신 연산 유닛을 효율적으로 사용하도록 유도해 에너지 소비 절감.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="12-비용-절감의-정량적-평가"><strong>1.2 비용 절감의 정량적 평가</strong></h4>
+<ol>
+<li>
+<p><strong>GPU 비용 계산</strong>:</p>
+<ul>
+<li>NVIDIA A100의 시간당 사용 비용: 약 $1.5 (Vast.ai 기준).</li>
+<li>RelayAttention 적용 전후 처리 속도를 비교:
+<ul>
+<li>처리 속도가 2배 향상되면 GPU 사용 시간이 50% 감소.</li>
+<li>GPU 비용도 비례해 절감.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>실제 서비스 시뮬레이션</strong>:</p>
+<ul>
+<li>RelayAttention을 적용한 vLLM이 ShareGPT와 같은 데이터셋을 처리할 때, 초당 요청 처리량(req/s)을 측정.</li>
+<li>GPU 사용량 변화에 따른 시간당 비용 절감을 분석.</li>
+</ul>
+</li>
+<li>
+<p><strong>TCO (총 소유 비용) 분석</strong>:</p>
+<ul>
+<li>RelayAttention 적용 후, 동일한 작업량을 처리하기 위해 필요한 GPU 대수를 감소시켜 전체 인프라 비용 절감 가능.</li>
+<li>서비스 규모(예: 초당 수천 요청)를 기준으로 RelayAttention이 비용 절감에 미치는 영향을 시뮬레이션.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="13-실제-인프라에서의-측정-가능성"><strong>1.3 실제 인프라에서의 측정 가능성</strong></h4>
+<ol>
+<li>
+<p><strong>서비스 로그 기반 성능 측정</strong>:</p>
+<ul>
+<li>요청 처리량(req/s), 처리 시간(latency), GPU 사용률을 실시간으로 모니터링.</li>
+<li>RelayAttention 적용 후 로그 데이터를 비교하여 비용 절감 효과 확인.</li>
+</ul>
+</li>
+<li>
+<p><strong>A/B 테스트</strong>:</p>
+<ul>
+<li>기존 시스템과 RelayAttention 통합 시스템을 병렬로 운영하며 비용 차이를 비교.</li>
+<li>동일한 요청 볼륨에서의 응답 시간 및 처리 비용 분석.</li>
+</ul>
+</li>
+<li>
+<p><strong>에너지 소비 모니터링</strong>:</p>
+<ul>
+<li>GPU 전력 소비를 측정하여 RelayAttention이 에너지 비용에 미치는 영향 분석.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-relayattention이-적용된-시스템을-학습-단계에서-직접-활용할-경우-훈련-속도나-학습-안정성에-영향을-미칠-가능성은-무엇인가"><strong>2. RelayAttention이 적용된 시스템을 학습 단계에서 직접 활용할 경우, 훈련 속도나 학습 안정성에 영향을 미칠 가능성은 무엇인가?</strong></h3>
+<h4 id="21-훈련-단계에서-relayattention의-잠재적-이점"><strong>2.1 훈련 단계에서 RelayAttention의 잠재적 이점</strong></h4>
+<ol>
+<li>
+<p><strong>훈련 비용 절감</strong>:</p>
+<ul>
+<li>훈련 데이터에 긴 시스템 프롬프트가 포함된 경우, 메모리 접근 최적화로 훈련 속도가 향상될 가능성.</li>
+<li>DRAM 접근 감소로 GPU 대역폭 병목이 완화되며 대규모 배치 학습에서 유리.</li>
+</ul>
+</li>
+<li>
+<p><strong>효율적인 메모리 활용</strong>:</p>
+<ul>
+<li>긴 프롬프트와 문맥이 포함된 대규모 배치 훈련 시 메모리 사용량 감소.</li>
+<li>동일한 GPU 메모리에서 더 큰 배치 크기 지원 가능.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="22-학습-안정성에-대한-잠재적-영향"><strong>2.2 학습 안정성에 대한 잠재적 영향</strong></h4>
+<ol>
+<li>
+<p><strong>수치적 안정성</strong>:</p>
+<ul>
+<li>Log-Sum-Exp 기반 계산이 훈련 중에도 안정적으로 작동할 것으로 기대되며, 수렴 과정에서의 안정성을 해치지 않을 가능성이 높음.</li>
+<li>긴 시스템 프롬프트에서도 Softmax 계산이 안정적으로 작동.</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 출력 품질에 미치는 영향</strong>:</p>
+<ul>
+<li>릴레이 융합 과정에서의 가중치 계산이 잘못된 경우, Attention 분포가 왜곡되어 학습 성능이 저하될 수 있음.</li>
+<li>특히, 시스템 프롬프트와 사용자 프롬프트의 중요도가 잘못 조정되면 모델 출력 품질에 영향을 미칠 수 있음.</li>
+</ul>
+</li>
+<li>
+<p><strong>훈련 불안정 요인</strong>:</p>
+<ul>
+<li>RelayAttention의 캐시 관리 로직이 학습 데이터 분포에 따라 동적으로 변동될 경우, 학습 과정이 불안정해질 가능성.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="23-추가-검증을-위한-실험"><strong>2.3 추가 검증을 위한 실험</strong></h4>
+<ol>
+<li><strong>훈련 속도와 품질 평가</strong>:
+<ul>
+<li>동일 데이터셋에서 RelayAttention 적용 여부에 따른 훈련 속도 및 성능(F1, BLEU 등) 비교.</li>
+</ul>
+</li>
+<li><strong>학습 수렴 속도</strong>:
+<ul>
+<li>RelayAttention 적용으로 인해 학습이 더 빠르게 수렴하거나, 안정성 문제가 발생하지 않는지 확인.</li>
+</ul>
+</li>
+<li><strong>긴 프롬프트 및 컨텍스트 변화</strong>:
+<ul>
+<li>프롬프트 길이와 문맥이 동적으로 변화하는 데이터셋에서 학습 안정성을 평가.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="3-relayattention을-적용한-모델이-추론-이외의-다른-작업예-피드백-기반-모델-업데이트-강화-학습에서도-동일한-성능-이점을-제공할-수-있는가"><strong>3. RelayAttention을 적용한 모델이 추론 이외의 다른 작업(예: 피드백 기반 모델 업데이트, 강화 학습)에서도 동일한 성능 이점을 제공할 수 있는가?</strong></h3>
+<h4 id="31-피드백-기반-모델-업데이트"><strong>3.1 피드백 기반 모델 업데이트</strong></h4>
+<ul>
+<li>
+<p><strong>RelayAttention의 효과</strong>:</p>
+<ul>
+<li>피드백 기반 업데이트는 주로 기존 추론 결과와 새로운 데이터를 결합해 재학습(retraining) 수행.</li>
+<li>RelayAttention은 긴 시스템 프롬프트를 포함한 피드백 데이터를 효율적으로 처리하여 재학습 속도 향상을 기대할 수 있음.</li>
+</ul>
+</li>
+<li>
+<p><strong>제한점</strong>:</p>
+<ul>
+<li>피드백 데이터가 짧거나 간단한 경우, RelayAttention의 I/O 최적화 이점이 미미.</li>
+<li>데이터 추가와 반복 학습(retraining) 과정에서 캐시 관리 복잡성이 증가할 가능성.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="32-강화-학습rlhf에서의-효과"><strong>3.2 강화 학습(RLHF)에서의 효과</strong></h4>
+<ul>
+<li>
+<p><strong>RelayAttention의 장점</strong>:</p>
+<ul>
+<li>RLHF(피드백을 활용한 강화 학습) 과정에서 긴 시스템 프롬프트나 보상 모델의 컨텍스트를 처리하는 데 RelayAttention이 유용.</li>
+<li>예: 보상 모델이 긴 문맥 데이터를 평가해야 하는 경우, RelayAttention이 I/O 병목을 완화.</li>
+</ul>
+</li>
+<li>
+<p><strong>한계</strong>:</p>
+<ul>
+<li>강화 학습의 경우, 시스템 프롬프트보다 생성된 응답이나 보상 데이터의 길이가 길어질 가능성이 높음.</li>
+<li>이 경우, 문맥 주의(Context Attention) 단계에서의 연산 최적화가 필요.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="33-검증을-위한-추가-실험"><strong>3.3 검증을 위한 추가 실험</strong></h4>
+<ol>
+<li>
+<p><strong>RLHF 시나리오</strong>:</p>
+<ul>
+<li>RelayAttention이 보상 모델 평가 속도를 얼마나 개선할 수 있는지 분석.</li>
+<li>보상 모델과 학습 과정에서의 캐시 관리 전략 테스트.</li>
+</ul>
+</li>
+<li>
+<p><strong>Few-shot 학습</strong>:</p>
+<ul>
+<li>긴 시스템 프롬프트와 제한된 데이터로 모델을 학습하는 Few-shot 학습 시 RelayAttention의 효율성 평가.</li>
+</ul>
+</li>
+<li>
+<p><strong>데이터 증강 및 업데이트</strong>:</p>
+<ul>
+<li>새로운 데이터가 추가된 상황에서, RelayAttention이 재학습(retraining) 비용을 얼마나 절감하는지 테스트.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-7"><strong>결론</strong></h3>
+<ol>
+<li><strong>클라우드 기반 서비스 비용 절감</strong>:
+<ul>
+<li>RelayAttention은 GPU 사용률을 크게 개선하여 비용 절감을 가져올 가능성이 높습니다. 이를 실제로 측정하려면 A/B 테스트 및 GPU 사용 로그 분석이 필요합니다.</li>
+</ul>
+</li>
+<li><strong>훈련 단계 적용 가능성</strong>:
+<ul>
+<li>RelayAttention은 훈련에서도 긴 시스템 프롬프트 처리 효율성을 유지할 가능성이 크며, 학습 안정성에 미치는 영향을 추가적으로 평가해야 합니다.</li>
+</ul>
+</li>
+<li><strong>추론 외의 작업에 대한 적용</strong>:
+<ul>
+<li>피드백 기반 업데이트와 RLHF와 같은 작업에서도 효율성을 유지할 수 있으나, 캐시 관리 전략과 문맥 주의 최적화가 추가적으로 필요합니다.</li>
+</ul>
+</li>
+</ol>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/RelayAttention-for-Efficient-Large-Language-Model-Serving-with-Long-System-Prompts/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/RelayAttention-for-Efficient-Large-Language-Model-Serving-with-Long-System-Prompts/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/TeraPipe-Token-Level-Pipeline-Parallelism-for-Training-Large-Scale-Language-Models/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                TeraPipe: Token-Level Pipeline Parallelism for Training Large-Scale Language Models
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-12-14">
+                12月14日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/QUICK-Quantization-aware-Interleaving-and-Conflict-free-Kernel-for-efficient-LLM-inference/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                QUICK: Quantization-aware Interleaving and Conflict-free Kernel for efficient LLM inference
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-12-14">
+                12月14日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문-요약과-분석">논문 요약과 분석</a>
+          <ul>
+            <li><a href="#핵심-내용-요약"><strong>핵심 내용 요약</strong></a></li>
+            <li><a href="#논문의-강점"><strong>논문의 강점</strong></a></li>
+            <li><a href="#핵심-알고리즘-설명-예시-입력-기반"><strong>핵심 알고리즘 설명 (예시 입력 기반)</strong></a></li>
+            <li><a href="#결과-분석"><strong>결과 분석</strong></a></li>
+            <li><a href="#한계점"><strong>한계점</strong></a></li>
+            <li><a href="#결론"><strong>결론</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#relayattention-알고리즘-예시를-통한-상세-설명">RelayAttention 알고리즘: 예시를 통한 상세 설명</a>
+          <ul>
+            <li><a href="#핵심-문제"><strong>핵심 문제</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#예시-relayattention의-전체-과정">예시: RelayAttention의 전체 과정</a>
+          <ul>
+            <li><a href="#예시-입력"><strong>예시 입력</strong></a></li>
+            <li><a href="#relayattention-단계"><strong>RelayAttention 단계</strong></a></li>
+            <li><a href="#relayattention의-처리-흐름"><strong>RelayAttention의 처리 흐름</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#relayattention의-주요-특징-요약">RelayAttention의 주요 특징 요약</a>
+          <ul>
+            <li><a href="#relayattention의-장점"><strong>RelayAttention의 장점</strong></a></li>
+            <li><a href="#결론-1"><strong>결론</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문-결과-및-분석-relayattention의-성과와-특출난-점">논문 결과 및 분석: RelayAttention의 성과와 특출난 점</a></li>
+        <li><a href="#1-논문에서-제시한-결과"><strong>1. 논문에서 제시한 결과</strong></a>
+          <ul>
+            <li><a href="#11-주요-결과-요약"><strong>1.1 주요 결과 요약</strong></a></li>
+            <li><a href="#12-결과-비교"><strong>1.2 결과 비교</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-특출난-점"><strong>2. 특출난 점</strong></a>
+          <ul>
+            <li><a href="#21-불필요한-메모리-접근-제거"><strong>2.1 불필요한 메모리 접근 제거</strong></a></li>
+            <li><a href="#22-모델-재훈련-없이-통합-가능"><strong>2.2 모델 재훈련 없이 통합 가능</strong></a></li>
+            <li><a href="#23-긴-프롬프트에서-효율성-극대화"><strong>2.3 긴 프롬프트에서 효율성 극대화</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-relayattention이-이러한-결과를-도출한-방법과-논문의-논리"><strong>3. RelayAttention이 이러한 결과를 도출한 방법과 논문의 논리</strong></a>
+          <ul>
+            <li><a href="#31-수학적-재구성"><strong>3.1 수학적 재구성</strong></a></li>
+            <li><a href="#32-io-병목-해소"><strong>3.2 I/O 병목 해소</strong></a></li>
+            <li><a href="#33-이론적-속도-향상-분석"><strong>3.3 이론적 속도 향상 분석</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-내-의견-논문의-논리와-구현에-대한-평가"><strong>4. 내 의견: 논문의 논리와 구현에 대한 평가</strong></a>
+          <ul>
+            <li><a href="#41-뛰어난-점"><strong>4.1 뛰어난 점</strong></a></li>
+            <li><a href="#42-한계-및-보완점"><strong>4.2 한계 및 보완점</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#5-결론"><strong>5. 결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#1-기존-시스템에서-필요한-추가-구현"><strong>1. 기존 시스템에서 필요한 추가 구현</strong></a>
+      <ul>
+        <li><a href="#11-주요-구현-단계"><strong>1.1 주요 구현 단계</strong></a>
+          <ul>
+            <li><a href="#1단계-별도-시스템-프롬프트-캐시-생성"><strong>1단계: 별도 시스템 프롬프트 캐시 생성</strong></a></li>
+            <li><a href="#2단계-연산-흐름-분리"><strong>2단계: 연산 흐름 분리</strong></a></li>
+            <li><a href="#3단계-가중치-계산-및-결합"><strong>3단계: 가중치 계산 및 결합</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#12-필요-리소스-분석"><strong>1.2 필요 리소스 분석</strong></a>
+          <ul>
+            <li><a href="#1-메모리-리소스"><strong>1) 메모리 리소스</strong></a></li>
+            <li><a href="#2-연산량-증가"><strong>2) 연산량 증가</strong></a></li>
+            <li><a href="#3-공수"><strong>3) 공수</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#2-구현-공수-및-리소스-요약"><strong>2. 구현 공수 및 리소스 요약</strong></a></li>
+    <li><a href="#3-relayattention의-추가-구현이-도출하는-효율성의-근거"><strong>3. RelayAttention의 추가 구현이 도출하는 효율성의 근거</strong></a></li>
+    <li><a href="#4-relayattention의-실현-가능성에-대한-의견"><strong>4. RelayAttention의 실현 가능성에 대한 의견</strong></a></li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-입력-데이터-추론-과정-및-모델-아키텍처-분석">논문의 입력 데이터, 추론 과정 및 모델 아키텍처 분석</a></li>
+      </ul>
+    </li>
+    <li><a href="#1-입력-데이터"><strong>1. 입력 데이터</strong></a>
+      <ul>
+        <li><a href="#11-입력-데이터"><strong>1.1 입력 데이터</strong></a></li>
+        <li><a href="#12-입력-예시"><strong>1.2 입력 예시</strong></a>
+          <ul>
+            <li><a href="#예시-입력-1">예시 입력:</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#2-추론-과정"><strong>2. 추론 과정</strong></a>
+      <ul>
+        <li><a href="#21-단계별-추론-과정"><strong>2.1 단계별 추론 과정</strong></a>
+          <ul>
+            <li><a href="#1단계-시스템-주의-system-attention"><strong>1단계: 시스템 주의 (System Attention)</strong></a></li>
+            <li><a href="#2단계-문맥-주의-context-attention"><strong>2단계: 문맥 주의 (Context Attention)</strong></a></li>
+            <li><a href="#3단계-릴레이-융합-relay-fusion"><strong>3단계: 릴레이 융합 (Relay Fusion)</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#3-모델-아키텍처-및-구성"><strong>3. 모델 아키텍처 및 구성</strong></a>
+      <ul>
+        <li><a href="#31-transformer-아키텍처"><strong>3.1 Transformer 아키텍처</strong></a></li>
+        <li><a href="#32-relayattention의-구성-변경"><strong>3.2 RelayAttention의 구성 변경</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#4-연산량-및-메모리-요구량-분석"><strong>4. 연산량 및 메모리 요구량 분석</strong></a>
+      <ul>
+        <li><a href="#41-연산량"><strong>4.1 연산량</strong></a></li>
+        <li><a href="#42-메모리-요구량"><strong>4.2 메모리 요구량</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#5-결론-1"><strong>5. 결론</strong></a></li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#relayattention-논문의-한계와-이를-극복하기-위한-연구-흐름">RelayAttention 논문의 한계와 이를 극복하기 위한 연구 흐름</a></li>
+      </ul>
+    </li>
+    <li><a href="#1-논문의-한계"><strong>1. 논문의 한계</strong></a>
+      <ul>
+        <li><a href="#11-배치-크기-의존성"><strong>1.1 배치 크기 의존성</strong></a></li>
+        <li><a href="#12-긴-사용자-컨텍스트-의존성"><strong>1.2 긴 사용자 컨텍스트 의존성</strong></a></li>
+        <li><a href="#13-멀티-애플리케이션-환경-부적합"><strong>1.3 멀티 애플리케이션 환경 부적합</strong></a></li>
+        <li><a href="#14-메모리-및-연산량-증가"><strong>1.4 메모리 및 연산량 증가</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#2-한계를-극복하기-위한-연구-흐름"><strong>2. 한계를 극복하기 위한 연구 흐름</strong></a>
+      <ul>
+        <li><a href="#21-단일-요청-처리-최적화"><strong>2.1 단일 요청 처리 최적화</strong></a>
+          <ul>
+            <li><a href="#연구-방향-1-캐시-공유를-활용한-단일-요청-최적화"><strong>연구 방향 1: 캐시 공유를 활용한 단일 요청 최적화</strong></a></li>
+            <li><a href="#연구-방향-2-단일-요청을-위한-동적-압축-기법"><strong>연구 방향 2: 단일 요청을 위한 동적 압축 기법</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#22-긴-사용자-컨텍스트-처리-최적화"><strong>2.2 긴 사용자 컨텍스트 처리 최적화</strong></a>
+          <ul>
+            <li><a href="#연구-방향-3-컨텍스트-적응형-연산"><strong>연구 방향 3: 컨텍스트 적응형 연산</strong></a></li>
+            <li><a href="#연구-방향-4-컨텍스트-축소를-위한-메타-데이터-활용"><strong>연구 방향 4: 컨텍스트 축소를 위한 메타 데이터 활용</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#23-멀티-애플리케이션-지원"><strong>2.3 멀티 애플리케이션 지원</strong></a>
+          <ul>
+            <li><a href="#연구-방향-5-멀티-시스템-프롬프트-캐싱"><strong>연구 방향 5: 멀티 시스템 프롬프트 캐싱</strong></a></li>
+            <li><a href="#연구-방향-6-프롬프트-공유-최적화"><strong>연구 방향 6: 프롬프트 공유 최적화</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#24-메모리-및-연산량-최적화"><strong>2.4 메모리 및 연산량 최적화</strong></a>
+          <ul>
+            <li><a href="#연구-방향-7-hierarchical-attention-기법"><strong>연구 방향 7: Hierarchical Attention 기법</strong></a></li>
+            <li><a href="#연구-방향-8-저차원화-및-양자화"><strong>연구 방향 8: 저차원화 및 양자화</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#3-결론"><strong>3. 결론</strong></a></li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#q1-문제-정의와-필요성에-관한-질문"><strong>Q1. 문제 정의와 필요성에 관한 질문</strong></a>
+          <ul>
+            <li><a href="#1-긴-시스템-프롬프트에서-발생하는-주요-병목-현상은-기존-llm-아키텍처에서-정확히-어떤-연산-단계에서-나타나는가-이를-줄이기-위한-기존-방법론pagedattention-flashattention과-relayattention의-본질적인-차이점은-무엇인가"><strong>1. 긴 시스템 프롬프트에서 발생하는 주요 병목 현상은 기존 LLM 아키텍처에서 정확히 어떤 연산 단계에서 나타나는가? 이를 줄이기 위한 기존 방법론(PagedAttention, FlashAttention)과 RelayAttention의 본질적인 차이점은 무엇인가?</strong></a></li>
+            <li><a href="#2-논문에서-주장하는-시스템-프롬프트의-io-병목이-모든-llm-아키텍처에-동일하게-적용되는가-아니면-특정-모델이나-gpu-설정에-더-영향을-받는가"><strong>2. 논문에서 주장하는 시스템 프롬프트의 I/O 병목이 모든 LLM 아키텍처에 동일하게 적용되는가, 아니면 특정 모델이나 GPU 설정에 더 영향을 받는가?</strong></a></li>
+            <li><a href="#3-relayattention의-사용이-긴-프롬프트를-다루지-않는-애플리케이션에서는-어떤-한계를-가질-수-있는가"><strong>3. RelayAttention의 사용이 긴 프롬프트를 다루지 않는 애플리케이션에서는 어떤 한계를 가질 수 있는가?</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#q-알고리즘-설계에-관한-질문-1"><strong>Q: 알고리즘 설계에 관한 질문</strong></a></li>
+        <li><a href="#1-relayattention에서-시스템-주의system-attention와-문맥-주의context-attention를-분리-처리한-방식이-기존의-일괄-어텐션-처리all-to-all-attention와-비교하여-계산-효율성-및-메모리-사용량에-어떤-이점을-제공하는가"><strong>1. RelayAttention에서 시스템 주의(System Attention)와 문맥 주의(Context Attention)를 분리 처리한 방식이 기존의 일괄 어텐션 처리(All-to-All Attention)와 비교하여 계산 효율성 및 메모리 사용량에 어떤 이점을 제공하는가?</strong></a>
+          <ul>
+            <li><a href="#11-all-to-all-attention의-한계"><strong>1.1 All-to-All Attention의 한계</strong></a></li>
+            <li><a href="#12-relayattention의-분리-처리의-장점"><strong>1.2 RelayAttention의 분리 처리의 장점</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-릴레이-융합relay-fusion-단계에서-가중-평균convex-combination-계산의-정확도가-결과-품질에-미치는-영향은-무엇인가"><strong>2. 릴레이 융합(Relay Fusion) 단계에서 가중 평균(Convex Combination) 계산의 정확도가 결과 품질에 미치는 영향은 무엇인가?</strong></a>
+          <ul>
+            <li><a href="#21-가중-평균-계산의-역할"><strong>2.1 가중 평균 계산의 역할</strong></a></li>
+            <li><a href="#22-정확도가-결과-품질에-미치는-영향"><strong>2.2 정확도가 결과 품질에 미치는 영향</strong></a></li>
+            <li><a href="#23-품질-검증-시-고려할-사항"><strong>2.3 품질 검증 시 고려할 사항</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-relayattention의-수학적-재구성rescaling-approach이-성능에-미치는-영향을-실험적으로-검증할-추가-방법은-무엇인가"><strong>3. RelayAttention의 수학적 재구성(Rescaling Approach)이 성능에 미치는 영향을 실험적으로 검증할 추가 방법은 무엇인가?</strong></a>
+          <ul>
+            <li><a href="#31-수학적-재구성의-핵심"><strong>3.1 수학적 재구성의 핵심</strong></a></li>
+            <li><a href="#32-추가-검증-방안"><strong>3.2 추가 검증 방안</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-2"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#q-구현-및-효율성에-관한-질문"><strong>Q: 구현 및 효율성에 관한 질문</strong></a></li>
+        <li><a href="#1-시스템-프롬프트의-길이가-매우-긴-상황예-2048-토큰-이상에서-relayattention이-얼마나-안정적으로-동작하는가-메모리-사용량-증가로-인해-생길-수-있는-한계는-무엇인가"><strong>1. 시스템 프롬프트의 길이가 매우 긴 상황(예: 2048 토큰 이상)에서 RelayAttention이 얼마나 안정적으로 동작하는가? 메모리 사용량 증가로 인해 생길 수 있는 한계는 무엇인가?</strong></a>
+          <ul>
+            <li><a href="#11-안정성"><strong>1.1 안정성</strong></a></li>
+            <li><a href="#12-메모리-사용량-증가"><strong>1.2 메모리 사용량 증가</strong></a></li>
+            <li><a href="#13-한계-및-대응-방안"><strong>1.3 한계 및 대응 방안</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-relayattention의-최적화를-위해-gpu-메모리와-연산-유닛을-어떻게-활용하며-특정-gpu-아키텍처에서의-최적화-전략은-무엇인가"><strong>2. RelayAttention의 최적화를 위해 GPU 메모리와 연산 유닛을 어떻게 활용하며, 특정 GPU 아키텍처에서의 최적화 전략은 무엇인가?</strong></a>
+          <ul>
+            <li><a href="#21-gpu-메모리-활용"><strong>2.1 GPU 메모리 활용</strong></a></li>
+            <li><a href="#22-특정-gpu-아키텍처-최적화"><strong>2.2 특정 GPU 아키텍처 최적화</strong></a></li>
+            <li><a href="#23-최적화를-위한-추가-고려-사항"><strong>2.3 최적화를 위한 추가 고려 사항</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-단일-요청-처리에서는-relayattention이-성능-향상을-제공하지-못한다고-논문에서-언급했는데-단일-요청-환경에서의-성능-향상을-위해-추가적으로-고려할-수-있는-알고리즘적-개선-방안은-무엇인가"><strong>3. 단일 요청 처리에서는 RelayAttention이 성능 향상을 제공하지 못한다고 논문에서 언급했는데, 단일 요청 환경에서의 성능 향상을 위해 추가적으로 고려할 수 있는 알고리즘적 개선 방안은 무엇인가?</strong></a>
+          <ul>
+            <li><a href="#31-단일-요청-환경에서-relayattention의-한계"><strong>3.1 단일 요청 환경에서 RelayAttention의 한계</strong></a></li>
+            <li><a href="#32-개선-방안"><strong>3.2 개선 방안</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-3"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#q-실험-설계-및-결과-분석에-관한-질문"><strong>Q: 실험 설계 및 결과 분석에 관한 질문</strong></a></li>
+        <li><a href="#1-relayattention이-다양한-gpua40-a100와-모델llama2-7b-llama-30b에서-일관된-성능-향상을-보였다고-했는데-더-작은-모델예-1b"><strong>1. RelayAttention이 다양한 GPU(A40, A100)와 모델(Llama2-7B, Llama-30B)에서 일관된 성능 향상을 보였다고 했는데, 더 작은 모델(예: 1B~2B 파라미터 모델)에서도 동일한 성능 이점을 제공할 수 있는가?</strong></a>
+          <ul>
+            <li><a href="#11-작은-모델에서-relayattention의-기대-효과"><strong>1.1 작은 모델에서 RelayAttention의 기대 효과</strong></a></li>
+            <li><a href="#12-예상되는-성능"><strong>1.2 예상되는 성능</strong></a></li>
+            <li><a href="#13-검증-실험-설계"><strong>1.3 검증 실험 설계</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-논문에서-비교한-pagedattention-및-promptcache와의-실험은-어떤-조건에서-수행되었으며-동일한-하드웨어에서-조건이-변경되었을-때-성능-차이는-어떻게-나타나는가"><strong>2. 논문에서 비교한 PagedAttention 및 PromptCache와의 실험은 어떤 조건에서 수행되었으며, 동일한 하드웨어에서 조건이 변경되었을 때 성능 차이는 어떻게 나타나는가?</strong></a>
+          <ul>
+            <li><a href="#21-실험-조건-논문-기준"><strong>2.1 실험 조건 (논문 기준)</strong></a></li>
+            <li><a href="#22-결과"><strong>2.2 결과</strong></a></li>
+            <li><a href="#23-조건-변경-시-예상-성능"><strong>2.3 조건 변경 시 예상 성능</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-긴-시스템-프롬프트-처리에서-relayattention의-성능-개선이-가장-크게-나타난-데이터셋sharegpt-mmlu과-유사한-환경이-아닌-데이터셋에서는-어떤-차이가-나타날-수-있는가"><strong>3. 긴 시스템 프롬프트 처리에서 RelayAttention의 성능 개선이 가장 크게 나타난 데이터셋(ShareGPT, MMLU)과 유사한 환경이 아닌 데이터셋에서는 어떤 차이가 나타날 수 있는가?</strong></a>
+          <ul>
+            <li><a href="#31-유사하지-않은-환경"><strong>3.1 유사하지 않은 환경</strong></a></li>
+            <li><a href="#32-예상되는-차이점"><strong>3.2 예상되는 차이점</strong></a></li>
+            <li><a href="#33-개선-방안"><strong>3.3 개선 방안</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-4"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#q-한계점과-확장-가능성에-관한-질문"><strong>Q: 한계점과 확장 가능성에 관한 질문</strong></a></li>
+        <li><a href="#1-relayattention은-멀티-애플리케이션-환경에서-비효율적이라고-언급했는데-이를-해결하기-위한-추가적인-캐시-관리-전략이나-스케줄링-방안은-무엇인가"><strong>1. RelayAttention은 멀티 애플리케이션 환경에서 비효율적이라고 언급했는데, 이를 해결하기 위한 추가적인 캐시 관리 전략이나 스케줄링 방안은 무엇인가?</strong></a>
+          <ul>
+            <li><a href="#11-멀티-애플리케이션-환경에서의-문제"><strong>1.1 멀티 애플리케이션 환경에서의 문제</strong></a></li>
+            <li><a href="#12-해결을-위한-추가-전략"><strong>1.2 해결을 위한 추가 전략</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-긴-사용자-프롬프트와-생성된-응답이-시스템-프롬프트보다-긴-경우-relayattention의-효과가-감소한다고-했는데-이를-완화하기-위한-프롬프트-압축이나-요약-방법은-무엇인가"><strong>2. 긴 사용자 프롬프트와 생성된 응답이 시스템 프롬프트보다 긴 경우 RelayAttention의 효과가 감소한다고 했는데, 이를 완화하기 위한 프롬프트 압축이나 요약 방법은 무엇인가?</strong></a>
+          <ul>
+            <li><a href="#21-문제의-원인"><strong>2.1 문제의 원인</strong></a></li>
+            <li><a href="#22-완화-방안-프롬프트-압축-및-요약"><strong>2.2 완화 방안: 프롬프트 압축 및 요약</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-relayattention이-적용되지-않는-극단적인-상황예-시스템-프롬프트가-짧거나-컨텍스트가-매우-긴-경우에서-성능을-보완하기-위해-다른-최적화-방법론과의-결합-가능성은-어떤-것이-있는가"><strong>3. RelayAttention이 적용되지 않는 극단적인 상황(예: 시스템 프롬프트가 짧거나 컨텍스트가 매우 긴 경우)에서 성능을 보완하기 위해 다른 최적화 방법론과의 결합 가능성은 어떤 것이 있는가?</strong></a>
+          <ul>
+            <li><a href="#31-극단적인-상황"><strong>3.1 극단적인 상황</strong></a></li>
+            <li><a href="#32-결합-가능한-최적화-방법론"><strong>3.2 결합 가능한 최적화 방법론</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-5"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#q-추가적인-이론적-및-실험적-검증-질문-1"><strong>Q: 추가적인 이론적 및 실험적 검증 질문</strong></a></li>
+        <li><a href="#1-relayattention의-수학적-분석특히-io-감소와-연산량-분석이-실제-실험-결과와-얼마나-일치하는가-이론적-속도-향상-비율p의-분석이-놓치고-있는-실질적인-요소는-무엇인가"><strong>1. RelayAttention의 수학적 분석(특히 I/O 감소와 연산량 분석)이 실제 실험 결과와 얼마나 일치하는가? 이론적 속도 향상 비율(p)의 분석이 놓치고 있는 실질적인 요소는 무엇인가?</strong></a>
+          <ul>
+            <li><a href="#11-이론적-분석과-실험-결과-비교"><strong>1.1 이론적 분석과 실험 결과 비교</strong></a></li>
+            <li><a href="#12-이론적-분석이-놓친-실질적-요소"><strong>1.2 이론적 분석이 놓친 실질적 요소</strong></a></li>
+            <li><a href="#13-추가-실험으로-검증할-방법"><strong>1.3 추가 실험으로 검증할 방법</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-릴레이-융합에서-log-sum-exp-계산의-수치-안정성이-시스템-크기large-scale-kv-cache에서-어떻게-보장되는가"><strong>2. 릴레이 융합에서 Log-Sum-Exp 계산의 수치 안정성이 시스템 크기(Large-scale KV Cache)에서 어떻게 보장되는가?</strong></a>
+          <ul>
+            <li><a href="#21-log-sum-exp-계산의-역할"><strong>2.1 Log-Sum-Exp 계산의 역할</strong></a></li>
+            <li><a href="#22-수치-안정성을-위한-보장-기법"><strong>2.2 수치 안정성을 위한 보장 기법</strong></a></li>
+            <li><a href="#23-대규모-kv-캐시에서의-검증-실험"><strong>2.3 대규모 KV 캐시에서의 검증 실험</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-relayattention의-메모리-사용량-증가와-gpu-연산-능력-간의-균형은-실제-환경예-데이터-센터-vs-엣지-디바이스에서-어떻게-달라지는가"><strong>3. RelayAttention의 메모리 사용량 증가와 GPU 연산 능력 간의 균형은 실제 환경(예: 데이터 센터 vs 엣지 디바이스)에서 어떻게 달라지는가?</strong></a>
+          <ul>
+            <li><a href="#31-메모리-사용량-증가"><strong>3.1 메모리 사용량 증가</strong></a></li>
+            <li><a href="#32-데이터-센터-vs-엣지-디바이스"><strong>3.2 데이터 센터 vs 엣지 디바이스</strong></a></li>
+            <li><a href="#33-최적화를-위한-방향"><strong>3.3 최적화를 위한 방향</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-6"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#q-relayattention의-실질적-적용-가능성에-관한-질문"><strong>Q: RelayAttention의 실질적 적용 가능성에 관한 질문</strong></a></li>
+        <li><a href="#1-relayattention이-클라우드-기반-대규모-llm-서비스에서-얼마나-비용-절감을-가져올-수-있는가-이는-실제-인프라에서-측정할-수-있는가"><strong>1. RelayAttention이 클라우드 기반 대규모 LLM 서비스에서 얼마나 비용 절감을 가져올 수 있는가? 이는 실제 인프라에서 측정할 수 있는가?</strong></a>
+          <ul>
+            <li><a href="#11-비용-절감의-주요-요인"><strong>1.1 비용 절감의 주요 요인</strong></a></li>
+            <li><a href="#12-비용-절감의-정량적-평가"><strong>1.2 비용 절감의 정량적 평가</strong></a></li>
+            <li><a href="#13-실제-인프라에서의-측정-가능성"><strong>1.3 실제 인프라에서의 측정 가능성</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-relayattention이-적용된-시스템을-학습-단계에서-직접-활용할-경우-훈련-속도나-학습-안정성에-영향을-미칠-가능성은-무엇인가"><strong>2. RelayAttention이 적용된 시스템을 학습 단계에서 직접 활용할 경우, 훈련 속도나 학습 안정성에 영향을 미칠 가능성은 무엇인가?</strong></a>
+          <ul>
+            <li><a href="#21-훈련-단계에서-relayattention의-잠재적-이점"><strong>2.1 훈련 단계에서 RelayAttention의 잠재적 이점</strong></a></li>
+            <li><a href="#22-학습-안정성에-대한-잠재적-영향"><strong>2.2 학습 안정성에 대한 잠재적 영향</strong></a></li>
+            <li><a href="#23-추가-검증을-위한-실험"><strong>2.3 추가 검증을 위한 실험</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-relayattention을-적용한-모델이-추론-이외의-다른-작업예-피드백-기반-모델-업데이트-강화-학습에서도-동일한-성능-이점을-제공할-수-있는가"><strong>3. RelayAttention을 적용한 모델이 추론 이외의 다른 작업(예: 피드백 기반 모델 업데이트, 강화 학습)에서도 동일한 성능 이점을 제공할 수 있는가?</strong></a>
+          <ul>
+            <li><a href="#31-피드백-기반-모델-업데이트"><strong>3.1 피드백 기반 모델 업데이트</strong></a></li>
+            <li><a href="#32-강화-학습rlhf에서의-효과"><strong>3.2 강화 학습(RLHF)에서의 효과</strong></a></li>
+            <li><a href="#33-검증을-위한-추가-실험"><strong>3.3 검증을 위한 추가 실험</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-7"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

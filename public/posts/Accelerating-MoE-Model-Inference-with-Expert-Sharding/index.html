@@ -1,0 +1,2327 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Accelerating MoE Model Inference with Expert Sharding | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 제공해주신 논문 &ldquo;Accelerating MoE Model..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/Accelerating-MoE-Model-Inference-with-Expert-Sharding/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/Accelerating-MoE-Model-Inference-with-Expert-Sharding/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="Accelerating MoE Model Inference with Expert Sharding">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 제공해주신 논문 “Accelerating MoE Model Inference with Expert Sharding” (MOESHARD)에 대한 자세한 분석은 다음과 같습니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-06-05T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-06-05T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="Accelerating MoE Model Inference with Expert Sharding">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 제공해주신 논문 “Accelerating MoE Model Inference with Expert Sharding” (MOESHARD)에 대한 자세한 분석은 다음과 같습니다.">
+
+
+  <meta itemprop="name" content="Accelerating MoE Model Inference with Expert Sharding">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 제공해주신 논문 “Accelerating MoE Model Inference with Expert Sharding” (MOESHARD)에 대한 자세한 분석은 다음과 같습니다.">
+  <meta itemprop="datePublished" content="2025-06-05T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-06-05T00:00:00+00:00">
+  <meta itemprop="wordCount" content="16921">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gemini-2.5-Pro(preview)">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">Accelerating MoE Model Inference with Expert Sharding</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    Accelerating MoE Model Inference with Expert Sharding
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2025-06-05">
+          2025년 06월 05일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >34 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>16921 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gemini-2.5-propreview/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gemini-2.5-pro(preview)
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2503.08467v1">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<p>제공해주신 논문 &ldquo;Accelerating MoE Model Inference with Expert Sharding&rdquo; (MOESHARD)에 대한 자세한 분석은 다음과 같습니다.</p>
+<p>이 논문은 Mixture of Experts (MoE) 모델의 추론 속도를 높이기 위한 새로운 시스템인 MOESHARD를 제안합니다. MoE 모델은 높은 성능을 달성하지만, 토큰 라우팅 불균형과 통신 오버헤드로 인해 하드웨어 활용률이 비효율적인 문제가 있습니다. [cite: 1] MOESHARD는 MoE 전문가(expert)의 텐서 샤딩(tensor sharding)을 통해 완벽한 로드 밸런싱을 달성하고자 합니다. [cite: 3]</p>
+<p><strong>논문의 강점 및 독창적인 지점</strong></p>
+<ul>
+<li><strong>완벽한 로드 밸런싱 달성:</strong> 기존 방식들이 로드 불균형을 완화하려는 것과 달리, MOESHARD는 전문가 행렬의 전략적인 행 및 열 분해를 통해 계산을 GPU에 균등하게 분배함으로써 완벽한 로드 밸런싱을 목표로 합니다. [cite: 3, 4, 5] 이는 라우팅 편향에 관계없이 GPU 활용률을 극대화합니다. [cite: 4]</li>
+<li><strong>토큰 손실 없음:</strong> 기존의 용량 계수(capacity factor) 방식은 토큰을 드롭시켜 모델 정확도를 저하시킬 수 있는 반면[cite: 39, 40], MOESHARD는 모든 토큰을 유지하여 전체 토큰 보존을 보장합니다. [cite: 4]</li>
+<li><strong>프로파일링 불필요:</strong> 전문가 복제나 동적 스케줄링에 의존하는 일부 기존 방법과 달리, MOESHARD는 사전 프로파일링이나 전문가 복제가 필요 없어 시스템 설계를 단순화합니다. [cite: 44]</li>
+<li><strong>커널 융합을 통한 오버헤드 최소화:</strong> 분해된 전문가 계산을 융합하여 커널 실행 횟수를 최소화함으로써 처리량을 향상시킵니다. [cite: 7, 55]</li>
+<li><strong>새로운 접근 방식:</strong> 전문가를 여러 GPU에 복제하거나 토큰을 다른 GPU로 리디렉션하는 대신, 모든 전문가를 샤딩하여 모든 GPU에 분산시키는 독창적인 방식으로 로드 불균형 문제에 접근합니다. [cite: 49]</li>
+<li><strong>구체적인 성능 향상 제시:</strong> DEEPSPEED와의 비교를 통해 인코더 기반 아키텍처에서 TTFT(Time To First Token)를 최대 6.4배까지 단축했음을 실험적으로 보여줍니다. [cite: 8]</li>
+</ul>
+<p><strong>핵심 알고리즘 (MOESHARD Forward Pass) 설명 및 예시</strong></p>
+<p>MOESHARD의 핵심 아이디어는 각 GPU가 모든 토큰을 입력으로 받고, 각 전문가의 샤드(조각)를 호스팅하여 부분적인 토큰 출력을 계산한 후, 이를 집계하여 최종 출력을 만드는 것입니다. [cite: 85] 전문가 행렬 $W_i$는 열 기준으로, $W_o$는 행 기준으로 샤딩됩니다. [cite: 119]</p>
+<p><strong>알고리즘 1: MOESHARD Forward Pass</strong> [cite: 86]</p>
+<ul>
+<li>
+<p><strong>입력:</strong> GPU 집합 G, 전문가 집합 E, 입력 토큰 텐서 X (배치 크기 b, 시퀀스 길이 s, 은닉 차원 h) [cite: 87]</p>
+</li>
+<li>
+<p><strong>가정:</strong> 설명을 위해 2개의 GPU ($G_0, G_1$)와 1개의 전문가($E_0$)가 있다고 가정합니다. 입력 토큰 $X_{total}$은 모든 GPU에 복제된 상태라고 가정합니다 (이는 Scatter Tokens 단계 이후 상황). 전문가 $E_0$는 두 개의 행렬 $W_i \in \mathbb{R}^{(h, h_o)}$와 $W_o \in \mathbb{R}^{(h_o, h)}$로 구성됩니다. [cite: 113] $h_o=4$라고 가정합니다.</p>
+<ul>
+<li>$W_i$는 열 기준 분할: $W_i = [W_{i,cols1-2} | W_{i,cols3-4}]$. $G_0$는 $W_i^{G_0} = W_{i,cols1-2}$를, $G_1$은 $W_i^{G_1} = W_{i,cols3-4}$를 가집니다. [cite: 119, 120]</li>
+<li>$W_o$는 행 기준 분할: $W_o = \begin{bmatrix} W_{o,rows1-2} \ W_{o,rows3-4} \end{bmatrix}$. $G_0$는 $W_o^{G_0} = W_{o,rows1-2}$를, $G_1$은 $W_o^{G_1} = W_{o,rows3-4}$를 가집니다. [cite: 119, 121]</li>
+</ul>
+</li>
+</ul>
+<p><strong>단계별 과정:</strong></p>
+<ol>
+<li>
+<p><strong>Step 1: 토큰 라우팅 (Token Routing)</strong> [cite: 89]</p>
+<ul>
+<li>입력 토큰 X는 라우터 메커니즘에 의해 특정 전문가에게 할당됩니다. [cite: 90]</li>
+<li>예시: 모든 토큰이 $E_0$에 할당되었다고 가정합니다. 각 GPU는 이 정보를 로컬에서 계산합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Step 2: 메타데이터 교환 (Metadata Exchange)</strong> [cite: 92]</p>
+<ul>
+<li>각 GPU는 다른 모든 GPU에게 각 전문가에게 할당된 토큰 수를 알립니다. [cite: 92]</li>
+<li>예시: $G_0$와 $G_1$은 서로 자신이 $E_0$에 할당한 토큰 수를 교환하여, 모든 GPU가 $E_0$로 향하는 총 토큰 수를 알게 됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Step 3: 토큰 분산 (Scatter Tokens)</strong> [cite: 95]</p>
+<ul>
+<li>MOESHARD는 모든 입력 토큰을 모든 GPU에 복제합니다. 즉, 각 GPU는 자신의 입력 토큰을 다른 모든 GPU로 전송합니다. [cite: 95]</li>
+<li>예시: 초기 토큰 배치가 $X_{batch}$였다면, 이 단계 후 $G_0$와 $G_1$ 모두 전체 $X_{batch}$ (여기서는 $X_{total}$로 지칭)를 갖게 됩니다. 각 GPU는 $W[g][e]$ 형태로 토큰을 저장하는데, 이는 GPU $g$에서 발생하여 전문가 $e$로 지정된 토큰을 의미합니다. [cite: 96] 그러나 MOESHARD의 핵심은 모든 GPU가 모든 토큰을 가지고 각자의 샤드에서 계산하는 것이므로, $X_{total}$이 각 GPU에서 사용됩니다. [cite: 85, 103]</li>
+</ul>
+</li>
+<li>
+<p><strong>Step 4: 전문가 계산 (Expert Computation)</strong> [cite: 104]</p>
+<ul>
+<li>각 GPU는 자신이 가진 전문가 샤드를 사용하여 할당된 (실제로는 모든 복제된) 토큰을 처리합니다. [cite: 105, 107]</li>
+<li>예시 (Figure 2b 참조 [cite: 103]):
+<ul>
+<li>$G_0$: $E_0$의 샤드 $W_i^{G_0}$와 $W_o^{G_0}$를 로드합니다. 부분 결과 $Y_{partial}^{G_0} = X_{total} \cdot W_i^{G_0} \cdot W_o^{G_0}$를 계산합니다. [cite: 123]</li>
+<li>$G_1$: $E_0$의 샤드 $W_i^{G_1}$와 $W_o^{G_1}$를 로드합니다. 부분 결과 $Y_{partial}^{G_1} = X_{total} \cdot W_i^{G_1} \cdot W_o^{G_1}$를 계산합니다. [cite: 123]</li>
+</ul>
+</li>
+<li>이 계산은 병렬로 수행됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Step 5: 토큰 수집 (Gather Tokens)</strong> [cite: 109]</p>
+<ul>
+<li>처리된 (부분적인) 토큰들은 원래 토큰을 담당했던 GPU로 다시 전송되거나, 모든 GPU에 전송되어 집계됩니다. [cite: 109]</li>
+<li>예시: $Y_{partial}^{G_0}$와 $Y_{partial}^{G_1}$이 모든 GPU에 배포되거나 중앙 집중적으로 수집됩니다.</li>
+<li>그 후, 부분 결과들은 점별(point-wise)로 집계되어 최종 토큰 출력을 형성합니다. [cite: 110]</li>
+<li>최종 결과 $X_{final} = Y_{partial}^{G_0} + Y_{partial}^{G_1}$. [cite: 124] 이는 $X_{total} \cdot W_i \cdot W_o$와 동일한 결과를 낳습니다.</li>
+</ul>
+</li>
+</ol>
+<p><strong>최적화:</strong>
+MOESHARD는 커널 실행 오버헤드를 줄이기 위해 두 가지 최적화를 사용합니다. [cite: 137]</p>
+<ol>
+<li>동일한 전문가에 대한 토큰들을 모든 GPU로부터 단일 텐서로 연결하여 전문가 샤드 계산 수를 $|E|\times|G|$에서 $|E|$로 줄입니다. [cite: 138]</li>
+<li>가변 크기 희소 행렬 곱셈을 활용하여 모든 전문가 샤드를 단일 연산으로 처리합니다. [cite: 139, 140]</li>
+</ol>
+<p><strong>논문의 한계점</strong></p>
+<ul>
+<li><strong>통신 오버헤드:</strong> 모든 입력 토큰을 모든 GPU에 복제하는 단계(Step 3 Scatter Tokens) [cite: 95, 98]는 GPU 수가 많아지거나 인터커넥트 성능이 낮은 환경에서는 병목이 될 수 있습니다. 논문은 NVLINK 3.0 환경에서 이 오버헤드가 관리 가능하다고 주장하지만[cite: 100], 더 많은 GPU 환경에서의 확장성은 검증이 필요합니다.</li>
+<li><strong>메모리 오버헤드:</strong> 각 GPU는 <em>모든</em> 전문가의 샤드를 저장해야 합니다. [cite: 85, 117] 전문가 수가 매우 많으면 이 샤드들의 총합 크기가 커질 수 있습니다. &ldquo;전체 MoE 모델이 모든 GPU의 집합적 메모리에収まる(들어맞는다)&ldquo;는 가정이 있지만[cite: 81], 이 부분에 대한 심층적 분석은 부족합니다.</li>
+<li><strong>인코더에 국한된 평가:</strong> 평가는 주로 모델의 인코더 부분에 초점을 맞추고 있습니다. [cite: 149] 디코더 추론(특히 자동 회귀 생성)은 특성이 달라 MOESHARD의 적용 가능성이 불분명합니다.</li>
+<li><strong>단순화된 가정:</strong>
+<ul>
+<li>전문가 샤드 수가 GPU 수로 나누어떨어진다고 가정합니다. [cite: 83]</li>
+<li>모든 GPU가 동일한 연산 능력과 메모리를 가진다고 가정합니다. [cite: 80]</li>
+<li>고속 인터커넥트로 연결된 단일 서버 환경을 가정합니다. [cite: 82]</li>
+</ul>
+</li>
+<li><strong>커스텀 라우터 사용:</strong> 대부분의 실험(섹션 4.2 제외)에서 편향(skew)을 제어하기 위해 커스텀 라우터를 사용합니다. [cite: 150, 151] 이 라우터는 실험 제어에는 유용하지만, &ldquo;비상식적인 토큰-전문가 할당을 유발하는 확률적 특성으로 인해 운영 환경에는 부적합하다&quot;고 언급됩니다. [cite: 152, 153] 실제 운영 환경의 라우터 및 자연 발생적 편향에서의 성능 검증이 더 필요합니다. (기본 라우터를 사용한 한 실험에서 좋은 결과를 보인 점은 긍정적입니다. [cite: 168])</li>
+<li><strong>제한된 GPU 수에서의 평가:</strong> 실험은 4개의 NVIDIA A100 GPU를 사용합니다. [cite: 156] 토큰 복제로 인한 통신 오버헤드가 훨씬 많은 수의 GPU에서 어떻게 확장될지는 미지수입니다.</li>
+<li><strong>주요 메트릭으로서의 TTFT:</strong> TTFT(Time To First Token)가 중요한 지표이긴 하지만[cite: 8], 지속적인 부하 상태에서의 처리량(throughput) 또한 서비스 제공에 중요하며, TTFT 중심의 실험에서는 이 부분이 주된 초점이 아닙니다.</li>
+</ul>
+<p>결론적으로, MOESHARD는 MoE 모델 추론 시 고질적인 문제인 로드 불균형을 해결하기 위한 독창적이고 효과적인 접근 방식을 제시합니다. 특히 토큰 손실 없이 완벽한 로드 밸런싱을 추구한다는 점이 인상적입니다. 다만, 통신 및 메모리 오버헤드, 특정 가정 및 평가 환경에 대한 고려가 실제 광범위한 적용을 위해서는 추가적으로 필요해 보입니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>MOESHARD의 핵심 알고리즘은 전문가(expert) 모델의 추론 과정에서 발생하는 부하 불균형 문제를 해결하기 위해 모든 전문가를 여러 GPU에 걸쳐 분산(sharding)시키는 것입니다[cite: 3, 43]. 각 GPU는 입력된 모든 토큰에 대해 자신이 맡은 전문가의 &lsquo;조각(shard)&lsquo;을 사용하여 부분적인 계산을 수행하고, 이 부분 결과들을 합쳐 최종 결과를 만듭니다[cite: 85].</p>
+<hr>
+<h2 id="moeshard-순방향-패스-forward-pass-상세-설명">MOESHARD 순방향 패스 (Forward Pass) 상세 설명</h2>
+<p>MOESHARD의 순방향 패스는 다음 단계로 진행됩니다[cite: 86].</p>
+<ol>
+<li>
+<p><strong>토큰 라우팅 (Token Routing)</strong>: 입력된 토큰들은 먼저 라우터(router)에 의해 특정 전문가에게 할당됩니다[cite: 89, 90]. 이 결과로 각 토큰이 어떤 전문가에게 전달되어야 하는지에 대한 매핑 정보($m_{expert}$)가 생성됩니다[cite: 91].</p>
+</li>
+<li>
+<p><strong>메타데이터 교환 (Metadata Exchange)</strong>: 이 단계에서는 각 GPU가 다른 모든 GPU로부터 각 전문가에게 얼마나 많은 토큰이 할당되었는지 정보를 공유합니다[cite: 92].</p>
+<ul>
+<li>먼저, 각 GPU는 라우팅 정보($m_{expert}$)에 따라 입력 토큰들을 전문가별로 그룹화합니다 ($I_{exp}$)[cite: 93].</li>
+<li>그리고 각 전문가에게 할당된 토큰의 수를 리스트($m_{sizes}$)로 만듭니다[cite: 94].</li>
+<li>이 리스트를 모든 다른 GPU에게 전송하고, 다른 GPU들로부터 받은 정보는 $m_{sizes}^{\prime}$에 저장됩니다[cite: 94].</li>
+</ul>
+</li>
+<li>
+<p><strong>토큰 분산 (Scatter Tokens)</strong>: 모든 입력 토큰이 모든 GPU에 복제됩니다[cite: 95]. 즉, 각 GPU는 자신이 가진 토큰들을 다른 모든 GPU로 전송합니다[cite: 95]. 각 GPU는 수신한 토큰들을 $W[g][e]$ (GPU $g$에서 유래하여 전문가 $e$로 향하는 토큰들) 형태로 저장합니다[cite: 96]. 이 과정에서 앞서 교환한 메타데이터($m_{sizes}^{\prime}$)를 사용하여 수신한 토큰들을 정확히 매핑할 수 있습니다[cite: 97]. 논문에 따르면, 4개의 GPU, 배치 크기 250, 시퀀스 길이 120, 은닉 차원 768, 텐서 요소당 4B를 가정할 때, 각 GPU는 약 88MiB를 전송하고 총 352MiB를 수신하며, NVLINK 3.0 환경에서는 이 전송에 약 0.15ms가 소요되어 무시할 만한 수준이라고 합니다[cite: 99, 100].</p>
+</li>
+<li>
+<p><strong>전문가 계산 (Expert Computation)</strong>: 각 GPU는 이제 모든 토큰($W$)에 대해 자신이 보유한 전문가의 샤드(shard)를 사용하여 계산을 수행합니다[cite: 104].</p>
+<ul>
+<li>전문가는 일반적으로 두 개의 행렬 $W_i$와 $W_o$로 구성됩니다[cite: 112].</li>
+<li>MOESHARD는 $W_i$를 열(column) 기준으로 분할하고, $W_o$를 행(row) 기준으로 분할합니다[cite: 118, 103].</li>
+<li><strong>예시</strong>: 2개의 GPU (GPU 0, GPU 1)가 있고, $W_i$가 4개의 열을, $W_o$가 4개의 행을 가진다고 가정해 봅시다 (즉, $h_o=4$)[cite: 118, 119, 120].
+<ul>
+<li>GPU 0은 $W_i$의 첫 2개 열($W_i^{G0}$)과 $W_o$의 첫 2개 행($W_o^{G0}$)을 가집니다[cite: 119, 120].</li>
+<li>GPU 1은 $W_i$의 나머지 2개 열($W_i^{G1}$)과 $W_o$의 나머지 2개 행($W_o^{G1}$)을 가집니다[cite: 119, 120].</li>
+<li>입력 토큰을 $x$라고 할 때, GPU 0은 부분 결과 $y_{G0} = x \cdot W_i^{G0} \cdot W_o^{G0}$를 계산합니다[cite: 122].</li>
+<li>GPU 1은 부분 결과 $y_{G1} = x \cdot W_i^{G1} \cdot W_o^{G1}$를 계산합니다[cite: 122].</li>
+</ul>
+</li>
+<li>계산된 부분 결과는 $W$의 해당 항목을 대체합니다[cite: 106].</li>
+</ul>
+</li>
+<li>
+<p><strong>토큰 수집 (Gather Tokens)</strong>: 각 GPU에서 계산된 부분적인 토큰 결과들($W[g]$)은 다시 모든 GPU로 전송됩니다[cite: 108]. 각 GPU는 다른 GPU들로부터 부분 결과($y[g]$)를 수신합니다[cite: 108].</p>
+</li>
+<li>
+<p><strong>결과 집계 (Aggregate Tokens)</strong>: 수신된 부분 결과들은 점별(point-wise)로 합산되어 최종 토큰 출력($x$)을 형성합니다[cite: 109].</p>
+<ul>
+<li><strong>예시 (계속)</strong>: 최종 결과는 $y_{G0} + y_{G1}$이 됩니다. 이 합산 결과는 샤딩 없이 원래의 $W_i$와 $W_o$를 사용하여 $x \cdot W_i \cdot W_o$를 계산한 것과 동일합니다[cite: 123].</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="최적화">최적화</h3>
+<p>MOESHARD는 빈번한 커널 실행으로 인한 오버헤드를 줄이기 위해 다음과 같은 최적화 기법을 사용합니다[cite: 137]:</p>
+<ul>
+<li><strong>토큰 그룹화</strong>: 각 GPU와 전문가에 대해 개별적으로 입력 토큰을 처리하는 대신, 동일한 전문가에 대한 토큰들을 모든 GPU로부터 하나의 큰 텐서로 묶습니다[cite: 138]. 이렇게 하면 전문가 샤드 계산의 최대 수가 $|E| \times |G|$에서 $|E|$로 줄어듭니다 (여기서 $|E|$는 전문가의 수, $|G|$는 GPU의 수)[cite: 138].</li>
+<li><strong>가변 크기 희소 행렬 곱셈 활용</strong>: 모든 전문가 샤드를 단일의 큰 희소 행렬 곱셈 연산으로 처리하여 커널 실행 횟수를 전문가 수와 무관하게 만듭니다[cite: 139, 140].</li>
+</ul>
+<hr>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<p>MOESHARD는 DEEPSPEED와 비교하여 특히 높은 토큰 라우팅 불균형 상황에서 더 나은 성능을 보여줍니다. 📊 이는 MOESHARD의 <strong>완벽한 로드 밸런싱</strong>과 <strong>전체 토큰 유지</strong>라는 핵심 설계 덕분입니다.</p>
+<hr>
+<h2 id="moeshard의-뛰어난-결과-및-이유">MOESHARD의 뛰어난 결과 및 이유</h2>
+<h3 id="특출난-점-deepspeed-대비">특출난 점 (DEEPSPEED 대비)</h3>
+<p>MOESHARD는 특히 토큰 할당이 매우 불균형한 시나리오에서 DEEPSPEED보다 뛰어난 성능을 보입니다.</p>
+<ul>
+<li><strong>Time-To-First-Token (TTFT) 단축</strong>: MOESHARD는 특정 조건(배치 크기 250, 전문가 128개, 라우터 편향 0.6, 편향된 전문가 10%)에서 DEEPSPEED보다 TTFT를 <strong>최대 6.4배</strong>까지 단축했습니다[cite: 8, 51].</li>
+<li><strong>배치 크기 증가에 따른 성능 향상</strong>: 배치 크기가 커질수록 MOESHARD의 TTFT 개선 효과는 더욱 두드러졌습니다. 예를 들어, 배치 크기 450에서 약 6.2배의 속도 향상을 보였습니다[cite: 187]. 이는 배치 크기가 커질수록 토큰 할당의 절대적인 불균형이 커지고, 이로 인해 DEEPSPEED와 같은 불균형 해결책에서 유휴 시간이 늘어나기 때문입니다[cite: 189].</li>
+<li><strong>전문가 수 변화에 대한 강인함</strong>: 전문가 수가 변하는 상황에서도 MOESHARD는 꾸준히 DEEPSPEED보다 나은 TTFT를 보였습니다. 특히 전문가 수가 64개일 때 6.45배로 가장 큰 성능 향상을 보였고, 그 이후 다소 감소하긴 했지만 여전히 2.39배 이상 빨랐습니다[cite: 184, 185].</li>
+</ul>
+<hr>
+<h3 id="결과-도출-방법-및-이유-논문-제시">결과 도출 방법 및 이유 (논문 제시)</h3>
+<p>논문은 MOESHARD의 우수한 결과가 다음과 같은 설계적 특징에서 비롯되었다고 설명합니다.</p>
+<ol>
+<li>
+<p><strong>전문가 샤딩 (Expert Sharding)을 통한 완벽한 로드 밸런싱</strong>:</p>
+<ul>
+<li>MOESHARD는 각 전문가의 행렬($W_i$, $W_o$)을 여러 GPU에 걸쳐 분할(shard)하여 저장합니다[cite: 3, 46]. 구체적으로 $W_i$는 열(column) 기준으로, $W_o$는 행(row) 기준으로 분할합니다[cite: 5, 118, 119].</li>
+<li>모든 GPU가 모든 입력 토큰을 받아 각자 보유한 전문가 샤드로 계산을 수행한 후, 부분 결과를 합산합니다[cite: 85, 123, 124].</li>
+<li>이 방식은 특정 전문가에게 토큰이 몰리는 현상(라우팅 불균형)에 관계없이 모든 GPU에 계산 부하를 균등하게 분배하여 유휴 시간을 줄이고 병목 현상을 방지합니다[cite: 4, 6]. 이것이 &ldquo;완벽한 로드 밸런싱&quot;을 달성하는 핵심입니다[cite: 3, 53].</li>
+</ul>
+</li>
+<li>
+<p><strong>전체 토큰 유지 (Full Token Retention)</strong>:</p>
+<ul>
+<li>기존 방식 중 일부는 전문가의 처리 용량을 초과하는 토큰을 버리는 &lsquo;용량 계수(Capacity Factors, CFs)&lsquo;에 의존합니다[cite: 38]. 이는 모델 정확도를 저하시킬 수 있습니다[cite: 39].</li>
+<li>MOESHARD는 토큰을 버리지 않고 모든 토큰을 처리하여 모델 정확도를 유지합니다[cite: 4]. DEEPSPEED는 CF를 사용하여 특정 전문가 수(예: 50개)를 초과하면 토큰을 버려 계산 시간을 줄이는 반면, MOESHARD는 모든 토큰을 처리하므로 이러한 상황에서도 일관된 성능을 보입니다[cite: 185, 186].</li>
+</ul>
+</li>
+<li>
+<p><strong>최적화된 커널 실행</strong>:</p>
+<ul>
+<li>MOESHARD는 여러 작은 행렬 곱셈 연산을 최적화하기 위해 커널 실행 횟수를 줄입니다[cite: 7, 137].</li>
+<li>첫째, 동일 전문가로 향하는 토큰들을 여러 GPU로부터 모아 하나의 큰 텐서로 만들어 처리함으로써, 전문가 샤드 계산 횟수를 GPU 수와 무관하게 만듭니다[cite: 138].</li>
+<li>둘째, 가변 크기 희소 행렬 곱셈(예: MEGABLOCKS [cite: 139, 140])을 활용하여 모든 전문가 샤드 계산을 단일 연산으로 융합하여 커널 실행 횟수를 전문가 수와 무관하게 만듭니다[cite: 139, 140].</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="나의-생각-">나의 생각 🤔</h3>
+<p>논문에서 제시한 MOESHARD의 접근 방식은 MoE 모델 추론의 핵심 문제점 중 하나인 로드 불균형을 정면으로 해결하려는 시도라는 점에서 매우 흥미롭습니다.</p>
+<ul>
+<li>
+<p><strong>아이디어의 참신성</strong>: 기존 연구들이 불균형을 &lsquo;완화&rsquo;하거나, &lsquo;회피&rsquo;하려는 경향(예: 전문가 복제, 토큰 리라우팅, 용량 제한)을 보인 반면, MOESHARD는 아예 <strong>모든 전문가를 잘게 쪼개 모든 GPU에 분산</strong>시켜 계산 자체를 균등하게 만드는 방식을 채택했습니다. 이는 문제의 근본 원인에 더 직접적으로 접근하는 방식으로, 라우팅 패턴에 덜 민감하다는 장점이 있을 수 있습니다.</p>
+</li>
+<li>
+<p><strong>&ldquo;완벽한 로드 밸런싱&quot;의 의미</strong>: 여기서 &ldquo;완벽한 로드 밸런싱&quot;은 각 GPU가 수행하는 전문가 관련 <em>계산량</em>이 동일하다는 의미로 해석됩니다. 모든 토큰이 모든 GPU에 복제되고, 각 GPU는 전체 전문가의 동일한 비율의 샤드를 처리하기 때문입니다. 이는 특정 GPU만 과부하되거나 유휴 상태가 되는 것을 원천적으로 방지합니다.</p>
+</li>
+<li>
+<p><strong>트레이드오프</strong>: 모든 토큰을 모든 GPU에 복제하는 과정(Step 3: Scatter Tokens)과 부분 결과를 다시 모으는 과정(Step 5: Gather Tokens)에서 발생하는 <strong>통신 오버헤드</strong>가 MOESHARD의 잠재적인 약점입니다. 논문에서는 NVLINK와 같은 고속 인터커넥트 환경에서는 이 오버헤드가 무시할 만하다고 주장하지만[cite: 100], GPU 수가 매우 많아지거나 네트워크 대역폭이 제한적인 환경에서는 성능에 영향을 미칠 수 있습니다. 결국, MOESHARD는 계산의 불균형을 해소하는 대신 통신량을 늘리는 트레이드오프를 선택한 것으로 볼 수 있습니다. 이 트레이드오프가 유리하게 작용하는 조건(예: 극심한 로드 불균형, 충분한 통신 대역폭)에서 MOESHARD의 장점이 극대화될 것입니다.</p>
+</li>
+<li>
+<p><strong>실용성</strong>: 프로파일링이나 복잡한 동적 스케줄링 없이도 로드 밸런싱을 달성할 수 있다는 점은 시스템 운영의 복잡성을 줄여 실용성을 높이는 요소입니다[cite: 44].</p>
+</li>
+</ul>
+<p>결론적으로, MOESHARD는 전문가 샤딩이라는 비교적 단순하면서도 강력한 아이디어를 통해 MoE 추론 성능을 효과적으로 개선했으며, 특히 로드 불균형이 심한 상황에서 그 진가를 발휘할 수 있는 접근법으로 보입니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h2 id="moeshard-입력-데이터-및-추론-과정-모델-아키텍처-및-요구-사항-상세-설명">MOESHARD: 입력 데이터 및 추론 과정, 모델 아키텍처 및 요구 사항 상세 설명</h2>
+<p>이 답변은 제공된 논문 &ldquo;Accelerating MoE Model Inference with Expert Sharding&quot;의 내용에만 근거하여 작성되었습니다.</p>
+<h3 id="입력-데이터">입력 데이터</h3>
+<p>MOESHARD 시스템에서 처리하는 주요 입력 데이터는 다음과 같습니다:</p>
+<ul>
+<li><strong>유형</strong>: 텍스트 데이터. 논문에서는 BookCorpus 데이터셋을 사용하여 실험을 진행했습니다[cite: 149].</li>
+<li><strong>형태</strong>: 모델에 입력되는 데이터는 토큰(token)의 시퀀스로, 일반적으로 3차원 텐서 <code>X</code>로 표현됩니다. 이 텐서의 차원은 <code>[b, s, h]</code>로 구성됩니다[cite: 87].
+<ul>
+<li><code>b</code>: 배치 크기 (batch size) - 한 번에 처리되는 시퀀스의 수</li>
+<li><code>s</code>: 시퀀스 길이 (sequence length) - 각 입력의 토큰 수</li>
+<li><code>h</code>: 은닉 차원 (hidden dimension) - 각 토큰을 표현하는 벡터의 크기</li>
+</ul>
+</li>
+<li><strong>모델</strong>: 논문은 Google Switch Transformers[cite: 147], 특히 Switch-Base 모델의 인코더 부분에 초점을 맞추어 MOESHARD를 평가했습니다[cite: 148]. Switch Transformer는 T5 아키텍처를 확장한 모델입니다[cite: 147].</li>
+</ul>
+<h3 id="추론-과정-moeshard-forward-pass-예시">추론 과정 (MOESHARD Forward Pass 예시)</h3>
+<p>MOESHARD의 추론 과정은 Algorithm 1에 자세히 설명되어 있으며[cite: 72], 핵심 아이디어는 각 GPU가 모든 토큰을 입력으로 받고, 각 전문가(expert)의 샤드(조각)를 사용하여 부분적인 계산을 수행한 후, 이 결과를 합치는 것입니다[cite: 85].</p>
+<p><strong>시나리오 예시:</strong></p>
+<ul>
+<li>GPU: 2개 ($GPU_0, GPU_1$)</li>
+<li>전문가: 1개 ($E_0$)</li>
+<li>입력 토큰: $GPU_0$에 $T_{0a}, T_{0b}$가 있고, $GPU_1$에 $T_{1c}, T_{1d}$가 있다고 가정합니다.</li>
+<li>전문가 행렬: $E_0$는 두 개의 행렬 $W_i \in \mathbb{R}^{(h, h_o)}$와 $W_o \in \mathbb{R}^{(h_o, h)}$로 구성됩니다[cite: 112]. $h_o=4$라고 가정합니다.
+<ul>
+<li>$W_i$는 열 기준 분할: $W_i = [W_{i,cols1-2} | W_{i,cols3-4}]$. $GPU_0$는 $W_i^{G0} = W_{i,cols1-2}$를, $GPU_1$은 $W_i^{G1} = W_{i,cols3-4}$를 가집니다[cite: 118, 119, 120].</li>
+<li>$W_o$는 행 기준 분할: $W_o = \begin{bmatrix} W_{o,rows1-2} \ W_{o,rows3-4} \end{bmatrix}$. $GPU_0$는 $W_o^{G0} = W_{o,rows1-2}$를, $GPU_1$은 $W_o^{G1} = W_{o,rows3-4}$를 가집니다[cite: 118, 119, 120].</li>
+</ul>
+</li>
+</ul>
+<p><strong>단계별 추론 과정 (Algorithm 1 [cite: 72] 기반):</strong></p>
+<ol>
+<li>
+<p><strong>Step 1: 토큰 라우팅 (Token Routing)</strong> [cite: 89]</p>
+<ul>
+<li>각 GPU는 로컬 라우터를 사용하여 자신의 토큰을 전문가에게 할당합니다[cite: 69, 90].
+<ul>
+<li>$GPU_0$: $T_{0a}, T_{0b}$를 $E_0$에 할당.</li>
+<li>$GPU_1$: $T_{1c}, T_{1d}$를 $E_0$에 할당.</li>
+</ul>
+</li>
+<li>토큰-전문가 매핑 정보 $m_{expert}$가 생성됩니다[cite: 90].</li>
+</ul>
+</li>
+<li>
+<p><strong>Step 2: 메타데이터 교환 (Metadata Exchange)</strong> [cite: 92]</p>
+<ul>
+<li>각 GPU는 자신이 각 전문가에게 할당한 토큰 수를 계산($m_{sizes}$)하고[cite: 93], 이 정보를 모든 다른 GPU와 교환합니다[cite: 93, 94].
+<ul>
+<li>$GPU_0$: $E_0$에 2개 토큰 할당 정보를 $GPU_1$에 전송.</li>
+<li>$GPU_1$: $E_0$에 2개 토큰 할당 정보를 $GPU_0$에 전송.</li>
+</ul>
+</li>
+<li>결과적으로 모든 GPU는 각 전문가에게 총 몇 개의 토큰이 어떤 GPU로부터 할당되었는지 알게 됩니다 ($m_{sizes}^{\prime}$)[cite: 94].</li>
+</ul>
+</li>
+<li>
+<p><strong>Step 3: 토큰 분산 (Scatter Tokens)</strong> [cite: 95]</p>
+<ul>
+<li>MOESHARD는 모든 입력 토큰을 모든 GPU에 복제합니다[cite: 95]. 각 GPU는 다른 모든 GPU로부터 토큰을 수신하여, 결과적으로 모든 GPU가 전체 토큰 집합 $(T_{0a}, T_{0b}, T_{1c}, T_{1d})$을 보유하게 됩니다. 이 전체 토큰 집합을 $X_{all}$이라고 하겠습니다.</li>
+<li>수신된 토큰은 $W[g][e]$ (GPU $g$에서 유래하여 전문가 $e$로 향하는 토큰들) 형태로 구성될 수 있지만[cite: 96], MOESHARD에서는 모든 GPU가 $X_{all}$을 사용하여 각자의 샤드에서 계산합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Step 4: 전문가 계산 (Expert Computation)</strong> [cite: 104]</p>
+<ul>
+<li>각 GPU는 $X_{all}$에 대해 자신이 보유한 $E_0$의 샤드를 사용하여 부분 계산을 수행합니다 (Figure 2b [cite: 103] 참조).
+<ul>
+<li>$GPU_0$: 부분 결과 $Y_{partial}^{G0} = X_{all} \cdot W_i^{G0} \cdot W_o^{G0}$를 계산합니다[cite: 122].</li>
+<li>$GPU_1$: 부분 결과 $Y_{partial}^{G1} = X_{all} \cdot W_i^{G1} \cdot W_o^{G1}$를 계산합니다[cite: 122].</li>
+</ul>
+</li>
+<li>이 계산은 병렬로 이루어집니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Step 5: 토큰 수집 (Gather Tokens)</strong> [cite: 109]</p>
+<ul>
+<li>각 GPU에서 계산된 부분 결과($Y_{partial}^{G0}$, $Y_{partial}^{G1}$)들은 모든 GPU에 다시 전송되거나 특정 방식으로 집계되기 위해 모입니다[cite: 109]. 각 GPU는 다른 GPU로부터 부분 결과 $y[g]$를 수신합니다[cite: 109].</li>
+</ul>
+</li>
+<li>
+<p><strong>Step 6: 결과 집계 (Aggregate Tokens)</strong> [cite: 110]</p>
+<ul>
+<li>수집된 부분 결과들은 점별(point-wise)로 합산되어 최종 토큰 출력 $X_{final}$을 형성합니다[cite: 110].</li>
+<li>$X_{final} = Y_{partial}^{G0} + Y_{partial}^{G1}$. 이 결과는 샤딩 없이 원본 전문가 행렬을 사용한 계산 $X_{all} \cdot W_i \cdot W_o$와 동일합니다[cite: 123].</li>
+</ul>
+</li>
+</ol>
+<h3 id="모델-아키텍처-구성">모델 아키텍처 구성</h3>
+<ul>
+<li><strong>기본 구조</strong>: Transformer 모델을 기반으로 하며, 여러 개의 Transformer 블록으로 구성됩니다[cite: 58, 59]. 각 Transformer 블록은 일반적으로 셀프 어텐션(self-attention) 메커니즘과 피드포워드 네트워크(FFN)를 포함합니다[cite: 59].</li>
+<li><strong>MoE 레이어</strong>: MoE 모델에서는 특정 Transformer 블록의 FFN이 MoE 레이어로 대체됩니다[cite: 21, 62].
+<ul>
+<li>MoE 레이어는 다수의 더 작은 전문가 네트워크(일반적으로 8개에서 256개 사이 [cite: 63])로 구성됩니다.</li>
+<li>각 토큰은 라우팅 메커니즘에 의해 동적으로 소수의 전문가(일반적으로 1~2개)에게만 전달되어 처리됩니다[cite: 22, 23, 64].</li>
+</ul>
+</li>
+<li><strong>전문가 구조</strong>: 각 전문가는 일반적으로 두 개의 행렬 $W_i \in \mathbb{R}^{(h_i, h_o)}$와 $W_o \in \mathbb{R}^{(h_o, h_i)}$로 구현됩니다[cite: 112]. (논문에서는 $h_i, h_o$를 사용하지만, 입력 토큰의 은닉 차원을 $h$로 표현했으므로, 전문가 내부 차원을 $h_{ff}$ (feed-forward intermediate dimension) 등으로 생각할 수 있습니다. 즉, $W_i \in \mathbb{R}^{(h, h_{ff})}$ 및 $W_o \in \mathbb{R}^{(h_{ff}, h)}$).</li>
+<li><strong>복제 및 분산</strong>:
+<ul>
+<li>기존 전문가 병렬화(EP) 방식에서는 셀프 어텐션 및 라우터 레이어는 모든 GPU에 복제되고, 전문가는 여러 GPU에 분산됩니다[cite: 67].</li>
+<li>MOESHARD에서는 비-MoE 레이어와 MoE 레이어의 전문가를 제외한 구성 요소(예: 라우터)는 각 GPU에 복제됩니다[cite: 74]. 핵심 차이점은 MOESHARD가 <em>모든</em> 전문가를 샤딩하여 각 샤드를 <em>모든</em> GPU에 배치한다는 것입니다[cite: 78, 85].</li>
+</ul>
+</li>
+</ul>
+<h3 id="모델-구성-연산">모델 구성 연산</h3>
+<p>MoE 모델 추론, 특히 MOESHARD 시스템에서 사용되는 주요 연산은 다음과 같습니다:</p>
+<ol>
+<li><strong>셀프 어텐션 (Self-attention)</strong>: 입력 시퀀스 내의 토큰 간 의존성을 계산합니다 (모든 GPU에서 복제되어 병렬 처리 [cite: 68]).</li>
+<li><strong>라우팅 (Routing)</strong>: 각 토큰을 어떤 전문가에게 보낼지 결정하는 연산입니다 (모든 GPU에서 복제되어 수행 [cite: 69]).</li>
+<li><strong>행렬 곱셈 (Matrix Multiplication)</strong>: 전문가의 핵심 연산으로, 입력 토큰과 전문가 행렬($W_i, W_o$) 간의 곱셈입니다[cite: 46, 113]. MOESHARD에서는 이 연산이 샤딩된 행렬에 대해 각 GPU에서 병렬로 수행됩니다[cite: 107, 122].</li>
+<li><strong>통신 연산</strong>:
+<ul>
+<li><strong>All-to-all Scatter</strong>: 메타데이터 교환 및 토큰 분산 단계에서 사용됩니다[cite: 70, 92, 95].</li>
+<li><strong>All-to-all Gather</strong>: 처리된 부분 결과 토큰들을 수집하는 단계에서 사용됩니다[cite: 70, 109].</li>
+</ul>
+</li>
+<li><strong>집계 (Aggregation)</strong>: 수집된 부분 결과들을 합산하는 연산입니다[cite: 110].</li>
+<li><strong>커널 융합 (Kernel Fusion)</strong>: MOESHARD는 다수의 작은 행렬 곱셈을 하나의 큰 연산으로 묶거나[cite: 138], 가변 크기 희소 행렬 곱셈 알고리즘을 사용하여 [cite: 139] 커널 실행 오버헤드를 줄입니다.</li>
+</ol>
+<h3 id="메모리-요구량">메모리 요구량</h3>
+<ul>
+<li><strong>전체 모델</strong>: 시스템은 전체 MoE 모델이 모든 GPU의 집합적인 메모리에 들어갈 수 있다고 가정합니다[cite: 80].</li>
+<li><strong>전문가 저장</strong>:
+<ul>
+<li>기존 EP에서는 각 GPU가 전문가의 일부 서브셋을 저장합니다[cite: 26]. 예를 들어 Switch-Base 256 전문가 모델은 54.63 GiB의 메모리를 필요로 합니다[cite: 25].</li>
+<li>MOESHARD에서는 각 GPU가 <em>모든</em> 전문가의 <em>샤드</em>를 저장합니다[cite: 85]. 각 GPU는 각 전문가에 대해 $W_i$로부터 $h_i \cdot \frac{h_o}{|G|}$개의 항목을, $W_o$로부터 $\frac{h_o}{|G|} \cdot h_i$개의 항목을 저장합니다[cite: 136]. (논문의 $W_j$는 문맥상 $W_i$로 보입니다).</li>
+</ul>
+</li>
+<li><strong>토큰 복제</strong>: Step 3에서 모든 토큰이 모든 GPU에 복제되므로 추가적인 메모리가 필요합니다[cite: 98]. 논문에 제시된 예시 (4 GPU, 배치 250, 시퀀스 120, 은닉 768, 요소당 4B)에서 각 GPU는 다른 GPU로부터 총 352MiB의 토큰 데이터를 수신하여 저장해야 합니다[cite: 99, 100].</li>
+<li><strong>기타</strong>: 비-MoE 레이어, 라우터 등은 모든 GPU에 복제되어 메모리를 차지합니다[cite: 74].</li>
+</ul>
+<h3 id="컴퓨팅-요구량">컴퓨팅 요구량</h3>
+<ul>
+<li><strong>주요 연산</strong>: 컴퓨팅 부하의 대부분은 전문가 내에서의 행렬 곱셈 연산에서 발생합니다[cite: 46].</li>
+<li><strong>MOESHARD의 분산 처리</strong>: MOESHARD는 이 행렬 곱셈을 여러 GPU에 걸쳐 샤딩된 형태로 분산시켜 병렬 처리함으로써 완벽한 로드 밸런싱을 추구합니다[cite: 3, 53]. 이는 GPU 유휴 시간을 줄이고 전체 처리 시간을 단축하는 것을 목표로 합니다[cite: 6].</li>
+<li><strong>커널 실행 오버헤드</strong>: 다수의 작은 행렬 곱셈은 빈번한 커널 실행으로 인해 오버헤드를 유발할 수 있습니다[cite: 137]. MOESHARD는 이를 최적화하기 위해 커널 융합 기법을 사용합니다[cite: 138, 139].</li>
+<li><strong>기타 연산</strong>: 셀프 어텐션, 라우팅, 통신 연산 등도 컴퓨팅 자원을 소모하지만, MoE 모델에서는 일반적으로 전문가 계산의 비중이 더 큽니다.</li>
+</ul>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>제공된 논문 &ldquo;Accelerating MoE Model Inference with Expert Sharding&quot;은 MOESHARD의 한계점을 명시적으로 언급하고 이를 극복하기 위한 미래 연구 흐름을 직접적으로 제시하고 있지는 않습니다. 하지만 논문에서 지적된 MOESHARD의 잠재적인 한계점들과 MoE 모델 추론 최적화라는 더 넓은 연구 분야를 고려할 때, 다음과 같은 연구 흐름을 통해 한계를 극복하고 성능을 더욱 향상시킬 수 있을 것으로 보입니다.</p>
+<hr>
+<h2 id="moeshard-한계-극복을-위한-연구-흐름-추론">MOESHARD 한계 극복을 위한 연구 흐름 (추론)</h2>
+<p>MOESHARD는 주로 통신 오버헤드, 메모리 오버헤드, 특정 가정 및 평가 범위에 대한 잠재적 한계를 가집니다. 이를 극복하기 위한 연구 흐름은 다음과 같이 생각해 볼 수 있습니다.</p>
+<h3 id="1-통신-최적화-심화-연구-">1. 통신 최적화 심화 연구 📡</h3>
+<ul>
+<li><strong>배경</strong>: MOESHARD는 모든 토큰을 모든 GPU에 복제하고(Step 3: Scatter Tokens)[cite: 95, 98], 처리된 부분 결과를 다시 수집하는(Step 5: Gather Tokens) [cite: 109] 과정에서 상당한 통신량이 발생할 수 있습니다. 이는 GPU 수가 많거나 네트워크 대역폭이 제한적인 환경에서 병목이 될 수 있습니다.</li>
+<li><strong>연구 방향</strong>:
+<ul>
+<li><strong>계층적 통신 (Hierarchical Communication)</strong>: GPU들을 그룹으로 묶고, 그룹 내 통신과 그룹 간 통신을 분리하여 전체적인 통신량을 줄이는 방식을 연구할 수 있습니다. DEEPSPEED-MoE에서도 계층적 all-to-all 통신 최적화를 언급하고 있습니다[cite: 192].</li>
+<li><strong>통신 압축 (Communication Compression)</strong>: 전송되는 토큰 데이터나 부분 결과를 압축하여 실제 네트워크를 통해 이동하는 데이터의 양을 줄이는 기법을 적용할 수 있습니다.</li>
+<li><strong>통신-계산 중첩 (Communication-Computation Overlap)</strong>: 통신 단계와 계산 단계를 더욱 효과적으로 중첩시켜, 통신으로 인한 유휴 시간을 최소화하는 스케줄링 기법을 개발할 수 있습니다.</li>
+<li><strong>부분 복제 및 선택적 통신</strong>: 모든 토큰을 모든 GPU에 복제하는 대신, 라우팅 정보나 전문가의 특성을 활용하여 필요한 토큰만 특정 GPU 그룹에 선택적으로 전송하는 방식을 탐구할 수 있습니다. 이는 MOESHARD의 &lsquo;완벽한 로드 밸런싱&rsquo; 철학과는 다소 상충될 수 있으나, 통신 효율성을 크게 높일 수 있습니다.</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-메모리-효율성-증대-연구-">2. 메모리 효율성 증대 연구 🧠</h3>
+<ul>
+<li><strong>배경</strong>: MOESHARD는 각 GPU가 모든 전문가의 샤드를 저장해야 하므로[cite: 117], 전문가 수가 매우 많을 경우 메모리 부담이 커질 수 있습니다. 또한, 토큰 복제로 인한 메모리 사용량 증가도 고려해야 합니다[cite: 99].</li>
+<li><strong>연구 방향</strong>:
+<ul>
+<li><strong>동적 샤드 로딩/오프로딩</strong>: 자주 사용되지 않는 전문가 샤드는 CPU 메모리나 NVMe와 같은 보조 저장 장치로 오프로딩하고, 필요할 때 GPU 메모리로 동적으로 로딩하는 기법을 연구할 수 있습니다.</li>
+<li><strong>전문가 샤드 압축</strong>: 저장되는 전문가 샤드의 파라미터를 양자화(quantization)나 가지치기(pruning)와 같은 모델 압축 기법을 적용하여 메모리 요구량을 줄일 수 있습니다.</li>
+<li><strong>하이브리드 전문가 저장</strong>: 일부 인기 있는 전문가는 모든 GPU에 샤드를 저장하되, 덜 인기 있는 전문가는 더 적은 수의 GPU에만 샤드를 저장하거나, 샤드 크기를 가변적으로 조절하는 하이브리드 방식을 고려할 수 있습니다. 이는 로드 밸런싱과 메모리 효율성 간의 새로운 트레이드오프를 제시할 수 있습니다.</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-유연성-및-일반화-확장-연구-">3. 유연성 및 일반화 확장 연구 🌐</h3>
+<ul>
+<li><strong>배경</strong>: MOESHARD는 인코더에 초점을 맞춰 평가되었고[cite: 149], GPU 사양 동일성 등 몇 가지 단순화된 가정을 전제로 합니다[cite: 80, 82].</li>
+<li><strong>연구 방향</strong>:
+<ul>
+<li><strong>디코더 및 인코더-디코더 아키텍처 지원</strong>: 자동 회귀(autoregressive) 특성을 가진 디코더 모델에서의 MOESHARD 적용 및 최적화 방안을 연구할 수 있습니다. 디코더는 토큰별 순차적 생성 특성으로 인해 레이턴시에 매우 민감하므로, 다른 접근 방식이 필요할 수 있습니다.</li>
+<li><strong>이기종 하드웨어 환경 지원</strong>: 서로 다른 연산 능력이나 메모리 용량을 가진 GPU 환경에서도 효과적으로 로드 밸런싱을 달성할 수 있도록 MOESHARD의 샤딩 및 작업 분배 전략을 개선하는 연구가 필요합니다.</li>
+<li><strong>다중 노드 환경으로의 확장</strong>: 단일 서버를 넘어 다중 노드 클러스터 환경으로 MOESHARD를 확장하고, 노드 간 통신 병목을 최소화하는 방안을 연구할 수 있습니다.</li>
+<li><strong>실제 라우팅 편향에 대한 적응성 강화</strong>: 논문에서 사용된 커스텀 라우터는 실험용이며 실제 운영 환경에는 부적합하다고 언급되었습니다[cite: 153]. 실제 운영 환경에서 나타나는 다양한 라우팅 편향 패턴에 대해 MOESHARD가 얼마나 강인하게 성능을 유지하는지, 또는 편향 패턴에 따라 샤딩 전략을 동적으로 조절할 수 있는지 등을 연구할 수 있습니다.</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-고급-커널-최적화-및-융합-기법-연구-">4. 고급 커널 최적화 및 융합 기법 연구 ⚙️</h3>
+<ul>
+<li><strong>배경</strong>: MOESHARD는 이미 커널 융합을 통해 오버헤드를 줄이려 시도했지만[cite: 138, 139, 140], 이 부분은 지속적인 개선이 가능한 영역입니다.</li>
+<li><strong>연구 방향</strong>:
+<ul>
+<li><strong>하드웨어 특화 커널 개발</strong>: 특정 GPU 아키텍처의 특성을 최대한 활용하는 맞춤형 CUDA 커널을 개발하여 샤딩된 전문가 계산의 효율성을 극대화할 수 있습니다.</li>
+<li><strong>컴파일러 기반 최적화</strong>: 샤딩된 연산 패턴을 자동으로 감지하고 최적의 커널 융합 전략을 생성하는 컴파일러 수준의 최적화 연구를 진행할 수 있습니다.</li>
+<li><strong>혼합 정밀도(Mixed Precision) 활용</strong>: 전문가 계산 시 낮은 정밀도(예: FP16, INT8)를 적극적으로 사용하여 메모리 사용량을 줄이고 계산 속도를 높이는 동시에 모델 정확도 손실을 최소화하는 방안을 연구할 수 있습니다.</li>
+</ul>
+</li>
+</ul>
+<p>이러한 연구 흐름들은 MOESHARD와 같은 전문가 샤딩 기반 접근법의 장점을 유지하면서 기존의 한계점을 보완하여, 더욱 효율적이고 범용적인 MoE 모델 추론 시스템을 개발하는 데 기여할 수 있을 것입니다.</p>
+<h1 id="q--moeshard가-제안하는-전문가-샤딩expert-sharding-방식은-기존의-전문가-병렬화expert-parallelism나-다른-로드-밸런싱-기법과-비교했을-때-통신-오버헤드와-계산-효율성-측면에서-구체적으로-어떤-장단점을-가지는가">Q : MOESHARD가 제안하는 전문가 샤딩(expert sharding) 방식은 기존의 전문가 병렬화(expert parallelism)나 다른 로드 밸런싱 기법과 비교했을 때, 통신 오버헤드와 계산 효율성 측면에서 구체적으로 어떤 장단점을 가지는가?</h1>
+<p>MOESHARD가 제안하는 전문가 샤딩 방식은 기존 기법들과 비교하여 통신 오버헤드 및 계산 효율성 측면에서 뚜렷한 장단점을 가집니다.</p>
+<hr>
+<h2 id="moeshard의-전문가-샤딩-장단점-분석">MOESHARD의 전문가 샤딩: 장단점 분석</h2>
+<h3 id="장점">장점</h3>
+<ul>
+<li><strong>계산 효율성 향상 (완벽한 로드 밸런싱)</strong>: MOESHARD는 전문가의 행렬을 여러 GPU에 걸쳐 분할(sharding)하여 모든 GPU에 계산 부하를 균등하게 분배합니다[cite: 3, 53]. 이는 특정 GPU에 작업이 몰리는 것을 방지하고 유휴 시간을 줄여, 라우팅 불균형에 관계없이 하드웨어 활용률을 극대화합니다[cite: 4, 6]. 결과적으로 토큰을 드롭하지 않고도 완벽한 로드 밸런싱을 달성하여 계산 효율성을 높입니다[cite: 3, 4].</li>
+<li><strong>토큰 손실 없음</strong>: 기존의 용량 계수(CF)를 사용하는 방식은 전문가 용량을 초과하는 토큰을 드롭시켜 모델 정확도를 저하할 수 있습니다[cite: 39]. 반면, MOESHARD는 모든 토큰을 유지하여 처리하므로 모델 정확도 손실이 없습니다[cite: 4].</li>
+<li><strong>프로파일링 불필요</strong>: 일부 기존 로드 밸런싱 기법은 전문가 복제나 동적 스케줄링을 위해 사전 프로파일링을 필요로 합니다[cite: 41, 196]. MOESHARD는 모든 전문가를 샤딩하므로 이러한 프로파일링 과정이 필요 없어 시스템 설계를 단순화합니다[cite: 44].</li>
+</ul>
+<h3 id="단점">단점</h3>
+<ul>
+<li><strong>통신 오버헤드 증가</strong>: MOESHARD는 모든 입력 토큰을 모든 GPU에 복제하고(Scatter Tokens 단계)[cite: 95], 처리된 부분 결과를 다시 수집하는 과정(Gather Tokens 단계) [cite: 109]이 필요합니다. 이는 GPU 수가 많아지거나 네트워크 대역폭이 충분하지 않은 경우 상당한 통신 오버헤드를 유발할 수 있습니다[cite: 98]. 논문에서는 NVLINK 환경에서 이 오버헤드가 관리 가능하다고 언급하지만[cite: 100], 이는 여전히 주요 고려 사항입니다. 기존 전문가 병렬화(EP) 방식에서는 토큰이 해당 전문가가 있는 특정 GPU로만 이동하므로, MOESHARD에 비해 잠재적으로 통신량이 적을 수 있습니다.</li>
+<li><strong>메모리 요구량 증가 가능성</strong>: 각 GPU는 모든 전문가의 샤드를 저장해야 합니다[cite: 117]. 전문가 수가 매우 많을 경우, 각 샤드의 크기는 작더라도 전체적으로 GPU 메모리를 많이 차지할 수 있습니다. 또한, 모든 토큰을 복제하여 각 GPU에 저장하므로, 이로 인한 메모리 부담도 있습니다[cite: 98].</li>
+</ul>
+<hr>
+<p>결론적으로 MOESHARD는 계산 효율성을 극대화하고 토큰 손실을 없애는 대신, 통신 오버헤드 증가라는 트레이드오프를 가집니다. 시스템의 GPU 수, 네트워크 성능, 사용 가능한 메모리 등의 환경에 따라 이 트레이드오프의 영향이 달라질 수 있습니다.</p>
+<h1 id="q--moeshard가-모든-토큰을-모든-gpu에-복제하는-방식step-3-scatter-tokens이-gpu의-수나-네트워크-대역폭에-따라-어떻게-확장되며-실제-대규모-시스템에서-발생할-수-있는-잠재적인-병목-현상은-무엇인가">Q : MOESHARD가 모든 토큰을 모든 GPU에 복제하는 방식(Step 3: Scatter Tokens)이 GPU의 수나 네트워크 대역폭에 따라 어떻게 확장되며, 실제 대규모 시스템에서 발생할 수 있는 잠재적인 병목 현상은 무엇인가?</h1>
+<p>MOESHARD의 토큰 복제 방식은 GPU 수와 네트워크 대역폭에 직접적인 영향을 받으며, 대규모 시스템에서 병목 현상을 일으킬 잠재적 요인이 될 수 있습니다. ☢️</p>
+<hr>
+<h2 id="moeshard-토큰-복제-방식의-확장성-및-잠재적-병목-현상">MOESHARD 토큰 복제 방식의 확장성 및 잠재적 병목 현상</h2>
+<p>MOESHARD의 &ldquo;Step 3: Scatter Tokens&quot;에서 모든 토큰을 모든 GPU에 복제하는 전략은 시스템 규모와 네트워크 환경에 따라 다음과 같은 확장성 문제를 보일 수 있습니다:</p>
+<h3 id="gpu-수에-따른-확장성-">GPU 수에 따른 확장성 📈</h3>
+<ul>
+<li><strong>통신량 증가</strong>: GPU 수가 N이라고 할 때, 각 GPU는 자신의 토큰을 (N-1)개의 다른 GPU로 전송해야 합니다. 동시에 각 GPU는 (N-1)개의 다른 GPU로부터 토큰을 수신합니다. 전체적으로 시스템 내에서 교환되는 토큰 데이터의 총량은 GPU 수의 제곱에 비례하여 ($O(N^2)$) 증가하는 경향을 보일 수 있습니다. 이로 인해 GPU 수가 많아질수록 통신 오버헤드가 급격히 커질 수 있습니다.</li>
+<li><strong>메모리 부담 증가</strong>: 각 GPU는 다른 모든 GPU로부터 토큰을 수신하여 저장해야 하므로, GPU 수가 늘어날수록 각 GPU가 일시적으로 저장해야 하는 총 토큰의 양도 증가합니다. 이는 GPU 메모리 용량에 부담을 줄 수 있습니다. 논문에서는 4개의 GPU와 특정 파라미터(배치 크기 250, 시퀀스 길이 120, 은닉 차원 768, 텐서 요소당 4B)를 예로 들며, 각 GPU가 약 88MiB를 보내고 352MiB를 수신한다고 언급했습니다[cite: 99, 100]. GPU 수가 이보다 훨씬 많아지면 이 수치는 크게 증가할 것입니다.</li>
+</ul>
+<h3 id="네트워크-대역폭에-따른-확장성-">네트워크 대역폭에 따른 확장성 🌐</h3>
+<ul>
+<li><strong>대역폭 포화</strong>: GPU 수가 증가함에 따라 총 통신량이 늘어나면, 한정된 네트워크 대역폭이 포화 상태에 이를 수 있습니다. 특히 NVLink와 같이 GPU 간 직접 연결 고속 인터커넥트가 아닌, PCIe나 이더넷과 같이 상대적으로 대역폭이 낮은 네트워크를 사용하는 경우 병목 현상이 더 심화될 수 있습니다. 논문에서는 NVLINK 3.0이 최대 600 GiB/s의 양방향 대역폭을 지원하여 예시 상황의 통신 시간(0.15ms)이 무시할 만하다고 주장했지만[cite: 100], 이는 최적의 환경을 가정한 것입니다.</li>
+<li><strong>레이턴시 증가</strong>: 네트워크 경합이 심해지거나 대역폭이 부족하면 데이터 전송 레이턴시(지연 시간)가 증가할 수 있습니다. 이는 전체 추론 시간, 특히 TTFT(Time To First Token)에 부정적인 영향을 미칠 수 있습니다.</li>
+</ul>
+<h3 id="실제-대규모-시스템에서의-잠재적-병목-현상-">실제 대규모 시스템에서의 잠재적 병목 현상 🚧</h3>
+<ol>
+<li><strong>네트워크 병목</strong>: GPU 수가 수십, 수백 개로 늘어나는 대규모 시스템에서는 모든 GPU 간 토큰 복제로 인한 통신량이 네트워크의 처리 용량을 초과하여 심각한 병목 현상을 유발할 수 있습니다. 이는 전체 시스템 처리량을 저하시키는 주요 원인이 됩니다.</li>
+<li><strong>메모리 병목</strong>: 다수의 GPU로부터 복제된 토큰을 수용하기 위한 메모리 공간이 부족해지거나, 빈번한 메모리 할당 및 해제로 인해 성능 저하가 발생할 수 있습니다.</li>
+<li><strong>동기화 오버헤드</strong>: 모든 GPU가 토큰을 주고받고 다음 단계로 넘어가기 위해서는 일종의 동기화 과정이 필요할 수 있습니다. GPU 수가 많아질수록 모든 GPU가 특정 지점에 도달하는 데 걸리는 시간이 길어져 동기화 오버헤드가 커질 수 있습니다. MOESHARD의 알고리즘 설명에는 명시적인 동기화 장벽이 단계별로 내포되어 있습니다(예: 메타데이터 교환 후 토큰 분산, 토큰 분산 후 전문가 계산).</li>
+</ol>
+<p>결론적으로, MOESHARD의 모든 토큰 복제 방식은 비교적 적은 수의 GPU와 고속 인터커넥트 환경에서는 효과적일 수 있으나[cite: 100], GPU 수가 매우 많아지거나 네트워크 환경이 열악한 대규모 시스템에서는 통신량과 메모리 부담으로 인해 확장성에 한계를 보이며 병목 지점으로 작용할 가능성이 높습니다.</p>
+<h1 id="q--논문에서-사용된-커스텀-라우터가-아닌-실제-프로덕션-환경의-라우터에서-발생하는-자연스러운-토큰-불균형-상황에서도-moeshard의-완벽한-로드-밸런싱과-성능-향상-효과가-일관되게-유지될-수-있는가">Q : 논문에서 사용된 커스텀 라우터가 아닌 실제 프로덕션 환경의 라우터에서 발생하는 자연스러운 토큰 불균형 상황에서도 MOESHARD의 &lsquo;완벽한 로드 밸런싱&rsquo;과 성능 향상 효과가 일관되게 유지될 수 있는가?</h1>
+<p>MOESHARD의 &lsquo;완벽한 로드 밸런싱&rsquo;은 설계상 토큰 라우팅 불균형의 정도와 관계없이 각 GPU에 동일한 계산량을 할당하므로, 이론적으로는 실제 프로덕션 환경의 라우터에서 발생하는 자연스러운 토큰 불균형 상황에서도 유지될 가능성이 큽니다. ⚖️</p>
+<hr>
+<h2 id="프로덕션-환경-라우터에서의-moeshard-성능-유지-가능성">프로덕션 환경 라우터에서의 MOESHARD 성능 유지 가능성</h2>
+<h3 id="완벽한-로드-밸런싱-유지">완벽한 로드 밸런싱 유지</h3>
+<p>MOESHARD의 핵심 아이디어는 어떤 전문가에게 얼마나 많은 토큰이 할당되든, 모든 전문가를 모든 GPU에 샤딩(sharding)하고 모든 토큰을 모든 GPU에서 처리하도록 하는 것입니다. [cite: 3, 46] 각 GPU는 모든 전문가의 동일한 비율의 샤드를 담당하고[cite: 117], 모든 토큰에 대해 이 샤드들을 사용하여 계산을 수행합니다. [cite: 85] 그 후 부분 결과들이 합산되어 최종 결과를 만듭니다. [cite: 110]</p>
+<p>이러한 방식은 라우터가 토큰을 어떻게 분배하든, 각 GPU가 수행하는 <em>전문가 관련 계산량</em>은 동일하게 유지되도록 설계되었습니다. [cite: 4, 6] 따라서 특정 전문가에게 토큰이 집중되는 &ldquo;핫(hot)&rdquo; 전문가 현상이 발생하더라도, 해당 전문가의 계산은 모든 GPU에 분산되므로 로드 밸런싱은 깨지지 않습니다.</p>
+<h3 id="성능-향상-효과의-일관성">성능 향상 효과의 일관성</h3>
+<ul>
+<li><strong>이론적 일관성</strong>: MOESHARD는 라우팅 편향 정도와 관계없이 활용률을 극대화하도록 설계되었습니다. [cite: 4] 따라서 프로덕션 라우터의 자연스러운 불균형은 MOESHARD에게 문제가 되지 않으며, 오히려 불균형이 심할수록 토큰을 드롭하거나 특정 GPU에 과부하가 걸리는 기존 방식 대비 MOESHARD의 장점이 더 부각될 수 있습니다.</li>
+<li><strong>실험 결과</strong>: 논문에서는 커스텀 라우터를 사용하여 의도적으로 라우팅 불균형을 만들고 실험을 진행하여 MOESHARD의 우수성을 보였습니다. [cite: 154, 171] 또한, 섹션 4.2에서는 &ldquo;기본, 원래 라우터(default, original router)&ldquo;를 사용한 실험 결과도 제시하는데, 이 경우에도 MOESHARD는 DEEPSPEED 대비 최대 4.25배의 계층별 속도 향상을 달성했습니다. [cite: 167, 168] 이는 MOESHARD가 실제 라우터 환경에서도 성능 향상 효과를 보일 수 있음을 시사합니다.</li>
+</ul>
+<h3 id="고려-사항">고려 사항</h3>
+<ul>
+<li><strong>커스텀 라우터의 한계</strong>: 논문 스스로도 실험에 사용된 커스텀 라우터는 &ldquo;비상식적인 토큰-전문가 할당을 유발하는 확률적 특성으로 인해 운영 환경에는 부적합하다&quot;고 언급했습니다. [cite: 152, 153] 따라서 프로덕션 환경의 실제 라우팅 패턴은 실험에서 제어된 패턴과 다를 수 있습니다.</li>
+<li><strong>통신 오버헤드</strong>: MOESHARD의 성능은 통신 오버헤드에 민감할 수 있습니다. 모든 토큰을 모든 GPU에 복제하는 과정은 라우팅 불균형과는 별개로 항상 발생합니다. [cite: 95, 98] 프로덕션 환경의 네트워크 상태나 GPU 수가 MOESHARD의 전체적인 성능에 영향을 미칠 수 있습니다.</li>
+</ul>
+<p>결론적으로, MOESHARD의 설계 원리상 &lsquo;완벽한 로드 밸런싱&rsquo;은 프로덕션 라우터의 자연스러운 불균형 상황에서도 유지될 가능성이 높습니다. 또한, 기본 라우터를 사용한 실험 결과는 성능 향상 효과 역시 일정 부분 유지될 수 있음을 보여줍니다. 다만, 프로덕션 환경의 구체적인 라우팅 특성 및 시스템 환경(네트워크, GPU 수 등)에 따라 그 효과의 크기는 달라질 수 있습니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/Accelerating-MoE-Model-Inference-with-Expert-Sharding/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/Accelerating-MoE-Model-Inference-with-Expert-Sharding/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/FlexInfer-Breaking-Memory-Constraint-via-Flexible-and-Efficient-Offloading-for-On-Device-LLM-Inference/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                FlexInfer: Breaking Memory Constraint via Flexible and Efficient Offloading for On-Device LLM Inference
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2025-06-05">
+                06月05日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Supply-Chain-Attacks-in-Machine-Learning-Frameworks/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Supply-Chain Attacks in Machine Learning Frameworks
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2025-06-10">
+                06月10日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#moeshard-순방향-패스-forward-pass-상세-설명">MOESHARD 순방향 패스 (Forward Pass) 상세 설명</a>
+      <ul>
+        <li><a href="#최적화">최적화</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#moeshard의-뛰어난-결과-및-이유">MOESHARD의 뛰어난 결과 및 이유</a>
+      <ul>
+        <li><a href="#특출난-점-deepspeed-대비">특출난 점 (DEEPSPEED 대비)</a></li>
+        <li><a href="#결과-도출-방법-및-이유-논문-제시">결과 도출 방법 및 이유 (논문 제시)</a></li>
+        <li><a href="#나의-생각-">나의 생각 🤔</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#moeshard-입력-데이터-및-추론-과정-모델-아키텍처-및-요구-사항-상세-설명">MOESHARD: 입력 데이터 및 추론 과정, 모델 아키텍처 및 요구 사항 상세 설명</a>
+      <ul>
+        <li><a href="#입력-데이터">입력 데이터</a></li>
+        <li><a href="#추론-과정-moeshard-forward-pass-예시">추론 과정 (MOESHARD Forward Pass 예시)</a></li>
+        <li><a href="#모델-아키텍처-구성">모델 아키텍처 구성</a></li>
+        <li><a href="#모델-구성-연산">모델 구성 연산</a></li>
+        <li><a href="#메모리-요구량">메모리 요구량</a></li>
+        <li><a href="#컴퓨팅-요구량">컴퓨팅 요구량</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#moeshard-한계-극복을-위한-연구-흐름-추론">MOESHARD 한계 극복을 위한 연구 흐름 (추론)</a>
+      <ul>
+        <li><a href="#1-통신-최적화-심화-연구-">1. 통신 최적화 심화 연구 📡</a></li>
+        <li><a href="#2-메모리-효율성-증대-연구-">2. 메모리 효율성 증대 연구 🧠</a></li>
+        <li><a href="#3-유연성-및-일반화-확장-연구-">3. 유연성 및 일반화 확장 연구 🌐</a></li>
+        <li><a href="#4-고급-커널-최적화-및-융합-기법-연구-">4. 고급 커널 최적화 및 융합 기법 연구 ⚙️</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#moeshard의-전문가-샤딩-장단점-분석">MOESHARD의 전문가 샤딩: 장단점 분석</a>
+      <ul>
+        <li><a href="#장점">장점</a></li>
+        <li><a href="#단점">단점</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#moeshard-토큰-복제-방식의-확장성-및-잠재적-병목-현상">MOESHARD 토큰 복제 방식의 확장성 및 잠재적 병목 현상</a>
+      <ul>
+        <li><a href="#gpu-수에-따른-확장성-">GPU 수에 따른 확장성 📈</a></li>
+        <li><a href="#네트워크-대역폭에-따른-확장성-">네트워크 대역폭에 따른 확장성 🌐</a></li>
+        <li><a href="#실제-대규모-시스템에서의-잠재적-병목-현상-">실제 대규모 시스템에서의 잠재적 병목 현상 🚧</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#프로덕션-환경-라우터에서의-moeshard-성능-유지-가능성">프로덕션 환경 라우터에서의 MOESHARD 성능 유지 가능성</a>
+      <ul>
+        <li><a href="#완벽한-로드-밸런싱-유지">완벽한 로드 밸런싱 유지</a></li>
+        <li><a href="#성능-향상-효과의-일관성">성능 향상 효과의 일관성</a></li>
+        <li><a href="#고려-사항">고려 사항</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

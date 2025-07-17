@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>DeepSeek on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/categories/DeepSeek/</link>
+    <description>Recent content in DeepSeek on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Sun, 06 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/categories/DeepSeek/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-R1-Incentivizing-Reasoning-Capability-in-LLMs-via-Reinforcement-Learning/</link>
+      <pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-R1-Incentivizing-Reasoning-Capability-in-LLMs-via-Reinforcement-Learning/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2501.12948v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;deepseek-r1-공개-rl-only-파이프라인으로-o1-급-추론을-재현하다&#34;&gt;DeepSeek-R1: 공개 RL-Only 파이프라인으로 &lt;em&gt;o1&lt;/em&gt; 급 추론을 재현하다&lt;/h1&gt;&#xA;&lt;h2 id=&#34;tldr&#34;&gt;TL;DR**&lt;/h2&gt;&#xA;&lt;p&gt;DeepSeek-R1은 &lt;em&gt;critic-less&lt;/em&gt; GRPO RL + 소량 Cold-Start SFT + 다단계 RL/SFT + 지식 증류 파이프라인으로, &lt;strong&gt;AIME-24 pass@1 79.8 %·MATH-500 97.3 %·Codeforces Elo 2029&lt;/strong&gt;를 달성해 공개 모델 최초로 OpenAI _o1-1217_과 동급 성능을 실증했다. 학습 비용은 기존 PPO RL의 절반 수준이며, 7 B–32 B 학생 모델로도 추론 능력을 이식해 “재현 가능한 SoTA”라는 연구 공백을 메웠다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Janus-Pro: UnifiedMultimodalUnderstanding and Generation with Data and Model Scaling</title>
+      <link>http://192.168.1.11:1314/posts/Janus-Pro-UnifiedMultimodalUnderstanding-and-Generation-with-Data-and-Model-Scaling/</link>
+      <pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Janus-Pro-UnifiedMultimodalUnderstanding-and-Generation-with-Data-and-Model-Scaling/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2501.17811v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;janus-pro-7b-dual-encoder-multimodal-llm-that-outsmarts-bigger-models&#34;&gt;&lt;strong&gt;Janus-Pro 7B: Dual-Encoder Multimodal LLM That Outsmarts Bigger Models&lt;/strong&gt;&lt;/h1&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;em&gt;SigLIP 이해 인코더 + VQ 생성 인코더&lt;/em&gt;를 완전히 분리한 뒤 &lt;strong&gt;7 B 파라미터 LLM&lt;/strong&gt;에 붙이는 ‘Dual-Encoder + Adapter’ 설계로, 13 B 통합 모델(TokenFlow-XL)을 &lt;strong&gt;이해·생성 양쪽에서 동시에 제치는&lt;/strong&gt; 첫 사례. – &lt;strong&gt;MMBench 79.2 (+10.3 pt) / GenEval 0.80 (+45 %)&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DeepSeek LLM: Scaling Open-Source Language Models with Longtermism</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-LLM-Scaling-Open-Source-Language-Models-with-Longtermism/</link>
+      <pubDate>Sun, 29 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-LLM-Scaling-Open-Source-Language-Models-with-Longtermism/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2401.02954v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;FLOPs / token로 재정의한 &lt;em&gt;DeepSeek Scaling Law&lt;/em&gt; 하나로 모델·데이터·하이퍼파라미터를 자동 결정하여, 2 T token만으로 67 B 파라미터 모델이 LLaMA-2 70 B를 코드·수학·대화·다국어에서 추월했다.&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;hr&gt;</description>
+    </item>
+    <item>
+      <title>DeepSeek-Prover-V1.5: Harnessing Proof Assistant Feedback for Reinforcement Learning and Monte-Carlo Tree Search</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-Prover-V1.5-Harnessing-Proof-Assistant-Feedback-for-Reinforcement-Learning-and-Monte-Carlo-Tree-Search/</link>
+      <pubDate>Mon, 10 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-Prover-V1.5-Harnessing-Proof-Assistant-Feedback-for-Reinforcement-Learning-and-Monte-Carlo-Tree-Search/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2408.08152v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h3 id=&#34;논문의-강점-및-독창성&#34;&gt;&lt;strong&gt;논문의 강점 및 독창성&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;strong&gt;강화 학습과 증명 보조기 피드백의 통합&lt;/strong&gt;&lt;br&gt;&#xA;DeepSeek-Prover-V1.5는 증명 보조기(Lean 4)의 피드백을 활용한 강화 학습(RLPAF)을 통해 모델의 성능을 개선했습니다. 기존 모델들은 단순한 감독 학습에 의존했으나, 이 모델은 증명 검증 결과를 직접적으로 학습에 반영함으로써 정확성을 높였습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DeepSeek-Prover: Advancing Theorem Proving in LLMs through Large-Scale Synthetic Data</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-Prover-Advancing-Theorem-Proving-in-LLMs-through-Large-Scale-Synthetic-Data/</link>
+      <pubDate>Sun, 09 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-Prover-Advancing-Theorem-Proving-in-LLMs-through-Large-Scale-Synthetic-Data/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2405.14333v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;p&gt;논문의 강점 및 독창적인 지점&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DeepSeek-V3 Technical Report</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-V3-Technical-Report/</link>
+      <pubDate>Tue, 21 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-V3-Technical-Report/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2412.19437v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;p&gt;논문의 강점과 독창적인 지점, 핵심 알고리즘 및 한계점을 다음과 같이 요약할 수 있습니다.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

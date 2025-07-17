@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>NAS on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/categories/NAS/</link>
+    <description>Recent content in NAS on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Fri, 12 Feb 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/categories/NAS/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>간단논문 정리 DARTS DIFFERENTIABLE ARCHITECTURE SEARCH (ICLR 2019)</title>
+      <link>http://192.168.1.11:1314/posts/%EA%B0%84%EB%8B%A8%EB%85%BC%EB%AC%B8-%EC%A0%95%EB%A6%AC-DARTS-DIFFERENTIABLE-ARCHITECTURE-SEARCH-ICLR-2019/</link>
+      <pubDate>Fri, 12 Feb 2021 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/%EA%B0%84%EB%8B%A8%EB%85%BC%EB%AC%B8-%EC%A0%95%EB%A6%AC-DARTS-DIFFERENTIABLE-ARCHITECTURE-SEARCH-ICLR-2019/</guid>
+      <description>&lt;h1 id=&#34;제목&#34;&gt;제목&lt;/h1&gt;&#xA;&lt;p&gt;DARTS: DIFFERENTIABLE ARCHITECTURE SEARCH&lt;/p&gt;&#xA;&lt;h1 id=&#34;저자&#34;&gt;저자&lt;/h1&gt;&#xA;&lt;p&gt;Hanxiao Liu,Karen Simonyan,Yiming Yang&lt;/p&gt;&#xA;&lt;h1 id=&#34;motivation&#34;&gt;Motivation&lt;/h1&gt;&#xA;&lt;p&gt;기존 NAS가 상당수의 시간 혹은 cost가 필요(2000 GPU days of reinforcement learning, 3150 GPU days of evolution)이러한 원인 중 하나가  discrete domain, which leads to a large number of architecture evaluations required 때문이라고 분석. 물론 이전에도 filter size와 같은 것들을 연속적으로 학습 했으나 해당 논문은 블록, 그래프 토플로지 까지 학습하는 것을 목표로 함&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

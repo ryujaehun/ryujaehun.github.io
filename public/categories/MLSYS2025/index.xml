@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MLSYS2025 on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/categories/MLSYS2025/</link>
+    <description>Recent content in MLSYS2025 on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Tue, 10 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/categories/MLSYS2025/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>A Bring-Your-Own-Model Approach for ML-Driven Storage Placement in Warehouse-Scale Computers</title>
+      <link>http://192.168.1.11:1314/posts/A-Bring-Your-Own-Model-Approach-for-ML-Driven-Storage-Placement-in-Warehouse-Scale-Computers/</link>
+      <pubDate>Tue, 10 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/A-Bring-Your-Own-Model-Approach-for-ML-Driven-Storage-Placement-in-Warehouse-Scale-Computers/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://openreview.net/pdf?id=JuGWOSB68T&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h2 id=&#34;bring-your-own-model-논문-상세-분석&#34;&gt;&amp;ldquo;Bring-Your-Own-Model&amp;rdquo; 논문 상세 분석&lt;/h2&gt;&#xA;&lt;p&gt;요청하신 &amp;ldquo;A Bring-Your-Own-Model Approach for ML-Driven Storage Placement in Warehouse-Scale Computers&amp;rdquo; 논문을 심층적으로 분석하여 강점과 독창성, 핵심 알고리즘, 그리고 한계점에 대해 설명해 드리겠습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Know Where You&#39;re Uncertain When Planning with Multimodal Foundation Models: A Formal Framework</title>
+      <link>http://192.168.1.11:1314/posts/Know-Where-Youre-Uncertain-When-Planning-with-Multimodal-Foundation-Models-A-Formal-Framework/</link>
+      <pubDate>Tue, 10 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Know-Where-Youre-Uncertain-When-Planning-with-Multimodal-Foundation-Models-A-Formal-Framework/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://openreview.net/pdf?id=HPHrIBlJYw&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;p&gt;이 논문(&amp;ldquo;KNOW WHERE YOU&amp;rsquo;RE UNCERTAIN WHEN PLANNING WITH MULTIMODAL FOUNDATION MODELS: A FORMAL FRAMEWORK&amp;rdquo;)은 로봇이 멀티모달 파운데이션 모델(시각과 언어를 함께 이해하는 모델)을 사용하여 계획을 수립할 때 발생하는 불확실성을 체계적으로 분석하고 해결하는 새로운 프레임워크를 제시합니다. 논문을 정밀하게 분석하여 강점과 독창성, 핵심 알고리즘의 작동 방식, 그리고 잠재적인 한계점을 설명해 드리겠습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>ReaL: Efficient RLHF Training of Large Language Models with Parameter Reallocation</title>
+      <link>http://192.168.1.11:1314/posts/ReaL-Efficient-RLHF-Training-of-Large-Language-Models-with-Parameter-Reallocation/</link>
+      <pubDate>Tue, 10 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/ReaL-Efficient-RLHF-Training-of-Large-Language-Models-with-Parameter-Reallocation/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://openreview.net/pdf?id=yLU1zRf95d&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h2 id=&#34;논문-분석-real-대규모-언어-모델의-효율적인-rlhf-훈련을-위한-매개변수-재할당&#34;&gt;논문 분석: REAL: 대규모 언어 모델의 효율적인 RLHF 훈련을 위한 매개변수 재할당&lt;/h2&gt;&#xA;&lt;p&gt;이 문서는 &amp;ldquo;REAL: Efficient RLHF Training of Large Language Models with Parameter Reallocation&amp;rdquo; 논문을 심층적으로 분석하여 논문의 핵심 강점과 독창성, 주요 알고리즘의 작동 방식, 그리고 잠재적인 한계점을 설명합니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Rubick: Exploiting Job Reconfigurability for Deep Learning Cluster Scheduling</title>
+      <link>http://192.168.1.11:1314/posts/Rubick-Exploiting-Job-Reconfigurability-for-Deep-Learning-Cluster-Scheduling/</link>
+      <pubDate>Tue, 10 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Rubick-Exploiting-Job-Reconfigurability-for-Deep-Learning-Cluster-Scheduling/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://openreview.net/pdf?id=tuziIJjRj5&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h2 id=&#34;rubick-논문-상세-분석-강점-핵심-알고리즘-그리고-한계점&#34;&gt;Rubick 논문 상세 분석: 강점, 핵심 알고리즘, 그리고 한계점&lt;/h2&gt;&#xA;&lt;p&gt;제공된 논문 &amp;ldquo;RUBICK: EXPLOITING JOB RECONFIGURABILITY FOR DEEP LEARNING CLUSTER SCHEDULING&amp;quot;에 대한 심층 분석 결과는 다음과 같습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Supply-Chain Attacks in Machine Learning Frameworks</title>
+      <link>http://192.168.1.11:1314/posts/Supply-Chain-Attacks-in-Machine-Learning-Frameworks/</link>
+      <pubDate>Tue, 10 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Supply-Chain-Attacks-in-Machine-Learning-Frameworks/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://openreview.net/pdf?id=EH5PZW6aCr&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h2 id=&#34;ai-모델-공급망-공격에-대한-연구-논문-심층-분석&#34;&gt;AI 모델 공급망 공격에 대한 연구 논문 심층 분석&lt;/h2&gt;&#xA;&lt;p&gt;사용자께서 제공하신 &amp;ldquo;Supply-Chain Attacks in Machine Learning Frameworks&amp;rdquo; 논문은 머신러닝(ML) 시스템이 직면한 새로운 유형의 공급망 공격을 심도 있게 분석하고, ML 커뮤니티의 보안 인식 수준을 평가한 중요한 연구입니다. 아래에 논문의 핵심 내용, 강점, 독창성, 핵심 공격 기법, 그리고 한계점을 상세히 설명해 드리겠습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>FlexInfer: Breaking Memory Constraint via Flexible and Efficient Offloading for On-Device LLM Inference</title>
+      <link>http://192.168.1.11:1314/posts/FlexInfer-Breaking-Memory-Constraint-via-Flexible-and-Efficient-Offloading-for-On-Device-LLM-Inference/</link>
+      <pubDate>Thu, 05 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/FlexInfer-Breaking-Memory-Constraint-via-Flexible-and-Efficient-Offloading-for-On-Device-LLM-Inference/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2503.03777v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h2 id=&#34;flexinfer-논문-상세-분석-온디바이스-llm-추론의-메모리-제약-극복&#34;&gt;FlexInfer 논문 상세 분석: 온디바이스 LLM 추론의 메모리 제약 극복&lt;/h2&gt;&#xA;&lt;p&gt;FlexInfer 논문 &amp;ldquo;FlexInfer: Breaking Memory Constraint via Flexible and Efficient Offloading for On-Device LLM Inference&amp;rdquo; [cite: 1]은 대규모 언어 모델(LLM)을 메모리가 제한된 온디바이스 환경에서 효율적으로 실행하기 위한 혁신적인 오프로딩 프레임워크를 제시합니다. 기존 방식들이 성능 저하나 유연성 부족의 한계를 가졌던 반면[cite: 2], FlexInfer는 비동기 프리페칭, 균형 잡힌 메모리 고정, 유연한 텐서 보존이라는 세 가지 핵심 기술을 통해 이러한 문제 해결을 시도합니다. [cite: 3]&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>ScaleFusion: Scalable Inference of Spatial-Temporal Diffusion Transformers for High-Resolution Long Video Generation</title>
+      <link>http://192.168.1.11:1314/posts/ScaleFusion-Scalable-Inference-of-Spatial-Temporal-Diffusion-Transformers-for-High-Resolution-Long-Video-Generation/</link>
+      <pubDate>Thu, 05 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/ScaleFusion-Scalable-Inference-of-Spatial-Temporal-Diffusion-Transformers-for-High-Resolution-Long-Video-Generation/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://openreview.net/pdf?id=anZWBeWnWh&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h2 id=&#34;scalefusion-논문-상세-분석-고해상도-장편-비디오-생성을-위한-공간-시간-확산-트랜스포머의-확장-가능한-추론&#34;&gt;ScaleFusion 논문 상세 분석: 고해상도 장편 비디오 생성을 위한 공간-시간 확산 트랜스포머의 확장 가능한 추론&lt;/h2&gt;&#xA;&lt;p&gt;ScaleFusion 논문 &amp;ldquo;SCALEFUSION: SCALABLE INFERENCE OF SPATIAL-TEMPORAL DIFFUSION TRANSFORMERS FOR HIGH-RESOLUTION LONG VIDEO GENERATION&amp;quot;은 고해상도(예: 1080p) 및 장시간(예: 20초 이상) 비디오 생성 시 공간-시간 확산 트랜스포머(ST-DiT) 모델의 높은 추론 지연 시간을 해결하기 위한 혁신적인 방법을 제시합니다. [cite: 1, 2] 주요 목표는 여러 GPU 시스템에 걸쳐 ST-DiT 추론을 최적으로 확장하여 시간 제약적인 시나리오에서의 적용 가능성을 높이는 것입니다. [cite: 3, 4, 5]&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>SOLA: Optimizing SLO Attainment for Large Language Model Serving with State-Aware Scheduling</title>
+      <link>http://192.168.1.11:1314/posts/SOLA-Optimizing-SLO-Attainment-for-Large-Language-Model-Serving-with-State-Aware-Scheduling/</link>
+      <pubDate>Thu, 05 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/SOLA-Optimizing-SLO-Attainment-for-Large-Language-Model-Serving-with-State-Aware-Scheduling/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://openreview.net/pdf?id=ubIvpetAd6&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;p&gt;이 SOLA 논문은 대규모 언어 모델(LLM) 서비스에서 서비스 수준 목표(SLO), 특히 첫 토큰까지의 시간(TTFT)과 출력 토큰당 시간(TPOT) 달성률을 최적화하기 위한 새로운 스케줄링 프레임워크를 제안합니다. 기존 시스템의 고정된 원칙에 따른 스케줄링 방식이 야기하는 TTFT와 TPOT 간의 지연 시간 분포 편향 및 요청 간 분포 분산 문제를 해결하고자 합니다. [cite: 3]&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>XGRAMMAR: FLEXIBLE AND EFFICIENT STRUCTURED GENERATION ENGINE FOR LARGE LANGUAGE MODELS</title>
+      <link>http://192.168.1.11:1314/posts/XGRAMMAR-FLEXIBLE-AND-EFFICIENT-STRUCTURED-GENERATION-ENGINE-FOR-LARGE-LANGUAGE-MODELS/</link>
+      <pubDate>Mon, 02 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/XGRAMMAR-FLEXIBLE-AND-EFFICIENT-STRUCTURED-GENERATION-ENGINE-FOR-LARGE-LANGUAGE-MODELS/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2411.15100v3&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h2 id=&#34;xgrammar-논문-상세-분석-유연하고-효율적인-llm-구조화-생성-엔진&#34;&gt;XGrammar 논문 상세 분석: 유연하고 효율적인 LLM 구조화 생성 엔진&lt;/h2&gt;&#xA;&lt;p&gt;제공해주신 논문 &amp;ldquo;XGrammar: Flexible and Efficient Structured Generation Engine for Large Language Models&amp;rdquo; [cite: 1]은 대규모 언어 모델(LLM)이 JSON, SQL, 코드 등 특정 구조를 가진 텍스트를 생성해야 하는 요구에 부응하기 위한 새로운 엔진 XGrammar를 제안합니다. 기존의 문맥 자유 문법(Context-Free Grammar, CFG) 기반 제약 디코딩 방식이 가진 실행 시간 오버헤드 문제를 해결하는 데 초점을 맞추고 있습니다. [cite: 2, 3, 4]&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Context Parallelism for Scalable Million-Token Inference</title>
+      <link>http://192.168.1.11:1314/posts/Context-Parallelism-for-Scalable-Million-Token-Inference/</link>
+      <pubDate>Mon, 31 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Context-Parallelism-for-Scalable-Million-Token-Inference/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2411.01783&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;p&gt;논문 『Context Parallelism for Scalable Million-Token Inference』는 대규모 언어 모델(LLM)의 긴 문맥 처리를 위한 **context parallelism (CP)**을 제안하며, 특히 긴 문맥에서 기존의 텐서 병렬화(Tensor Parallelism, TP)에 비해 효율적인 성능을 달성하는 데 초점을 맞춘 연구입니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference</title>
+      <link>http://192.168.1.11:1314/posts/NEO-Saving-GPU-Memory-Crisis-with-CPU-Offloading-for-Online-LLM-Inference/</link>
+      <pubDate>Mon, 31 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/NEO-Saving-GPU-Memory-Crisis-with-CPU-Offloading-for-Online-LLM-Inference/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2411.01142&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h3 id=&#34;-논문-제목-neo-saving-gpu-memory-crisis-with-cpu-offloading-for-online-llm-inference&#34;&gt;📌 &lt;strong&gt;논문 제목:&lt;/strong&gt; NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference&lt;/h3&gt;&#xA;&lt;h3 id=&#34;-저자-xuanlin-jiang-yang-zhou-shiyi-cao-ion-stoica-minlan-yu&#34;&gt;📌 &lt;strong&gt;저자:&lt;/strong&gt; Xuanlin Jiang, Yang Zhou, Shiyi Cao, Ion Stoica, Minlan Yu&lt;/h3&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;1-결론-요약-강점--독창적인-지점&#34;&gt;&lt;strong&gt;1. 결론 요약 (강점 &amp;amp; 독창적인 지점)&lt;/strong&gt;&lt;/h2&gt;&#xA;&lt;p&gt;NEO는 GPU 메모리의 제한으로 인해 발생하는 LLM 추론의 병목을 해결하기 위해 &lt;strong&gt;비대칭 GPU-CPU 파이프라이닝과 부하 인식 스케줄링을 적용한 새로운 시스템&lt;/strong&gt;입니다. 주요 강점은 다음과 같습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>AI Metropolis: Scaling Large Language Model-based Multi-Agent Simulation with Out-of-order Execution</title>
+      <link>http://192.168.1.11:1314/posts/AI-Metropolis-Scaling-Large-Language-Model-based-Multi-Agent-Simulation-with-Out-of-order-Execution/</link>
+      <pubDate>Mon, 17 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/AI-Metropolis-Scaling-Large-Language-Model-based-Multi-Agent-Simulation-with-Out-of-order-Execution/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2411.03519&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;p&gt;논문『AI Metropolis: Scaling Large Language Model-based Multi-Agent Simulation with Out-of-order Execution』의 주요 강점과 독창적인 지점, 핵심 알고리즘 및 한계점을 압축하여 설명하면 다음과 같습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DIFFSERVE: EFFICIENTLY SERVING TEXT-TO-IMAGE DIFFUSION MODELS WITH QUERY-AWARE MODEL SCALING</title>
+      <link>http://192.168.1.11:1314/posts/DIFFSERVE-EFFICIENTLY-SERVING-TEXT-TO-IMAGE-DIFFUSION-MODELS-WITH-QUERY-AWARE-MODEL-SCALING/</link>
+      <pubDate>Mon, 17 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DIFFSERVE-EFFICIENTLY-SERVING-TEXT-TO-IMAGE-DIFFUSION-MODELS-WITH-QUERY-AWARE-MODEL-SCALING/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2411.15381&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h3 id=&#34;논문의-핵심-요약-및-기여&#34;&gt;&lt;strong&gt;논문의 핵심 요약 및 기여&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;p&gt;&lt;strong&gt;DIFFSERVE&lt;/strong&gt;는 &lt;strong&gt;query-aware model scaling&lt;/strong&gt; 개념을 도입하여 &lt;strong&gt;Text-to-Image Diffusion Model&lt;/strong&gt;의 효율적인 서빙을 가능하게 하는 시스템이다. 기존 서빙 시스템이 모든 요청에 대해 동일한 크기의 모델을 사용하는 반면, DIFFSERVE는 입력 쿼리의 난이도에 따라 &lt;strong&gt;경량(lightweight) 모델과 고성능(heavyweight) 모델을 선택적으로 사용&lt;/strong&gt;하는 &lt;strong&gt;모델 캐스케이드(model cascade)&lt;/strong&gt; 기법을 적용한다. 이를 통해 &lt;strong&gt;최대 24% 품질 향상&lt;/strong&gt;, &lt;strong&gt;19-70% SLO(서비스 레벨 목표) 위반 감소&lt;/strong&gt;를 달성한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>EFFICIENT LLM INFERENCE USING DYNAMIC INPUT PRUNING AND CACHE-AWARE MASKING</title>
+      <link>http://192.168.1.11:1314/posts/EFFICIENT-LLM-INFERENCE-USING-DYNAMIC-INPUT-PRUNING-AND-CACHE-AWARE-MASKING/</link>
+      <pubDate>Wed, 12 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/EFFICIENT-LLM-INFERENCE-USING-DYNAMIC-INPUT-PRUNING-AND-CACHE-AWARE-MASKING/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2412.01380&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h3 id=&#34;논문의-핵심-내용과-독창적인-기여&#34;&gt;&lt;strong&gt;논문의 핵심 내용과 독창적인 기여&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;p&gt;이 논문은 &lt;strong&gt;대형 언어 모델(LLM)의 추론 속도를 향상&lt;/strong&gt;시키기 위해 &lt;strong&gt;Dynamic Input Pruning(DIP)&lt;/strong&gt; 및 &lt;strong&gt;Cache-Aware Masking&lt;/strong&gt; 기법을 제안한다. 기존 LLM들은 &lt;strong&gt;메모리 대역폭의 병목 현상&lt;/strong&gt;으로 인해 모바일 디바이스에서 효율적으로 동작하기 어려웠다. 특히 최신 LLM들이 ReLU 대신 SwiGLU를 사용하는데, 이는 자연적인 활성화 희소성이 낮아 기존 동적 희소화 기법이 비효율적이었다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Marconi: Prefix Caching for the Era of Hybrid LLMs</title>
+      <link>http://192.168.1.11:1314/posts/Marconi-Prefix-Caching-for-the-Era-of-Hybrid-LLMs/</link>
+      <pubDate>Wed, 12 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Marconi-Prefix-Caching-for-the-Era-of-Hybrid-LLMs/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2411.19379&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h3 id=&#34;논문의-핵심-요약-및-평가&#34;&gt;논문의 핵심 요약 및 평가&lt;/h3&gt;&#xA;&lt;p&gt;&lt;strong&gt;논문 제목:&lt;/strong&gt;&lt;br&gt;&#xA;&lt;strong&gt;Marconi: Prefix Caching for the Era of Hybrid LLMs&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>LAVA: LIFETIME-AWARE VM ALLOCATION WITH LEARNED DISTRIBUTIONS AND ADAPTATION TO MISPREDICTIONS</title>
+      <link>http://192.168.1.11:1314/posts/LAVA-LIFETIME-AWARE-VM-ALLOCATION-WITH-LEARNED-DISTRIBUTIONS-AND-ADAPTATION-TO-MISPREDICTIONS/</link>
+      <pubDate>Tue, 11 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/LAVA-LIFETIME-AWARE-VM-ALLOCATION-WITH-LEARNED-DISTRIBUTIONS-AND-ADAPTATION-TO-MISPREDICTIONS/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2412.09840&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h2 id=&#34;논문의-강점과-독창성&#34;&gt;&lt;strong&gt;논문의 강점과 독창성&lt;/strong&gt;&lt;/h2&gt;&#xA;&lt;h3 id=&#34;강점&#34;&gt;&lt;strong&gt;강점&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;strong&gt;기존 VM 스케줄링 방식보다 높은 효율성&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>TurboAttention: Efficient Attention Approximation for High Throughputs LLMs</title>
+      <link>http://192.168.1.11:1314/posts/TurboAttention-Efficient-Attention-Approximation-for-High-Throughputs-LLMs/</link>
+      <pubDate>Tue, 11 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/TurboAttention-Efficient-Attention-Approximation-for-High-Throughputs-LLMs/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2412.08585&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;p&gt;논문 『TurboAttention: Efficient Attention Approximation for High Throughputs LLMs』는 기존의 Attention 연산의 속도와 메모리 효율성을 동시에 개선한 통합적인 접근 방법을 제안하고 있으며, 이는 두 가지 핵심 알고리즘인 FlashQ와 Sparsity-based Softmax Approximation (SAS)을 통해 구현되었습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>A PRACTICAL CROSS-LAYER APPROACH FOR ML-DRIVEN STORAGE PLACEMENT IN WAREHOUSE-SCALE COMPUTERS</title>
+      <link>http://192.168.1.11:1314/posts/A-PRACTICAL-CROSS-LAYER-APPROACH-FOR-ML-DRIVEN-STORAGE-PLACEMENT-IN-WAREHOUSE-SCALE-COMPUTERS/</link>
+      <pubDate>Mon, 10 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/A-PRACTICAL-CROSS-LAYER-APPROACH-FOR-ML-DRIVEN-STORAGE-PLACEMENT-IN-WAREHOUSE-SCALE-COMPUTERS/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2501.05651&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h3 id=&#34;논문의-강점-및-독창적인-지점&#34;&gt;&lt;strong&gt;논문의 강점 및 독창적인 지점&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;p&gt;이 논문은 &lt;strong&gt;대규모 데이터 센터에서 기계 학습(ML)을 활용한 저장소 배치(Storage Placement) 문제&lt;/strong&gt;를 다루며, 기존 접근법의 한계를 극복하기 위해 &lt;strong&gt;크로스-레이어(Cross-Layer) 접근 방식&lt;/strong&gt;을 제안했다. 주요 강점과 독창적인 점은 다음과 같다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Comet: Fine-grained Computation-communication Overlapping for Mixture-of-Experts</title>
+      <link>http://192.168.1.11:1314/posts/Comet-Fine-grained-Computation-communication-Overlapping-for-Mixture-of-Experts/</link>
+      <pubDate>Mon, 10 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Comet-Fine-grained-Computation-communication-Overlapping-for-Mixture-of-Experts/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2502.16949&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;h3 id=&#34;논문의-핵심-요약-및-기여점&#34;&gt;&lt;strong&gt;논문의 핵심 요약 및 기여점&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;p&gt;이 논문은 &lt;strong&gt;Comet&lt;/strong&gt;이라는 새로운 MoE(Mixture-of-Experts) 시스템을 제안하여 &lt;strong&gt;계산-통신 오버래핑&lt;/strong&gt;을 더욱 세밀하게 수행함으로써 MoE 모델의 실행 속도를 크게 향상시켰다. 기존 MoE 모델에서 통신 비용이 전체 실행 시간의 47%를 차지하는 문제를 해결하기 위해, &lt;strong&gt;세밀한 수준의(overlapping fine-grained) 계산-통신 오버래핑 기법&lt;/strong&gt;을 도입했다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Scaling Deep Learning Training with MPMD Pipeline Parallelism</title>
+      <link>http://192.168.1.11:1314/posts/Scaling-Deep-Learning-Training-with-MPMD-Pipeline-Parallelism/</link>
+      <pubDate>Mon, 10 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Scaling-Deep-Learning-Training-with-MPMD-Pipeline-Parallelism/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2412.14374&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;p&gt;본 논문은 JaxPP라는 시스템을 제안하여, 기존의 Single-Program Multiple-Data (SPMD) 방식의 한계를 극복하고 Multiple-Program Multiple-Data (MPMD) 파이프라인 병렬화를 통해 대규모 딥러닝 모델 학습의 확장성과 성능을 향상한 연구이다. 특히, JaxPP는 사용자가 pipeline 스케줄링을 유연하게 정의할 수 있도록 지원하며, 자동화된 작업 분배와 통신 패턴 추론을 통해 하드웨어 자원을 효율적으로 사용하여 기존 SPMD 대비 최대 1.11배 향상된 성능을 보였다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>LSERVE: EFFICIENT LONG-SEQUENCE LLM SERVING WITH UNIFIED SPARSE ATTENTION</title>
+      <link>http://192.168.1.11:1314/posts/LSERVE-EFFICIENT-LONG-SEQUENCE-LLM-SERVING-WITH-UNIFIED-SPARSE-ATTENTION/</link>
+      <pubDate>Thu, 06 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/LSERVE-EFFICIENT-LONG-SEQUENCE-LLM-SERVING-WITH-UNIFIED-SPARSE-ATTENTION/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2502.14866&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;p&gt;논문의 핵심 내용을 먼저 간략히 요약한 후, 강점과 독창적인 지점을 자세히 설명하고, 핵심 알고리즘의 동작 원리를 예시와 함께 제시한 뒤, 논문의 한계점을 마지막으로 정리하겠습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>ThunderServe: High-performance and Cost-efficient LLM Serving in Cloud Environments</title>
+      <link>http://192.168.1.11:1314/posts/ThunderServe-High-performance-and-Cost-efficient-LLM-Serving-in-Cloud-Environments/</link>
+      <pubDate>Thu, 06 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/ThunderServe-High-performance-and-Cost-efficient-LLM-Serving-in-Cloud-Environments/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2502.09334&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;p&gt;논문 『ThunderServe: High-performance and Cost-efficient LLM Serving in Cloud Environments』를 상세히 분석하여 다음과 같은 내용을 압축적으로 정리하였다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>VOLUT: EFFICIENT VOLUMETRIC STREAMING ENHANCED BY LUT-BASED SUPER-RESOLUTION</title>
+      <link>http://192.168.1.11:1314/posts/VOLUT-EFFICIENT-VOLUMETRIC-STREAMING-ENHANCED-BY-LUT-BASED-SUPER-RESOLUTION/</link>
+      <pubDate>Thu, 06 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/VOLUT-EFFICIENT-VOLUMETRIC-STREAMING-ENHANCED-BY-LUT-BASED-SUPER-RESOLUTION/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2502.12151&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘&#34;&gt;Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘&lt;/h1&gt;&#xA;&lt;p&gt;논문 『VoLUT: Efficient Volumetric Streaming Enhanced by LUT-based Super-resolution』을 분석하여 핵심 사항을 아래와 같이 압축하여 전달하고, 강점과 독창성, 알고리즘의 동작 과정, 한계점을 차례로 제시합니다.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

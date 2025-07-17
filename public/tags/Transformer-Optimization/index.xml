@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Transformer Optimization on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/Transformer-Optimization/</link>
+    <description>Recent content in Transformer Optimization on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Tue, 08 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/Transformer-Optimization/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Insights into DeepSeek-V3: Scaling Challenges and Reflections on Hardware for AI Architectures</title>
+      <link>http://192.168.1.11:1314/posts/Insights-into-DeepSeek-V3-Scaling-Challenges-and-Reflections-on-Hardware-for-AI-Architectures/</link>
+      <pubDate>Tue, 08 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Insights-into-DeepSeek-V3-Scaling-Challenges-and-Reflections-on-Hardware-for-AI-Architectures/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2505.09343v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;deepseek-v3-2-048-대-h800으로-405-b-급-llm을-돌린다는-것의-의미&#34;&gt;DeepSeek-V3: 2 048 대 H800으로 405 B-급 LLM을 돌린다는 것의 의미&lt;/h1&gt;&#xA;&lt;h2 id=&#34;tldr--한-줄-요약&#34;&gt;TL;DR ― 한 줄 요약&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;Multi-Head Latent Attention (MLA) + FP8 MoE + Dual-Pipe + 2-계층 MPFT&lt;/strong&gt; 덕분에 DeepSeek-V3는&#xA;&lt;em&gt;KV 70 KB/tok · 250 GFLOPs/tok · 14.8 ms TPOT&lt;/em&gt;을 달성, &lt;strong&gt;dense 405 B LLM이 요구하던 자원 대비 비용·전력을 40 % 이상 줄였다.&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Native Sparse Attention: Hardware-Aligned and Natively Trainable Sparse Attention</title>
+      <link>http://192.168.1.11:1314/posts/Native-Sparse-Attention-Hardware-Aligned-and-Natively-Trainable-Sparse-Attention/</link>
+      <pubDate>Mon, 07 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Native-Sparse-Attention-Hardware-Aligned-and-Natively-Trainable-Sparse-Attention/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2502.11089v2&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;native-sparse-attention-nsa--64-k-토큰도-11-빠르게-정확도는-그대로&#34;&gt;Native Sparse Attention (NSA) — 64 k 토큰도 11× 빠르게, 정확도는 그대로&lt;/h1&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;NSA는 ‘압축 → 선택 → 슬라이딩’ 3 분기 희소 어텐션과 GQA/MQA-친화 커널을 결합해 64 k 컨텍스트에서 디코딩 속도를 11.6 배, 학습 속도를 최대 9 배 높이면서도 Full-Attention보다 평균 성능을 향상시킨다.&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

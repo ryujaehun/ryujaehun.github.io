@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>DeepSeek on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/DeepSeek/</link>
+    <description>Recent content in DeepSeek on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Tue, 08 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/DeepSeek/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>DeepSeek-Prover-V2: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-Prover-V2-Advancing-Formal-Mathematical-Reasoning-via-Reinforcement-Learning-for-Subgoal-Decomposition/</link>
+      <pubDate>Tue, 08 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-Prover-V2-Advancing-Formal-Mathematical-Reasoning-via-Reinforcement-Learning-for-Subgoal-Decomposition/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2504.21801v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;subgoal-curriculum--cot-consistency-deepseek-prover-v2가-자동-정리-증명의-판을-갈아엎다&#34;&gt;Subgoal Curriculum + CoT Consistency: &lt;strong&gt;DeepSeek-Prover-V2&lt;/strong&gt;가 자동 정리 증명의 판을 갈아엎다&lt;/h1&gt;&#xA;&lt;h2 id=&#34;tldr&#34;&gt;TL;DR&lt;/h2&gt;&#xA;&lt;p&gt;&lt;em&gt;DeepSeek-Prover-V2&lt;/em&gt;는 **“문제를 잘게 쪼개고, 쪼갠 대로 끝까지 맞춘다”**는 원칙으로 소형 7 B 모델에서도 MiniF2F Pass@32 &lt;strong&gt;82.4 %&lt;/strong&gt;(671 B)·&lt;strong&gt;75.6 %&lt;/strong&gt;(7 B)의 새 SOTA를 달성했다. 핵심은 &lt;strong&gt;Subgoal-guided Curriculum&lt;/strong&gt;과 **Chain-of-Thought-Lean 일치 보상(GRPO)**의 결합이다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Inference-Time Scaling for Generalist Reward Modeling</title>
+      <link>http://192.168.1.11:1314/posts/Inference-Time-Scaling-for-Generalist-Reward-Modeling/</link>
+      <pubDate>Tue, 08 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Inference-Time-Scaling-for-Generalist-Reward-Modeling/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2504.02495v2&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;inference-time-scaling-deepseek-grm이-초대형-모델을-넘어선-비결&#34;&gt;Inference-Time Scaling: DeepSeek-GRM이 초대형 모델을 넘어선 비결&lt;/h1&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;“27 B 모델 × 32배 샘플”&lt;/strong&gt;—Generative Reward Model(GRM)과 k-Vote 합산만으로 GPT-4o·Nemotron-340B보다 높은 **종합 정확도 72.8 %**를 기록, &lt;em&gt;모델 크기 대신 추론 컴퓨트&lt;/em&gt;라는 새로운 스케일링 축을 제시했다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Insights into DeepSeek-V3: Scaling Challenges and Reflections on Hardware for AI Architectures</title>
+      <link>http://192.168.1.11:1314/posts/Insights-into-DeepSeek-V3-Scaling-Challenges-and-Reflections-on-Hardware-for-AI-Architectures/</link>
+      <pubDate>Tue, 08 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Insights-into-DeepSeek-V3-Scaling-Challenges-and-Reflections-on-Hardware-for-AI-Architectures/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2505.09343v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;deepseek-v3-2-048-대-h800으로-405-b-급-llm을-돌린다는-것의-의미&#34;&gt;DeepSeek-V3: 2 048 대 H800으로 405 B-급 LLM을 돌린다는 것의 의미&lt;/h1&gt;&#xA;&lt;h2 id=&#34;tldr--한-줄-요약&#34;&gt;TL;DR ― 한 줄 요약&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;Multi-Head Latent Attention (MLA) + FP8 MoE + Dual-Pipe + 2-계층 MPFT&lt;/strong&gt; 덕분에 DeepSeek-V3는&#xA;&lt;em&gt;KV 70 KB/tok · 250 GFLOPs/tok · 14.8 ms TPOT&lt;/em&gt;을 달성, &lt;strong&gt;dense 405 B LLM이 요구하던 자원 대비 비용·전력을 40 % 이상 줄였다.&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Code I/O: Condensing Reasoning Patterns via Code Input-Output Prediction</title>
+      <link>http://192.168.1.11:1314/posts/Code-I/O-Condensing-Reasoning-Patterns-via-Code-Input-Output-Prediction/</link>
+      <pubDate>Mon, 07 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Code-I/O-Condensing-Reasoning-Patterns-via-Code-Input-Output-Prediction/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2502.07316v4&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;code-io-코드-입출력--자연어-cot로-범용-추론까지데이터-설계만으로-7b-30b-llm을-평균-2-점-끌어올리다&#34;&gt;CODE I/O: 코드 입·출력 + 자연어 CoT로 범용 추론까지 — 데이터 설계만으로 7B-30B LLM을 평균 +2 점 끌어올리다&lt;/h1&gt;&#xA;&lt;h2 id=&#34;tldr&#34;&gt;TL;DR&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;“코드 함수 → 입력·출력 예측 + 체계적 Chain-of-Thought(CoT)”라는 단일 데이터 파이프라인만으로, 3.5 M 샘플이 14 M 규모 SOTA 데이터보다 더 크고 균형 잡힌 이득(+2.9 점)을 만든다.&lt;/strong&gt;&#xA;검증 가능·저비용·다양성 세 마리 토끼를 잡은 &lt;strong&gt;CODE I/O&lt;/strong&gt;는 “데이터 품질 &amp;gt; 데이터 양”이라는 사실을 실험적으로 증명한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Native Sparse Attention: Hardware-Aligned and Natively Trainable Sparse Attention</title>
+      <link>http://192.168.1.11:1314/posts/Native-Sparse-Attention-Hardware-Aligned-and-Natively-Trainable-Sparse-Attention/</link>
+      <pubDate>Mon, 07 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Native-Sparse-Attention-Hardware-Aligned-and-Natively-Trainable-Sparse-Attention/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2502.11089v2&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;native-sparse-attention-nsa--64-k-토큰도-11-빠르게-정확도는-그대로&#34;&gt;Native Sparse Attention (NSA) — 64 k 토큰도 11× 빠르게, 정확도는 그대로&lt;/h1&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;NSA는 ‘압축 → 선택 → 슬라이딩’ 3 분기 희소 어텐션과 GQA/MQA-친화 커널을 결합해 64 k 컨텍스트에서 디코딩 속도를 11.6 배, 학습 속도를 최대 9 배 높이면서도 Full-Attention보다 평균 성능을 향상시킨다.&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-R1-Incentivizing-Reasoning-Capability-in-LLMs-via-Reinforcement-Learning/</link>
+      <pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-R1-Incentivizing-Reasoning-Capability-in-LLMs-via-Reinforcement-Learning/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2501.12948v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;deepseek-r1-공개-rl-only-파이프라인으로-o1-급-추론을-재현하다&#34;&gt;DeepSeek-R1: 공개 RL-Only 파이프라인으로 &lt;em&gt;o1&lt;/em&gt; 급 추론을 재현하다&lt;/h1&gt;&#xA;&lt;h2 id=&#34;tldr&#34;&gt;TL;DR**&lt;/h2&gt;&#xA;&lt;p&gt;DeepSeek-R1은 &lt;em&gt;critic-less&lt;/em&gt; GRPO RL + 소량 Cold-Start SFT + 다단계 RL/SFT + 지식 증류 파이프라인으로, &lt;strong&gt;AIME-24 pass@1 79.8 %·MATH-500 97.3 %·Codeforces Elo 2029&lt;/strong&gt;를 달성해 공개 모델 최초로 OpenAI _o1-1217_과 동급 성능을 실증했다. 학습 비용은 기존 PPO RL의 절반 수준이며, 7 B–32 B 학생 모델로도 추론 능력을 이식해 “재현 가능한 SoTA”라는 연구 공백을 메웠다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Janus-Pro: UnifiedMultimodalUnderstanding and Generation with Data and Model Scaling</title>
+      <link>http://192.168.1.11:1314/posts/Janus-Pro-UnifiedMultimodalUnderstanding-and-Generation-with-Data-and-Model-Scaling/</link>
+      <pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Janus-Pro-UnifiedMultimodalUnderstanding-and-Generation-with-Data-and-Model-Scaling/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2501.17811v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;janus-pro-7b-dual-encoder-multimodal-llm-that-outsmarts-bigger-models&#34;&gt;&lt;strong&gt;Janus-Pro 7B: Dual-Encoder Multimodal LLM That Outsmarts Bigger Models&lt;/strong&gt;&lt;/h1&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;em&gt;SigLIP 이해 인코더 + VQ 생성 인코더&lt;/em&gt;를 완전히 분리한 뒤 &lt;strong&gt;7 B 파라미터 LLM&lt;/strong&gt;에 붙이는 ‘Dual-Encoder + Adapter’ 설계로, 13 B 통합 모델(TokenFlow-XL)을 &lt;strong&gt;이해·생성 양쪽에서 동시에 제치는&lt;/strong&gt; 첫 사례. – &lt;strong&gt;MMBench 79.2 (+10.3 pt) / GenEval 0.80 (+45 %)&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DeepSeek-V3 Technical Report</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-V3-Technical-Report/</link>
+      <pubDate>Sat, 05 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-V3-Technical-Report/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2412.19437v2&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;DeepSeek-V3는 671 B-parameter MoE LLM에 &lt;code&gt;Aux-loss-free Load-Balancing Bias&lt;/code&gt; + FP8 혼정밀 훈련 + Multi-Token Prediction을 결합해, dense 405 B 모델과 동급 (또는 우위) 성능을 절반 이하의 GPU 시간·비용으로 달성한 오픈소스 SOTA이다.&lt;/strong&gt; &lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DeepSeek-VL2: Mixture-of-Experts Vision-Language Models for Advanced Multimodal Understanding</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-VL2-Mixture-of-Experts-Vision-Language-Models-for-Advanced-Multimodal-Understanding/</link>
+      <pubDate>Sat, 05 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-VL2-Mixture-of-Experts-Vision-Language-Models-for-Advanced-Multimodal-Understanding/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2412.10302v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;deepseek-vl2--작고-빠르면서-고해상도까지-정확한-멀티모달-llm&#34;&gt;DeepSeek-VL2 — “작고 빠르면서 고해상도까지 정확한” 멀티모달 LLM&lt;/h1&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;Dynamic Tiling × MLA-MoE × 800 B VL 데이터라는 세 축의 설계로, &lt;strong&gt;4.5 B 활성 파라미터&lt;/strong&gt; 모델이 &lt;strong&gt;DocVQA 92.3 / MMStar 61.3&lt;/strong&gt; 등 동급 공개 VLM 대비 ▲2 – ▲10 pt 성능을 내면서도 &lt;strong&gt;단일 10 GB GPU&lt;/strong&gt;에서 고해상도(최대 3.5 K²) 이미지를 실시간 처리한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Auxiliary-Loss-Free Load Balancing Strategy for Mixture-of-Experts</title>
+      <link>http://192.168.1.11:1314/posts/Auxiliary-Loss-Free-Load-Balancing-Strategy-for-Mixture-of-Experts/</link>
+      <pubDate>Tue, 01 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Auxiliary-Loss-Free-Load-Balancing-Strategy-for-Mixture-of-Experts/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2408.15664v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;Loss-Free Balancing(LFB)은 &lt;em&gt;auxiliary loss&lt;/em&gt;를 완전히 제거한 채, &lt;strong&gt;전문가별 bias 한 줄 업데이트&lt;/strong&gt;만으로 Mixture-of-Experts(MoE) 모델의 ‘로드 밸런스 ↔ 성능’ 딜레마를 깨고 **Perplexity ≈ 0.5↓, MaxVio ≥ 90 %↓**를 동시에 달성했다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DeepSeek LLM: Scaling Open-Source Language Models with Longtermism</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-LLM-Scaling-Open-Source-Language-Models-with-Longtermism/</link>
+      <pubDate>Sun, 29 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-LLM-Scaling-Open-Source-Language-Models-with-Longtermism/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2401.02954v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;FLOPs / token로 재정의한 &lt;em&gt;DeepSeek Scaling Law&lt;/em&gt; 하나로 모델·데이터·하이퍼파라미터를 자동 결정하여, 2 T token만으로 67 B 파라미터 모델이 LLaMA-2 70 B를 코드·수학·대화·다국어에서 추월했다.&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;hr&gt;</description>
+    </item>
+  </channel>
+</rss>

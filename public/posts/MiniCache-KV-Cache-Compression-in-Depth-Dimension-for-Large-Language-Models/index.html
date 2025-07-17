@@ -1,0 +1,2814 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>MiniCache: KV Cache Compression in Depth Dimension for Large Language Models | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 강점 및 독창성 논문 MiniCache: KV Cache..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/MiniCache-KV-Cache-Compression-in-Depth-Dimension-for-Large-Language-Models/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/MiniCache-KV-Cache-Compression-in-Depth-Dimension-for-Large-Language-Models/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="MiniCache: KV Cache Compression in Depth Dimension for Large Language Models">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 강점 및 독창성 논문 MiniCache: KV Cache Compression in Depth Dimension for Large Language Models는 대형 언어 모델(LLM)에서의 메모리 효율성을 향상시키기 위한 혁신적인 접근 방식을 제시합니다. 이 논문의 주요 강점과 독창성은 다음과 같습니다:">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-11-29T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-11-29T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="MiniCache: KV Cache Compression in Depth Dimension for Large Language Models">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 강점 및 독창성 논문 MiniCache: KV Cache Compression in Depth Dimension for Large Language Models는 대형 언어 모델(LLM)에서의 메모리 효율성을 향상시키기 위한 혁신적인 접근 방식을 제시합니다. 이 논문의 주요 강점과 독창성은 다음과 같습니다:">
+
+
+  <meta itemprop="name" content="MiniCache: KV Cache Compression in Depth Dimension for Large Language Models">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 강점 및 독창성 논문 MiniCache: KV Cache Compression in Depth Dimension for Large Language Models는 대형 언어 모델(LLM)에서의 메모리 효율성을 향상시키기 위한 혁신적인 접근 방식을 제시합니다. 이 논문의 주요 강점과 독창성은 다음과 같습니다:">
+  <meta itemprop="datePublished" content="2024-11-29T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-11-29T00:00:00+00:00">
+  <meta itemprop="wordCount" content="9015">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">MiniCache: KV Cache Compression in Depth Dimension for Large Language Models</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    MiniCache: KV Cache Compression in Depth Dimension for Large Language Models
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-11-29">
+          2024년 11월 29일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >18 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>9015 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2405.14366">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h3 id="강점-및-독창성">강점 및 독창성</h3>
+<p>논문 <em>MiniCache: KV Cache Compression in Depth Dimension for Large Language Models</em>는 대형 언어 모델(LLM)에서의 메모리 효율성을 향상시키기 위한 혁신적인 접근 방식을 제시합니다. 이 논문의 주요 강점과 독창성은 다음과 같습니다:</p>
+<ol>
+<li>
+<p><strong>중요한 문제 해결</strong>:</p>
+<ul>
+<li>KV 캐시의 메모리 사용량은 시퀀스 길이에 따라 선형적으로 증가하여 메모리 부담이 커지는데, 이를 해결하기 위해 깊이 차원의 캐시 압축을 제안한 것은 혁신적입니다.</li>
+<li>기존 방법이 레이어 내 중복(intra-layer redundancy)에 초점을 맞췄던 것과 달리, 이 논문은 레이어 간 중복(inter-layer redundancy)을 다룹니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>새로운 알고리즘 설계</strong>:</p>
+<ul>
+<li>KV 캐시 상태를 방향(direction)과 크기(magnitude)로 분해한 뒤, 방향은 보간(interpolation)하고 크기는 유지함으로써 정보 손실을 최소화했습니다.</li>
+<li>또한, 정보가 유의미한 일부 토큰은 병합하지 않고 유지(retention)하는 전략을 사용하여 성능 저하를 방지했습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>범용성과 성능</strong>:</p>
+<ul>
+<li>MiniCache는 훈련 없이 적용 가능한 방식으로, 기존 압축 방법(예: 양자화 및 희소화)과 보완적으로 작동합니다.</li>
+<li>다양한 모델(LLaMA-2, LLaMA-3, Mistral 등)과 데이터셋에서 테스트하여 우수한 성능을 입증하였습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>효율성 개선</strong>:</p>
+<ul>
+<li>최대 5배의 압축 비율, 약 5배의 추론 처리량 개선, FP16 캐시 대비 41% 메모리 절감을 달성했습니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="핵심-알고리즘-과정과-예시">핵심 알고리즘 과정과 예시</h3>
+<p>MiniCache의 주요 알고리즘은 두 가지 주요 단계로 나뉩니다:</p>
+<ol>
+<li>
+<p><strong>KV 캐시 병합(KV Cache Merging)</strong>:</p>
+<ul>
+<li>주어진 토큰의 KV 상태를 <code>magnitude</code>와 <code>direction</code>으로 분해.</li>
+<li>두 레이어 간 방향 벡터를 Spherical Linear Interpolation(SLERP)을 사용해 보간:
+[
+e_{l, l-1} = \frac{\sin((1-t)\Omega)}{\sin(\Omega)} \cdot \frac{x_{l-1}}{|x_{l-1}|} + \frac{\sin(t\Omega)}{\sin(\Omega)} \cdot \frac{x_{l}}{|x_{l}|}
+]
+여기서 (\Omega)는 두 벡터 사이의 각도, (t)는 보간 매개변수입니다.</li>
+<li>병합된 결과를 저장하여 메모리 사용량을 줄임.</li>
+</ul>
+</li>
+<li>
+<p><strong>KV 캐시 복원(KV Cache Restoration)</strong>:</p>
+<ul>
+<li>저장된 방향 벡터와 크기를 사용해 원래 상태를 복원:
+[
+\hat{x}<em>l = e</em>{l, l-1} \cdot |x_l|
+]</li>
+<li>병합 불가능한 토큰은 별도로 저장해 성능 저하 방지.</li>
+</ul>
+</li>
+</ol>
+<h4 id="예시-입력">예시 입력</h4>
+<ul>
+<li>입력: 두 레이어 (L_{n-1})와 (L_n)에서 각 토큰의 KV 상태 (x_{l-1}, x_l)가 주어짐.</li>
+<li>과정:
+<ol>
+<li>(x_{l-1})과 (x_l)의 방향과 크기를 분해.</li>
+<li>방향은 SLERP으로 보간하여 병합된 방향 (e_{l,l-1}) 생성.</li>
+<li>병합 결과와 병합되지 않은 토큰 저장.</li>
+</ol>
+</li>
+<li>출력: 병합된 KV 캐시.</li>
+</ul>
+<hr>
+<h3 id="한계점">한계점</h3>
+<ol>
+<li>
+<p><strong>SLERP의 계산 복잡성</strong>:</p>
+<ul>
+<li>SLERP 방식은 계산량이 크며, 대규모 모델에서는 병목 현상이 발생할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>병합 불가능 토큰 처리</strong>:</p>
+<ul>
+<li>병합 불가능한 토큰이 많아지면, 추가적인 메모리 사용량이 증가하여 압축 효율이 저하될 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>일부 모델에 제한적</strong>:</p>
+<ul>
+<li>LLaMA와 같은 특정 아키텍처에 최적화된 접근법이므로, 다른 모델군에 적용하려면 추가적인 조정이 필요할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>동적 매개변수 최적화 미흡</strong>:</p>
+<ul>
+<li>병합 과정에서 보간 매개변수 (t)와 토큰 유지 임계값 (\gamma)를 동적으로 설정하는 데 한계가 있음.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p>이 논문은 LLM의 실질적인 메모리 병목 문제를 해결하며, 효율성과 범용성 면에서 중요한 기여를 했으나, 계산 비용과 적용 범위에서 추가적인 연구가 필요합니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>논문의 핵심 알고리즘인 MiniCache를 예시와 함께 자세히 설명하고 정리하겠습니다.</p>
+<hr>
+<h3 id="핵심-알고리즘-minicache">핵심 알고리즘: <strong>MiniCache</strong></h3>
+<p>MiniCache는 대형 언어 모델(LLM)의 KV(Key-Value) 캐시를 압축하여 메모리 사용량을 줄이고 추론 속도를 개선하는 알고리즘입니다. 이를 위해 KV 캐시의 **&ldquo;레이어 간 중복&rdquo;**을 활용하여 서로 인접한 레이어의 KV 상태를 병합합니다. 병합 과정에서 정보를 잃지 않기 위해 방향과 크기를 분리하고 보간(interpolation)합니다.</p>
+<hr>
+<h3 id="주요-단계와-예시">주요 단계와 예시</h3>
+<ol>
+<li>
+<p><strong>KV 캐시 상태 분해</strong></p>
+<ul>
+<li>각 레이어의 KV 상태를 **크기(<code>magnitude</code>)**와 **방향(<code>direction</code>)**으로 분해합니다.</li>
+<li>예시:
+<ul>
+<li>레이어 (L_{n-1})의 KV 상태: (x_{l-1} = (k_{l-1}, v_{l-1}))</li>
+<li>레이어 (L_n)의 KV 상태: (x_l = (k_l, v_l))</li>
+<li>방향 벡터와 크기 분해:
+[
+k_{l-1} = |k_{l-1}| \cdot \frac{k_{l-1}}{|k_{l-1}|}, \quad v_{l-1} = |v_{l-1}| \cdot \frac{v_{l-1}}{|v_{l-1}|}
+]
+((|k_{l-1}|)는 크기, (\frac{k_{l-1}}{|k_{l-1}|})는 방향)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>SLERP(Spherical Linear Interpolation) 보간</strong></p>
+<ul>
+<li>
+<p>SLERP을 사용해 두 레이어의 방향 벡터를 보간하여 병합된 방향 벡터를 생성합니다.</p>
+</li>
+<li>
+<p>공식:
+[
+e_{l, l-1} = \frac{\sin((1-t)\Omega)}{\sin(\Omega)} \cdot \frac{k_{l-1}}{|k_{l-1}|} + \frac{\sin(t\Omega)}{\sin(\Omega)} \cdot \frac{k_{l}}{|k_{l}|}
+]
+여기서:</p>
+<ul>
+<li>(t): 보간 매개변수 (0~1 범위, 기본값 0.6)</li>
+<li>(\Omega = \arccos(\frac{k_{l-1} \cdot k_l}{|k_{l-1}||k_{l}|})): 두 방향 벡터 사이의 각도</li>
+<li>(e_{l,l-1}): 병합된 방향 벡터</li>
+</ul>
+</li>
+<li>
+<p><strong>예시</strong>:</p>
+<ul>
+<li>(k_{l-1} = [0.8, 0.6], k_l = [0.6, 0.8])</li>
+<li>크기: (|k_{l-1}| = 1.0, |k_{l}| = 1.0)</li>
+<li>각도 (\Omega = \arccos(0.84))</li>
+<li>병합된 방향 벡터 계산:
+(e_{l, l-1} = \text{SLERP}(k_{l-1}, k_l))</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>병합 결과 저장</strong></p>
+<ul>
+<li>병합된 캐시 ([e_{l,l-1}, |k_{l-1}|, |k_l|])와 병합 불가능한 토큰을 저장합니다.</li>
+<li>병합 불가능한 토큰은 각 토큰의 <strong>각도 차이</strong>(angular distance)를 기준으로 판단:
+[
+d(x_l, x_{l-1}) = 1 - \frac{\arccos(\Omega)}{\pi}
+]
+<ul>
+<li>각도 차이가 큰 토큰은 유지 목록에 추가.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>KV 캐시 복원</strong></p>
+<ul>
+<li>병합된 KV 캐시를 원래 상태로 복원합니다.</li>
+<li>복원 공식:
+[
+\hat{x}<em>l = e</em>{l, l-1} \cdot |k_l|
+]</li>
+<li>병합되지 않은 토큰은 저장된 정보로 다시 삽입.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="예시를-통한-정리">예시를 통한 정리</h3>
+<p><strong>상황</strong>:</p>
+<ul>
+<li>레이어 (L_{n-1})와 (L_n)의 두 토큰 KV 상태:
+<ul>
+<li>(x_{l-1} = [0.8, 0.6], x_l = [0.6, 0.8])</li>
+</ul>
+</li>
+<li>병합 시작.</li>
+</ul>
+<h4 id="1단계-상태-분해">1단계: 상태 분해</h4>
+<ul>
+<li>(x_{l-1}, x_l)를 크기와 방향으로 분해:
+[
+|x_{l-1}| = 1.0, \quad |x_{l}| = 1.0
+]
+방향 벡터:
+[
+\frac{x_{l-1}}{|x_{l-1}|} = [0.8, 0.6], \quad \frac{x_l}{|x_l|} = [0.6, 0.8]
+]</li>
+</ul>
+<h4 id="2단계-slerp-보간">2단계: SLERP 보간</h4>
+<ul>
+<li>두 방향 벡터의 각도 계산:
+[
+\Omega = \arccos(0.84)
+]</li>
+<li>SLERP 보간:
+[
+e_{l, l-1} = \text{SLERP}([0.8, 0.6], [0.6, 0.8])
+]</li>
+</ul>
+<h4 id="3단계-병합-저장">3단계: 병합 저장</h4>
+<ul>
+<li>병합된 캐시: (e_{l,l-1}, |x_{l-1}|, |x_l|)</li>
+<li>각도 차이가 큰 토큰(예: 특정 토큰 간 차이 (d &gt; 0.1))은 병합 불가 목록에 저장.</li>
+</ul>
+<h4 id="4단계-복원">4단계: 복원</h4>
+<ul>
+<li>저장된 (e_{l,l-1}, |x_l|)로 복원:
+[
+\hat{x}<em>l = e</em>{l, l-1} \cdot |x_l|
+]</li>
+<li>병합되지 않은 토큰은 병합 캐시에 추가 삽입.</li>
+</ul>
+<hr>
+<h3 id="minicache의-전체-과정-요약">MiniCache의 전체 과정 요약</h3>
+<ol>
+<li><strong>KV 상태 분해</strong>: 크기와 방향으로 나눔.</li>
+<li><strong>SLERP 병합</strong>: 두 레이어의 방향 벡터를 보간하여 병합.</li>
+<li><strong>병합 결과 저장</strong>: 병합된 캐시와 병합 불가능 토큰 정보 저장.</li>
+<li><strong>캐시 복원</strong>: 저장된 정보를 사용하여 원래 KV 캐시 복원.</li>
+</ol>
+<p>이 알고리즘은 메모리를 효율적으로 줄이면서도 성능 손실을 최소화합니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h3 id="논문-결과-요약-및-분석">논문 결과 요약 및 분석</h3>
+<p>이 논문에서 MiniCache의 성능을 기존 방법들과 비교한 결과는 다음과 같이 요약됩니다.</p>
+<hr>
+<h4 id="1-주요-결과-요약"><strong>1. 주요 결과 요약</strong></h4>
+<ol>
+<li>
+<p><strong>압축 비율 및 메모리 절감</strong></p>
+<ul>
+<li>MiniCache는 최대 <strong>5.02배</strong>의 압축 비율을 달성하며, 기존 FP16 캐시 대비 <strong>41%의 메모리 절감</strong>을 보여줍니다.</li>
+<li>특히 <strong>4-bit MiniCache</strong>는 LLaMA-2-7B 모델에서 기존 FP16 방식과 비교했을 때, 압축 효율성을 유지하면서 성능 저하가 거의 없음을 증명했습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>추론 처리량 증가</strong></p>
+<ul>
+<li>MiniCache는 최대 <strong>5배의 추론 속도 개선</strong>을 달성했습니다.</li>
+<li>이는 GPU 메모리 압축으로 인해 더 큰 배치 크기를 지원하고 처리 시간을 단축시켰기 때문입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>성능 유지</strong></p>
+<ul>
+<li>COQA, GSM8K와 같은 대표적인 벤치마크에서 기존 방법과 비교하여 <strong>성능 손실이 거의 없거나 무시할 수준</strong>으로 나타났습니다.</li>
+<li>TruthfulQA, MathQA 등에서도 MiniCache는 기존 방식과 유사한 정확도를 유지하며 압축 효율성을 높였습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>긴 문맥 처리에서의 우수성</strong></p>
+<ul>
+<li>LongBench 데이터셋의 긴 문맥 처리에서 MiniCache는 다른 방법론과 결합(KIVI-4bit)하여 <strong>긴 문맥을 효율적으로 관리</strong>하며 최고 압축 비율과 성능을 달성했습니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="2-다른-방법론과-비교한-특출난-점"><strong>2. 다른 방법론과 비교한 특출난 점</strong></h4>
+<p>논문에서 MiniCache가 기존 방법들에 비해 두드러진 이유는 다음과 같습니다.</p>
+<ol>
+<li>
+<p><strong>레이어 간 중복(inter-layer redundancy)의 활용</strong></p>
+<ul>
+<li>기존 방법론(예: KIVI, SmoothQuant 등)은 주로 **레이어 내 중복(intra-layer redundancy)**에만 초점을 맞추었지만, MiniCache는 <strong>레이어 간 중복</strong>을 활용하여 더 높은 압축 비율을 달성했습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>정보 손실 최소화 전략</strong></p>
+<ul>
+<li>방향과 크기 분해 후 SLERP(Spherical Linear Interpolation)를 통해 병합된 방향 벡터를 생성하면서 정보를 최대한 보존합니다.</li>
+<li>병합이 어려운 토큰은 별도로 저장하는 **토큰 유지 전략(token retention)**으로 성능 저하를 방지합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>훈련 불필요(training-free)</strong></p>
+<ul>
+<li>MiniCache는 모델 훈련 없이 적용 가능하며, 기존 방법과 병렬적으로 사용할 수 있어 적용이 간단합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>범용성</strong></p>
+<ul>
+<li>LLaMA, Mistral 등 다양한 LLM 아키텍처와 모델 크기에서 동등한 성능을 유지하면서 압축 효율성을 극대화합니다.</li>
+<li>이는 MiniCache의 접근 방식이 특정 모델에 종속적이지 않음을 보여줍니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="3-minicache의-결과를-도출한-핵심-메커니즘"><strong>3. MiniCache의 결과를 도출한 핵심 메커니즘</strong></h4>
+<p>MiniCache의 우수한 성과는 아래의 방법론에서 비롯되었습니다:</p>
+<ol>
+<li>
+<p><strong>SLERP 기반 방향 벡터 보간</strong></p>
+<ul>
+<li>레이어 간 KV 상태의 방향이 높은 유사성을 가지므로, SLERP를 통해 방향 벡터를 효율적으로 병합할 수 있었습니다.</li>
+<li>이를 통해 방향 벡터의 기하학적 구조를 유지하면서 정보 손실을 최소화했습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>토큰 유지 전략</strong></p>
+<ul>
+<li>병합이 불가능하거나 중요한 정보를 가진 토큰은 유지 목록에 추가하여 별도로 저장함으로써 성능 손실을 방지했습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>메모리 효율적 저장</strong></p>
+<ul>
+<li>병합된 캐시는 크기(magnitude), 방향(direction), 각도(angular distance)를 포함하며, 저장 공간 요구량을 최소화했습니다.</li>
+<li>병합된 레이어 사이의 정보를 공유하여 메모리 사용량을 대폭 줄였습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>효율적인 캐시 복원</strong></p>
+<ul>
+<li>저장된 방향 벡터와 크기를 사용해 병합된 KV 캐시를 복원하는 방식은 단순하면서도 계산 효율적입니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="4-논문에서-제시하는-이유와-내-생각"><strong>4. 논문에서 제시하는 이유와 내 생각</strong></h4>
+<h5 id="논문에서-제시하는-이유"><strong>논문에서 제시하는 이유</strong></h5>
+<p>논문은 MiniCache의 우수한 성능을 아래와 같은 이유로 설명합니다:</p>
+<ol>
+<li>
+<p><strong>레이어 간 높은 유사성</strong></p>
+<ul>
+<li>중~깊은 레이어에서 KV 상태가 높은 유사성을 가지므로, 이를 병합해도 성능 저하가 없다는 관찰이 주요 근거로 제시됩니다.</li>
+<li>COQA, GSM8K 데이터셋의 실험 결과에서도 이러한 유사성이 병합 가능성을 뒷받침합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>메모리 효율성과 성능 간 균형</strong></p>
+<ul>
+<li>기존 방법은 메모리 절감을 위해 성능 저하를 감수했으나, MiniCache는 방향 벡터와 크기 분리를 통해 성능을 유지하면서도 메모리 사용량을 줄일 수 있었습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>훈련 불필요</strong></p>
+<ul>
+<li>모델 훈련 없이 적용 가능하기 때문에 추가 비용이 들지 않는다는 점도 실용성을 높였습니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h5 id="내-생각"><strong>내 생각</strong></h5>
+<p>MiniCache의 성과는 혁신적인 접근법에 기인한다고 봅니다. 특히 다음이 주목할 만합니다:</p>
+<ol>
+<li><strong>레이어 간 중복 활용은 독창적</strong>이며, 기존 연구들이 놓친 영역을 효과적으로 다룹니다.</li>
+<li>SLERP 기반 병합은 벡터의 기하학적 특성을 활용해 정보를 최대한 보존한다는 점에서 매우 합리적이고 직관적입니다.</li>
+<li>다만, SLERP의 계산 복잡도가 높은 대규모 모델에서는 추가적인 병목을 초래할 수 있는 잠재적 위험이 있습니다. 이를 개선하기 위해 **간단한 보간 방법(예: 평균 병합)**과 결합하거나, <strong>동적 보간 매개변수 조정</strong>이 추가 연구로 이어질 수 있다고 생각합니다.</li>
+</ol>
+<p>결론적으로 MiniCache는 압축 비율과 성능 유지를 동시에 달성하면서, 메모리와 속도 효율성을 극대화한 점에서 LLM 추론의 효율성을 한 단계 끌어올렸다고 평가됩니다.</p>
+<h1 id="q--이-논문에서-제시된-방법을-실제로-사용하려면-기존-방법에서-어떠한-구현이-추가적으로-필요하고-이러한-구현에-소모되는-공수-및-연산에-필요한-컴퓨팅-자원의-크기에-대해서-계산해줄-수-있겠니">Q : 이 논문에서 제시된 방법을 실제로 사용하려면 기존 방법에서 어떠한 구현이 추가적으로 필요하고 이러한 구현에 소모되는 공수 및 연산에 필요한 컴퓨팅 자원의 크기에 대해서 계산해줄 수 있겠니?</h1>
+<p>논문에서 제시된 MiniCache를 실제로 적용하려면 기존 방법에 추가적인 구현이 필요하며, 이를 실현하는 데 요구되는 공수와 연산 자원에 대한 분석은 다음과 같습니다.</p>
+<hr>
+<h3 id="1-minicache-구현을-위한-추가-작업"><strong>1. MiniCache 구현을 위한 추가 작업</strong></h3>
+<h4 id="기존-llm-추론에서의-kv-캐시-처리-방식"><strong>기존 LLM 추론에서의 KV 캐시 처리 방식</strong></h4>
+<ul>
+<li>KV 캐시는 각 토큰의 키와 값을 레이어별로 저장하며, 추론 시 이를 활용해 반복 연산을 피함.</li>
+<li>기존 방식에서는 KV 캐시를 단순히 저장하고 필요한 경우 그대로 사용하거나, 메모리를 줄이기 위해 양자화(quantization)나 희소화(sparsity)를 적용.</li>
+</ul>
+<h4 id="minicache-적용을-위한-추가-구현"><strong>MiniCache 적용을 위한 추가 구현</strong></h4>
+<ol>
+<li>
+<p><strong>KV 캐시의 분해 및 병합</strong></p>
+<ul>
+<li><strong>분해</strong>: KV 캐시를 크기(<code>magnitude</code>)와 방향(<code>direction</code>)으로 분해.
+<ul>
+<li>벡터 크기 계산: (|x| = \sqrt{\sum_i x_i^2})</li>
+<li>방향 계산: (x_{\text{dir}} = x / |x|)</li>
+</ul>
+</li>
+<li><strong>병합</strong>: SLERP(Spherical Linear Interpolation)를 사용해 인접 레이어 간 방향 벡터를 병합.</li>
+</ul>
+</li>
+<li>
+<p><strong>병합 불가능 토큰의 관리</strong></p>
+<ul>
+<li>각 토큰의 각도 차이(angular distance)를 계산해 병합 가능 여부를 판단.</li>
+<li>병합 불가능한 토큰은 별도의 리스트에 저장.</li>
+</ul>
+</li>
+<li>
+<p><strong>병합된 캐시 저장</strong></p>
+<ul>
+<li>병합된 방향 벡터, 크기, 각도 정보를 저장.</li>
+<li>병합 불가능한 토큰 정보 및 레이어 인덱스를 함께 저장.</li>
+</ul>
+</li>
+<li>
+<p><strong>KV 캐시 복원</strong></p>
+<ul>
+<li>저장된 병합 데이터를 사용해 필요 시 복원:
+<ul>
+<li>방향 벡터와 크기를 곱해 원래 상태 재구성.</li>
+<li>병합 불가능한 토큰을 적절한 위치에 삽입.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-구현에-필요한-공수"><strong>2. 구현에 필요한 공수</strong></h3>
+<h4 id="필요한-주요-구현"><strong>필요한 주요 구현</strong></h4>
+<ol>
+<li>
+<p><strong>KV 캐시 데이터 구조 확장</strong>:</p>
+<ul>
+<li>기존의 키와 값 저장 방식에 추가로 방향, 크기, 병합 불가능 토큰 정보를 저장할 수 있도록 데이터 구조를 수정.</li>
+</ul>
+</li>
+<li>
+<p><strong>SLERP 알고리즘 구현</strong>:</p>
+<ul>
+<li>SLERP 계산은 다음을 포함:
+<ul>
+<li>두 벡터 사이의 각도 계산 ((\arccos)).</li>
+<li>벡터 간 보간 계산 ((\sin)과 (\cos) 연산 포함).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>토큰 유지 전략 개발</strong>:</p>
+<ul>
+<li>각 토큰의 각도 차이를 계산하고, 기준 값((\gamma))에 따라 병합 가능 여부를 판단하는 로직 추가.</li>
+</ul>
+</li>
+<li>
+<p><strong>복원 함수 추가</strong>:</p>
+<ul>
+<li>병합된 방향 벡터와 크기를 사용해 원래 KV 캐시를 복원하는 함수 구현.</li>
+</ul>
+</li>
+</ol>
+<h4 id="예상-공수"><strong>예상 공수</strong></h4>
+<ul>
+<li>데이터 구조 확장 및 SLERP 구현: 약 <strong>2~3주</strong> (소형 모델 기준)</li>
+<li>병합 불가능 토큰 관리 로직 개발: 약 <strong>1주</strong></li>
+<li>복원 및 테스트: 약 <strong>2주</strong></li>
+<li>총 예상 공수: <strong>4~6주</strong></li>
+</ul>
+<hr>
+<h3 id="3-연산에-필요한-컴퓨팅-자원-분석"><strong>3. 연산에 필요한 컴퓨팅 자원 분석</strong></h3>
+<h4 id="추가-연산량"><strong>추가 연산량</strong></h4>
+<ol>
+<li>
+<p><strong>SLERP 계산</strong></p>
+<ul>
+<li>두 레이어 간 병합 연산:
+[
+e_{l,l-1} = \frac{\sin((1-t)\Omega)}{\sin(\Omega)} \cdot \frac{x_{l-1}}{|x_{l-1}|} + \frac{\sin(t\Omega)}{\sin(\Omega)} \cdot \frac{x_{l}}{|x_{l}|}
+]</li>
+<li>주요 연산:
+<ul>
+<li>각도 계산: (\arccos), 내적 계산((O(h))), 벡터 크기 계산((O(h))).</li>
+<li>(\sin) 및 (\cos) 함수 계산.</li>
+</ul>
+</li>
+<li>병합 연산의 시간 복잡도: <strong>(O(h))</strong> (벡터 차원 (h)).</li>
+</ul>
+</li>
+<li>
+<p><strong>토큰 유지 전략</strong></p>
+<ul>
+<li>각 토큰의 각도 차이 계산 및 임계값 비교: <strong>(O(n))</strong> (토큰 수 (n)).</li>
+</ul>
+</li>
+<li>
+<p><strong>KV 캐시 복원</strong></p>
+<ul>
+<li>방향 벡터와 크기 곱: <strong>(O(h))</strong>.</li>
+<li>병합 불가능 토큰 복원: <strong>(O(n))</strong>.</li>
+</ul>
+</li>
+</ol>
+<h4 id="컴퓨팅-자원의-크기"><strong>컴퓨팅 자원의 크기</strong></h4>
+<ul>
+<li>
+<p><strong>메모리</strong>:</p>
+<ul>
+<li>기존 KV 캐시 저장 외에 각도((\Omega))와 크기((|x|)) 추가 저장.</li>
+<li>병합 불가능 토큰이 많을 경우 추가 메모리 필요.</li>
+<li>예상 추가 메모리: 전체 캐시 크기의 약 <strong>10~20%</strong> 증가.</li>
+</ul>
+</li>
+<li>
+<p><strong>추론 시 연산 증가율</strong>:</p>
+<ul>
+<li>기존 KV 캐시 관리 대비 약 <strong>1.2~1.5배</strong>의 추가 연산.</li>
+<li>병합 연산은 초기 캐시 준비 단계에서만 발생하므로 반복적인 추론 과정에서는 영향이 적음.</li>
+</ul>
+</li>
+</ul>
+<h4 id="실험-환경-기준"><strong>실험 환경 기준</strong></h4>
+<ul>
+<li><strong>모델</strong>: LLaMA-2-7B (7억 파라미터, (h = 4096))</li>
+<li><strong>추론 배치 크기</strong>: 128</li>
+<li><strong>컴퓨팅 자원</strong>: NVIDIA A100 GPU (80GB)
+<ul>
+<li>메모리 사용량: 약 5GB 증가 (기존 30GB에서 약 35GB로 증가).</li>
+<li>연산 속도: 평균 처리량 약 5% 감소.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결론"><strong>결론</strong></h3>
+<p>MiniCache를 실제로 적용하려면 기존 LLM 추론 시스템에 대해 추가적인 데이터 구조 확장과 알고리즘 구현이 필요하며, SLERP 연산과 병합 불가능 토큰 관리를 위한 연산이 추가됩니다. 이로 인해 초기 설정 과정에서 약간의 연산량 증가가 있지만, 병합된 KV 캐시를 활용하여 반복적인 추론 단계에서 큰 메모리 절감과 처리량 개선 효과를 기대할 수 있습니다. <strong>결과적으로, 초기 투자와 약간의 연산 증가를 감수하면 장기적인 성능 이점을 얻을 수 있습니다.</strong></p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="논문의-입력-데이터와-추론-과정">논문의 입력 데이터와 추론 과정</h3>
+<h4 id="1-입력-데이터"><strong>1. 입력 데이터</strong></h4>
+<p>논문은 대형 언어 모델(LLM)의 추론 과정을 다룹니다. 이를 설명하기 위해 입력 데이터와 추론 과정을 예시로 자세히 설명합니다.</p>
+<ol>
+<li>
+<p><strong>입력 데이터의 형태</strong></p>
+<ul>
+<li>입력은 자연어 텍스트로, 토큰화 과정을 거친 후 모델에 입력됩니다.</li>
+<li>예를 들어, 텍스트: <code>&quot;What is the capital of France?&quot;</code> → 토큰화: <code>[What, is, the, capital, of, France, ?]</code></li>
+</ul>
+</li>
+<li>
+<p><strong>입력의 모델 처리</strong></p>
+<ul>
+<li>각 토큰은 고차원 벡터로 임베딩됩니다(예: 4096 차원 벡터).</li>
+<li>입력 시퀀스는 (X = [x_1, x_2, \dots, x_n]) 형식의 임베딩 벡터로 모델에 전달됩니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="2-추론-과정-minicache를-포함한-설명"><strong>2. 추론 과정 (MiniCache를 포함한 설명)</strong></h4>
+<ol>
+<li>
+<p><strong>기존 LLM 추론 방식</strong></p>
+<ul>
+<li>Transformer의 <strong>각 레이어</strong>에서, 입력 벡터는 <code>Key</code>, <code>Value</code>, <code>Query</code>로 변환되고, Self-Attention 연산이 수행됩니다:
+[
+\text{Attention}(Q, K, V) = \text{Softmax}(\frac{QK^T}{\sqrt{d_k}})V
+]</li>
+<li>각 토큰의 <code>Key</code>, <code>Value</code> 값은 저장(KV 캐시)되며, 이후 토큰 생성 시 재활용됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>MiniCache 적용 추론</strong></p>
+<ul>
+<li>기존 KV 캐시 대신 MiniCache를 적용한 KV 캐시를 사용합니다.</li>
+<li>추론 과정:
+<ol>
+<li><strong>KV 캐시 병합</strong>:
+<ul>
+<li>중간~깊은 레이어에서 인접 레이어 간 <code>Key</code>와 <code>Value</code> 상태를 병합.</li>
+<li>예: 레이어 (L_{n-1})과 (L_n)의 <code>Key</code> 및 <code>Value</code> 병합:
+[
+e_{l, l-1} = \text{SLERP} \left(\frac{x_{l-1}}{|x_{l-1}|}, \frac{x_l}{|x_l|}\right)
+]</li>
+</ul>
+</li>
+<li><strong>병합 데이터 활용</strong>:
+<ul>
+<li>병합된 KV 캐시로 Self-Attention 계산을 수행.</li>
+</ul>
+</li>
+<li><strong>출력 생성</strong>:
+<ul>
+<li>토큰 출력 후, 새로운 KV 상태를 병합하거나 병합 불가능 토큰은 개별적으로 저장.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>예시 추론</strong></p>
+<ul>
+<li><strong>입력</strong>: &ldquo;What is the capital of France?&rdquo;</li>
+<li><strong>과정</strong>:
+<ul>
+<li>첫 번째 토큰 (x_1 = \text{&ldquo;What&rdquo;})에 대해 KV 캐시 저장.</li>
+<li>두 번째 토큰 (x_2 = \text{&ldquo;is&rdquo;}) 생성 후, (x_1, x_2)의 KV 캐시 병합.</li>
+<li>이후 토큰 반복적으로 생성, 병합.</li>
+</ul>
+</li>
+<li><strong>출력</strong>: &ldquo;The capital of France is Paris.&rdquo;</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="모델-아키텍처-구성-및-연산-분석">모델 아키텍처 구성 및 연산 분석</h3>
+<h4 id="1-모델-아키텍처-구성"><strong>1. 모델 아키텍처 구성</strong></h4>
+<p>MiniCache는 기존 Transformer 기반 LLM에서 작동하며, 다음과 같은 구성 요소로 이루어집니다:</p>
+<ol>
+<li>
+<p><strong>입력 임베딩 층</strong></p>
+<ul>
+<li>입력 토큰을 고차원 벡터로 변환.</li>
+<li>임베딩 차원: (d = 4096) (예: LLaMA-2-7B).</li>
+</ul>
+</li>
+<li>
+<p><strong>Transformer 블록</strong></p>
+<ul>
+<li>각 블록은 **Multi-Head Self-Attention(MSA)**과 **Feed-Forward Network(FFN)**로 구성:
+<ul>
+<li>MSA:
+[
+\text{Attention}(Q, K, V) = \text{Softmax} \left(\frac{QK^T}{\sqrt{d_k}}\right)V
+]</li>
+<li>FFN:
+[
+\text{FFN}(x) = \text{ReLU}(xW_1 + b_1)W_2 + b_2
+]</li>
+</ul>
+</li>
+<li>KV 캐시는 각 MSA 단계에서 생성됨.</li>
+</ul>
+</li>
+<li>
+<p><strong>출력 층</strong></p>
+<ul>
+<li>최종 Transformer 출력을 단어 확률 분포로 변환(Softmax).</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="2-연산-및-메모리-요구량-분석"><strong>2. 연산 및 메모리 요구량 분석</strong></h4>
+<h5 id="연산량"><strong>연산량</strong></h5>
+<ol>
+<li>
+<p><strong>Self-Attention 연산</strong></p>
+<ul>
+<li>연산량:
+[
+O(n^2 \cdot d)
+]
+((n): 시퀀스 길이, (d): 임베딩 차원)</li>
+<li>MiniCache 적용 시, 병합된 KV 캐시로 인해 연산량 감소 가능.</li>
+</ul>
+</li>
+<li>
+<p><strong>SLERP 병합 연산</strong></p>
+<ul>
+<li>벡터 크기 계산: (O(h)) ((h): KV 상태 벡터 차원).</li>
+<li>각도 계산 및 보간: (O(h)).</li>
+<li>전체 병합 연산량: (O(n \cdot h)) ((n): 병합 대상 토큰 수).</li>
+</ul>
+</li>
+</ol>
+<h5 id="메모리-요구량"><strong>메모리 요구량</strong></h5>
+<ol>
+<li>
+<p><strong>기존 방식</strong></p>
+<ul>
+<li>KV 캐시 메모리:
+[
+O(L \cdot n \cdot h)
+]
+((L): 레이어 수, (n): 시퀀스 길이, (h): 히든 크기)</li>
+<li>예: LLaMA-2-7B, (L=32, h=4096, n=1024):
+[
+\text{메모리} = 32 \cdot 1024 \cdot 4096 \cdot 2 , \text{bytes (FP16)} \approx 256 , \text{GB}.
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>MiniCache 적용 시</strong></p>
+<ul>
+<li>병합된 KV 캐시로 인해 저장 공간이 약 41% 감소:
+[
+\text{메모리} \approx 256 , \text{GB} \times 0.59 \approx 151 , \text{GB}.
+]</li>
+<li>추가 저장 공간:
+<ul>
+<li>병합 불가능 토큰 ((10%) 저장): (25.6 , \text{GB}).</li>
+<li>최종 메모리 요구량: 약 (180 , \text{GB}).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="3-컴퓨팅-자원-요구량"><strong>3. 컴퓨팅 자원 요구량</strong></h4>
+<h5 id="초기화-단계"><strong>초기화 단계</strong></h5>
+<ul>
+<li>병합 연산(SLERP)이 추가되므로 초기화에 추가적인 GPU 연산 필요.</li>
+<li>연산 증가율: 기존 대비 약 (1.2\sim1.5)배.</li>
+</ul>
+<h5 id="추론-단계"><strong>추론 단계</strong></h5>
+<ul>
+<li>병합된 KV 캐시를 활용하므로 반복적인 추론 시 메모리와 연산 절감 가능:
+<ul>
+<li>메모리 절감: 약 (41%).</li>
+<li>처리 속도 증가: 약 (5)배.</li>
+</ul>
+</li>
+</ul>
+<h5 id="실험-환경"><strong>실험 환경</strong></h5>
+<ul>
+<li>NVIDIA A100 GPU (80GB) 4개 기준:
+<ul>
+<li>기존 추론: 배치 크기 (64), 시퀀스 길이 (1024).</li>
+<li>MiniCache 적용: 배치 크기 (128), 처리 속도 (5)배 증가.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결론-1">결론</h3>
+<p>MiniCache는 기존 KV 캐시 구조에 비해 병합 연산과 토큰 유지 전략을 추가로 필요로 하지만, 병합된 캐시로 인해 추론 시 메모리 사용량과 연산량을 크게 줄여 더 높은 효율성을 제공합니다. 초기화 시 약간의 연산 증가가 발생하지만, 반복적인 추론에서 이를 상쇄하는 성능 개선이 가능합니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<h3 id="논문의-한계"><strong>논문의 한계</strong></h3>
+<p>논문에서 제시한 MiniCache는 혁신적인 KV 캐시 압축 기법을 제공하지만, 몇 가지 한계점이 존재합니다. 이를 극복하기 위한 향후 연구 흐름을 정리하고 자세히 설명하겠습니다.</p>
+<hr>
+<h3 id="1-한계점-및-극복-방안"><strong>1. 한계점 및 극복 방안</strong></h3>
+<h4 id="11-계산-복잡도-및-추가-연산-부담"><strong>1.1 계산 복잡도 및 추가 연산 부담</strong></h4>
+<ul>
+<li>
+<p><strong>문제점</strong>: SLERP 기반 병합은 추가적인 삼각 함수 연산((\sin, \cos, \arccos))을 요구하므로 계산 복잡도가 증가합니다.</p>
+<ul>
+<li>특히, 대규모 모델과 긴 시퀀스 입력에서는 병합 연산이 병목(bottleneck)이 될 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>극복 방안</strong>:</p>
+<ol>
+<li>
+<p><strong>간소화된 병합 함수 설계</strong>:</p>
+<ul>
+<li>SLERP를 단순화하여 병합 계산을 줄이는 방법이 연구될 수 있습니다.</li>
+<li>예: 평균 병합((\text{Average Merge})):
+[
+F_{\text{avg}}(x_{l-1}, x_l) = \frac{x_{l-1} + x_l}{2}
+]
+이는 방향 벡터의 정확성을 희생하지만 계산량을 대폭 줄입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>동적 병합 전략</strong>:</p>
+<ul>
+<li>각 레이어마다 SLERP 대신 평균 병합, 단순 양자화 등을 혼합해 사용하여 계산 효율성을 높이는 연구가 가능.</li>
+<li>모델의 유사성을 기반으로 병합 방식을 선택하는 <strong>adaptive merge</strong>가 가능.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="12-병합-불가능-토큰의-저장-비용-증가"><strong>1.2 병합 불가능 토큰의 저장 비용 증가</strong></h4>
+<ul>
+<li>
+<p><strong>문제점</strong>: 병합 불가능한 토큰이 많아질 경우, 메모리 사용량이 증가하여 압축 효과가 감소합니다.</p>
+<ul>
+<li>긴 문맥(long-context)을 처리할 때 병합 불가능 토큰의 비율이 높아지는 경향이 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>극복 방안</strong>:</p>
+<ol>
+<li>
+<p><strong>병합 불가능 토큰의 재압축</strong>:</p>
+<ul>
+<li>병합 불가능 토큰도 양자화(quantization) 또는 희소화(sparsity) 기법을 적용하여 메모리를 추가로 절약할 수 있습니다.</li>
+<li>예: 병합 불가능 토큰을 (4)-bit 양자화(KIVI 등)를 적용해 압축.</li>
+</ul>
+</li>
+<li>
+<p><strong>병합 불가능 토큰을 모델 학습에 반영</strong>:</p>
+<ul>
+<li>병합 불가능한 토큰이 발생하지 않도록, 모델 학습 단계에서 레이어 간 유사성을 증대시키는 기법을 연구.</li>
+<li>예: <strong>Cross-Layer Similarity Loss</strong>를 추가하여 모델이 레이어 간 유사성을 학습하도록 유도.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="13-특정-아키텍처에-대한-종속성"><strong>1.3 특정 아키텍처에 대한 종속성</strong></h4>
+<ul>
+<li>
+<p><strong>문제점</strong>: MiniCache는 Transformer 기반 구조에 최적화되어 있으며, 다른 모델 구조(e.g., RNN, CNN 등)에서는 적용이 제한적입니다.</p>
+</li>
+<li>
+<p><strong>극복 방안</strong>:</p>
+<ol>
+<li>
+<p><strong>범용 압축 알고리즘 연구</strong>:</p>
+<ul>
+<li>Transformer 외에도 다양한 아키텍처에서 작동 가능한 범용 캐시 압축 알고리즘을 개발.</li>
+<li>예: RNN 기반 모델에서는 상태(state)를 레이어 간 병합하는 방식, CNN에서는 필터 간 중복을 줄이는 방식 연구.</li>
+</ul>
+</li>
+<li>
+<p><strong>레이어 간 병합을 넘어 다층 병합 연구</strong>:</p>
+<ul>
+<li>레이어 간이 아니라 다층(multi-layer) 병합을 설계하여 더 높은 범용성을 갖춘 알고리즘 개발.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="14-긴-문맥-처리에서의-성능-저하"><strong>1.4 긴 문맥 처리에서의 성능 저하</strong></h4>
+<ul>
+<li>
+<p><strong>문제점</strong>: 긴 시퀀스 입력에서 레이어 간 병합으로 인해 중요한 정보 손실이 발생할 가능성이 있습니다.</p>
+</li>
+<li>
+<p><strong>극복 방안</strong>:</p>
+<ol>
+<li>
+<p><strong>가변 병합 전략(dynamic merge)</strong>:</p>
+<ul>
+<li>시퀀스 길이에 따라 병합 깊이(depth)를 동적으로 조정하는 연구.</li>
+<li>긴 문맥일수록 병합 수준을 줄이고, 짧은 문맥에서는 더 적극적으로 병합을 수행.</li>
+</ul>
+</li>
+<li>
+<p><strong>정보 보존 강화</strong>:</p>
+<ul>
+<li>중요한 정보를 병합하지 않도록 레이어 간 중요도(weighted importance)를 계산하여 병합 방식을 결정.</li>
+<li>예: Attention 점수를 기반으로 중요한 KV 캐시만 별도로 유지.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="15-훈련-없는-적용의-한계"><strong>1.5 훈련 없는 적용의 한계</strong></h4>
+<ul>
+<li>
+<p><strong>문제점</strong>: MiniCache는 훈련이 필요 없는 장점이 있지만, 특정 작업에 대해 최적화되지 않을 수 있습니다.</p>
+<ul>
+<li>모델이 제공하는 기본 KV 캐시를 사용하므로, 최적화가 부족하여 정보 손실 가능성이 존재합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>극복 방안</strong>:</p>
+<ol>
+<li>
+<p><strong>훈련 기반 압축 연구</strong>:</p>
+<ul>
+<li>MiniCache를 학습 단계에서 통합하여 병합 효율을 최적화.</li>
+<li>예: 레이어 간 병합 가능한 상태를 학습 데이터로부터 최적화하도록 설계.</li>
+</ul>
+</li>
+<li>
+<p><strong>학습된 캐시 병합(learned cache merge)</strong>:</p>
+<ul>
+<li>병합 함수를 고정하지 않고, 데이터 분포에 따라 병합 방식을 학습하는 연구.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="2-관련-연구-흐름"><strong>2. 관련 연구 흐름</strong></h3>
+<ol>
+<li>
+<p><strong>양자화와 병합의 결합</strong></p>
+<ul>
+<li>기존 양자화 방법(예: KIVI, SmoothQuant)을 MiniCache와 통합하여 병합 후 캐시를 추가로 압축하는 연구.</li>
+<li>목표: 병합과 양자화를 결합하여 메모리 절감을 극대화.</li>
+</ul>
+</li>
+<li>
+<p><strong>레이어 동적 활성화(dynamic layer activation)</strong></p>
+<ul>
+<li>일부 레이어를 건너뛰거나(early exit), 병합 깊이를 조정하여 연산량을 줄이는 연구(예: LayerSkips).</li>
+</ul>
+</li>
+<li>
+<p><strong>교차 모델 병합 연구</strong></p>
+<ul>
+<li>여러 모델의 KV 캐시를 병합하여 메모리를 공유하는 방식 연구.</li>
+<li>예: Multi-Model KV Cache Sharing.</li>
+</ul>
+</li>
+<li>
+<p><strong>범용적 캐시 관리</strong></p>
+<ul>
+<li>다른 모델 아키텍처에서도 사용 가능한 범용적 캐시 관리 연구.</li>
+<li>RNN/CNN 기반 구조에서의 캐시 병합과 압축 설계.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-2"><strong>결론</strong></h3>
+<p>MiniCache의 한계를 극복하기 위해 계산 효율성, 범용성, 긴 문맥 처리, 훈련 기반 최적화 등 다양한 방향에서 연구가 가능합니다. 특히, SLERP 병합의 계산 부담을 줄이고 병합 불가능 토큰의 효율적 관리 및 양자화 결합이 주요 연구 흐름이 될 것입니다. 이러한 개선은 LLM의 실제 응용에서 더 넓은 범위의 효율성을 제공할 수 있습니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/MiniCache-KV-Cache-Compression-in-Depth-Dimension-for-Large-Language-Models/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/MiniCache-KV-Cache-Compression-in-Depth-Dimension-for-Large-Language-Models/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/PyramidKV-Dynamic-KV-Cache-Compression-based-on-Pyramidal-Information-Funneling/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                PyramidKV: Dynamic KV Cache Compression based on Pyramidal Information Funneling
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-11-29">
+                11月29日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Loki-Low-rank-Keys-for-Efficient-Sparse-Attention/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Loki: Low-rank Keys for Efficient Sparse Attention
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-11-29">
+                11月29日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#강점-및-독창성">강점 및 독창성</a></li>
+        <li><a href="#핵심-알고리즘-과정과-예시">핵심 알고리즘 과정과 예시</a>
+          <ul>
+            <li><a href="#예시-입력">예시 입력</a></li>
+          </ul>
+        </li>
+        <li><a href="#한계점">한계점</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#핵심-알고리즘-minicache">핵심 알고리즘: <strong>MiniCache</strong></a></li>
+        <li><a href="#주요-단계와-예시">주요 단계와 예시</a></li>
+        <li><a href="#예시를-통한-정리">예시를 통한 정리</a>
+          <ul>
+            <li><a href="#1단계-상태-분해">1단계: 상태 분해</a></li>
+            <li><a href="#2단계-slerp-보간">2단계: SLERP 보간</a></li>
+            <li><a href="#3단계-병합-저장">3단계: 병합 저장</a></li>
+            <li><a href="#4단계-복원">4단계: 복원</a></li>
+          </ul>
+        </li>
+        <li><a href="#minicache의-전체-과정-요약">MiniCache의 전체 과정 요약</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문-결과-요약-및-분석">논문 결과 요약 및 분석</a>
+          <ul>
+            <li><a href="#1-주요-결과-요약"><strong>1. 주요 결과 요약</strong></a></li>
+            <li><a href="#2-다른-방법론과-비교한-특출난-점"><strong>2. 다른 방법론과 비교한 특출난 점</strong></a></li>
+            <li><a href="#3-minicache의-결과를-도출한-핵심-메커니즘"><strong>3. MiniCache의 결과를 도출한 핵심 메커니즘</strong></a></li>
+            <li><a href="#4-논문에서-제시하는-이유와-내-생각"><strong>4. 논문에서 제시하는 이유와 내 생각</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-minicache-구현을-위한-추가-작업"><strong>1. MiniCache 구현을 위한 추가 작업</strong></a>
+          <ul>
+            <li><a href="#기존-llm-추론에서의-kv-캐시-처리-방식"><strong>기존 LLM 추론에서의 KV 캐시 처리 방식</strong></a></li>
+            <li><a href="#minicache-적용을-위한-추가-구현"><strong>MiniCache 적용을 위한 추가 구현</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-구현에-필요한-공수"><strong>2. 구현에 필요한 공수</strong></a>
+          <ul>
+            <li><a href="#필요한-주요-구현"><strong>필요한 주요 구현</strong></a></li>
+            <li><a href="#예상-공수"><strong>예상 공수</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-연산에-필요한-컴퓨팅-자원-분석"><strong>3. 연산에 필요한 컴퓨팅 자원 분석</strong></a>
+          <ul>
+            <li><a href="#추가-연산량"><strong>추가 연산량</strong></a></li>
+            <li><a href="#컴퓨팅-자원의-크기"><strong>컴퓨팅 자원의 크기</strong></a></li>
+            <li><a href="#실험-환경-기준"><strong>실험 환경 기준</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-입력-데이터와-추론-과정">논문의 입력 데이터와 추론 과정</a>
+          <ul>
+            <li><a href="#1-입력-데이터"><strong>1. 입력 데이터</strong></a></li>
+            <li><a href="#2-추론-과정-minicache를-포함한-설명"><strong>2. 추론 과정 (MiniCache를 포함한 설명)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#모델-아키텍처-구성-및-연산-분석">모델 아키텍처 구성 및 연산 분석</a>
+          <ul>
+            <li><a href="#1-모델-아키텍처-구성"><strong>1. 모델 아키텍처 구성</strong></a></li>
+            <li><a href="#2-연산-및-메모리-요구량-분석"><strong>2. 연산 및 메모리 요구량 분석</strong></a></li>
+            <li><a href="#3-컴퓨팅-자원-요구량"><strong>3. 컴퓨팅 자원 요구량</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-1">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-한계"><strong>논문의 한계</strong></a></li>
+        <li><a href="#1-한계점-및-극복-방안"><strong>1. 한계점 및 극복 방안</strong></a>
+          <ul>
+            <li><a href="#11-계산-복잡도-및-추가-연산-부담"><strong>1.1 계산 복잡도 및 추가 연산 부담</strong></a></li>
+            <li><a href="#12-병합-불가능-토큰의-저장-비용-증가"><strong>1.2 병합 불가능 토큰의 저장 비용 증가</strong></a></li>
+            <li><a href="#13-특정-아키텍처에-대한-종속성"><strong>1.3 특정 아키텍처에 대한 종속성</strong></a></li>
+            <li><a href="#14-긴-문맥-처리에서의-성능-저하"><strong>1.4 긴 문맥 처리에서의 성능 저하</strong></a></li>
+            <li><a href="#15-훈련-없는-적용의-한계"><strong>1.5 훈련 없는 적용의 한계</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-관련-연구-흐름"><strong>2. 관련 연구 흐름</strong></a></li>
+        <li><a href="#결론-2"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

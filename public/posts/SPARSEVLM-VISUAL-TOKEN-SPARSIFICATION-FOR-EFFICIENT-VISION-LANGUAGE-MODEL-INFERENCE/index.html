@@ -1,0 +1,2705 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>SPARSEVLM: VISUAL TOKEN SPARSIFICATION FOR EFFICIENT VISION-LANGUAGE MODEL INFERENCE | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 강점 및 독창적인 지점 논문의 강점:
+효율성 향상:
+SparseVLM은 추가..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/SPARSEVLM-VISUAL-TOKEN-SPARSIFICATION-FOR-EFFICIENT-VISION-LANGUAGE-MODEL-INFERENCE/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/SPARSEVLM-VISUAL-TOKEN-SPARSIFICATION-FOR-EFFICIENT-VISION-LANGUAGE-MODEL-INFERENCE/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="SPARSEVLM: VISUAL TOKEN SPARSIFICATION FOR EFFICIENT VISION-LANGUAGE MODEL INFERENCE">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 강점 및 독창적인 지점 논문의 강점:">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-11-20T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-11-20T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="SPARSEVLM: VISUAL TOKEN SPARSIFICATION FOR EFFICIENT VISION-LANGUAGE MODEL INFERENCE">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 강점 및 독창적인 지점 논문의 강점:">
+
+
+  <meta itemprop="name" content="SPARSEVLM: VISUAL TOKEN SPARSIFICATION FOR EFFICIENT VISION-LANGUAGE MODEL INFERENCE">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 강점 및 독창적인 지점 논문의 강점:">
+  <meta itemprop="datePublished" content="2024-11-20T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-11-20T00:00:00+00:00">
+  <meta itemprop="wordCount" content="9060">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">SPARSEVLM: VISUAL TOKEN SPARSIFICATION FOR EFFICIENT VISION-LANGUAGE MODEL INFERENCE</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    SPARSEVLM: VISUAL TOKEN SPARSIFICATION FOR EFFICIENT VISION-LANGUAGE MODEL INFERENCE
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-11-20">
+          2024년 11월 20일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >19 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>9060 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2410.04417">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h3 id="강점-및-독창적인-지점">강점 및 독창적인 지점</h3>
+<p><strong>논문의 강점:</strong></p>
+<ol>
+<li>
+<p><strong>효율성 향상</strong>:</p>
+<ul>
+<li>SparseVLM은 추가적인 훈련 없이 비전-언어 모델(VLM)의 효율성을 크게 향상시키는 방식을 제안합니다. 이는 기존의 많은 방법이 추가 데이터와 훈련이 필요했던 점에서 차별화됩니다.</li>
+<li>FLOPs(연산 복잡도)를 최대 67%까지 줄이면서도 93%의 정확도를 유지했습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>텍스트-비전 상호작용 활용</strong>:</p>
+<ul>
+<li>기존 방법은 비전 토큰의 희소화에 대해 텍스트의 정보를 고려하지 않았지만, SparseVLM은 텍스트의 중요도를 활용하여 비전 토큰의 중요성을 판단합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>범용성과 적용성</strong>:</p>
+<ul>
+<li>SparseVLM은 이미지와 비디오 기반 VLM 모두에 적용 가능하며, 다양한 벤치마크에서 우수한 성능을 보여줍니다.</li>
+<li>다른 기존 모델에 플러그 앤 플레이 방식으로 쉽게 통합될 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>토큰 재활용 전략</strong>:</p>
+<ul>
+<li>삭제된 토큰을 단순히 버리지 않고, 중요한 정보를 재활용하여 압축 표현을 생성함으로써 정보 손실을 줄이는 고유한 방법을 제안합니다.</li>
+</ul>
+</li>
+</ol>
+<p><strong>독창적인 지점:</strong></p>
+<ul>
+<li><strong>텍스트 기반 가이드</strong>:
+텍스트 토큰에서 시각적으로 관련된 부분을 선택하여 비전 토큰의 중요도를 평가하는 새로운 접근 방식을 제안했습니다.</li>
+<li><strong>적응형 희소화 비율</strong>:
+셀프-어텐션 행렬의 랭크를 기반으로 레이어별 희소화 비율을 동적으로 결정하여 토큰 제거를 보다 정교하게 수행합니다.</li>
+</ul>
+<hr>
+<h3 id="핵심-알고리즘-설명-sparsevlm">핵심 알고리즘 설명 (SparseVLM)</h3>
+<p>SparseVLM의 핵심 과정은 다음과 같습니다:</p>
+<ol>
+<li>
+<p><strong>텍스트-비전 상호작용 평가</strong>:</p>
+<ul>
+<li>입력된 텍스트와 비전 토큰의 상관 관계를 평가하여, 비전 토큰이 텍스트와 얼마나 연관 있는지 판단합니다.</li>
+<li>예: 질문이 &ldquo;사진의 파란색 간판에 무엇이 쓰여 있습니까?&ldquo;라면, 모델은 &lsquo;파란색&rsquo;, &lsquo;간판&rsquo;과 연관된 비전 토큰을 우선적으로 유지합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>비전 토큰 중요도 계산</strong>:</p>
+<ul>
+<li>셀프-어텐션 행렬에서 텍스트 토큰과 비전 토큰 간의 상호작용 점수를 평균하여 각 비전 토큰의 중요도를 계산합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>적응형 희소화</strong>:</p>
+<ul>
+<li>비전 토큰의 중요도를 기준으로 덜 중요한 토큰을 제거합니다.</li>
+<li>희소화 비율은 어텐션 행렬의 랭크를 기반으로 동적으로 조정됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>토큰 재활용</strong>:</p>
+<ul>
+<li>제거된 토큰 중 일부를 재활용하여 새로운 압축 토큰을 생성합니다.</li>
+<li>k-최근접 이웃 알고리즘을 사용하여 유사한 토큰을 클러스터링하고, 그룹별로 토큰을 합쳐 압축합니다.</li>
+</ul>
+</li>
+</ol>
+<p><strong>예시 입력과 과정:</strong></p>
+<ul>
+<li>입력 이미지: 버스와 간판이 있는 거리 풍경.</li>
+<li>입력 질문: &ldquo;이 파란색 간판에 무엇이 적혀 있습니까?&rdquo;
+<ol>
+<li>텍스트 토큰에서 &lsquo;파란색&rsquo;, &lsquo;간판&rsquo;이 중요 텍스트로 선택됨.</li>
+<li>비전 토큰에서 간판 관련 토큰의 중요도가 높게 평가됨.</li>
+<li>중요도가 낮은 배경 토큰(예: 길, 건물 등)이 제거됨.</li>
+<li>삭제된 토큰 일부를 클러스터링하여 필요한 정보를 압축 표현으로 유지.</li>
+<li>최종적으로 간판의 텍스트 정보를 활용하여 답변 생성.</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="논문의-한계점">논문의 한계점</h3>
+<ol>
+<li>
+<p><strong>일부 정보 손실 가능성</strong>:</p>
+<ul>
+<li>희소화 과정에서 중요도가 낮게 평가된 토큰이 제거되면, 모델이 예기치 못한 상황에서 정보를 충분히 유지하지 못할 가능성이 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>정확성 감소</strong>:</p>
+<ul>
+<li>희소화 비율이 높아질수록 정확성이 떨어지는 경향이 있음. 특히 고난도 질문에서 더 두드러질 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>추가 계산 비용</strong>:</p>
+<ul>
+<li>토큰 재활용 및 클러스터링 단계는 추가적인 계산 비용을 발생시키며, 매우 대규모 데이터셋에서 효율성에 영향을 줄 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>구체적인 사례 제한</strong>:</p>
+<ul>
+<li>SparseVLM의 성능은 질문의 유형과 데이터의 특성에 따라 달라질 수 있으며, 일반화된 성능 평가가 추가로 필요합니다.</li>
+</ul>
+</li>
+</ol>
+<p>위 분석은 SparseVLM의 잠재적인 응용 가능성을 뒷받침하며, 향후 연구에서 이를 보완할 방법론을 탐구할 여지를 제공합니다.</p>
+<h1 id="q--이-논문에서-사용하는-방법을-학습하기-위하여-어떤-데이터셋이-필요할까-그리고-어떻게-학습을-진행하면-될지-예시를-들어서-아주-자세하게-설명해줘">Q : 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될지 예시를 들어서 아주 자세하게 설명해줘</h1>
+<p>SparseVLM은 학습이 필요 없는 &ldquo;훈련 프리(training-free)&rdquo; 방식이지만, 이를 더 잘 이해하고 실험적으로 검증하기 위해 특정 데이터셋과 접근 방식을 사용할 수 있습니다. 아래에서 필요한 데이터셋과 학습 시뮬레이션 방식을 자세히 설명하겠습니다.</p>
+<hr>
+<h3 id="필요한-데이터셋">필요한 데이터셋</h3>
+<p>SparseVLM은 텍스트와 이미지를 함께 사용하는 비전-언어 모델(VLM)을 기반으로 작동하므로, 다음과 같은 유형의 데이터셋이 적합합니다:</p>
+<ol>
+<li>
+<p><strong>이미지 질문-응답 데이터셋</strong></p>
+<ul>
+<li><strong>VQA v2</strong> (Visual Question Answering): 다양한 이미지에 대한 질문과 정답 쌍을 포함하며, 모델의 텍스트-비전 통합 능력을 테스트할 수 있습니다.</li>
+<li><strong>TextVQA</strong>: 이미지 내 텍스트를 읽고 이해하는 능력을 평가하는 데이터셋.</li>
+<li><strong>GQA</strong>: 장면 그래프 기반의 논리적 추론과 이미지 이해를 테스트하는 데이터셋.</li>
+</ul>
+</li>
+<li>
+<p><strong>비디오 질문-응답 데이터셋</strong></p>
+<ul>
+<li><strong>TGIF-QA</strong>: 비디오의 시간적 정보를 이해하는 과제를 포함합니다.</li>
+<li><strong>MSVD-QA</strong> 및 <strong>MSRVTT-QA</strong>: 비디오와 질문에 기반한 답변을 요구하는 데이터셋으로, SparseVLM의 비디오 적용 가능성을 테스트하기 적합합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>다양한 비전-언어 벤치마크</strong></p>
+<ul>
+<li><strong>MMBench</strong> 및 <strong>MME</strong>: 모델의 전반적인 멀티모달 능력을 평가하는 포괄적 데이터셋입니다.</li>
+<li><strong>POPE</strong>: 비전-언어 모델의 환각(hallucination)을 평가하는 데이터셋으로, SparseVLM의 정확성을 테스트할 수 있습니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="학습-없이-sparsevlm을-실험적으로-테스트하기-위한-과정">학습 없이 SparseVLM을 실험적으로 테스트하기 위한 과정</h3>
+<h4 id="1-모델-초기화">1. <strong>모델 초기화</strong></h4>
+<ul>
+<li><strong>기존 VLM 모델 사용</strong>: SparseVLM은 기존의 비전-언어 모델(VLM)에 플러그 앤 플레이 방식으로 작동합니다. 예를 들어, LLaVA, Mini-Gemini 또는 VideoLLaVA와 같은 사전 훈련된 모델을 선택합니다.</li>
+</ul>
+<h4 id="2-텍스트와-비전-토큰-처리">2. <strong>텍스트와 비전 토큰 처리</strong></h4>
+<ul>
+<li><strong>텍스트 토큰화</strong>:
+<ul>
+<li>질문(예: &ldquo;파란 간판에 무엇이 적혀 있습니까?&quot;)을 텍스트 토큰으로 변환합니다.</li>
+</ul>
+</li>
+<li><strong>비전 토큰 생성</strong>:
+<ul>
+<li>입력 이미지 또는 비디오 프레임을 비전 인코더(e.g., CLIP, ConvNeXt)를 통해 비전 토큰으로 변환합니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-텍스트-비전-상호작용-평가">3. <strong>텍스트-비전 상호작용 평가</strong></h4>
+<ul>
+<li><strong>텍스트-비전 상호작용 평가</strong>:
+<ul>
+<li>셀프 어텐션 행렬에서 텍스트와 비전 토큰 간의 상호작용 점수를 계산합니다.</li>
+</ul>
+</li>
+<li><strong>텍스트 토큰 선택</strong>:
+<ul>
+<li>텍스트 토큰 중 비전과 관련성이 높은 텍스트 토큰(&ldquo;텍스트 rater&rdquo;)을 선택합니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-비전-토큰-희소화">4. <strong>비전 토큰 희소화</strong></h4>
+<ul>
+<li><strong>토큰 중요도 평가</strong>:
+<ul>
+<li>각 비전 토큰의 중요도를 계산하고, 중요도가 낮은 토큰을 제거합니다.</li>
+</ul>
+</li>
+<li><strong>희소화 비율 조정</strong>:
+<ul>
+<li>레이어별 희소화 비율은 어텐션 행렬의 랭크를 기준으로 동적으로 결정합니다.</li>
+</ul>
+</li>
+<li><strong>토큰 재활용</strong>:
+<ul>
+<li>삭제된 토큰 중 일부를 재활용하여, k-최근접 이웃 알고리즘으로 유사한 토큰을 클러스터링하고 정보를 압축합니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="5-테스트-및-평가">5. <strong>테스트 및 평가</strong></h4>
+<ul>
+<li><strong>데이터셋 실험</strong>:
+<ul>
+<li>준비된 데이터셋(VQA v2, TextVQA 등)에서 SparseVLM을 사용해 모델을 평가합니다.</li>
+</ul>
+</li>
+<li><strong>비교 평가</strong>:
+<ul>
+<li>FastV, ToMe, 또는 기존의 비전 토큰 처리 방법과 비교하여 정확도, FLOPs(연산 복잡도), 지연 시간(CUDA latency) 등을 분석합니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="예시-textvqa-데이터셋을-활용한-학습-및-평가">예시: TextVQA 데이터셋을 활용한 학습 및 평가</h3>
+<p><strong>실험 설정:</strong></p>
+<ol>
+<li>
+<p>데이터셋:</p>
+<ul>
+<li>질문: &ldquo;이 파란 간판에 무엇이 적혀 있습니까?&rdquo;</li>
+<li>이미지: 거리 사진 (파란 간판 포함)</li>
+</ul>
+</li>
+<li>
+<p>실험 과정:</p>
+<ul>
+<li><strong>텍스트 토큰화</strong>: &ldquo;이&rdquo;, &ldquo;파란&rdquo;, &ldquo;간판&rdquo;, &ldquo;무엇&rdquo;, &ldquo;적혀&rdquo;, &ldquo;있습니까?&ldquo;를 텍스트 토큰으로 변환.</li>
+<li><strong>비전 토큰 생성</strong>: 이미지의 모든 패치를 토큰화하여 총 576개의 비전 토큰 생성.</li>
+<li><strong>상호작용 평가</strong>: 어텐션 행렬에서 &lsquo;파란&rsquo;, &lsquo;간판&rsquo;과 연관된 비전 토큰의 중요도를 계산.</li>
+<li><strong>희소화 진행</strong>: 중요도가 낮은 배경 토큰 제거, 간판 관련 토큰만 유지.</li>
+<li><strong>재활용 및 압축</strong>: 삭제된 토큰 중 일부를 클러스터링하여 압축 표현 생성.</li>
+</ul>
+</li>
+<li>
+<p>결과 평가:</p>
+<ul>
+<li>SparseVLM이 질문에 맞는 답변(&ldquo;BLUE SIGN&rdquo;)을 정확히 생성하는지 평가.</li>
+<li>FLOPs 감소, 처리 시간 단축 등과 같은 효율성 지표도 분석.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="최적의-학습-및-실험-환경">최적의 학습 및 실험 환경</h3>
+<ul>
+<li><strong>하드웨어</strong>:
+<ul>
+<li>NVIDIA A100 GPU 또는 이에 상응하는 고성능 GPU.</li>
+</ul>
+</li>
+<li><strong>프레임워크</strong>:
+<ul>
+<li>PyTorch와 Transformers 라이브러리를 활용.</li>
+</ul>
+</li>
+<li><strong>코드베이스</strong>:
+<ul>
+<li>SparseVLM 공식 GitHub: <a href="https://github.com/Gumpest/SparseVLMs">링크</a>에서 예제 코드 활용.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결론">결론</h3>
+<p>SparseVLM의 학습은 필요하지 않지만, 실험적으로 검증하기 위해 다양한 비전-언어 데이터셋과 실험 과정을 통해 성능을 평가할 수 있습니다. 이를 통해 SparseVLM의 장점인 효율성과 정확성을 효과적으로 이해하고 적용할 수 있습니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<p>SparseVLM 논문은 기존의 방법들과 비교하여 여러 면에서 뛰어난 성능과 효율성을 보여줍니다. 이 성과는 논문에서 제안한 독창적인 방법론들이 조합되어 이루어진 것으로, 이를 세부적으로 분석하고, 논문에서 주장하는 바와 제 생각을 함께 제시하겠습니다.</p>
+<hr>
+<h3 id="논문에서-제시한-결과">논문에서 제시한 결과</h3>
+<p><strong>1. 주요 성능 지표 비교 (이미지 이해 태스크)</strong>:</p>
+<ul>
+<li>SparseVLM은 LLaVA와 같은 VLM에 통합되었을 때, 비전 토큰을 최대 88.9%까지 줄이면서도 87% 이상의 정확도를 유지했습니다.</li>
+<li>ToMe 및 FastV와 같은 기존 방법과 비교했을 때:
+<ul>
+<li>Accuracy: SparseVLM이 FastV 대비 최대 <strong>14.8%</strong> 높은 정확도를 기록.</li>
+<li>FLOPs: SparseVLM은 연산 복잡도를 최대 <strong>84.4%</strong> 줄이는 데 성공.</li>
+<li>GPU Latency: 기존 방법 대비 최대 <strong>53.9%</strong> 감소.</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. 비디오 이해 태스크에서의 우수성</strong>:</p>
+<ul>
+<li>SparseVLM은 VideoLLaVA와 함께 테스트되었을 때, 2048개의 비디오 토큰을 135개로 줄였음에도 불구하고 FastV 대비 <strong>34.4% 더 높은 정확도</strong>를 보여줌.</li>
+<li>GPT 평가 점수(GPT-3.5를 이용한 품질 점수)에서도 SparseVLM은 FastV 대비 <strong>0.85점</strong> 더 높음.</li>
+</ul>
+<hr>
+<h3 id="sparsevlm의-특출난-점">SparseVLM의 특출난 점</h3>
+<h4 id="1-텍스트-기반-비전-토큰-희소화"><strong>1. 텍스트 기반 비전 토큰 희소화</strong></h4>
+<ul>
+<li>SparseVLM은 비전 토큰의 중요도를 판단할 때, 텍스트와의 연관성을 적극적으로 활용합니다.
+<ul>
+<li>예를 들어, 질문(&ldquo;파란 간판에 무엇이 쓰여 있습니까?&quot;)에서 &lsquo;파란&rsquo;, &lsquo;간판&rsquo;과 같은 텍스트 토큰의 정보를 활용해 이미지에서 불필요한 배경 토큰(예: 건물, 도로 등)을 제거합니다.</li>
+</ul>
+</li>
+<li><strong>특출난 점</strong>: 기존 방법(예: FastV)은 텍스트-비전 연관성을 고려하지 않고 비전 토큰의 희소화만 수행하여 정확도가 더 낮아질 가능성이 있음.</li>
+</ul>
+<h4 id="2-적응형-희소화-비율"><strong>2. 적응형 희소화 비율</strong></h4>
+<ul>
+<li>어텐션 행렬의 랭크를 기반으로 비전 토큰의 희소화 비율을 레이어마다 동적으로 조정합니다.
+<ul>
+<li>정보 밀도가 높은 이미지의 경우 더 많은 토큰을 유지하고, 그렇지 않은 경우 더 많은 토큰을 제거.</li>
+</ul>
+</li>
+<li><strong>특출난 점</strong>: ToMe와 같은 기존 방법은 정적인 희소화 비율을 사용해 유연성이 부족.</li>
+</ul>
+<h4 id="3-토큰-재활용-및-압축"><strong>3. 토큰 재활용 및 압축</strong></h4>
+<ul>
+<li>제거된 토큰 중 일부를 클러스터링하여 중요한 정보를 재활용합니다.
+<ul>
+<li>k-최근접 이웃 알고리즘으로 유사한 토큰을 클러스터링한 후 새로운 압축 표현으로 재구성.</li>
+</ul>
+</li>
+<li><strong>특출난 점</strong>: 기존 방법은 제거된 토큰을 단순히 버려 정보 손실이 더 큼.</li>
+</ul>
+<hr>
+<h3 id="이러한-결과를-도출한-이유-논문에서-제시한-근거">이러한 결과를 도출한 이유 (논문에서 제시한 근거)</h3>
+<h4 id="1-텍스트-비전-상호작용-활용"><strong>1. 텍스트-비전 상호작용 활용</strong></h4>
+<ul>
+<li>텍스트와 비전 간의 상호작용 점수를 기반으로 비전 토큰의 중요도를 평가한 것이 정확도를 유지하면서도 토큰을 대폭 줄이는 데 기여.</li>
+<li>논문에서는 어텐션 행렬을 재활용해 추가적인 훈련 없이 상호작용을 계산하므로 효율성을 극대화했다고 주장.</li>
+</ul>
+<h4 id="2-정보-손실-최소화"><strong>2. 정보 손실 최소화</strong></h4>
+<ul>
+<li>토큰 희소화와 더불어, 제거된 토큰을 클러스터링해 재활용함으로써 정보 손실을 크게 줄였다고 논문에서 강조.</li>
+<li>이는 희소화된 토큰으로도 높은 정확도를 유지한 주된 이유로 제시됨.</li>
+</ul>
+<h4 id="3-적응형-접근"><strong>3. 적응형 접근</strong></h4>
+<ul>
+<li>어텐션 행렬의 랭크를 기반으로 희소화 비율을 동적으로 조정한 것이 성능 유지와 효율성 간의 균형을 맞추는 데 기여.</li>
+<li>특히 비디오 이해 태스크에서 각 프레임의 특성을 고려한 희소화는 FastV 대비 더 나은 성능을 보이는 중요한 요인.</li>
+</ul>
+<hr>
+<h3 id="내-생각과-추가적인-통찰">내 생각과 추가적인 통찰</h3>
+<h4 id="sparsevlm의-강점-분석"><strong>SparseVLM의 강점 분석</strong></h4>
+<ol>
+<li>
+<p><strong>텍스트-비전 연관성 활용</strong>:</p>
+<ul>
+<li>기존의 비전 중심 방법론에서 벗어나, 텍스트 정보를 적극적으로 활용한 접근 방식이 매우 혁신적입니다.</li>
+<li>이는 인간의 시각적 정보 처리 방식(필요한 정보만 선택적으로 처리)과 유사해, 효율적이고 실용적입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>정보 손실의 감소</strong>:</p>
+<ul>
+<li>단순히 토큰을 줄이는 것만이 아니라, 삭제된 토큰을 재활용하여 모델의 표현력을 보존한 점이 인상적입니다.</li>
+<li>이는 SparseVLM이 다른 방법론 대비 더 나은 성능을 보여준 중요한 이유로 보입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>적응형 희소화 비율의 실용성</strong>:</p>
+<ul>
+<li>어텐션 행렬의 랭크를 기반으로 희소화 비율을 동적으로 조정한 방식은 데이터의 다양성에 유연하게 대응할 수 있게 해줍니다.</li>
+</ul>
+</li>
+</ol>
+<h4 id="한계점-및-개선-가능성"><strong>한계점 및 개선 가능성</strong></h4>
+<ol>
+<li>
+<p><strong>텍스트-비전 상호작용의 한계</strong>:</p>
+<ul>
+<li>텍스트 정보가 부족하거나 부정확한 경우, SparseVLM의 성능이 감소할 가능성이 있습니다. 예를 들어, 질문이 모호한 경우 적절한 비전 토큰을 선택하기 어려울 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>추가 계산 비용</strong>:</p>
+<ul>
+<li>비전 토큰 재활용 및 클러스터링 단계에서 발생하는 추가 계산 비용은 매우 대규모 데이터셋에서 성능 저하로 이어질 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>추론 성능의 극대화</strong>:</p>
+<ul>
+<li>SparseVLM은 &ldquo;훈련 프리&rdquo; 접근법을 사용하는데, 이는 일부 정교한 데이터세트에서 더 세부적으로 맞춤화된 결과를 얻기 어려울 수 있습니다. 희소화 전략을 학습 기반으로 확장하면 더 나은 결과를 도출할 가능성도 존재합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-1">결론</h3>
+<p>SparseVLM은 텍스트-비전 상호작용을 활용하고 적응형 희소화 비율 및 토큰 재활용 전략을 결합하여 효율성과 정확성을 모두 달성한 혁신적인 접근법입니다. 그러나 텍스트 의존성 및 계산 비용 문제가 일부 존재하므로, 향후 연구에서는 이를 개선하거나 학습 기반 방식과의 조합을 탐구하는 것도 흥미로운 방향이 될 것입니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="입력-데이터와-추론-과정">입력 데이터와 추론 과정</h3>
+<p>SparseVLM은 <strong>텍스트-비전 통합 모델</strong>의 효율성을 높이기 위해 입력 데이터를 처리하고 추론합니다. 이를 예시와 함께 설명하겠습니다.</p>
+<hr>
+<h3 id="입력-데이터"><strong>입력 데이터</strong></h3>
+<ol>
+<li>
+<p><strong>이미지</strong>: 모델은 고해상도 이미지 또는 비디오 프레임을 입력으로 받습니다.</p>
+<ul>
+<li>예: 한 장의 이미지에서 &ldquo;파란 간판에 무엇이 적혀 있습니까?&ldquo;라는 질문이 주어진다면, 해당 이미지는 모델의 비전 인코더로 전달됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>텍스트</strong>: 자연어로 작성된 질문 또는 설명.</p>
+<ul>
+<li>예: &ldquo;파란 간판에 무엇이 적혀 있습니까?&rdquo;</li>
+</ul>
+</li>
+<li>
+<p><strong>결과</strong>: 이미지 내 특정 관심 영역(Region of Interest, ROI)에 대한 텍스트 기반의 답변을 생성합니다.</p>
+</li>
+</ol>
+<hr>
+<h3 id="추론-과정"><strong>추론 과정</strong></h3>
+<h4 id="1-비전-토큰-생성"><strong>1. 비전 토큰 생성</strong></h4>
+<ul>
+<li>
+<p><strong>과정</strong>:</p>
+<ul>
+<li>입력 이미지는 사전 훈련된 <strong>비전 인코더</strong>(예: CLIP, ConvNeXt)를 통해 <strong>비전 토큰</strong>으로 변환됩니다.</li>
+<li>이미지 해상도에 따라 비전 토큰의 수가 달라지며, 일반적으로 각 이미지 패치(Patch)가 하나의 토큰이 됩니다.</li>
+<li>예: (672 \times 672) 이미지 → (2304)개의 비전 토큰 생성.</li>
+</ul>
+</li>
+<li>
+<p><strong>비전 토큰 예시</strong>:</p>
+<ul>
+<li>간판: (T_1), 배경: (T_2), 도로: (T_3), 건물: (T_4) &hellip;</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-텍스트-토큰화"><strong>2. 텍스트 토큰화</strong></h4>
+<ul>
+<li>
+<p><strong>과정</strong>:</p>
+<ul>
+<li>질문(텍스트 입력)은 <strong>텍스트 토큰화</strong>를 통해 벡터 표현으로 변환됩니다.</li>
+<li>토큰화 후 모델은 각 텍스트 토큰(예: &lsquo;파란&rsquo;, &lsquo;간판&rsquo;)이 비전 토큰과 얼마나 연관성이 있는지 계산합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>텍스트 토큰 예시</strong>:</p>
+<ul>
+<li>&lsquo;파란&rsquo;(Q1), &lsquo;간판&rsquo;(Q2), &lsquo;무엇&rsquo;(Q3), &lsquo;쓰여&rsquo;(Q4), &lsquo;있습니까&rsquo;(Q5) &hellip;</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-텍스트-비전-상호작용-평가-1"><strong>3. 텍스트-비전 상호작용 평가</strong></h4>
+<ul>
+<li><strong>과정</strong>:
+<ul>
+<li>텍스트-비전 간의 상관성을 계산하기 위해 <strong>셀프 어텐션 행렬</strong>을 활용합니다.</li>
+<li>텍스트 토큰 중 비전 토큰과 높은 상관성을 가지는 것을 &ldquo;Rater&quot;로 지정합니다.
+<ul>
+<li>예: &lsquo;파란&rsquo;(Q1), &lsquo;간판&rsquo;(Q2)은 비전 토큰 (T_1)와 높은 상관성을 가짐.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-비전-토큰-희소화-1"><strong>4. 비전 토큰 희소화</strong></h4>
+<ul>
+<li><strong>과정</strong>:
+<ul>
+<li>중요도가 낮은 비전 토큰은 제거하고, 남은 비전 토큰만 유지합니다.</li>
+<li>희소화 비율은 어텐션 행렬의 <strong>랭크</strong>를 기반으로 동적으로 결정됩니다.
+<ul>
+<li>예: (2304 \to 192)개의 비전 토큰으로 축소.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="5-토큰-재활용-및-압축"><strong>5. 토큰 재활용 및 압축</strong></h4>
+<ul>
+<li><strong>과정</strong>:
+<ul>
+<li>희소화 과정에서 제거된 토큰 중 일부를 선택하여 <strong>k-최근접 이웃 클러스터링</strong>으로 그룹화합니다.</li>
+<li>각 그룹은 하나의 압축된 토큰으로 재구성됩니다.
+<ul>
+<li>예: 배경 정보 토큰((T_2, T_3, T_4)) → 하나의 압축된 토큰.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="6-텍스트-비전-통합-및-출력"><strong>6. 텍스트-비전 통합 및 출력</strong></h4>
+<ul>
+<li><strong>과정</strong>:
+<ul>
+<li>남은 비전 토큰과 텍스트 토큰은 통합되어 최종적으로 답변이 생성됩니다.</li>
+<li>예: 출력 텍스트: &ldquo;Warning.&rdquo;</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="모델-아키텍처-구성"><strong>모델 아키텍처 구성</strong></h3>
+<ol>
+<li>
+<p><strong>비전 인코더</strong></p>
+<ul>
+<li><strong>구성</strong>:
+<ul>
+<li>ResNet, ConvNeXt 또는 CLIP과 같은 사전 훈련된 모델을 사용.</li>
+<li>입력 이미지를 패치로 분할하고 각 패치를 고차원 벡터로 인코딩.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>텍스트 인코더</strong></p>
+<ul>
+<li><strong>구성</strong>:
+<ul>
+<li>GPT-4, Vicuna 등 LLM 기반의 언어 모델 사용.</li>
+<li>입력 질문을 텍스트 토큰으로 변환한 후, 비전 토큰과 상호작용.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>셀프 어텐션 모듈</strong></p>
+<ul>
+<li><strong>구성</strong>:
+<ul>
+<li>비전 및 텍스트 토큰 간의 상호작용을 계산.</li>
+<li>텍스트-비전 어텐션 행렬 생성.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>희소화 모듈</strong></p>
+<ul>
+<li><strong>구성</strong>:
+<ul>
+<li>텍스트와 연관성이 낮은 비전 토큰을 점진적으로 제거.</li>
+<li>랭크 기반으로 희소화 비율을 결정.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>토큰 재활용 모듈</strong></p>
+<ul>
+<li><strong>구성</strong>:
+<ul>
+<li>삭제된 비전 토큰을 k-최근접 이웃 클러스터링으로 재활용하여 압축.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="연산-및-메모리-요구량"><strong>연산 및 메모리 요구량</strong></h3>
+<h4 id="1-flops연산량"><strong>1. FLOPs(연산량)</strong></h4>
+<ul>
+<li>
+<p><strong>텍스트-비전 상호작용 평가</strong>:</p>
+<ul>
+<li>FLOPs: (L_t \times L_v \times 2D)
+<ul>
+<li>(L_t): 텍스트 토큰 개수.</li>
+<li>(L_v): 비전 토큰 개수.</li>
+<li>(D): 토큰 임베딩 차원.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>희소화 레벨 결정</strong>:</p>
+<ul>
+<li>FLOPs: (L_t \times L_v \times \text{min}(L_t, L_v))
+<ul>
+<li>어텐션 행렬의 랭크 계산에 기반.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>토큰 재활용</strong>:</p>
+<ul>
+<li>FLOPs: (L_r \times (3L_r - 1) \times 2D)
+<ul>
+<li>(L_r): 재활용된 토큰의 개수.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-메모리-요구량"><strong>2. 메모리 요구량</strong></h4>
+<ul>
+<li>비전 토큰:
+<ul>
+<li>(L_v \times D) (비전 토큰의 수 × 임베딩 차원)</li>
+</ul>
+</li>
+<li>텍스트 토큰:
+<ul>
+<li>(L_t \times D)</li>
+</ul>
+</li>
+<li>희소화된 토큰:
+<ul>
+<li>(L_s \times D), (L_s \ll L_v) (희소화 후 남은 토큰 수).</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-효율성-분석"><strong>3. 효율성 분석</strong></h4>
+<ul>
+<li>SparseVLM의 메모리와 연산 요구량은 비전 토큰 개수에 선형적으로 비례.</li>
+<li>FLOPs 감소율: 최대 84.4% (기존 방법 대비).</li>
+</ul>
+<hr>
+<h3 id="결론-2"><strong>결론</strong></h3>
+<p>SparseVLM은 입력 이미지를 텍스트와 연결하여 효율적으로 희소화하고, 재활용을 통해 정보 손실을 줄이는 혁신적인 방법을 사용합니다. FLOPs와 메모리 요구량을 크게 줄이면서도 높은 정확도를 유지할 수 있는 이유는:</p>
+<ol>
+<li>텍스트-비전 연관성을 적극적으로 활용.</li>
+<li>희소화 비율을 동적으로 조정.</li>
+<li>삭제된 정보를 재활용하여 효과적으로 압축했기 때문입니다.</li>
+</ol>
+<p>SparseVLM은 연산 효율성과 정확도 간의 이상적인 균형을 유지하는 강력한 접근 방식으로, 고성능 비전-언어 모델 개발에 중요한 기여를 합니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>SparseVLM 논문이 제안하는 방법론은 효율적이고 정확한 비전-언어 모델(VLM) 추론을 가능하게 하지만, 다음과 같은 한계가 있습니다. 이를 극복하기 위한 연구 흐름과 대안을 설명하겠습니다.</p>
+<hr>
+<h3 id="논문의-한계점-1"><strong>논문의 한계점</strong></h3>
+<ol>
+<li>
+<p><strong>텍스트-비전 상호작용의 한계</strong>:</p>
+<ul>
+<li>SparseVLM은 텍스트 정보(예: 질문)의 정확성과 관련성을 가정하고 동작합니다. 그러나 질문이 모호하거나 충분한 정보를 제공하지 못하면 텍스트-비전 간의 상호작용 품질이 저하될 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>정보 손실 가능성</strong>:</p>
+<ul>
+<li>희소화 과정에서 중요도가 낮다고 판단된 비전 토큰을 제거하기 때문에 정보 손실이 발생할 가능성이 존재합니다. 이는 복잡한 질문(예: 다중 객체의 상호작용을 묻는 질문)에서 성능 저하로 이어질 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>추론 비용 증가</strong>:</p>
+<ul>
+<li>희소화와 토큰 재활용 과정에서 추가적인 계산(FLOPs)이 발생하며, 특히 매우 대규모 데이터셋이나 실시간 애플리케이션에서는 성능 병목이 될 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>적응형 희소화의 제한성</strong>:</p>
+<ul>
+<li>희소화 비율이 어텐션 행렬의 랭크에만 의존하므로, 다른 정교한 지표(예: 데이터의 시맨틱 복잡성, 다중 객체 간의 관계)를 반영하지 못할 수 있습니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="한계를-극복하기-위한-연구-흐름"><strong>한계를 극복하기 위한 연구 흐름</strong></h3>
+<h4 id="1-텍스트-비전-상호작용-강화"><strong>1. 텍스트-비전 상호작용 강화</strong></h4>
+<ul>
+<li>
+<p><strong>연구 방향</strong>:</p>
+<ul>
+<li>텍스트-비전 상호작용의 품질을 높이기 위해, 보다 정교한 언어 이해 모델을 통합하거나 멀티모달 사전 훈련을 강화할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>가능한 접근 방법</strong>:</p>
+<ul>
+<li><strong>컨텍스트 보강</strong>:
+<ul>
+<li>질문만 활용하는 대신, 추가적인 텍스트 정보를 제공(예: 설명 데이터셋 활용)하여 텍스트 토큰의 품질을 향상.</li>
+<li>예: &ldquo;파란 간판에 무엇이 적혀 있습니까?&rdquo; → &ldquo;파란 간판이 건물 앞에 있습니다.&rdquo;</li>
+</ul>
+</li>
+<li><strong>질문 재구성</strong>:
+<ul>
+<li>모델이 질문을 자체적으로 변환하여 더 유의미한 텍스트-비전 상호작용을 유도.</li>
+<li>연구 사례: OpenAI의 InstructGPT처럼 질문에 추가적인 지시를 포함.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="2-희소화-과정의-개선"><strong>2. 희소화 과정의 개선</strong></h4>
+<ul>
+<li>
+<p><strong>연구 방향</strong>:</p>
+<ul>
+<li>희소화된 토큰의 품질을 높이고 정보 손실을 줄이기 위해 새로운 방법을 탐구.</li>
+</ul>
+</li>
+<li>
+<p><strong>가능한 접근 방법</strong>:</p>
+<ul>
+<li><strong>다중 단계 희소화</strong>:
+<ul>
+<li>희소화를 단계별로 진행하며, 각 단계에서 제거된 토큰이 최종 성능에 미치는 영향을 측정.</li>
+<li>예: 중요도가 낮은 토큰을 먼저 축소 표현으로 전환한 뒤, 최종적으로 제거 여부를 판단.</li>
+</ul>
+</li>
+<li><strong>중요도 예측 모델</strong>:
+<ul>
+<li>단순히 텍스트-비전 상호작용 점수에 의존하지 않고, 시맨틱 중요도를 학습하는 모델 도입.</li>
+<li>연구 사례: Vision Transformer에서 사용되는 &ldquo;Gradient-based Token Pruning&rdquo;.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="3-희소화-비율의-적응성-향상"><strong>3. 희소화 비율의 적응성 향상</strong></h4>
+<ul>
+<li>
+<p><strong>연구 방향</strong>:</p>
+<ul>
+<li>어텐션 행렬의 랭크 외에도 데이터를 동적으로 분석해 희소화 비율을 설정.</li>
+</ul>
+</li>
+<li>
+<p><strong>가능한 접근 방법</strong>:</p>
+<ul>
+<li><strong>시맨틱 복잡성 기반 희소화</strong>:
+<ul>
+<li>데이터의 시맨틱 복잡성을 측정해 희소화 비율을 조정.</li>
+<li>예: 다중 객체가 포함된 이미지에서는 더 많은 토큰을 유지.</li>
+</ul>
+</li>
+<li><strong>모달리티별 희소화</strong>:
+<ul>
+<li>텍스트와 비전 모달리티 간 중요도를 각각 평가한 후 희소화 비율을 설정.</li>
+<li>연구 사례: Cross-Modality Attention 기반 희소화.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="4-토큰-재활용-및-클러스터링-최적화"><strong>4. 토큰 재활용 및 클러스터링 최적화</strong></h4>
+<ul>
+<li>
+<p><strong>연구 방향</strong>:</p>
+<ul>
+<li>재활용 과정에서 계산 비용을 줄이고 압축 표현의 품질을 향상.</li>
+</ul>
+</li>
+<li>
+<p><strong>가능한 접근 방법</strong>:</p>
+<ul>
+<li><strong>효율적인 클러스터링 알고리즘</strong>:
+<ul>
+<li>k-최근접 이웃 대신 Fast Approximate Nearest Neighbor(Faiss) 같은 고속 알고리즘 활용.</li>
+<li>연구 사례: 대규모 데이터셋을 다루는 Google의 ScaNN(Sparse and Clustered Approximate Nearest Neighbors).</li>
+</ul>
+</li>
+<li><strong>다중 클러스터링 레벨</strong>:
+<ul>
+<li>클러스터링을 여러 레벨로 수행해 압축 표현의 유연성을 제공.</li>
+<li>예: 주요 클러스터(ROI 중심)와 부차적 클러스터(배경 중심)로 나누는 방식.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="5-계산-비용-및-메모리-효율성-개선"><strong>5. 계산 비용 및 메모리 효율성 개선</strong></h4>
+<ul>
+<li>
+<p><strong>연구 방향</strong>:</p>
+<ul>
+<li>희소화 과정에서 발생하는 계산 오버헤드를 줄이고 메모리 효율성을 높이기 위한 방법 개발.</li>
+</ul>
+</li>
+<li>
+<p><strong>가능한 접근 방법</strong>:</p>
+<ul>
+<li><strong>하드웨어 최적화</strong>:
+<ul>
+<li>CUDA 커널 최적화 및 병렬화를 통해 희소화 및 클러스터링 연산을 가속.</li>
+<li>연구 사례: Nvidia의 TensorRT를 활용한 실시간 추론 최적화.</li>
+</ul>
+</li>
+<li><strong>모델 압축 기법 통합</strong>:
+<ul>
+<li>SparseVLM과 양자화(Quantization) 또는 지식 증류(Knowledge Distillation)를 결합해 메모리 요구량을 최소화.</li>
+<li>연구 사례: DistilBERT와 같은 경량화된 모델로 VLM 설계.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="6-다양한-도메인에-대한-일반화"><strong>6. 다양한 도메인에 대한 일반화</strong></h4>
+<ul>
+<li>
+<p><strong>연구 방향</strong>:</p>
+<ul>
+<li>SparseVLM의 성능을 다양한 도메인(의료, 자율주행, 증강 현실 등)으로 확장.</li>
+</ul>
+</li>
+<li>
+<p><strong>가능한 접근 방법</strong>:</p>
+<ul>
+<li><strong>도메인 맞춤 데이터셋</strong>:
+<ul>
+<li>각 도메인에서 가장 중요한 시각적 정보와 텍스트 간 상호작용을 반영하는 데이터셋 구축.</li>
+</ul>
+</li>
+<li><strong>도메인 지식 기반 희소화</strong>:
+<ul>
+<li>특정 도메인의 특수성을 반영해 희소화 전략을 조정.</li>
+<li>예: 의료 이미징에서는 ROI(병변 부위)를 중심으로 희소화.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결론-3"><strong>결론</strong></h3>
+<p>SparseVLM의 한계를 극복하기 위해서는 텍스트-비전 상호작용 강화, 희소화 과정 개선, 적응성 향상, 계산 비용 절감 등의 연구 흐름이 중요합니다. 특히, 다양한 도메인에서 적용 가능한 방법론을 개발하고, 계산 비용과 메모리 사용량을 최적화하면 SparseVLM의 활용 가능성을 더욱 확장할 수 있을 것입니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/SPARSEVLM-VISUAL-TOKEN-SPARSIFICATION-FOR-EFFICIENT-VISION-LANGUAGE-MODEL-INFERENCE/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/SPARSEVLM-VISUAL-TOKEN-SPARSIFICATION-FOR-EFFICIENT-VISION-LANGUAGE-MODEL-INFERENCE/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/SWIFTKV-FAST-PREFILL-OPTIMIZED-INFERENCE-WITH-KNOWLEDGE-PRESERVING-MODEL-TRANSFORMATION/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                SWIFTKV: FAST PREFILL-OPTIMIZED INFERENCE WITH KNOWLEDGE-PRESERVING MODEL TRANSFORMATION
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-11-20">
+                11月20日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/LoRC-Low-Rank-Compression-for-LLMs-KV-Cache-with-a-Progressive-Compression-Strategy/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                LoRC: Low-Rank Compression for LLMs KV Cache with a Progressive Compression Strategy
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-11-20">
+                11月20日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#강점-및-독창적인-지점">강점 및 독창적인 지점</a></li>
+        <li><a href="#핵심-알고리즘-설명-sparsevlm">핵심 알고리즘 설명 (SparseVLM)</a></li>
+        <li><a href="#논문의-한계점">논문의 한계점</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#필요한-데이터셋">필요한 데이터셋</a></li>
+        <li><a href="#학습-없이-sparsevlm을-실험적으로-테스트하기-위한-과정">학습 없이 SparseVLM을 실험적으로 테스트하기 위한 과정</a>
+          <ul>
+            <li><a href="#1-모델-초기화">1. <strong>모델 초기화</strong></a></li>
+            <li><a href="#2-텍스트와-비전-토큰-처리">2. <strong>텍스트와 비전 토큰 처리</strong></a></li>
+            <li><a href="#3-텍스트-비전-상호작용-평가">3. <strong>텍스트-비전 상호작용 평가</strong></a></li>
+            <li><a href="#4-비전-토큰-희소화">4. <strong>비전 토큰 희소화</strong></a></li>
+            <li><a href="#5-테스트-및-평가">5. <strong>테스트 및 평가</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#예시-textvqa-데이터셋을-활용한-학습-및-평가">예시: TextVQA 데이터셋을 활용한 학습 및 평가</a></li>
+        <li><a href="#최적의-학습-및-실험-환경">최적의 학습 및 실험 환경</a></li>
+        <li><a href="#결론">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문에서-제시한-결과">논문에서 제시한 결과</a></li>
+        <li><a href="#sparsevlm의-특출난-점">SparseVLM의 특출난 점</a>
+          <ul>
+            <li><a href="#1-텍스트-기반-비전-토큰-희소화"><strong>1. 텍스트 기반 비전 토큰 희소화</strong></a></li>
+            <li><a href="#2-적응형-희소화-비율"><strong>2. 적응형 희소화 비율</strong></a></li>
+            <li><a href="#3-토큰-재활용-및-압축"><strong>3. 토큰 재활용 및 압축</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#이러한-결과를-도출한-이유-논문에서-제시한-근거">이러한 결과를 도출한 이유 (논문에서 제시한 근거)</a>
+          <ul>
+            <li><a href="#1-텍스트-비전-상호작용-활용"><strong>1. 텍스트-비전 상호작용 활용</strong></a></li>
+            <li><a href="#2-정보-손실-최소화"><strong>2. 정보 손실 최소화</strong></a></li>
+            <li><a href="#3-적응형-접근"><strong>3. 적응형 접근</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#내-생각과-추가적인-통찰">내 생각과 추가적인 통찰</a>
+          <ul>
+            <li><a href="#sparsevlm의-강점-분석"><strong>SparseVLM의 강점 분석</strong></a></li>
+            <li><a href="#한계점-및-개선-가능성"><strong>한계점 및 개선 가능성</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-1">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#입력-데이터와-추론-과정">입력 데이터와 추론 과정</a></li>
+        <li><a href="#입력-데이터"><strong>입력 데이터</strong></a></li>
+        <li><a href="#추론-과정"><strong>추론 과정</strong></a>
+          <ul>
+            <li><a href="#1-비전-토큰-생성"><strong>1. 비전 토큰 생성</strong></a></li>
+            <li><a href="#2-텍스트-토큰화"><strong>2. 텍스트 토큰화</strong></a></li>
+            <li><a href="#3-텍스트-비전-상호작용-평가-1"><strong>3. 텍스트-비전 상호작용 평가</strong></a></li>
+            <li><a href="#4-비전-토큰-희소화-1"><strong>4. 비전 토큰 희소화</strong></a></li>
+            <li><a href="#5-토큰-재활용-및-압축"><strong>5. 토큰 재활용 및 압축</strong></a></li>
+            <li><a href="#6-텍스트-비전-통합-및-출력"><strong>6. 텍스트-비전 통합 및 출력</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#모델-아키텍처-구성"><strong>모델 아키텍처 구성</strong></a></li>
+        <li><a href="#연산-및-메모리-요구량"><strong>연산 및 메모리 요구량</strong></a>
+          <ul>
+            <li><a href="#1-flops연산량"><strong>1. FLOPs(연산량)</strong></a></li>
+            <li><a href="#2-메모리-요구량"><strong>2. 메모리 요구량</strong></a></li>
+            <li><a href="#3-효율성-분석"><strong>3. 효율성 분석</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-2"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-한계점-1"><strong>논문의 한계점</strong></a></li>
+        <li><a href="#한계를-극복하기-위한-연구-흐름"><strong>한계를 극복하기 위한 연구 흐름</strong></a>
+          <ul>
+            <li><a href="#1-텍스트-비전-상호작용-강화"><strong>1. 텍스트-비전 상호작용 강화</strong></a></li>
+            <li><a href="#2-희소화-과정의-개선"><strong>2. 희소화 과정의 개선</strong></a></li>
+            <li><a href="#3-희소화-비율의-적응성-향상"><strong>3. 희소화 비율의 적응성 향상</strong></a></li>
+            <li><a href="#4-토큰-재활용-및-클러스터링-최적화"><strong>4. 토큰 재활용 및 클러스터링 최적화</strong></a></li>
+            <li><a href="#5-계산-비용-및-메모리-효율성-개선"><strong>5. 계산 비용 및 메모리 효율성 개선</strong></a></li>
+            <li><a href="#6-다양한-도메인에-대한-일반화"><strong>6. 다양한 도메인에 대한 일반화</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-3"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

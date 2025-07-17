@@ -1,0 +1,4425 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 「SwitchHead: Accelerating Transformers..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/SwitchHead-Accelerating-Transformers-with-Mixture-of-Experts-Attention/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/SwitchHead-Accelerating-Transformers-with-Mixture-of-Experts-Attention/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 「SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention」을 매우 자세하게 읽고 분석한 내용을 바탕으로, 논문의 강점과 독창적인 지점, 핵심 알고리즘의 상세한 설명과 함께 예시 입력을 이용한 동작 과정을 소개하고, 마지막으로 한계점을 명확하게 설명하겠습니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-04-14T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-04-14T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 「SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention」을 매우 자세하게 읽고 분석한 내용을 바탕으로, 논문의 강점과 독창적인 지점, 핵심 알고리즘의 상세한 설명과 함께 예시 입력을 이용한 동작 과정을 소개하고, 마지막으로 한계점을 명확하게 설명하겠습니다.">
+
+
+  <meta itemprop="name" content="SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 「SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention」을 매우 자세하게 읽고 분석한 내용을 바탕으로, 논문의 강점과 독창적인 지점, 핵심 알고리즘의 상세한 설명과 함께 예시 입력을 이용한 동작 과정을 소개하고, 마지막으로 한계점을 명확하게 설명하겠습니다.">
+  <meta itemprop="datePublished" content="2025-04-14T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-04-14T00:00:00+00:00">
+  <meta itemprop="wordCount" content="11354">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2025-04-14">
+          2025년 04월 14일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >23 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>11354 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2312.07987v3">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<p>논문 「SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention」을 매우 자세하게 읽고 분석한 내용을 바탕으로, 논문의 강점과 독창적인 지점, 핵심 알고리즘의 상세한 설명과 함께 예시 입력을 이용한 동작 과정을 소개하고, 마지막으로 한계점을 명확하게 설명하겠습니다.</p>
+<hr>
+<h2 id="1-논문의-핵심-및-결론-요약">1. 논문의 핵심 및 결론 요약:</h2>
+<p><strong>SwitchHead는 Transformer의 Self-Attention층에 Mixture of Experts(MoE)를 적용해 계산량 및 메모리를 효과적으로 절약하는 기법이다.</strong></p>
+<ul>
+<li>기존 Transformer 모델의 Self-Attention은 많은 메모리와 계산을 요구한다.</li>
+<li>SwitchHead는 Attention 내의 Value와 Output projection을 여러 Experts로 구성하여, 소수의 Attention Matrix만 계산하고도 동일한 성능을 달성한다.</li>
+<li>실험적으로 최대 <strong>8배 더 적은 Attention Matrix</strong> 계산으로 <strong>기존 Transformer 모델의 성능(Perplexity)을 유지</strong>했다.</li>
+<li>262M 크기의 모델 기준, 기존 Transformer의 <strong>44%의 계산량</strong>과 <strong>27%의 메모리</strong>만 사용하여 동일한 성능을 달성했다.</li>
+</ul>
+<hr>
+<h2 id="2-논문의-강점-및-독창적-기여">2. 논문의 강점 및 독창적 기여:</h2>
+<ul>
+<li><strong>Attention층의 효율적 MoE 적용</strong>: 기존 연구는 Feed-forward층에만 MoE를 적용하는 데 집중했던 반면, SwitchHead는 Attention 층 자체를 MoE로 구성해 매우 큰 효율성 증대를 이뤘다.</li>
+<li><strong>독립적이고 안정적인 선택 메커니즘</strong>: 비경쟁적인 sigmoid 기반의 expert 선택 방식(σ-MoE)을 적용하여 별도의 Regularization 없이 안정적인 학습을 가능하게 했다.</li>
+<li><strong>효율적이고 간결한 설계</strong>: Key와 Query를 공유하고, Value와 Output만 MoE로 구성함으로써 불필요한 복잡성을 최소화했다.</li>
+<li><strong>현실적 벤치마크 및 평가</strong>: C4, Wikitext-103, Enwik8 등 다양한 데이터셋에서의 실험을 통해 범용성을 입증했다. 또한 zero-shot 성능 평가에서도 좋은 결과를 보였다.</li>
+</ul>
+<hr>
+<h2 id="3-핵심-알고리즘-설명-및-예시">3. 핵심 알고리즘 설명 및 예시:</h2>
+<p>SwitchHead의 알고리즘은 크게 두 가지로 나눌 수 있다.</p>
+<h3 id="step-by-step-알고리즘-동작">Step-by-step 알고리즘 동작:</h3>
+<ol>
+<li>
+<p>입력 (x \in \mathbb{R}^{T\times d_{model}})를 받는다.</p>
+</li>
+<li>
+<p>각 Attention head (h) 마다 독립적으로 Expert 선택을 위한 gate 값을 계산한다.</p>
+<ul>
+<li>
+<p>Source (Value) side gate (s_S^h):
+[
+s_S^h = \sigma(x W_S^h) \quad,\quad W_S^h \in \mathbb{R}^{d_{model}\times E}
+]</p>
+</li>
+<li>
+<p>Destination (Output) side gate (s_D^h):
+[
+s_D^h = \sigma(x W_D^h) \quad,\quad W_D^h \in \mathbb{R}^{d_{model}\times E}
+]</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Gate 값이 높은 상위 (k)개의 Expert를 선택하여 Value와 Output projection 수행:</p>
+<ul>
+<li>
+<p>Value projection (V^h):
+[
+V^h = \sum_{e\in E_S^h} s_S^h[e] \cdot (xW_V^{h,e}), \quad E_S^h = \text{arg top-k}(s_S^h)
+]</p>
+</li>
+<li>
+<p>Key, Query는 공유되어 (K^h = xW_K^h,; Q^h = xW_Q^h)로 계산됨.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Attention 행렬 계산:
+[
+A^h = \text{softmax}\left(\frac{Q^h (K^h)^T}{\sqrt{d_{head}}}\right)
+]</p>
+</li>
+<li>
+<p>최종 Output 계산:
+[
+y = \sum_{h=0}^{n_{heads}-1}\sum_{e\in E_D^h} s_D^h[e] \cdot A^h V^h W_O^{h,e}
+]</p>
+</li>
+</ol>
+<h3 id="간단한-예시-입력-및-결과">간단한 예시 입력 및 결과:</h3>
+<ul>
+<li>입력: (x) (간략한 예시)</li>
+<li>Gate 계산: 각각 (s_S^h, s_D^h)에서 높은 값으로 상위 Expert 선택 (예: 5개 중 2개 선택)</li>
+<li>선택된 Expert만을 이용하여 Value 및 Output Projection 수행</li>
+<li>하나의 Attention 행렬 (A^h) 계산 및 최종 Output 출력</li>
+</ul>
+<p>이 방식으로, Attention Matrix 계산이 크게 감소하고, 메모리 효율성이 극대화됨.</p>
+<hr>
+<h2 id="4-비교-평가-기존-모델과의-비교">4. 비교 평가 (기존 모델과의 비교):</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Model</th>
+          <th>Params</th>
+          <th>Perplexity (↓)</th>
+          <th>MACs (계산량)</th>
+          <th>Memory Usage</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Transformer (Dense)</td>
+          <td>262M</td>
+          <td>9.66</td>
+          <td>5.4G</td>
+          <td>21.0M</td>
+      </tr>
+      <tr>
+          <td>SwitchHead</td>
+          <td>262M</td>
+          <td><strong>9.55</strong></td>
+          <td><strong>2.0G (44%)</strong></td>
+          <td><strong>2.9M (27%)</strong></td>
+      </tr>
+      <tr>
+          <td>MoA (Mixture of Attention)</td>
+          <td>262M</td>
+          <td>9.50</td>
+          <td>2.9G</td>
+          <td>9.9M</td>
+      </tr>
+  </tbody>
+</table>
+<p>SwitchHead는 동급 성능에서 가장 낮은 계산량과 메모리 사용량을 보여준다.</p>
+<hr>
+<h2 id="5-논문의-한계점">5. 논문의 한계점:</h2>
+<ul>
+<li><strong>규모 확장성 검증 부족</strong>: 논문은 262M 크기 모델까지 검증했지만, GPT-3나 GPT-4와 같은 초대형 모델에서의 성능이 추가적으로 검증되어야 한다.</li>
+<li><strong>하드웨어 최적화 필요성</strong>: MoE 연산은 하드웨어에 따라 속도 편차가 크며, 전용 연산 커널이 없으면 효율성이 제한될 수 있다. Triton kernel을 사용했으나, 여전히 cuBLAS 대비 60% 수준의 성능이다.</li>
+<li><strong>모델 병렬화 구현의 복잡성</strong>: 전문가(expert)들이 여러 GPU에 분산될 경우 동적 로드 밸런싱이 필요해 구현이 복잡해질 수 있다.</li>
+</ul>
+<hr>
+<h2 id="결론-및-추가-논의">결론 및 추가 논의:</h2>
+<p>SwitchHead는 Self-Attention 층의 MoE 설계를 간결하고 효율적으로 실현한 매우 독창적인 논문이다. 특히 Value와 Output projection만 Expert로 구성하고, Key와 Query는 공유하는 설계는 독특하며, 실험적으로도 좋은 결과를 보여 실용적으로도 매우 가치가 있다.</p>
+<p>다만, 초대형 모델에서의 성능 및 하드웨어 특화 구현은 추가 연구가 요구된다. 추후 연구에서는 더 큰 모델과 다양한 응용 분야에서의 성능을 검증하고, 연산 최적화 방안을 심화 연구해야 할 것이다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>논문 『SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention』의 핵심 알고리즘을 아래에서 매우 자세하고 직관적으로 설명하고, 예시를 통해 전체적인 과정을 명확히 정리하겠습니다.</p>
+<hr>
+<h2 id="-switchhead의-핵심-알고리즘-개념">📌 <strong>SwitchHead의 핵심 알고리즘 개념</strong></h2>
+<p>SwitchHead의 핵심 아이디어는 <strong>&ldquo;하나의 Attention head 내에서, 여러 개의 Value 및 Output projection을 미리 준비하고, 입력에 따라 그 중 일부의 Expert만 선택하여 계산한다&rdquo;</strong> 는 것입니다.</p>
+<p>기존의 Transformer Attention은 각 head마다 한 쌍의 고정된 projection이 있지만, SwitchHead는 <strong>동적 선택을 통해 불필요한 계산을 크게 줄입니다.</strong></p>
+<p>구체적으로 각 head는 다음의 요소를 가집니다:</p>
+<ul>
+<li>하나의 Query projection</li>
+<li>하나의 Key projection</li>
+<li><strong>여러 개의 (E개의) Value projection</strong> 중 일부 (k개) 선택</li>
+<li><strong>여러 개의 (E개의) Output projection</strong> 중 일부 (k개) 선택</li>
+</ul>
+<hr>
+<h2 id="-상세-알고리즘-과정-step-by-step">📌 <strong>상세 알고리즘 과정 (Step-by-Step)</strong></h2>
+<h3 id="-step-0-입력-설정-example">🔍 <strong>Step 0: 입력 설정 (Example)</strong></h3>
+<p>예를 들어, 아래와 같은 입력 시퀀스가 있다고 하겠습니다:</p>
+<ul>
+<li>입력 벡터 ( x \in \mathbb{R}^{T \times d_{model}} )
+<ul>
+<li>( T = 3 ) (문장 길이)</li>
+<li>( d_{model} = 4 ) (모델 차원)</li>
+</ul>
+</li>
+</ul>
+<p>실제 예시 (임의 값):</p>
+<p>[
+x = \begin{bmatrix}
+0.1 &amp; 0.2 &amp; 0.3 &amp; 0.4 \[6pt]
+0.5 &amp; 0.6 &amp; 0.7 &amp; 0.8 \[6pt]
+0.9 &amp; 1.0 &amp; 1.1 &amp; 1.2
+\end{bmatrix}
+]</p>
+<hr>
+<h3 id="-step-1-gate-계산-expert-선택">🔍 <strong>Step 1: Gate 계산 (Expert 선택)</strong></h3>
+<p>각 head((h))마다 expert를 선택하는 Gate가 존재합니다.</p>
+<ul>
+<li>Source-side(Value) gate ( s_S^h \in \mathbb{R}^{T\times E} )</li>
+<li>Destination-side(Output) gate ( s_D^h \in \mathbb{R}^{T\times E} )</li>
+</ul>
+<p>간략한 예로 head가 1개(h=1), Expert가 3개(E=3)인 경우:</p>
+<ul>
+<li>( W_S^h, W_D^h \in \mathbb{R}^{d_{model} \times E} = (4\times3) )</li>
+</ul>
+<p>Gate 값 계산식은:</p>
+<p>[
+s_S^h = \sigma(xW_S^h), \quad s_D^h = \sigma(xW_D^h)
+]</p>
+<p>계산 후의 예시 gate 값 (임의의 sigmoid 출력값 예):</p>
+<table>
+  <thead>
+      <tr>
+          <th>Token</th>
+          <th>( s_S^h ) (Value-side gate)</th>
+          <th>( s_D^h ) (Output-side gate)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>[0.8, 0.1, 0.3]</td>
+          <td>[0.2, 0.9, 0.5]</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>[0.2, 0.7, 0.4]</td>
+          <td>[0.6, 0.1, 0.7]</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>[0.5, 0.4, 0.9]</td>
+          <td>[0.3, 0.8, 0.2]</td>
+      </tr>
+  </tbody>
+</table>
+<p>위 값에서 k=2개의 상위 gate 값을 가진 Expert를 각 토큰별로 선택합니다:</p>
+<ul>
+<li>Value-side 선택: 토큰 1 (Expert 1,3), 토큰 2 (Expert 2,3), 토큰 3 (Expert 1,3)</li>
+<li>Output-side 선택: 토큰 1 (Expert 2,3), 토큰 2 (Expert 1,3), 토큰 3 (Expert 2,1)</li>
+</ul>
+<hr>
+<h3 id="-step-2-key-query-value-projection-계산">🔍 <strong>Step 2: Key, Query, Value projection 계산</strong></h3>
+<ul>
+<li>
+<p>Query와 Key는 일반적인 Transformer와 동일하게 고정 projection 행렬로 계산합니다:
+[
+Q^h = xW_Q^h, \quad K^h = xW_K^h
+]</p>
+</li>
+<li>
+<p>Value는 Expert projection을 사용하며, 선택된 Expert들의 가중합으로 계산됩니다:
+[
+V^h = \sum_{e \in E_S^h} s_S^h[e]\cdot(xW_V^{h,e})
+]</p>
+</li>
+</ul>
+<p>(각각 (W_Q^h, W_K^h, W_V^{h,e})는 (d_{model}\times d_{head}) 차원의 행렬입니다.)</p>
+<hr>
+<h3 id="-step-3-attention-행렬-계산">🔍 <strong>Step 3: Attention 행렬 계산</strong></h3>
+<p>일반적인 Transformer와 동일한 Attention Matrix를 계산합니다:
+[
+A^h = \text{softmax}\left(\frac{Q^h(K^h)^T}{\sqrt{d_{head}}}\right)
+]</p>
+<p>여기서 (A^h)는 (3×3) 행렬입니다 (입력 길이 3 기준).</p>
+<hr>
+<h3 id="-step-4-최종-출력-output-projection-계산">🔍 <strong>Step 4: 최종 출력 (Output projection) 계산</strong></h3>
+<p>Output projection 역시 선택된 Expert들의 가중합으로 계산됩니다:
+[
+y = \sum_{e \in E_D^h} s_D^h[e]\cdot(A^hV^hW_O^{h,e})
+]</p>
+<p>이로써 최종 출력 (y \in \mathbb{R}^{T\times d_{model}}) 이 계산됩니다.</p>
+<hr>
+<h2 id="-전체-알고리즘-요약-정리">📌 <strong>전체 알고리즘 요약 정리</strong></h2>
+<table>
+  <thead>
+      <tr>
+          <th>단계</th>
+          <th>과정 요약</th>
+          <th>계산방식 및 특징</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Step 1</td>
+          <td>Gate 계산 및 Expert 선택</td>
+          <td>입력별 독립적 sigmoid gate 계산</td>
+      </tr>
+      <tr>
+          <td>Step 2</td>
+          <td>Key, Query(고정), Value(Expert 선택) projection 계산</td>
+          <td>선택된 Expert만 계산 (효율성 증대)</td>
+      </tr>
+      <tr>
+          <td>Step 3</td>
+          <td>Attention 행렬 계산</td>
+          <td>기존 Attention과 동일</td>
+      </tr>
+      <tr>
+          <td>Step 4</td>
+          <td>Output projection (Expert 선택) 및 최종 결과 계산</td>
+          <td>선택된 Expert만으로 최종 결과 산출</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-switchhead의-이점-및-기여">📌 <strong>SwitchHead의 이점 및 기여</strong></h2>
+<ul>
+<li><strong>효율적 연산</strong>: 모든 Expert를 다 계산하지 않고 입력에 따라 일부 Expert만 동적으로 선택.</li>
+<li><strong>자원 절약</strong>: Transformer의 Attention 연산량 및 메모리 사용을 획기적으로 감소시킴.</li>
+<li><strong>성능 유지</strong>: 적은 연산량으로도 성능(perplexity)은 기존의 dense 모델과 유사한 수준 유지.</li>
+</ul>
+<hr>
+<p>이러한 방식으로 SwitchHead는 효율성을 극대화하면서도, Transformer 모델의 성능을 유지하는 혁신적인 Mixture-of-Experts 기반 Attention 알고리즘을 제공합니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<p>논문 『SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention』의 핵심 알고리즘을 아래에서 매우 자세하고 직관적으로 설명하고, 예시를 통해 전체적인 과정을 명확히 정리하겠습니다.</p>
+<hr>
+<h2 id="-switchhead의-핵심-알고리즘-개념-1">📌 <strong>SwitchHead의 핵심 알고리즘 개념</strong></h2>
+<p>SwitchHead의 핵심 아이디어는 <strong>&ldquo;하나의 Attention head 내에서, 여러 개의 Value 및 Output projection을 미리 준비하고, 입력에 따라 그 중 일부의 Expert만 선택하여 계산한다&rdquo;</strong> 는 것입니다.</p>
+<p>기존의 Transformer Attention은 각 head마다 한 쌍의 고정된 projection이 있지만, SwitchHead는 <strong>동적 선택을 통해 불필요한 계산을 크게 줄입니다.</strong></p>
+<p>구체적으로 각 head는 다음의 요소를 가집니다:</p>
+<ul>
+<li>하나의 Query projection</li>
+<li>하나의 Key projection</li>
+<li><strong>여러 개의 (E개의) Value projection</strong> 중 일부 (k개) 선택</li>
+<li><strong>여러 개의 (E개의) Output projection</strong> 중 일부 (k개) 선택</li>
+</ul>
+<hr>
+<h2 id="-상세-알고리즘-과정-step-by-step-1">📌 <strong>상세 알고리즘 과정 (Step-by-Step)</strong></h2>
+<h3 id="-step-0-입력-설정-example-1">🔍 <strong>Step 0: 입력 설정 (Example)</strong></h3>
+<p>예를 들어, 아래와 같은 입력 시퀀스가 있다고 하겠습니다:</p>
+<ul>
+<li>입력 벡터 ( x \in \mathbb{R}^{T \times d_{model}} )
+<ul>
+<li>( T = 3 ) (문장 길이)</li>
+<li>( d_{model} = 4 ) (모델 차원)</li>
+</ul>
+</li>
+</ul>
+<p>실제 예시 (임의 값):</p>
+<p>[
+x = \begin{bmatrix}
+0.1 &amp; 0.2 &amp; 0.3 &amp; 0.4 \[6pt]
+0.5 &amp; 0.6 &amp; 0.7 &amp; 0.8 \[6pt]
+0.9 &amp; 1.0 &amp; 1.1 &amp; 1.2
+\end{bmatrix}
+]</p>
+<hr>
+<h3 id="-step-1-gate-계산-expert-선택-1">🔍 <strong>Step 1: Gate 계산 (Expert 선택)</strong></h3>
+<p>각 head((h))마다 expert를 선택하는 Gate가 존재합니다.</p>
+<ul>
+<li>Source-side(Value) gate ( s_S^h \in \mathbb{R}^{T\times E} )</li>
+<li>Destination-side(Output) gate ( s_D^h \in \mathbb{R}^{T\times E} )</li>
+</ul>
+<p>간략한 예로 head가 1개(h=1), Expert가 3개(E=3)인 경우:</p>
+<ul>
+<li>( W_S^h, W_D^h \in \mathbb{R}^{d_{model} \times E} = (4\times3) )</li>
+</ul>
+<p>Gate 값 계산식은:</p>
+<p>[
+s_S^h = \sigma(xW_S^h), \quad s_D^h = \sigma(xW_D^h)
+]</p>
+<p>계산 후의 예시 gate 값 (임의의 sigmoid 출력값 예):</p>
+<table>
+  <thead>
+      <tr>
+          <th>Token</th>
+          <th>( s_S^h ) (Value-side gate)</th>
+          <th>( s_D^h ) (Output-side gate)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>[0.8, 0.1, 0.3]</td>
+          <td>[0.2, 0.9, 0.5]</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>[0.2, 0.7, 0.4]</td>
+          <td>[0.6, 0.1, 0.7]</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>[0.5, 0.4, 0.9]</td>
+          <td>[0.3, 0.8, 0.2]</td>
+      </tr>
+  </tbody>
+</table>
+<p>위 값에서 k=2개의 상위 gate 값을 가진 Expert를 각 토큰별로 선택합니다:</p>
+<ul>
+<li>Value-side 선택: 토큰 1 (Expert 1,3), 토큰 2 (Expert 2,3), 토큰 3 (Expert 1,3)</li>
+<li>Output-side 선택: 토큰 1 (Expert 2,3), 토큰 2 (Expert 1,3), 토큰 3 (Expert 2,1)</li>
+</ul>
+<hr>
+<h3 id="-step-2-key-query-value-projection-계산-1">🔍 <strong>Step 2: Key, Query, Value projection 계산</strong></h3>
+<ul>
+<li>
+<p>Query와 Key는 일반적인 Transformer와 동일하게 고정 projection 행렬로 계산합니다:
+[
+Q^h = xW_Q^h, \quad K^h = xW_K^h
+]</p>
+</li>
+<li>
+<p>Value는 Expert projection을 사용하며, 선택된 Expert들의 가중합으로 계산됩니다:
+[
+V^h = \sum_{e \in E_S^h} s_S^h[e]\cdot(xW_V^{h,e})
+]</p>
+</li>
+</ul>
+<p>(각각 (W_Q^h, W_K^h, W_V^{h,e})는 (d_{model}\times d_{head}) 차원의 행렬입니다.)</p>
+<hr>
+<h3 id="-step-3-attention-행렬-계산-1">🔍 <strong>Step 3: Attention 행렬 계산</strong></h3>
+<p>일반적인 Transformer와 동일한 Attention Matrix를 계산합니다:
+[
+A^h = \text{softmax}\left(\frac{Q^h(K^h)^T}{\sqrt{d_{head}}}\right)
+]</p>
+<p>여기서 (A^h)는 (3×3) 행렬입니다 (입력 길이 3 기준).</p>
+<hr>
+<h3 id="-step-4-최종-출력-output-projection-계산-1">🔍 <strong>Step 4: 최종 출력 (Output projection) 계산</strong></h3>
+<p>Output projection 역시 선택된 Expert들의 가중합으로 계산됩니다:
+[
+y = \sum_{e \in E_D^h} s_D^h[e]\cdot(A^hV^hW_O^{h,e})
+]</p>
+<p>이로써 최종 출력 (y \in \mathbb{R}^{T\times d_{model}}) 이 계산됩니다.</p>
+<hr>
+<h2 id="-전체-알고리즘-요약-정리-1">📌 <strong>전체 알고리즘 요약 정리</strong></h2>
+<table>
+  <thead>
+      <tr>
+          <th>단계</th>
+          <th>과정 요약</th>
+          <th>계산방식 및 특징</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Step 1</td>
+          <td>Gate 계산 및 Expert 선택</td>
+          <td>입력별 독립적 sigmoid gate 계산</td>
+      </tr>
+      <tr>
+          <td>Step 2</td>
+          <td>Key, Query(고정), Value(Expert 선택) projection 계산</td>
+          <td>선택된 Expert만 계산 (효율성 증대)</td>
+      </tr>
+      <tr>
+          <td>Step 3</td>
+          <td>Attention 행렬 계산</td>
+          <td>기존 Attention과 동일</td>
+      </tr>
+      <tr>
+          <td>Step 4</td>
+          <td>Output projection (Expert 선택) 및 최종 결과 계산</td>
+          <td>선택된 Expert만으로 최종 결과 산출</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-switchhead의-이점-및-기여-1">📌 <strong>SwitchHead의 이점 및 기여</strong></h2>
+<ul>
+<li><strong>효율적 연산</strong>: 모든 Expert를 다 계산하지 않고 입력에 따라 일부 Expert만 동적으로 선택.</li>
+<li><strong>자원 절약</strong>: Transformer의 Attention 연산량 및 메모리 사용을 획기적으로 감소시킴.</li>
+<li><strong>성능 유지</strong>: 적은 연산량으로도 성능(perplexity)은 기존의 dense 모델과 유사한 수준 유지.</li>
+</ul>
+<hr>
+<p>이러한 방식으로 SwitchHead는 효율성을 극대화하면서도, Transformer 모델의 성능을 유지하는 혁신적인 Mixture-of-Experts 기반 Attention 알고리즘을 제공합니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<p>좋습니다. 이 논문에서는 Transformer의 Attention Layer를 Mixture-of-Experts(MoE)로 확장한 <strong>SwitchHead</strong> 아키텍처를 제안하며, 특히 <strong>입력 처리, 추론 과정, 모델 아키텍처 구성, 연산량 및 메모리 요구량</strong>을 모두 정량적으로 다루고 있습니다. 아래에서 예시 기반으로 자세히 설명드리겠습니다.</p>
+<hr>
+<h2 id="-1-입력-데이터-예시-포함">📌 1. 입력 데이터 (예시 포함)</h2>
+<h3 id="-데이터-형식">🔷 데이터 형식</h3>
+<p>논문에서는 일반적인 자연어처리 데이터셋(C4, Wikitext103 등)을 사용합니다. 예시로 토큰 시퀀스:</p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-0"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-0"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-0">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plaintext" data-lang="plaintext"><span class="line"><span class="ln">1</span><span class="cl">Input sequence: [&#34;The&#34;, &#34;cat&#34;, &#34;sat&#34;, &#34;on&#34;, &#34;the&#34;, &#34;mat&#34;, &#34;.&#34;]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-0';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<p>이를 subword tokenizer (SentencePiece, vocab size=8k)로 분절하면:</p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-1"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-1"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-1">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plaintext" data-lang="plaintext"><span class="line"><span class="ln">1</span><span class="cl">Tokens: [312, 532, 771, 128, 312, 949, 9]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-1';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<p>이것은 embedding을 통해 벡터로 변환됩니다:</p>
+<ul>
+<li>각 토큰 → ( d_{model} )-차원의 벡터 (예: ( d_{model} = 512 ))</li>
+<li>결과: ( x \in \mathbb{R}^{T \times d_{model}} ), 예: ( x \in \mathbb{R}^{7 \times 512} )</li>
+</ul>
+<hr>
+<h2 id="-2-추론-과정-예시-기반-step-by-step">📌 2. 추론 과정 (예시 기반 Step-by-Step)</h2>
+<p>아래에서는 SwitchHead attention의 한 layer가 작동하는 과정을 예시를 기반으로 설명합니다.</p>
+<h3 id="-전제-조건-설정-예시">⚙️ 전제 조건 (설정 예시)</h3>
+<ul>
+<li>입력 길이 ( T = 7 )</li>
+<li>( d_{model} = 512 ), ( d_{head} = 128 )</li>
+<li>Head 수 ( n_{heads} = 2 ), Expert 수 ( E = 4 ), Top-k = 2</li>
+</ul>
+<hr>
+<h3 id="-1-query-key-계산-고정-projection">🔶 [1] <strong>Query, Key 계산 (고정 projection)</strong></h3>
+<ul>
+<li>각 head ( h \in {1, 2} )에 대해 고정 projection 행렬 ( W_Q^h, W_K^h \in \mathbb{R}^{512 \times 128} ) 적용</li>
+</ul>
+<p>[
+Q^h = xW_Q^h, \quad K^h = xW_K^h
+]</p>
+<p>→ ( Q^h, K^h \in \mathbb{R}^{7 \times 128} )</p>
+<hr>
+<h3 id="-2-expert-gate-계산-및-선택-moe-for-valueoutput">🔶 [2] <strong>Expert gate 계산 및 선택 (MoE for Value/Output)</strong></h3>
+<ul>
+<li>Value side gate: ( s_S^h = \sigma(xW_S^h) ), ( W_S^h \in \mathbb{R}^{512 \times E} )</li>
+<li>Output side gate: ( s_D^h = \sigma(xW_D^h) ), ( W_D^h \in \mathbb{R}^{512 \times E} )</li>
+</ul>
+<p>→ 예를 들어 토큰 3에 대해:</p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-2"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-2"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-2">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plaintext" data-lang="plaintext"><span class="line"><span class="ln">1</span><span class="cl">s_S^h = [0.1, 0.8, 0.05, 0.7] → top-k = {2, 4}
+</span></span><span class="line"><span class="ln">2</span><span class="cl">s_D^h = [0.6, 0.3, 0.9, 0.2] → top-k = {1, 3}</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-2';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<hr>
+<h3 id="-3-value-projection-weighted-expert-mix">🔶 [3] <strong>Value Projection (Weighted Expert Mix)</strong></h3>
+<p>선택된 expert에 대해서만 value projection:</p>
+<p>[
+V^h = \sum_{e \in E_S^h} s_S^h[e] \cdot (x W_V^{h,e}), \quad W_V^{h,e} \in \mathbb{R}^{512 \times 128}
+]</p>
+<p>→ 최종 ( V^h \in \mathbb{R}^{7 \times 128} )</p>
+<hr>
+<h3 id="-4-attention-계산">🔶 [4] <strong>Attention 계산</strong></h3>
+<p>[
+A^h = \text{softmax}\left(\frac{Q^h (K^h)^T}{\sqrt{d_{head}}}\right) \in \mathbb{R}^{7 \times 7}
+]</p>
+<p>→ 각 head마다 단 하나의 attention matrix만 계산함.</p>
+<hr>
+<h3 id="-5-output-projection-weighted-expert-mix">🔶 [5] <strong>Output projection (Weighted Expert Mix)</strong></h3>
+<p>[
+y = \sum_{e \in E_D^h} s_D^h[e] \cdot (A^h V^h W_O^{h,e})
+\quad W_O^{h,e} \in \mathbb{R}^{128 \times 512}
+]</p>
+<p>→ 최종 ( y \in \mathbb{R}^{7 \times 512} )</p>
+<hr>
+<h2 id="-3-모델-아키텍처-구성">📌 3. 모델 아키텍처 구성</h2>
+<p>SwitchHead는 기본적으로 Transformer-XL 또는 RoPE 기반 standard Transformer 구조를 유지하되:</p>
+<h3 id="-핵심-변경점">🔧 핵심 변경점:</h3>
+<table>
+  <thead>
+      <tr>
+          <th>Layer 구성 요소</th>
+          <th>변경 전 (기존 Transformer)</th>
+          <th>SwitchHead 변경사항</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Query/Key projection</td>
+          <td>고정, head별 projection</td>
+          <td>동일</td>
+      </tr>
+      <tr>
+          <td><strong>Value projection</strong></td>
+          <td>고정</td>
+          <td><strong>head별 MoE 선택적 projection</strong></td>
+      </tr>
+      <tr>
+          <td><strong>Output projection</strong></td>
+          <td>고정</td>
+          <td><strong>head별 MoE 선택적 projection</strong></td>
+      </tr>
+      <tr>
+          <td>Attention 계산</td>
+          <td>각 head마다 1개</td>
+          <td>동일 (중요: expert마다 X, head마다 O)</td>
+      </tr>
+      <tr>
+          <td>Feedforward layer</td>
+          <td>MLP (고정)</td>
+          <td>σ-MoE로 대체 가능 (SwitchAll의 경우)</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-4-연산량-및-메모리-요구량-분석">📌 4. 연산량 및 메모리 요구량 분석</h2>
+<p>논문에서는 Multiply-Accumulate operations (MACs) 기준으로 계산합니다.</p>
+<h3 id="-연산량macs-기본-transformer-vs-switchhead-비교">⚙️ 연산량(MACs): 기본 Transformer vs SwitchHead 비교</h3>
+<table>
+  <thead>
+      <tr>
+          <th>항목</th>
+          <th>Transformer</th>
+          <th>SwitchHead (value/output MoE)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Projection 연산량</td>
+          <td>(4T d_{model} d_{head} \cdot n_{heads})</td>
+          <td>(2T d_{model} d_{head} \cdot n_{heads} + 2Tkd_{model}d_{head})</td>
+      </tr>
+      <tr>
+          <td>Attention 연산량</td>
+          <td>(2T^2 d_{head} \cdot n_{heads})</td>
+          <td>동일</td>
+      </tr>
+      <tr>
+          <td>Output readout 연산량</td>
+          <td>(T d_{head} d_{model} \cdot n_{heads})</td>
+          <td>(2Tk d_{head} d_{model})</td>
+      </tr>
+  </tbody>
+</table>
+<p>→ 전체 MACs 비교:</p>
+<p>[
+\text{SwitchHead MACs} \approx 40% \sim 50% 수준
+]</p>
+<h3 id="-메모리-사용량">📦 메모리 사용량</h3>
+<table>
+  <thead>
+      <tr>
+          <th>항목</th>
+          <th>Transformer</th>
+          <th>SwitchHead</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Attention matrix</td>
+          <td>(n_{heads} \cdot T^2)</td>
+          <td>동일</td>
+      </tr>
+      <tr>
+          <td>Projection cache</td>
+          <td>(n_{heads} \cdot T \cdot d_{head})</td>
+          <td>동일</td>
+      </tr>
+      <tr>
+          <td>Expert weights</td>
+          <td>없음</td>
+          <td><strong>활성 expert에 대한 값만 저장</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>→ 논문 실험 기준 최대 <strong>73% 메모리 절감</strong><br>
+(ex: 262M 모델에서 21M → 2.9M float 수치로 감소)</p>
+<hr>
+<h2 id="-요약-정리">📌 요약 정리</h2>
+<table>
+  <thead>
+      <tr>
+          <th>항목</th>
+          <th>SwitchHead의 특징</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>입력 형태</td>
+          <td>Subword token sequence, embedding: ( x \in \mathbb{R}^{T \times d_{model}} )</td>
+      </tr>
+      <tr>
+          <td>Attention 구조 변경</td>
+          <td>Query/Key: 고정, Value/Output: MoE expert 선택</td>
+      </tr>
+      <tr>
+          <td>Attention Matrix 수</td>
+          <td>Head마다 1개만 계산 (기존 MoA보다 크게 절감)</td>
+      </tr>
+      <tr>
+          <td>Expert 선택 방식</td>
+          <td>Sigmoid-based 비경쟁 gate (σ-MoE)</td>
+      </tr>
+      <tr>
+          <td>연산량 (MAC 기준)</td>
+          <td>Dense 대비 최대 60% 이상 절감</td>
+      </tr>
+      <tr>
+          <td>메모리 사용량</td>
+          <td>Dense 대비 최대 73% 감소</td>
+      </tr>
+      <tr>
+          <td>추론 속도</td>
+          <td>Wall-clock 기준 1.5배 이상 빠름 (실험에서 확인됨)</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<p>SwitchHead는 MoE Attention 중에서도 가장 &ldquo;현실적이고 안정적이며 계산 효율적인 방식&quot;으로, 특히 inference-time cost와 memory footprint가 중요한 환경에서 강력한 선택지입니다. 예를 들어 모바일/엣지 디바이스, 장기 시퀀스 모델링 등에서 매우 유용합니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>이 논문 『SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention』은 Attention Layer에 MoE를 적용하여 자원 효율성을 크게 높인 혁신적인 연구지만, 여전히 몇 가지 <strong>구조적 한계</strong>가 존재합니다. 이 한계를 극복하기 위한 최근 연구 흐름은 다음과 같이 나눌 수 있습니다:</p>
+<hr>
+<h2 id="-논문의-주요-한계-정리">✅ 논문의 주요 한계 정리</h2>
+<table>
+  <thead>
+      <tr>
+          <th>한계점</th>
+          <th>상세 설명</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>① 모델 크기 제한</td>
+          <td>실험 모델이 262M 규모로, GPT-3 수준(10B~175B)의 초대형 모델에서는 효과 미확인</td>
+      </tr>
+      <tr>
+          <td>② MoE Load Balancing 미지원</td>
+          <td>Expert 간 부하 불균형 발생 가능성 존재. 실제 대규모 분산에서는 병목 가능성</td>
+      </tr>
+      <tr>
+          <td>③ Triton kernel 성능 미흡</td>
+          <td>현재 구현된 커널이 cuBLAS 대비 60% 수준으로 suboptimal</td>
+      </tr>
+      <tr>
+          <td>④ Layer-level sparsity 부족</td>
+          <td>Attention 내 sparsity만 적용, 전체 layer 구조 수준에서 sparsity 설계 부족</td>
+      </tr>
+      <tr>
+          <td>⑤ Expert 선택의 지역성 결여</td>
+          <td>토큰 간 상관관계 반영 없이 expert 선택 → 정보 흐름 왜곡 가능성</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-위-한계를-극복하기-위한-주요-연구-흐름">🔍 위 한계를 극복하기 위한 주요 연구 흐름</h2>
+<p>아래에서는 각 한계점에 대응하는 현재의 연구 흐름을 구체적 방법론과 함께 정리합니다.</p>
+<hr>
+<h3 id="-1-초대형-모델-확장을-위한-sparse-routing-최적화">🔹 [1] <strong>초대형 모델 확장을 위한 Sparse Routing 최적화</strong></h3>
+<h4 id="-관련-흐름">📘 관련 흐름:</h4>
+<ul>
+<li><strong>GShard, Switch Transformer (Fedus et al.)</strong></li>
+<li><strong>Unified Routing (Clark et al., 2022)</strong></li>
+</ul>
+<h4 id="-핵심-아이디어">📌 핵심 아이디어:</h4>
+<ul>
+<li>Expert 간 라우팅을 학습 가능한 정책으로 설계 (e.g., RL 기반, differentiable top-k)</li>
+<li>MoE expert들을 <strong>다중 레벨 계층 구조</strong>로 구성해 대규모 모델에도 적합하게 설계</li>
+</ul>
+<h4 id="-적용-가능-방향">🧠 적용 가능 방향:</h4>
+<ul>
+<li>SwitchHead에서도 expert를 각 layer마다 고정된 구조로 둘 것이 아니라, <strong>hierarchical expert routing</strong>을 적용하면 초대형 모델로 확장 가능</li>
+</ul>
+<hr>
+<h3 id="-2-load-balancing-및-expert-activation-균형화">🔹 [2] <strong>Load Balancing 및 Expert Activation 균형화</strong></h3>
+<h4 id="-관련-흐름-1">📘 관련 흐름:</h4>
+<ul>
+<li><strong>BASE Layers (Lewis et al., 2021)</strong></li>
+<li><strong>Soft Mixture of Experts (Zhou et al., 2022)</strong></li>
+</ul>
+<h4 id="-핵심-아이디어-1">📌 핵심 아이디어:</h4>
+<ul>
+<li>Routing network가 특정 expert에 과도하게 집중되지 않도록, regularization 또는 auxiliary loss (e.g., entropy loss, usage loss)를 추가</li>
+<li>Soft routing을 통해 활성화 score를 부드럽게 분산시킴</li>
+</ul>
+<h4 id="-적용-가능-방향-1">🧠 적용 가능 방향:</h4>
+<ul>
+<li>SwitchHead의 σ-MoE는 안정적이지만 <strong>expert 간 activation 편향</strong> 문제는 여전히 존재<br>
+→ 이를 위해 soft usage loss나 <strong>entropy-based expert dispersion loss</strong> 추가가 유효</li>
+</ul>
+<hr>
+<h3 id="-3-하드웨어-최적화를-위한-커널-개선">🔹 [3] <strong>하드웨어 최적화를 위한 커널 개선</strong></h3>
+<h4 id="-관련-흐름-2">📘 관련 흐름:</h4>
+<ul>
+<li><strong>Flash-MoE (Zhang et al., 2023)</strong></li>
+<li><strong>FlashAttention-2 (Dao et al., 2023)</strong></li>
+</ul>
+<h4 id="-핵심-아이디어-2">📌 핵심 아이디어:</h4>
+<ul>
+<li>GPU 메모리 bandwidth와 compute tradeoff를 감안하여, kernel 내 attention &amp; projection을 <strong>fused 연산</strong>으로 처리</li>
+<li>CUDA-aware/IO-aware optimization 도입</li>
+</ul>
+<h4 id="-적용-가능-방향-2">🧠 적용 가능 방향:</h4>
+<ul>
+<li>SwitchHead의 MoE projection을 Triton이 아닌 <strong>fused CUDA kernel</strong>로 작성 → cuBLAS 대비 성능 개선 (최대 2배)</li>
+</ul>
+<hr>
+<h3 id="-4-layer-level-sparse-모듈과의-결합">🔹 [4] <strong>Layer-Level Sparse 모듈과의 결합</strong></h3>
+<h4 id="-관련-흐름-3">📘 관련 흐름:</h4>
+<ul>
+<li><strong>SparseMixture (Lepikhin et al., 2021)</strong></li>
+<li><strong>LayerDrop + Sparse Routing</strong> (Zhang et al., 2023)</li>
+</ul>
+<h4 id="-핵심-아이디어-3">📌 핵심 아이디어:</h4>
+<ul>
+<li>특정 layer 전체를 토큰마다 skip하거나 expert로 라우팅함으로써 <strong>전체 레벨에서 sparsity 제어</strong></li>
+<li>각 Layer는 MoE-FF, MoE-Attn, Dense 중 하나로 선택적으로 사용</li>
+</ul>
+<h4 id="-적용-가능-방향-3">🧠 적용 가능 방향:</h4>
+<ul>
+<li>SwitchHead를 단독으로 쓰기보다는 SwitchFF, SwitchDense, SparseLayer 등과 결합한 <strong>&ldquo;Fully Conditional Sparse Stack&rdquo;</strong> 구성 가능</li>
+</ul>
+<hr>
+<h3 id="-5-locality-aware-expert-routing--token-clustering-기반-분산">🔹 [5] <strong>Locality-aware Expert Routing / Token Clustering 기반 분산</strong></h3>
+<h4 id="-관련-흐름-4">📘 관련 흐름:</h4>
+<ul>
+<li><strong>Token-level Routing (Shazeer et al., 2017)</strong></li>
+<li><strong>Dynamic MoE Routing with Token Clusters (2023)</strong></li>
+</ul>
+<h4 id="-핵심-아이디어-4">📌 핵심 아이디어:</h4>
+<ul>
+<li>Query 간 유사도에 기반한 <strong>grouping 후 expert 선택</strong></li>
+<li>예: 비슷한 토큰들은 동일 expert에 할당되어 학습 효율 증가</li>
+</ul>
+<h4 id="-적용-가능-방향-4">🧠 적용 가능 방향:</h4>
+<ul>
+<li>현재 SwitchHead는 <strong>token-local gate</strong>만 사용<br>
+→ Attention head 내에서 Query 유사도 기반 <strong>context-aware expert routing</strong> 적용하면 성능 및 정보 흐름 강화 가능</li>
+</ul>
+<hr>
+<h2 id="-통합적-적용-예시-future-switchhead">📌 통합적 적용 예시: Future SwitchHead++</h2>
+<table>
+  <thead>
+      <tr>
+          <th>적용 기술</th>
+          <th>기대 효과</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Hierarchical MoE</td>
+          <td>초대형 모델 확장</td>
+      </tr>
+      <tr>
+          <td>Load Balancing Loss</td>
+          <td>expert 간 편향 최소화</td>
+      </tr>
+      <tr>
+          <td>FlashAttention-2 기반 CUDA kernel</td>
+          <td>학습/추론 속도 개선 (1.5x 이상)</td>
+      </tr>
+      <tr>
+          <td>Layer-wise MoE (SwitchAll++)</td>
+          <td>모델 전체에서 sparsity 극대화</td>
+      </tr>
+      <tr>
+          <td>Token Clustering Routing</td>
+          <td>의미 기반 expert 선택 → 정보 보존 및 표현력 증가</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-결론">✅ 결론</h2>
+<p>SwitchHead는 Transformer attention 효율화를 이끈 매우 강력한 기초 구조입니다. 그러나 다음의 방향으로 확장 시 더욱 실용적이고 강력한 시스템이 될 수 있습니다:</p>
+<ul>
+<li><strong>초대형 모델 적용 가능성 확보 (scalability)</strong></li>
+<li><strong>expert 간 학습/추론 병렬성 최적화 (load balance)</strong></li>
+<li><strong>context-aware routing으로 표현력 유지</strong></li>
+<li><strong>Flash 기반 최적 커널 연산 적용</strong></li>
+</ul>
+<p>앞으로의 연구에서는 SwitchHead 구조를 <strong>하드웨어 친화적이고 context-adaptive한 전체 Sparse LLM 스택의 일부로 통합</strong>하는 방향이 유망합니다.</p>
+<h1 id="q--switchhead는-왜-query와-key-projection은-고정시키고-value와-output-projection만-moe로-구성했을-때-가장-효율적인-결과를-보였는가-이는-attention-메커니즘의-구조적-특성과-어떤-관련이-있을까">Q : SwitchHead는 왜 Query와 Key projection은 고정시키고 Value와 Output projection만 MoE로 구성했을 때 가장 효율적인 결과를 보였는가? 이는 Attention 메커니즘의 구조적 특성과 어떤 관련이 있을까?</h1>
+<p>이 질문은 SwitchHead의 핵심 설계 선택에 대한 통찰을 요구하는 매우 중요한 질문입니다. 결론부터 말하면:</p>
+<p><strong>Query와 Key는 Attention Matrix 생성을 위한 “공통 연산”이므로, 이를 고정시키고 Value와 Output만 MoE로 구성하는 것이 연산 효율성과 학습 안정성 양면에서 유리하기 때문입니다.</strong></p>
+<p>아래에서 구체적으로 구조적 이유와 실험적 증거를 함께 설명하겠습니다.</p>
+<hr>
+<h2 id="-왜-querykey는-고정하고-valueoutput만-moe로-해야-효율적인가">✅ 왜 Query/Key는 고정하고, Value/Output만 MoE로 해야 효율적인가?</h2>
+<h3 id="1-query-key는-attention-matrix를-생성하는-상호작용의-핵심">1. <strong>Query-Key는 Attention Matrix를 생성하는 상호작용의 “핵심”</strong></h3>
+<ul>
+<li>Attention 행렬 ( A = \text{softmax}(QK^T / \sqrt{d}) )는 Query와 Key의 내적을 통해 생성됨</li>
+<li>만약 Q와 K가 각각 MoE 구조로 token마다 다르게 생성되면, 각 token마다 <strong>다른 attention 행렬</strong>을 계산해야 함
+→ 이는 곧 <strong>모든 token 간 조합에 대해 attention matrix를 다시 계산해야 하므로 연산량이 폭증</strong></li>
+</ul>
+<p>예시:</p>
+<ul>
+<li>( T )개의 token이 있다면, 일반적으로 ( T \times T ) attention matrix 1개면 되지만,</li>
+<li>Q, K가 MoE라면 토큰마다 K/Q가 다르므로 ( T \times T ) 개 attention score가 각기 다르게 계산되어야 함</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p>✅ <strong>논문에서는 이를 “source/destination routing이 attention matrix 계산을 방해한다”고 표현합니다.</strong></p>
+    </div>
+  </blockquote>
+
+<hr>
+<h3 id="2-반면-valueoutput-projection은-attention-결과-이후-단계--개별적으로-분리-가능">2. <strong>반면, Value/Output projection은 Attention 결과 이후 단계 → 개별적으로 분리 가능</strong></h3>
+<ul>
+<li>Attention matrix가 이미 고정되어 있다면,
+<ul>
+<li>각 토큰에 대해 선택된 Value expert로부터 context vector ( A \cdot V )를 계산하는 것은 token-local한 작업</li>
+<li>Output projection도 token마다 다른 expert를 적용 가능 (선택된 ( W_O^e ))</li>
+</ul>
+</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p>✅ <strong>Value/Output은 Attention 이후 단계이므로 expert마다 독립적 연산이 가능하고, 공유된 attention matrix를 그대로 사용 가능</strong></p>
+    </div>
+  </blockquote>
+
+<hr>
+<h2 id="-논문-내-실험-결과와-근거">✅ 논문 내 실험 결과와 근거</h2>
+<p>논문 Table 6 (Sec. A.3)에서 다양한 조합에 대한 성능 비교를 제시합니다:</p>
+<table>
+  <thead>
+      <tr>
+          <th>V</th>
+          <th>K</th>
+          <th>Q</th>
+          <th>O</th>
+          <th>Perplexity ↓</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Y</td>
+          <td>N</td>
+          <td>N</td>
+          <td>Y</td>
+          <td><strong>12.27</strong> (최고 성능)</td>
+      </tr>
+      <tr>
+          <td>N</td>
+          <td>N</td>
+          <td>N</td>
+          <td>Y</td>
+          <td>12.30</td>
+      </tr>
+      <tr>
+          <td>Y</td>
+          <td>Y</td>
+          <td>Y</td>
+          <td>Y</td>
+          <td>12.57</td>
+      </tr>
+      <tr>
+          <td>Y</td>
+          <td>Y</td>
+          <td>N</td>
+          <td>Y</td>
+          <td>12.37</td>
+      </tr>
+      <tr>
+          <td>N</td>
+          <td>Y</td>
+          <td>N</td>
+          <td>Y</td>
+          <td>12.36</td>
+      </tr>
+      <tr>
+          <td>Y</td>
+          <td>N</td>
+          <td>Y</td>
+          <td>N</td>
+          <td>12.51</td>
+      </tr>
+      <tr>
+          <td>N</td>
+          <td>Y</td>
+          <td>Y</td>
+          <td>N</td>
+          <td>12.90</td>
+      </tr>
+  </tbody>
+</table>
+<p>→ <strong>Query/Key를 MoE로 바꾸면 성능이 급격히 하락하며, 불필요한 연산만 증가</strong></p>
+<hr>
+<h2 id="-구조적-특성과의-정리된-연관성">✅ 구조적 특성과의 정리된 연관성</h2>
+<table>
+  <thead>
+      <tr>
+          <th>요소</th>
+          <th>역할</th>
+          <th>MoE 적합성</th>
+          <th>이유</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Query (Q)</td>
+          <td>각 토큰의 정보 수집 대상 결정</td>
+          <td>✖ 부적합</td>
+          <td>모든 K와의 상호작용 필요 → global</td>
+      </tr>
+      <tr>
+          <td>Key (K)</td>
+          <td>모든 토큰의 feature 제공</td>
+          <td>✖ 부적합</td>
+          <td>모든 Q와의 상호작용 필요 → global</td>
+      </tr>
+      <tr>
+          <td>Value (V)</td>
+          <td>Attention으로 가중 평균될 정보</td>
+          <td>✔ 적합</td>
+          <td>가중합 대상이므로 token-local</td>
+      </tr>
+      <tr>
+          <td>Output (O)</td>
+          <td>최종 representation 계산</td>
+          <td>✔ 적합</td>
+          <td>독립적인 후처리 → expert selection 가능</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-요약-핵심-정리">✅ 요약 (핵심 정리)</h2>
+<ul>
+<li><strong>Query/Key는 token-to-token 간 상호작용을 위한 전역 연산이므로, MoE로 만들 경우 attention matrix 공유가 불가능해지고 연산량이 폭증</strong></li>
+<li><strong>Value/Output은 attention 이후의 token-local 연산이므로, MoE 적용 시 선택적 sparsity를 활용해 효율성 향상</strong></li>
+<li><strong>SwitchHead는 이 구조적 특성을 활용해 최소한의 연산으로 최대의 효과를 내는 설계를 택했다</strong></li>
+</ul>
+<p>따라서, 이 선택은 단순한 실험적 결과가 아니라 <strong>Transformer의 attention 메커니즘의 수학적 구조에 기초한 설계 최적화</strong>라고 볼 수 있습니다.</p>
+<h1 id="q--기존-moe-방식예-moa-switch-transformer-등과-비교해-switchhead가-계산량과-메모리-사용량을-줄이면서도-성능-저하-없이-학습-가능한-핵심-요인은-무엇이며-이를-다른-구조예-decoder-only-llm에도-확장-가능할까">Q : 기존 MoE 방식(예: MoA, Switch Transformer 등)과 비교해 SwitchHead가 계산량과 메모리 사용량을 줄이면서도 성능 저하 없이 학습 가능한 핵심 요인은 무엇이며, 이를 다른 구조(예: Decoder-only LLM)에도 확장 가능할까?</h1>
+<p>결론부터 말하면, <strong>SwitchHead가 기존 MoE 방식보다 계산량과 메모리 사용량을 줄이면서도 성능 저하 없이 학습 가능한 이유는 두 가지 핵심 설계 덕분입니다</strong>:</p>
+<ol>
+<li><strong>Attention matrix는 head마다 1개만 계산 (MoA 대비 큰 절감)</strong></li>
+<li><strong>비경쟁적 expert 선택 구조(σ-MoE)로 인해 학습 안정성이 높고 regularization이 불필요</strong></li>
+</ol>
+<p>이러한 설계는 구조적으로 매우 일반적이기 때문에, **Decoder-only LLM 구조(예: GPT 계열)**에도 충분히 확장 가능합니다. 아래에서 상세히 설명드리겠습니다.</p>
+<hr>
+<h2 id="-switchhead가-효율성과-성능을-동시에-확보한-핵심-요인-2가지">✅ SwitchHead가 효율성과 성능을 동시에 확보한 핵심 요인 2가지</h2>
+<h3 id="-attention-계산-병목-해소-단-하나의-attention-matrix만-계산">① Attention 계산 병목 해소: &ldquo;단 하나의 attention matrix만 계산&rdquo;</h3>
+<ul>
+<li>기존 MoE attention 방식 (MoA: Mixture of Attention Heads)은 토큰마다 서로 다른 expert에서 projection을 하므로, <strong>각 head마다 여러 attention matrix를 따로 계산해야 함</strong>.
+<ul>
+<li>예: top-k=4인 경우, head당 4개의 attention matrix</li>
+</ul>
+</li>
+<li><strong>SwitchHead는 head마다 1개의 shared attention matrix만 사용</strong><br>
+→ MoE는 Query/Key가 아니라 Value/Output에만 적용하므로 attention 계산량 절감</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>비교 항목</th>
+          <th>MoA</th>
+          <th>SwitchHead</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Attention 계산</td>
+          <td>head × top-k 개</td>
+          <td>head 수만큼 (top-k와 무관)</td>
+      </tr>
+      <tr>
+          <td>연산량 (MACs)</td>
+          <td>높음</td>
+          <td>최대 60% 감소</td>
+      </tr>
+      <tr>
+          <td>메모리</td>
+          <td>attention matrix 복수 저장 필요</td>
+          <td>1개 per head만 저장하면 됨</td>
+      </tr>
+  </tbody>
+</table>
+<p>→ 특히 시퀀스 길이 (T)가 긴 경우 (O(T^2)) 비용을 줄일 수 있어 매우 효과적임.</p>
+<hr>
+<h3 id="-σ-moe-기반-비경쟁-expert-선택으로-안정적-학습">② σ-MoE 기반 비경쟁 Expert 선택으로 안정적 학습</h3>
+<ul>
+<li>기존 MoE (예: Switch Transformer)는 Softmax 기반 routing을 사용하여 Expert 간 경쟁 유도
+→ 문제: <strong>Expert collapse, high variance</strong>, Regularization 필요</li>
+<li><strong>SwitchHead는 sigmoid 기반 비경쟁 selection(σ-MoE)</strong> 사용:
+<ul>
+<li>Top-k selection을 각 Expert에 대해 독립적으로 수행</li>
+<li>Regularization 없이도 expert 다양성이 유지됨</li>
+</ul>
+</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>비교 항목</th>
+          <th>Switch Transformer</th>
+          <th>SwitchHead</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Routing 방식</td>
+          <td>Softmax 경쟁 선택</td>
+          <td>Sigmoid 비경쟁 선택</td>
+      </tr>
+      <tr>
+          <td>Regularization 필요</td>
+          <td>필수</td>
+          <td>불필요</td>
+      </tr>
+      <tr>
+          <td>Collapse 위험</td>
+          <td>있음</td>
+          <td>거의 없음</td>
+      </tr>
+  </tbody>
+</table>
+<p>→ 결과적으로 학습 안정성이 높고, hyperparameter tuning 부담도 낮음</p>
+<hr>
+<h2 id="-decoder-only-llm에-적용-가능성-분석">✅ Decoder-only LLM에 적용 가능성 분석</h2>
+<h3 id="switchhead-구조의-일반성">SwitchHead 구조의 일반성</h3>
+<p>SwitchHead는 <strong>Self-Attention의 계산 패턴만을 수정하는 구조</strong>로서,</p>
+<ul>
+<li>Encoder/Decoder/Decoder-only 모두에서 <strong>Self-Attention block</strong>만 존재하면 적용 가능</li>
+<li>즉, GPT 계열의 <strong>Decoder-only 구조에도 직접 확장 가능</strong>함</li>
+</ul>
+<h4 id="적용-예">적용 예:</h4>
+<ul>
+<li>GPT-style block에서 Multi-Head Attention 부분을 SwitchHead로 교체</li>
+<li>Feedforward(MLP) 부분은 기존 σ-MoE 또는 dense 사용 가능</li>
+</ul>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-3"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-3"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-3">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plaintext" data-lang="plaintext"><span class="line"><span class="ln">1</span><span class="cl">GPT Block:
+</span></span><span class="line"><span class="ln">2</span><span class="cl">[LayerNorm] → [SwitchHead Attention] → [Add &amp; Norm] → [MLP / σ-MoE] → [Add &amp; Norm]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-3';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<h3 id="적용-시-유의점">적용 시 유의점</h3>
+<table>
+  <thead>
+      <tr>
+          <th>고려 요소</th>
+          <th>영향 및 대응 전략</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Causal Masking</td>
+          <td>Attention 행렬 (A = \text{softmax}(QK^T)) 계산 시 동일 적용 가능</td>
+      </tr>
+      <tr>
+          <td>KV Cache</td>
+          <td>Value MoE가 token-dependent → <strong>추론 시 expert activation 저장 필요</strong></td>
+      </tr>
+      <tr>
+          <td>Memory 효율</td>
+          <td>GPT 추론 시 토큰당 expert 선택만 저장하면 되므로 <strong>크게 문제 없음</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>→ 실제로 <strong>GPT-style LLM + SwitchHead는 실용적 구성</strong>이며, 특히 장기 문맥, 모바일 환경 등에 매우 적합</p>
+<hr>
+<h2 id="-결론-요약">✅ 결론 요약</h2>
+<table>
+  <thead>
+      <tr>
+          <th>항목</th>
+          <th>SwitchHead의 이점</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Attention Matrix 수</td>
+          <td>head당 1개 (MoA 대비 최대 8× 절감)</td>
+      </tr>
+      <tr>
+          <td>Routing 방식</td>
+          <td>σ-MoE: 비경쟁, regularization 불필요</td>
+      </tr>
+      <tr>
+          <td>메모리 사용량</td>
+          <td>최대 73% 절감 (논문 기준)</td>
+      </tr>
+      <tr>
+          <td>성능 유지</td>
+          <td>perplexity 유지 또는 개선됨 (Table 1, 2, 4 참조)</td>
+      </tr>
+      <tr>
+          <td>Decoder-only LLM 적용 가능성</td>
+          <td>높음: Self-Attn block만 존재하면 적용 가능</td>
+      </tr>
+      <tr>
+          <td>추가 구현 시 고려사항</td>
+          <td>KV 캐시 관리, expert activation 캐시 필요</td>
+      </tr>
+  </tbody>
+</table>
+<p>따라서, SwitchHead는 <strong>기존 MoE보다 훨씬 효율적이고 안정적이며</strong>, <strong>GPT류 LLM에 쉽게 통합될 수 있는 확장성 높은 Attention 구조</strong>라고 평가할 수 있습니다.</p>
+<h1 id="q--현재-switchhead는-token-local-gate에-의존해-expert를-선택하는데-token-간의-상호작용-정보예-attention-weight-query-유사도-등를-활용한-context-aware-routing이-추가된다면-어떤-이점과-위험이-있을까">Q : 현재 SwitchHead는 token-local gate에 의존해 expert를 선택하는데, token 간의 상호작용 정보(예: attention weight, query 유사도 등)를 활용한 context-aware routing이 추가된다면 어떤 이점과 위험이 있을까?</h1>
+<p>좋은 질문입니다. 현재 SwitchHead는 <strong>token-local gate</strong>만을 사용해 expert를 선택하는 구조인데, 여기에 <strong>token 간 상호작용 정보를 활용한 context-aware routing</strong>을 추가하는 것은 구조적으로 의미 있는 확장이 될 수 있습니다. 다만 <strong>이점과 함께 구조적, 계산적 위험도 동반</strong>되므로 신중한 분석이 필요합니다.</p>
+<p>아래에서 구체적인 장단점 및 적용 가능성, 예시, 대안까지 자세히 정리하겠습니다.</p>
+<hr>
+<h2 id="-기본-전제-현재-switchhead의-routing-방식">✅ 기본 전제: 현재 SwitchHead의 Routing 방식</h2>
+<p>현재 SwitchHead의 expert 선택은 다음과 같습니다:</p>
+<ul>
+<li>**토큰별로 독립적인 gate (sigmoid(xW))**를 사용</li>
+<li>Top-k expert를 선택하고, 선택된 expert만 projection을 수행</li>
+<li>이 선택은 <strong>문맥과 무관하며, token 자체의 embedding 값만 사용</strong></li>
+</ul>
+<hr>
+<h2 id="-만약-context-aware-routing을-추가한다면">✅ 만약 context-aware routing을 추가한다면?</h2>
+<p>예시적인 변화:</p>
+<ul>
+<li>기존 gate를 ( g_i = \sigma(x_iW) )에서<br>
+→ <strong>( g_i = \sigma(\text{f}(x_i, c_i)) )</strong> 로 변경
+<ul>
+<li>여기서 ( c_i )는 주변 토큰의 정보 (예: attention score, query 유사도 등)</li>
+<li>예: ( c_i = \sum_j A_{ij}x_j ) (attention-weighted context)</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="-이점-장점">✅ 이점 (장점)</h2>
+<h3 id="1-문맥-기반-expert-선택--더-표현력-높은-분기">1. <strong>문맥 기반 expert 선택 → 더 표현력 높은 분기</strong></h3>
+<ul>
+<li>예: &ldquo;The bank&quot;라는 문장이 있을 때,
+<ul>
+<li>현재 token &ldquo;bank&quot;의 의미는 문맥에 따라 &ldquo;financial&rdquo; vs &ldquo;river&quot;로 달라짐</li>
+<li>context-aware routing은 주변 단어로부터 의미를 파악해 <strong>적절한 expert를 선택</strong> 가능</li>
+</ul>
+</li>
+</ul>
+<p>→ <strong>문맥을 반영한 의미적 분기 구조 학습 가능</strong><br>
+→ 각 expert의 의미적 specialization 가능성 증가</p>
+<hr>
+<h3 id="2-expert-redundancy-감소-및-압축-향상">2. <strong>Expert redundancy 감소 및 압축 향상</strong></h3>
+<ul>
+<li>토큰 간 의미가 비슷한 경우 <strong>같은 expert를 공유</strong> 가능</li>
+<li>token-local gate는 같은 의미를 가진 단어라도 서로 다른 expert를 선택할 수 있음</li>
+<li>context-aware routing은 유사 토큰끼리 공유하는 경향을 유도하여 <strong>모델 압축과 generalization에 유리</strong></li>
+</ul>
+<hr>
+<h3 id="3-추론-시-interpretability-향상-가능">3. <strong>추론 시 interpretability 향상 가능</strong></h3>
+<ul>
+<li>attention 기반으로 expert 선택이 이루어지면 **&ldquo;왜 이 expert를 썼는가?&rdquo;**를 attention map으로 시각화 가능</li>
+<li>이는 대규모 모델 해석성과 디버깅에 유리</li>
+</ul>
+<hr>
+<h2 id="-위험-단점">❌ 위험 (단점)</h2>
+<h3 id="1-연산량-증가-routing-계산이-비선형화됨">1. <strong>연산량 증가: routing 계산이 비선형화됨</strong></h3>
+<ul>
+<li>기존 gate: 단일 matmul + sigmoid</li>
+<li>context-aware gate:
+<ul>
+<li>attention or query 유사도 계산 필요 → 추가 연산 ( O(T^2) ) 또는 최소 ( O(Td) )</li>
+<li>특히 길이가 긴 입력 시 routing 계산 자체가 병목 가능</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-attention과-routing-간의-dependency-loop-발생-가능성">2. <strong>attention과 routing 간의 dependency loop 발생 가능성</strong></h3>
+<ul>
+<li>만약 attention → routing → attention 이 반복된다면, <strong>모델 계산 그래프가 순환 의존성</strong> 가질 수 있음</li>
+<li>이를 해결하려면 routing을 이전 layer의 attention에만 의존시키거나 stop-gradient 설계 필요</li>
+</ul>
+<h3 id="3-expert-collapseoverfitting-위험-증가">3. <strong>expert collapse/overfitting 위험 증가</strong></h3>
+<ul>
+<li>context-aware routing은 작은 attention 변화에도 expert 선택이 달라질 수 있어 <strong>unstable</strong></li>
+<li>특히 학습 초기에 특정 attention 분포가 편향될 경우, 특정 expert만 과도하게 활성화될 수 있음</li>
+</ul>
+<p>→ 기존 softmax 기반 MoE가 겪던 collapse 문제와 유사 현상 발생 가능</p>
+<hr>
+<h2 id="-가능한-구현-방식-및-완화-전략">🔄 가능한 구현 방식 및 완화 전략</h2>
+<table>
+  <thead>
+      <tr>
+          <th>전략</th>
+          <th>설명</th>
+          <th>위험 완화</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>delayed routing</td>
+          <td>이전 layer의 attention 정보를 기반으로 routing</td>
+          <td>dependency loop 방지</td>
+      </tr>
+      <tr>
+          <td>routing gradient stop</td>
+          <td>routing에 gradient 전파 차단</td>
+          <td>collapse 방지</td>
+      </tr>
+      <tr>
+          <td>context-compressed gate</td>
+          <td>context vector를 단일 요약 벡터로 압축 후 사용</td>
+          <td>연산량 감소</td>
+      </tr>
+      <tr>
+          <td>Gated Fusion</td>
+          <td>기존 token-local gate와 context-aware gate를 gating으로 혼합</td>
+          <td>안정성 + 표현력 균형</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-결론-언제-context-aware-routing을-고려할-수-있는가">✅ 결론: 언제 context-aware routing을 고려할 수 있는가?</h2>
+<table>
+  <thead>
+      <tr>
+          <th>조건</th>
+          <th>적용 여부</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>문맥에 따라 의미가 크게 바뀌는 작업 (ex: QA, multi-task)</td>
+          <td>매우 효과적</td>
+      </tr>
+      <tr>
+          <td>긴 sequence 처리 (ex: document, code)</td>
+          <td>유리 (전역 정보 활용 가능)</td>
+      </tr>
+      <tr>
+          <td>연산 리소스가 여유로운 환경 (서버 추론)</td>
+          <td>적용 가능</td>
+      </tr>
+      <tr>
+          <td>실시간 inference, 모바일 환경</td>
+          <td><strong>비추</strong> (routing latency 증가)</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-요약">📌 요약</h2>
+<ul>
+<li><strong>이점</strong>: 표현력 향상, 의미 기반 expert specialization, redundancy 감소</li>
+<li><strong>위험</strong>: 연산량 증가, 순환 의존성, expert collapse 가능성</li>
+<li><strong>대안/보완책</strong>: delayed routing, gradient stop, gated fusion 등</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p>🔍 <strong>결론적으로, context-aware routing은 SwitchHead의 표현력을 더욱 높일 수 있는 강력한 확장이 될 수 있으나, 연산량과 학습 안정성 이슈를 해결하는 추가 메커니즘이 반드시 필요합니다.</strong></p>
+    </div>
+  </blockquote>
+
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/SwitchHead-Accelerating-Transformers-with-Mixture-of-Experts-Attention/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/SwitchHead-Accelerating-Transformers-with-Mixture-of-Experts-Attention/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Duplex-A-Device-for-Large-Language-Models-with-Mixture-of-Experts-Grouped-Query-Attention-and-Continuous-Batching/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                Duplex: A Device for Large Language Models with Mixture of Experts, Grouped Query Attention, and Continuous Batching
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2025-04-13">
+                04月13日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/MegaScale-Infer-Serving-Mixture-of-Experts-at-Scale-with-Disaggregated-Expert-Parallelism/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                MegaScale-Infer: Serving Mixture-of-Experts at Scale with Disaggregated Expert Parallelism
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2025-04-14">
+                04月14日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-논문의-핵심-및-결론-요약">1. 논문의 핵심 및 결론 요약:</a></li>
+    <li><a href="#2-논문의-강점-및-독창적-기여">2. 논문의 강점 및 독창적 기여:</a></li>
+    <li><a href="#3-핵심-알고리즘-설명-및-예시">3. 핵심 알고리즘 설명 및 예시:</a>
+      <ul>
+        <li><a href="#step-by-step-알고리즘-동작">Step-by-step 알고리즘 동작:</a></li>
+        <li><a href="#간단한-예시-입력-및-결과">간단한 예시 입력 및 결과:</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-비교-평가-기존-모델과의-비교">4. 비교 평가 (기존 모델과의 비교):</a></li>
+    <li><a href="#5-논문의-한계점">5. 논문의 한계점:</a></li>
+    <li><a href="#결론-및-추가-논의">결론 및 추가 논의:</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-switchhead의-핵심-알고리즘-개념">📌 <strong>SwitchHead의 핵심 알고리즘 개념</strong></a></li>
+    <li><a href="#-상세-알고리즘-과정-step-by-step">📌 <strong>상세 알고리즘 과정 (Step-by-Step)</strong></a>
+      <ul>
+        <li><a href="#-step-0-입력-설정-example">🔍 <strong>Step 0: 입력 설정 (Example)</strong></a></li>
+        <li><a href="#-step-1-gate-계산-expert-선택">🔍 <strong>Step 1: Gate 계산 (Expert 선택)</strong></a></li>
+        <li><a href="#-step-2-key-query-value-projection-계산">🔍 <strong>Step 2: Key, Query, Value projection 계산</strong></a></li>
+        <li><a href="#-step-3-attention-행렬-계산">🔍 <strong>Step 3: Attention 행렬 계산</strong></a></li>
+        <li><a href="#-step-4-최종-출력-output-projection-계산">🔍 <strong>Step 4: 최종 출력 (Output projection) 계산</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-전체-알고리즘-요약-정리">📌 <strong>전체 알고리즘 요약 정리</strong></a></li>
+    <li><a href="#-switchhead의-이점-및-기여">📌 <strong>SwitchHead의 이점 및 기여</strong></a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-switchhead의-핵심-알고리즘-개념-1">📌 <strong>SwitchHead의 핵심 알고리즘 개념</strong></a></li>
+    <li><a href="#-상세-알고리즘-과정-step-by-step-1">📌 <strong>상세 알고리즘 과정 (Step-by-Step)</strong></a>
+      <ul>
+        <li><a href="#-step-0-입력-설정-example-1">🔍 <strong>Step 0: 입력 설정 (Example)</strong></a></li>
+        <li><a href="#-step-1-gate-계산-expert-선택-1">🔍 <strong>Step 1: Gate 계산 (Expert 선택)</strong></a></li>
+        <li><a href="#-step-2-key-query-value-projection-계산-1">🔍 <strong>Step 2: Key, Query, Value projection 계산</strong></a></li>
+        <li><a href="#-step-3-attention-행렬-계산-1">🔍 <strong>Step 3: Attention 행렬 계산</strong></a></li>
+        <li><a href="#-step-4-최종-출력-output-projection-계산-1">🔍 <strong>Step 4: 최종 출력 (Output projection) 계산</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-전체-알고리즘-요약-정리-1">📌 <strong>전체 알고리즘 요약 정리</strong></a></li>
+    <li><a href="#-switchhead의-이점-및-기여-1">📌 <strong>SwitchHead의 이점 및 기여</strong></a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-1-입력-데이터-예시-포함">📌 1. 입력 데이터 (예시 포함)</a>
+      <ul>
+        <li><a href="#-데이터-형식">🔷 데이터 형식</a></li>
+      </ul>
+    </li>
+    <li><a href="#-2-추론-과정-예시-기반-step-by-step">📌 2. 추론 과정 (예시 기반 Step-by-Step)</a>
+      <ul>
+        <li><a href="#-전제-조건-설정-예시">⚙️ 전제 조건 (설정 예시)</a></li>
+        <li><a href="#-1-query-key-계산-고정-projection">🔶 [1] <strong>Query, Key 계산 (고정 projection)</strong></a></li>
+        <li><a href="#-2-expert-gate-계산-및-선택-moe-for-valueoutput">🔶 [2] <strong>Expert gate 계산 및 선택 (MoE for Value/Output)</strong></a></li>
+        <li><a href="#-3-value-projection-weighted-expert-mix">🔶 [3] <strong>Value Projection (Weighted Expert Mix)</strong></a></li>
+        <li><a href="#-4-attention-계산">🔶 [4] <strong>Attention 계산</strong></a></li>
+        <li><a href="#-5-output-projection-weighted-expert-mix">🔶 [5] <strong>Output projection (Weighted Expert Mix)</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-3-모델-아키텍처-구성">📌 3. 모델 아키텍처 구성</a>
+      <ul>
+        <li><a href="#-핵심-변경점">🔧 핵심 변경점:</a></li>
+      </ul>
+    </li>
+    <li><a href="#-4-연산량-및-메모리-요구량-분석">📌 4. 연산량 및 메모리 요구량 분석</a>
+      <ul>
+        <li><a href="#-연산량macs-기본-transformer-vs-switchhead-비교">⚙️ 연산량(MACs): 기본 Transformer vs SwitchHead 비교</a></li>
+        <li><a href="#-메모리-사용량">📦 메모리 사용량</a></li>
+      </ul>
+    </li>
+    <li><a href="#-요약-정리">📌 요약 정리</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-논문의-주요-한계-정리">✅ 논문의 주요 한계 정리</a></li>
+    <li><a href="#-위-한계를-극복하기-위한-주요-연구-흐름">🔍 위 한계를 극복하기 위한 주요 연구 흐름</a>
+      <ul>
+        <li><a href="#-1-초대형-모델-확장을-위한-sparse-routing-최적화">🔹 [1] <strong>초대형 모델 확장을 위한 Sparse Routing 최적화</strong></a>
+          <ul>
+            <li><a href="#-관련-흐름">📘 관련 흐름:</a></li>
+            <li><a href="#-핵심-아이디어">📌 핵심 아이디어:</a></li>
+            <li><a href="#-적용-가능-방향">🧠 적용 가능 방향:</a></li>
+          </ul>
+        </li>
+        <li><a href="#-2-load-balancing-및-expert-activation-균형화">🔹 [2] <strong>Load Balancing 및 Expert Activation 균형화</strong></a>
+          <ul>
+            <li><a href="#-관련-흐름-1">📘 관련 흐름:</a></li>
+            <li><a href="#-핵심-아이디어-1">📌 핵심 아이디어:</a></li>
+            <li><a href="#-적용-가능-방향-1">🧠 적용 가능 방향:</a></li>
+          </ul>
+        </li>
+        <li><a href="#-3-하드웨어-최적화를-위한-커널-개선">🔹 [3] <strong>하드웨어 최적화를 위한 커널 개선</strong></a>
+          <ul>
+            <li><a href="#-관련-흐름-2">📘 관련 흐름:</a></li>
+            <li><a href="#-핵심-아이디어-2">📌 핵심 아이디어:</a></li>
+            <li><a href="#-적용-가능-방향-2">🧠 적용 가능 방향:</a></li>
+          </ul>
+        </li>
+        <li><a href="#-4-layer-level-sparse-모듈과의-결합">🔹 [4] <strong>Layer-Level Sparse 모듈과의 결합</strong></a>
+          <ul>
+            <li><a href="#-관련-흐름-3">📘 관련 흐름:</a></li>
+            <li><a href="#-핵심-아이디어-3">📌 핵심 아이디어:</a></li>
+            <li><a href="#-적용-가능-방향-3">🧠 적용 가능 방향:</a></li>
+          </ul>
+        </li>
+        <li><a href="#-5-locality-aware-expert-routing--token-clustering-기반-분산">🔹 [5] <strong>Locality-aware Expert Routing / Token Clustering 기반 분산</strong></a>
+          <ul>
+            <li><a href="#-관련-흐름-4">📘 관련 흐름:</a></li>
+            <li><a href="#-핵심-아이디어-4">📌 핵심 아이디어:</a></li>
+            <li><a href="#-적용-가능-방향-4">🧠 적용 가능 방향:</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#-통합적-적용-예시-future-switchhead">📌 통합적 적용 예시: Future SwitchHead++</a></li>
+    <li><a href="#-결론">✅ 결론</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-왜-querykey는-고정하고-valueoutput만-moe로-해야-효율적인가">✅ 왜 Query/Key는 고정하고, Value/Output만 MoE로 해야 효율적인가?</a>
+      <ul>
+        <li><a href="#1-query-key는-attention-matrix를-생성하는-상호작용의-핵심">1. <strong>Query-Key는 Attention Matrix를 생성하는 상호작용의 “핵심”</strong></a></li>
+        <li><a href="#2-반면-valueoutput-projection은-attention-결과-이후-단계--개별적으로-분리-가능">2. <strong>반면, Value/Output projection은 Attention 결과 이후 단계 → 개별적으로 분리 가능</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-논문-내-실험-결과와-근거">✅ 논문 내 실험 결과와 근거</a></li>
+    <li><a href="#-구조적-특성과의-정리된-연관성">✅ 구조적 특성과의 정리된 연관성</a></li>
+    <li><a href="#-요약-핵심-정리">✅ 요약 (핵심 정리)</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-switchhead가-효율성과-성능을-동시에-확보한-핵심-요인-2가지">✅ SwitchHead가 효율성과 성능을 동시에 확보한 핵심 요인 2가지</a>
+      <ul>
+        <li><a href="#-attention-계산-병목-해소-단-하나의-attention-matrix만-계산">① Attention 계산 병목 해소: &ldquo;단 하나의 attention matrix만 계산&rdquo;</a></li>
+        <li><a href="#-σ-moe-기반-비경쟁-expert-선택으로-안정적-학습">② σ-MoE 기반 비경쟁 Expert 선택으로 안정적 학습</a></li>
+      </ul>
+    </li>
+    <li><a href="#-decoder-only-llm에-적용-가능성-분석">✅ Decoder-only LLM에 적용 가능성 분석</a>
+      <ul>
+        <li><a href="#switchhead-구조의-일반성">SwitchHead 구조의 일반성</a>
+          <ul>
+            <li><a href="#적용-예">적용 예:</a></li>
+          </ul>
+        </li>
+        <li><a href="#적용-시-유의점">적용 시 유의점</a></li>
+      </ul>
+    </li>
+    <li><a href="#-결론-요약">✅ 결론 요약</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-기본-전제-현재-switchhead의-routing-방식">✅ 기본 전제: 현재 SwitchHead의 Routing 방식</a></li>
+    <li><a href="#-만약-context-aware-routing을-추가한다면">✅ 만약 context-aware routing을 추가한다면?</a></li>
+    <li><a href="#-이점-장점">✅ 이점 (장점)</a>
+      <ul>
+        <li><a href="#1-문맥-기반-expert-선택--더-표현력-높은-분기">1. <strong>문맥 기반 expert 선택 → 더 표현력 높은 분기</strong></a></li>
+        <li><a href="#2-expert-redundancy-감소-및-압축-향상">2. <strong>Expert redundancy 감소 및 압축 향상</strong></a></li>
+        <li><a href="#3-추론-시-interpretability-향상-가능">3. <strong>추론 시 interpretability 향상 가능</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-위험-단점">❌ 위험 (단점)</a>
+      <ul>
+        <li><a href="#1-연산량-증가-routing-계산이-비선형화됨">1. <strong>연산량 증가: routing 계산이 비선형화됨</strong></a></li>
+        <li><a href="#2-attention과-routing-간의-dependency-loop-발생-가능성">2. <strong>attention과 routing 간의 dependency loop 발생 가능성</strong></a></li>
+        <li><a href="#3-expert-collapseoverfitting-위험-증가">3. <strong>expert collapse/overfitting 위험 증가</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-가능한-구현-방식-및-완화-전략">🔄 가능한 구현 방식 및 완화 전략</a></li>
+    <li><a href="#-결론-언제-context-aware-routing을-고려할-수-있는가">✅ 결론: 언제 context-aware routing을 고려할 수 있는가?</a></li>
+    <li><a href="#-요약">📌 요약</a></li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

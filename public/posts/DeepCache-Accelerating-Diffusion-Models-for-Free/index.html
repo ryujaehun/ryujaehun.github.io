@@ -1,0 +1,2894 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>DeepCache: Accelerating Diffusion Models for Free | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점과 독창성 강점:
+훈련 불필요한 가속화 방법: 기존의 모델 압축이..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/DeepCache-Accelerating-Diffusion-Models-for-Free/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/DeepCache-Accelerating-Diffusion-Models-for-Free/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="DeepCache: Accelerating Diffusion Models for Free">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점과 독창성 강점:">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-12-09T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-12-09T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="DeepCache: Accelerating Diffusion Models for Free">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점과 독창성 강점:">
+
+
+  <meta itemprop="name" content="DeepCache: Accelerating Diffusion Models for Free">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점과 독창성 강점:">
+  <meta itemprop="datePublished" content="2024-12-09T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-12-09T00:00:00+00:00">
+  <meta itemprop="wordCount" content="9339">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt,LLM-Inference">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">DeepCache: Accelerating Diffusion Models for Free</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    DeepCache: Accelerating Diffusion Models for Free
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-12-09">
+          2024년 12월 09일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >19 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>9339 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+                <a
+                  href="/categories/LLM-Inference/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  LLM-Inference
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2312.00858v2">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h3 id="논문의-강점과-독창성">논문의 강점과 독창성</h3>
+<ol>
+<li>
+<p><strong>강점</strong>:</p>
+<ul>
+<li><strong>훈련 불필요한 가속화 방법</strong>: 기존의 모델 압축이나 속도 향상 방법은 대규모 재학습이 필요한 경우가 많지만, 이 논문에서는 훈련 없이 모델의 속도를 개선할 수 있는 혁신적인 접근법을 제시했습니다.</li>
+<li><strong>U-Net 구조 활용</strong>: U-Net의 구조적 특성을 활용하여 고레벨 특징(high-level features)을 캐싱하고, 저레벨 특징(low-level features)만 업데이트하여 연산 비용을 대폭 절감합니다.</li>
+<li><strong>다양한 모델 및 데이터셋에 대한 일반화 가능성</strong>: DDPM, LDM, Stable Diffusion 등의 여러 확산 모델에서 성능이 향상되었으며, 다양한 데이터셋(CIFAR, ImageNet, COCO 등)에서도 실험적으로 검증되었습니다.</li>
+<li><strong>가속 성능</strong>: Stable Diffusion V1.5는 2.3배, LDM-4-G는 7.0배 가속을 이루면서도 이미지 품질의 감소를 최소화했습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>독창성</strong>:</p>
+<ul>
+<li><strong>DeepCache 알고리즘</strong>: 기존의 압축 또는 가속화 기법과 달리, 연속적인 디노이징 단계에서 고레벨 특징의 시간적 유사성을 활용하여 연산을 캐싱하는 새로운 방법론입니다.</li>
+<li><strong>1:N 전략</strong>: 한 번 계산된 특징을 여러 단계에서 재사용할 수 있도록 하는 1:N 전략을 도입하여, 계산 효율성을 극대화했습니다.</li>
+<li><strong>비균일(non-uniform) 캐싱</strong>: 특정 단계에서 유사성이 낮아지는 문제를 해결하기 위해 비균일 캐싱 전략을 도입했습니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="핵심-알고리즘-설명-예시-포함">핵심 알고리즘 설명 (예시 포함)</h3>
+<p><strong>DeepCache의 작동 과정</strong>:</p>
+<ol>
+<li>
+<p><strong>기본 원리</strong>:</p>
+<ul>
+<li>고레벨 특징은 연속된 디노이징 단계에서 변화가 적습니다. 이를 기반으로 이전 단계의 고레벨 특징을 캐싱하여 다음 단계에서 재활용합니다.</li>
+<li>저레벨 특징은 매 단계에서 업데이트되어야 하므로 계산을 유지합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>과정</strong>:</p>
+<ol>
+<li><strong>캐싱 단계</strong>:
+<ul>
+<li>입력 ( x_t )에서 U-Net의 고레벨 특징 ( F_t )를 계산하여 저장합니다.</li>
+</ul>
+</li>
+<li><strong>재활용 단계</strong>:
+<ul>
+<li>다음 단계 ( t-1 )에서 고레벨 특징을 새로 계산하지 않고, 이전 단계에서 저장한 ( F_t )를 재활용합니다.</li>
+<li>저레벨 특징만 새로 계산하여 결합합니다.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<p><strong>예시</strong>:</p>
+<ul>
+<li>입력 이미지 ( x_t ): 가우시안 노이즈로부터 시작.</li>
+<li>U-Net의 첫 번째 디노이징 단계:
+<ul>
+<li>고레벨 특징 ( F_t = U_m(x_t) ) 계산 후 캐싱.</li>
+</ul>
+</li>
+<li>두 번째 디노이징 단계:
+<ul>
+<li>고레벨 특징 ( F_t )를 캐시에서 불러오고, 저레벨 특징 ( D_{t-1} )만 계산하여 결합.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="한계점">한계점</h3>
+<ol>
+<li>
+<p><strong>구조 의존성</strong>:</p>
+<ul>
+<li>U-Net 구조의 특징에 강하게 의존하므로, 다른 구조를 사용하는 확산 모델에서는 바로 적용하기 어렵습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>캐싱 간격에 따른 품질 저하</strong>:</p>
+<ul>
+<li>캐싱 간격(N)이 너무 크면 고레벨 특징의 변화가 무시되며, 결과적으로 이미지 품질이 저하될 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>적용 가능성</strong>:</p>
+<ul>
+<li>초기 설정이나 하이퍼파라미터 튜닝이 필요하여, 실제 응용에서 추가적인 실험을 요구할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>제한된 가속 비율</strong>:</p>
+<ul>
+<li>캐싱 가능한 레이어의 비율이 제한적일 경우, 속도 향상의 효과가 상대적으로 감소합니다.</li>
+</ul>
+</li>
+</ol>
+<p>이 논문은 기존 훈련 기반 압축 및 가속화 기술의 대안으로 주목할 만한 기여를 했으며, 확산 모델 연구와 응용에서 중요한 발전을 나타냅니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>논문에서 제안된 <strong>DeepCache 알고리즘</strong>은 **확산 모델(Diffusion Models)**의 디노이징(reverse denoising) 과정에서 <strong>중복 연산을 줄여 계산 속도를 향상</strong>시키기 위한 방법입니다. 이 알고리즘은 주로 <strong>U-Net 구조</strong>에서의 <strong>고레벨(high-level) 특징 캐싱과 저레벨(low-level) 특징 업데이트</strong>를 핵심 아이디어로 합니다.</p>
+<hr>
+<h3 id="1-배경과-문제-정의">1. <strong>배경과 문제 정의</strong></h3>
+<ul>
+<li>
+<p><strong>확산 모델의 디노이징 과정</strong>:
+확산 모델은 랜덤 노이즈에서 시작해, 이를 반복적으로 디노이징하여 샘플을 생성합니다. 이 과정은 다수의 연속적인 단계로 이루어져 있고, 각 단계에서 비슷한 연산이 반복됩니다.</p>
+</li>
+<li>
+<p><strong>관찰</strong>:
+고레벨 특징(high-level features)은 연속적인 단계에서 큰 변화가 없으며, **시간적 일관성(temporal consistency)**을 보입니다. 반면, 저레벨 특징(low-level features)은 매 단계에서 업데이트가 필요합니다.</p>
+</li>
+<li>
+<p><strong>목표</strong>:
+이러한 고레벨 특징의 유사성을 활용하여 계산량을 줄이고, 디노이징 과정을 가속화하는 방법을 제안합니다.</p>
+</li>
+</ul>
+<hr>
+<h3 id="2-deepcache-알고리즘의-주요-아이디어">2. <strong>DeepCache 알고리즘의 주요 아이디어</strong></h3>
+<ol>
+<li>
+<p><strong>캐싱</strong>:</p>
+<ul>
+<li><strong>U-Net 구조</strong>의 고레벨 특징은 시간적으로 변화가 적으므로, 이를 한 번 계산하여 캐시(Cache)에 저장합니다.</li>
+<li>이후의 디노이징 단계에서는 고레벨 특징을 재계산하지 않고, 캐시에서 불러옵니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>부분 연산(Partial Inference)</strong>:</p>
+<ul>
+<li>고레벨 특징은 캐시에서 가져오고, 저레벨 특징만 새롭게 계산하여 결합합니다.</li>
+<li>이를 통해 전체 U-Net을 통과하지 않고도 다음 단계의 출력을 생성합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>1:N 전략</strong>:</p>
+<ul>
+<li>한 번 계산된 고레벨 특징을 여러 단계(N단계)에 걸쳐 재사용하여, 연산량을 더욱 줄입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>비균일 캐싱(non-uniform caching)</strong>:</p>
+<ul>
+<li>일부 단계에서 고레벨 특징의 변화가 클 수 있습니다. 이를 감안하여, 고레벨 특징이 유사성이 낮아지는 단계에서는 더 자주 업데이트하는 방식으로 품질 저하를 최소화합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="3-deepcache의-작동-과정">3. <strong>DeepCache의 작동 과정</strong></h3>
+<h4 id="step-1-캐싱-단계"><strong>Step 1: 캐싱 단계</strong></h4>
+<ol>
+<li>디노이징 단계 ( t )에서, 입력 ( x_t )가 주어졌을 때, 전체 U-Net을 사용하여 고레벨 특징 ( F_t )를 계산합니다.
+<ul>
+<li>고레벨 특징: U-Net의 업샘플링 경로(Upsampling Path)에서 생성된 고차원 표현입니다.</li>
+<li>계산된 ( F_t )는 캐시에 저장됩니다.</li>
+</ul>
+</li>
+<li>저레벨 특징은 계속 업데이트합니다.</li>
+</ol>
+<h4 id="step-2-재활용-단계"><strong>Step 2: 재활용 단계</strong></h4>
+<ol>
+<li>다음 단계 ( t-1 )에서는 전체 U-Net을 다시 실행하지 않습니다.</li>
+<li>고레벨 특징 ( F_t )를 캐시에서 불러오고, 저레벨 특징만 업데이트하여 출력 ( x_{t-1} )을 생성합니다.
+<ul>
+<li>수식으로 표현:
+[
+x_{t-1} = \text{Concat}(D_{t-1}(\cdot), F_t)
+]
+여기서 ( D_{t-1}(\cdot) )는 저레벨 특징 계산 부분, ( F_t )는 캐시에서 불러온 고레벨 특징입니다.</li>
+</ul>
+</li>
+</ol>
+<h4 id="step-3-1n-전략"><strong>Step 3: 1:N 전략</strong></h4>
+<ol>
+<li>고레벨 특징 ( F_t )를 ( N )단계 동안 재사용합니다.</li>
+<li>캐싱이 이루어지는 단계는 다음과 같습니다:
+[
+I = {x \in \mathbb{N} ,|, x = iN, 0 \leq i &lt; k}
+]
+여기서 ( k = \lceil T/N \rceil ), ( T )는 총 디노이징 단계 수입니다.</li>
+</ol>
+<h4 id="step-4-비균일-1n-전략-선택적"><strong>Step 4: 비균일 1:N 전략 (선택적)</strong></h4>
+<ol>
+<li>고레벨 특징의 유사성이 낮아지는 단계에서는 캐싱 간격을 줄입니다.</li>
+<li>특정 중심 단계 ( c )와 파워 ( p )를 기준으로, 더 자주 업데이트할 단계의 순서를 설정합니다:
+[
+I = \text{unique_int} \left({ik ,|, ik = (lk)^p + c }\right)
+]</li>
+</ol>
+<hr>
+<h3 id="4-deepcache-알고리즘-예시">4. <strong>DeepCache 알고리즘 예시</strong></h3>
+<h4 id="입력-데이터"><strong>입력 데이터</strong>:</h4>
+<ul>
+<li>초기 랜덤 노이즈 ( x_t ).</li>
+</ul>
+<h4 id="u-net-구조의-특징-계산"><strong>U-Net 구조의 특징 계산</strong>:</h4>
+<ol>
+<li>
+<p>첫 번째 디노이징 단계:</p>
+<ul>
+<li>( x_t )를 통해 U-Net의 고레벨 특징 ( F_t )를 계산하고 저장.</li>
+<li>( F_t ) = U-Net의 업샘플링 경로 출력.</li>
+</ul>
+</li>
+<li>
+<p>두 번째 디노이징 단계:</p>
+<ul>
+<li>고레벨 특징 ( F_t )는 캐시에서 불러옴.</li>
+<li>저레벨 특징만 계산하여 ( x_{t-1} ) 생성.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="5-deepcache-알고리즘의-수식">5. <strong>DeepCache 알고리즘의 수식</strong></h3>
+<ol>
+<li>
+<p><strong>캐싱 단계</strong>:</p>
+<ul>
+<li>고레벨 특징 계산:
+[
+F_t \leftarrow U_m(x_t)
+]</li>
+<li>캐싱된 특징 저장:
+[
+F_{\text{cache}} \leftarrow F_t
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>재활용 단계</strong>:</p>
+<ul>
+<li>고레벨 특징 재활용:
+[
+x_{t-1} = \text{Concat}(D_{t-1}(\cdot), F_{\text{cache}})
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>1:N 전략</strong>:</p>
+<ul>
+<li>고레벨 특징 ( F_t )는 ( N )단계 동안 재사용.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="6-deepcache의-장점">6. <strong>DeepCache의 장점</strong></h3>
+<ul>
+<li><strong>훈련 불필요</strong>: 고레벨 특징의 캐싱은 사전 훈련된 모델에 추가적으로 적용될 수 있어, 별도의 훈련 비용이 필요 없습니다.</li>
+<li><strong>가속 효과</strong>: U-Net의 연산량을 줄여 최대 7배의 가속 효과를 달성합니다.</li>
+<li><strong>확장성</strong>: 다양한 확산 모델(Diffusion Models)과 샘플링 방법에 적용 가능합니다.</li>
+</ul>
+<p>이 알고리즘은 단순하면서도 기존의 확산 모델 가속화 기법에 비해 효율적이고 실용적입니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<p>논문에서 제시한 결과는 다양한 데이터셋과 모델에서 <strong>DeepCache</strong>의 성능을 정량적으로 입증하며, 특히 기존 방법론과 비교할 때 몇 가지 특출난 점이 강조됩니다. 아래는 논문에서 제시된 결과와 이를 뒷받침하는 논리, 그리고 이에 대한 저의 분석입니다.</p>
+<hr>
+<h3 id="1-논문에서-제시한-주요-결과">1. <strong>논문에서 제시한 주요 결과</strong></h3>
+<h4 id="1-속도-향상">(1) <strong>속도 향상</strong></h4>
+<ul>
+<li><strong>Stable Diffusion V1.5</strong>:
+<ul>
+<li>기존 모델 대비 2.3배의 속도 향상을 달성하며, 이미지 품질(CLIP Score)은 0.05의 미미한 감소를 보임.</li>
+</ul>
+</li>
+<li><strong>LDM-4-G (ImageNet)</strong>:
+<ul>
+<li>최대 7배의 가속 효과와 0.22의 FID 증가라는 경미한 품질 감소를 확인.</li>
+</ul>
+</li>
+<li><strong>다른 데이터셋(CIFAR10, LSUN 등)</strong>:
+<ul>
+<li>1.3배에서 2배 이상의 속도 향상을 달성하면서도 FID와 IS 지표에서 기존 방법론과 유사하거나 더 나은 결과를 보여줌.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-품질-유지">(2) <strong>품질 유지</strong></h4>
+<ul>
+<li><strong>ImageNet (LDM-4-G)</strong>:
+<ul>
+<li>FID 점수: 기존 LDM-4의 3.60 대비 3.59(FID 감소 미미).</li>
+<li>Non-uniform 1:N 전략을 적용했을 때, 품질 저하 없이 더 높은 가속 성능을 얻음.</li>
+</ul>
+</li>
+<li><strong>Stable Diffusion</strong>:
+<ul>
+<li>BK-SDM (기존 구조적 압축 기법)과 비교 시, 동일한 속도에서 더 나은 이미지 품질(CLIP Score 29.46 vs. 27.36)을 기록.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-훈련-필요-없음">(3) <strong>훈련 필요 없음</strong></h4>
+<ul>
+<li>DeepCache는 추가 훈련 없이 기존 모델에서 직접 적용 가능.</li>
+<li>기존의 <strong>Diff-Pruning</strong>이나 <strong>BK-SDM</strong>과 달리, 훈련 비용과 데이터 의존도를 제거하면서도 경쟁력 있는 결과를 달성.</li>
+</ul>
+<hr>
+<h3 id="2-deepcache의-특출난-점">2. <strong>DeepCache의 특출난 점</strong></h3>
+<h4 id="1-훈련-없는-가속화">(1) <strong>훈련 없는 가속화</strong></h4>
+<ul>
+<li>기존 모델 가속화 방법론(Diff-Pruning, BK-SDM)은 모델 압축을 위해 사전 학습된 모델에 대해 추가적인 훈련이 필요합니다.
+<ul>
+<li>예를 들어, Diff-Pruning은 10만~50만 단계의 추가 훈련이 필요하며, BK-SDM은 추가적으로 230만 개의 텍스트-이미지 쌍을 훈련합니다.</li>
+</ul>
+</li>
+<li>반면, DeepCache는 훈련 없이 U-Net의 구조적 특성을 활용하여 속도를 향상시키므로, <strong>실용성이 매우 뛰어납니다.</strong></li>
+</ul>
+<h4 id="2-다양한-데이터셋과-모델에서의-범용성">(2) <strong>다양한 데이터셋과 모델에서의 범용성</strong></h4>
+<ul>
+<li>논문에서는 <strong>Stable Diffusion, LDM, DDPM</strong> 등 여러 모델에 DeepCache를 적용하며, CIFAR10, ImageNet, COCO와 같은 데이터셋에서 일관되게 가속 효과와 품질 유지 결과를 보여줍니다.</li>
+<li>이는 <strong>특정 모델 구조에 의존적이지 않은 접근법</strong>임을 입증합니다.</li>
+</ul>
+<h4 id="3-캐싱을-통한-연산-절감">(3) <strong>캐싱을 통한 연산 절감</strong></h4>
+<ul>
+<li>기존의 모델 압축 기법은 모델의 구조적 변형이나 훈련 단계를 필요로 하지만, DeepCache는 시간적 특징의 유사성을 활용한 캐싱 전략으로 단순하면서도 효과적인 가속화를 달성합니다.</li>
+</ul>
+<hr>
+<h3 id="3-결과를-뒷받침하는-논문의-논리">3. <strong>결과를 뒷받침하는 논문의 논리</strong></h3>
+<h4 id="1-시간적-일관성-활용">(1) <strong>시간적 일관성 활용</strong></h4>
+<ul>
+<li>디노이징 과정에서 고레벨 특징은 연속 단계 간 변화가 적음(0.95 이상의 유사성 관찰).</li>
+<li>이를 기반으로 고레벨 특징을 캐싱하여 연산을 중복하지 않음.</li>
+</ul>
+<h4 id="2-u-net-구조-활용">(2) <strong>U-Net 구조 활용</strong></h4>
+<ul>
+<li>U-Net에서 고레벨 특징(업샘플링 경로)과 저레벨 특징(다운샘플링 경로)이 분리되어 계산됨.</li>
+<li>고레벨 특징을 캐싱하여, 업샘플링 경로의 계산량을 대폭 줄임.</li>
+</ul>
+<h4 id="3-1n-및-비균일-캐싱-전략">(3) <strong>1:N 및 비균일 캐싱 전략</strong></h4>
+<ul>
+<li>고레벨 특징을 여러 단계에서 재사용하여 가속화 효과 극대화.</li>
+<li>비균일 캐싱으로 유사성이 낮아지는 특정 단계에서 품질 저하를 방지.</li>
+</ul>
+<hr>
+<h3 id="4-추가적인-분석">4. <strong>추가적인 분석</strong></h3>
+<h4 id="1-deepcache의-효과">(1) <strong>DeepCache의 효과</strong></h4>
+<ul>
+<li>논문에서 제시된 주요 결과들은 DeepCache의 알고리즘적 설계와 긴밀히 연관되어 있습니다.
+<ul>
+<li><strong>시간적 유사성</strong>을 활용하여 연산 중복을 제거함으로써 속도를 크게 향상시킴.</li>
+<li>U-Net의 구조적 특성을 활용해 효율적으로 고레벨/저레벨 특징을 분리.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-deepcache의-장점은-모델-구조와-데이터에-따라-변동">(2) <strong>DeepCache의 장점은 모델 구조와 데이터에 따라 변동</strong></h4>
+<ul>
+<li><strong>U-Net의 깊이</strong>나 <strong>특징 맵 크기</strong>가 다르면 DeepCache의 가속 효과는 달라질 수 있습니다.
+<ul>
+<li>예를 들어, 고레벨 특징이 적은 모델에서는 가속화 비율이 감소할 가능성이 있습니다.</li>
+</ul>
+</li>
+<li>하지만, 논문은 다양한 데이터셋에서 일관된 결과를 보여주어 이러한 제약을 어느 정도 극복함을 입증합니다.</li>
+</ul>
+<h4 id="3-품질-저하-최소화의-이유">(3) <strong>품질 저하 최소화의 이유</strong></h4>
+<ul>
+<li>논문에서 제시된 고레벨 특징의 유사성은 실험적으로 증명되었으며, 이는 품질 저하가 적은 이유로 작용합니다.
+<ul>
+<li>캐싱 간격이 클수록(예: ( N=20 )) 품질 저하가 발생하지만, 적정 간격에서는 큰 영향을 미치지 않음.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="5-제안된-방법의-개선-가능성">5. <strong>제안된 방법의 개선 가능성</strong></h3>
+<h4 id="1-모델-구조-최적화">(1) <strong>모델 구조 최적화</strong></h4>
+<ul>
+<li>U-Net 외의 모델에서도 적용 가능하도록 범용적인 캐싱 전략 개발이 가능할 것입니다.</li>
+</ul>
+<h4 id="2-동적-캐싱-간격">(2) <strong>동적 캐싱 간격</strong></h4>
+<ul>
+<li>고정된 캐싱 간격이 아닌, 모델 출력 품질을 실시간으로 평가하여 동적으로 캐싱 간격을 조정하는 방법이 품질을 더욱 높일 수 있을 것으로 보입니다.</li>
+</ul>
+<h4 id="3-다른-특징-추출-모델과-결합">(3) <strong>다른 특징 추출 모델과 결합</strong></h4>
+<ul>
+<li>고레벨 특징 외에도, 저레벨 특징의 일관성을 활용한 추가 가속화 전략을 제안할 수 있습니다.</li>
+</ul>
+<hr>
+<h3 id="결론">결론</h3>
+<p>논문에서 제시된 DeepCache는 간단한 아이디어와 실용적인 설계로 기존 방법론 대비 탁월한 속도와 품질 유지 효과를 보여줍니다. 이는 고레벨 특징의 유사성과 U-Net의 구조적 특성을 창의적으로 활용한 결과이며, 앞으로 다양한 모델과 응용으로 확장 가능성이 큽니다.</p>
+<h1 id="q--이-논문에서-제시된-방법을-실제로-사용하려면-기존-방법에서-어떠한-구현이-추가적으로-필요하고-이러한-구현에-소모되는-공수-및-연산에-필요한-컴퓨팅-자원의-크기에-대해서-계산해줄-수-있겠니">Q : 이 논문에서 제시된 방법을 실제로 사용하려면 기존 방법에서 어떠한 구현이 추가적으로 필요하고 이러한 구현에 소모되는 공수 및 연산에 필요한 컴퓨팅 자원의 크기에 대해서 계산해줄 수 있겠니?</h1>
+<h3 id="deepcache를-실제로-사용하기-위한-구현-요구-사항"><strong>DeepCache를 실제로 사용하기 위한 구현 요구 사항</strong></h3>
+<p><strong>DeepCache</strong>를 기존 모델에 적용하려면 다음과 같은 구현 단계가 필요합니다:</p>
+<hr>
+<h3 id="1-u-net-구조에서-캐싱-로직-추가">1. <strong>U-Net 구조에서 캐싱 로직 추가</strong></h3>
+<h4 id="1-기존-구조-수정">(1) <strong>기존 구조 수정</strong></h4>
+<ul>
+<li>U-Net 모델의 업샘플링 경로에서 생성되는 <strong>고레벨 특징</strong>을 추출하고 저장할 로직을 추가해야 합니다.
+<ul>
+<li>특정 업샘플링 블록(예: ( U_m ))에서 생성된 특징 맵을 캐시 저장.</li>
+<li>다운샘플링 경로의 저레벨 특징은 그대로 업데이트.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-캐싱을-위한-메모리-관리">(2) <strong>캐싱을 위한 메모리 관리</strong></h4>
+<ul>
+<li>각 디노이징 단계에서 필요한 고레벨 특징 ( F_t )를 저장하고, 이후 단계에서 이를 다시 불러오는 기능 추가.
+<ul>
+<li>메모리 효율성을 위해 캐싱 간격 ( N )에 따라 적절히 저장 공간을 관리해야 함.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-1n-전략-구현">(3) <strong>1:N 전략 구현</strong></h4>
+<ul>
+<li>( N )단계마다 캐시를 갱신하며, 갱신되지 않는 단계에서는 캐싱된 고레벨 특징을 불러오도록 구현.</li>
+</ul>
+<h4 id="4-비균일-캐싱-로직선택-사항">(4) <strong>비균일 캐싱 로직(선택 사항)</strong></h4>
+<ul>
+<li>특정 단계에서 고레벨 특징의 변화가 큰 경우, 캐싱 갱신 간격을 줄이도록 비균일 ( 1:N ) 전략을 적용.</li>
+</ul>
+<hr>
+<h3 id="2-알고리즘-구현에-필요한-추가-컴퓨팅-자원">2. <strong>알고리즘 구현에 필요한 추가 컴퓨팅 자원</strong></h3>
+<h4 id="1-메모리-요구-사항">(1) <strong>메모리 요구 사항</strong></h4>
+<ul>
+<li>
+<p>캐싱된 고레벨 특징은 U-Net의 특정 업샘플링 블록에서 생성된 특징 맵으로, 이는 모델의 깊이 및 입력 크기에 따라 달라짐.</p>
+</li>
+<li>
+<p>예를 들어:</p>
+<ul>
+<li>Stable Diffusion V1.5의 경우, 입력 크기가 ( 512 \times 512 )이고, ( m )-번째 업샘플링 블록의 채널 수가 ( C_m )일 때, 고레벨 특징 캐싱에 필요한 메모리:
+[
+\text{Memory per cache} = H_m \times W_m \times C_m \times 4 \ (\text{float32})
+]
+여기서 ( H_m )와 ( W_m )는 업샘플링 블록의 출력 크기.</li>
+</ul>
+</li>
+<li>
+<p>전체 메모리 사용량:
+[
+\text{Total Memory} = \text{Memory per cache} \times T / N
+]
+( T ): 전체 디노이징 단계, ( N ): 캐싱 간격.</p>
+</li>
+<li>
+<p>예시:</p>
+<ul>
+<li>( H_m = W_m = 64 ), ( C_m = 256 ), ( T = 50 ), ( N = 5 )라면:
+[
+\text{Memory per cache} = 64 \times 64 \times 256 \times 4 \approx 4 \ \text{MB}
+]
+[
+\text{Total Memory} = 4 \times (50 / 5) = 40 \ \text{MB}
+]</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-추가-연산량">(2) <strong>추가 연산량</strong></h4>
+<ul>
+<li>캐싱 로직 자체는 메모리 접근과 간단한 연산(특징 맵 결합)만 필요하므로, <strong>추가 연산량은 거의 무시할 수 있음</strong>.</li>
+<li>그러나 <strong>저레벨 특징 업데이트</strong>를 위한 부분적인 U-Net 계산은 계속 수행해야 하므로, 실제 연산 절감 효과는 캐싱 적용 범위에 따라 달라집니다:
+<ul>
+<li>캐싱 적용 없이 전체 U-Net 연산을 수행할 경우, 연산량은 대략:
+[
+\text{Total MACs} = \text{MACs per step} \times T
+]</li>
+<li>캐싱 적용 시, 일부 연산량을 줄여:
+[
+\text{Reduced MACs} = \text{MACs per step (cached)} \times (T / N) + \text{MACs per step (partial)} \times (T - T / N)
+]</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-추가적인-공수">3. <strong>추가적인 공수</strong></h3>
+<h4 id="1-기술적-요구-사항">(1) <strong>기술적 요구 사항</strong></h4>
+<ul>
+<li><strong>프레임워크 지원</strong>:
+<ul>
+<li>PyTorch 또는 TensorFlow에서 기존의 U-Net 구현을 수정해야 하며, 이는 일반적인 연구 개발 환경에서는 비교적 간단합니다.</li>
+<li>캐싱 로직 추가는 모델의 forward 함수를 수정하는 수준에서 해결 가능.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-필요한-개발-시간">(2) <strong>필요한 개발 시간</strong></h4>
+<ul>
+<li><strong>캐싱 로직 구현</strong>: 약 2~3일 소요.
+<ul>
+<li>U-Net 구조에 따라 캐싱 위치 및 전략을 세밀히 조정해야 함.</li>
+</ul>
+</li>
+<li><strong>비균일 캐싱</strong>: 약 1주일 소요.
+<ul>
+<li>고레벨 특징의 시간적 유사성을 평가하고, 적절한 비균일 간격을 설정하기 위한 추가적인 실험이 필요.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-실험-및-튜닝">(3) <strong>실험 및 튜닝</strong></h4>
+<ul>
+<li>최적의 ( N ) 및 비균일 캐싱 전략을 찾기 위한 실험에 1~2주가 소요될 수 있음.</li>
+</ul>
+<hr>
+<h3 id="4-예상되는-가속-비율">4. <strong>예상되는 가속 비율</strong></h3>
+<ul>
+<li>
+<p><strong>Stable Diffusion</strong>:</p>
+<ul>
+<li>논문 결과에 따르면, 50단계 디노이징에서 ( N = 5 )를 적용했을 때, <strong>2.3배의 속도 향상</strong>을 기록.</li>
+<li>이는 업샘플링 경로에서 캐싱된 고레벨 특징 덕분에 U-Net 연산량의 상당 부분을 줄였기 때문.</li>
+</ul>
+</li>
+<li>
+<p><strong>LDM-4-G</strong>:</p>
+<ul>
+<li>( N = 20 )일 때, <strong>7배 가속</strong>을 기록. 하지만, 품질이 약간 저하됨(FID 증가).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결론-1">결론</h3>
+<p><strong>DeepCache</strong>를 실제로 구현하려면, 다음과 같은 추가 작업이 필요합니다:</p>
+<ul>
+<li>U-Net에서 고레벨 특징을 캐싱하고, 적절한 간격으로 이를 활용하도록 수정.</li>
+<li>캐싱된 데이터를 효율적으로 관리할 수 있는 메모리 할당 및 회수 로직 구현.</li>
+<li>적절한 캐싱 간격과 비균일 전략 설정.</li>
+</ul>
+<p>추가 공수는 비교적 적으며(약 2~3주), 연산 자원 소모는 메모리 요구량이 약간 증가하는 수준에 그칩니다. 이에 따라, <strong>속도-품질 트레이드오프를 고려한 실용적 구현이 가능</strong>합니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="논문의-입력-데이터와-추론-과정"><strong>논문의 입력 데이터와 추론 과정</strong></h3>
+<h4 id="입력-데이터-1"><strong>입력 데이터</strong></h4>
+<ul>
+<li><strong>초기 입력</strong>: 확산 모델에서의 초기 입력은 <strong>가우시안 노이즈</strong>입니다.
+<ul>
+<li>크기: ( x_t \in \mathbb{R}^{H \times W \times C} ), 여기서 ( H, W )는 이미지의 높이와 너비, ( C )는 채널 수입니다.</li>
+<li>예: ( H = 256, W = 256, C = 3 ) (컬러 이미지).</li>
+</ul>
+</li>
+</ul>
+<h4 id="추론-과정"><strong>추론 과정</strong></h4>
+<ol>
+<li>
+<p><strong>초기화</strong>:</p>
+<ul>
+<li>초기 가우시안 노이즈 ( x_T \sim N(0, I) )에서 시작.</li>
+<li>총 디노이징 단계 ( T ) 설정 (예: ( T = 50 )).</li>
+</ul>
+</li>
+<li>
+<p><strong>디노이징 단계</strong> (( t )에서 ( t-1 )로):</p>
+<ul>
+<li>각 단계에서 다음 수식을 사용해 ( x_{t-1} )을 계산:
+[
+x_{t-1} = \frac{1}{\sqrt{\alpha_t}} \left( x_t - \frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}<em>t}} \epsilon</em>\theta(x_t, t) \right) + \sigma_t z
+]
+<ul>
+<li>( \alpha_t ): 노이즈 감소율.</li>
+<li>( \epsilon_\theta(x_t, t) ): U-Net 기반의 신경망이 예측하는 노이즈.</li>
+<li>( \sigma_t ): 노이즈 샘플링을 위한 가중치.</li>
+<li>( z \sim N(0, I) ): 가우시안 노이즈.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>DeepCache 적용</strong>:</p>
+<ul>
+<li>고레벨 특징(( F_t ))은 캐시에 저장.</li>
+<li>저레벨 특징만 계산하여 ( x_{t-1} ) 생성.</li>
+</ul>
+</li>
+<li>
+<p><strong>최종 출력</strong>:</p>
+<ul>
+<li>( x_0 ) (디노이징 완료된 샘플)는 원본 이미지와 유사한 출력.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="예시-cifar-10-이미지-생성-32--32-해상도"><strong>예시: CIFAR-10 이미지 생성 (32 × 32 해상도)</strong></h3>
+<h4 id="입력-및-초기-설정"><strong>입력 및 초기 설정</strong></h4>
+<ul>
+<li>입력 ( x_T ): ( 32 \times 32 \times 3 ) 크기의 랜덤 노이즈.</li>
+<li>총 디노이징 단계: ( T = 50 ).</li>
+</ul>
+<h4 id="첫-번째-디노이징-단계--t--t-"><strong>첫 번째 디노이징 단계</strong> (( t = T ))</h4>
+<ol>
+<li>
+<p><strong>U-Net을 통해 고레벨/저레벨 특징 계산</strong>:</p>
+<ul>
+<li>업샘플링 경로에서 고레벨 특징 ( F_T ) 추출 및 캐싱.</li>
+<li>다운샘플링 경로에서 저레벨 특징 ( D_T ) 계산.</li>
+</ul>
+</li>
+<li>
+<p><strong>첫 번째 출력 생성</strong>:</p>
+<ul>
+<li>( x_{T-1} ) 계산:
+[
+x_{T-1} = \frac{1}{\sqrt{\alpha_T}} \left( x_T - \frac{1-\alpha_T}{\sqrt{1-\bar{\alpha}<em>T}} \epsilon</em>\theta(x_T, T) \right) + \sigma_T z
+]</li>
+</ul>
+</li>
+</ol>
+<h4 id="다음-단계--t--t-1-t-2-dots-1-"><strong>다음 단계</strong> (( t = T-1, T-2, \dots, 1 ))</h4>
+<ol>
+<li>
+<p><strong>캐싱된 고레벨 특징 재사용</strong>:</p>
+<ul>
+<li>이전 단계에서 캐싱된 ( F_T, F_{T-1}, \dots ) 사용.</li>
+<li>저레벨 특징 ( D_{t-1} )만 업데이트.</li>
+</ul>
+</li>
+<li>
+<p><strong>출력 생성 반복</strong>:</p>
+<ul>
+<li>위 수식을 반복해 ( x_{t-1} )을 계산.</li>
+</ul>
+</li>
+</ol>
+<h4 id="최종-결과"><strong>최종 결과</strong>:</h4>
+<ul>
+<li>( x_0 )은 CIFAR-10 데이터셋의 분포와 유사한 ( 32 \times 32 \times 3 ) 크기의 이미지.</li>
+</ul>
+<hr>
+<h3 id="모델-아키텍처의-구성"><strong>모델 아키텍처의 구성</strong></h3>
+<p>논문은 U-Net 기반의 네트워크를 사용합니다.</p>
+<h4 id="u-net-구조"><strong>U-Net 구조</strong></h4>
+<ol>
+<li>
+<p><strong>다운샘플링 경로</strong>:</p>
+<ul>
+<li>컨볼루션 레이어와 풀링 연산을 통해 저레벨 특징을 추출.</li>
+<li>출력 크기는 입력 크기의 절반으로 줄어듦.</li>
+</ul>
+</li>
+<li>
+<p><strong>업샘플링 경로</strong>:</p>
+<ul>
+<li>업컨볼루션(Transposed Convolution) 연산을 통해 고레벨 특징을 생성.</li>
+<li>다운샘플링 경로에서 전달된 특징을 결합(skip connection)하여 최종 결과 생성.</li>
+</ul>
+</li>
+<li>
+<p><strong>구체적인 아키텍처 예</strong>:</p>
+<ul>
+<li>입력 크기: ( 256 \times 256 \times 3 ).</li>
+<li>채널 크기: ( 64 \rightarrow 128 \rightarrow 256 \rightarrow 512 ) (다운샘플링) → ( 256 \rightarrow 128 \rightarrow 64 ) (업샘플링).</li>
+<li>총 층수: 약 20~30층.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="연산-및-메모리-요구량"><strong>연산 및 메모리 요구량</strong></h3>
+<h4 id="1-연산-요구량-macs"><strong>1. 연산 요구량 (MACs)</strong></h4>
+<ul>
+<li>
+<p><strong>다운샘플링 블록</strong>:</p>
+<ul>
+<li>( H \times W \times C ) → ( \frac{H}{2} \times \frac{W}{2} \times 2C ).</li>
+<li>연산량:
+[
+\text{MACs} = H \times W \times C \times K^2 \times 2C
+]
+여기서 ( K )는 커널 크기 (예: ( K = 3 )).</li>
+</ul>
+</li>
+<li>
+<p><strong>업샘플링 블록</strong>:</p>
+<ul>
+<li>( \frac{H}{2} \times \frac{W}{2} \times 2C ) → ( H \times W \times C ).</li>
+<li>연산량은 다운샘플링과 유사.</li>
+</ul>
+</li>
+<li>
+<p><strong>총 연산량 (U-Net)</strong>:
+[
+\text{Total MACs} = \sum_{i=1}^{L} \text{MACs}_i
+]
+( L ): 레이어 수.</p>
+</li>
+</ul>
+<h4 id="2-메모리-요구량"><strong>2. 메모리 요구량</strong></h4>
+<ul>
+<li>
+<p><strong>모델 파라미터</strong>:</p>
+<ul>
+<li>파라미터 수: ( W = K^2 \times C_{\text{in}} \times C_{\text{out}} ), ( B = C_{\text{out}} ).</li>
+<li>메모리 사용량:
+[
+\text{Memory per layer} = (W + B) \times 4 \ (\text{float32})
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>특징 맵 캐싱</strong>:</p>
+<ul>
+<li>캐싱된 고레벨 특징:
+[
+\text{Memory per cache} = H \times W \times C \times 4 \ (\text{float32})
+]</li>
+</ul>
+</li>
+</ul>
+<h4 id="예시-stable-diffusion-v15"><strong>예시: Stable Diffusion V1.5</strong></h4>
+<ul>
+<li>입력 크기: ( 512 \times 512 ).</li>
+<li>채널 크기: ( 64 \rightarrow 128 \rightarrow 256 \rightarrow 512 ).</li>
+<li>총 메모리 요구량:
+<ul>
+<li>모델 파라미터: 약 1GB.</li>
+<li>캐싱 메모리: ( 64 \times 64 \times 256 \times 4 = 4 \ \text{MB} ) (한 단계당).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="컴퓨팅-요구량"><strong>컴퓨팅 요구량</strong></h3>
+<h4 id="1-연산량"><strong>1. 연산량</strong></h4>
+<ul>
+<li>Stable Diffusion V1.5의 연산량은 약 <strong>99.82 GFLOPs</strong>로, 디노이징 50단계에서는 총 약 <strong>5 TFLOPs</strong>가 필요.</li>
+</ul>
+<h4 id="2-가속-효과"><strong>2. 가속 효과</strong></h4>
+<ul>
+<li>DeepCache 적용 후 연산량:
+[
+\text{Reduced MACs} = \text{Full Inference MACs} \times (1/N)
+]
+( N = 5 )일 때, 약 <strong>20%~40%의 연산량 감소</strong>.</li>
+</ul>
+<hr>
+<h3 id="결론-2">결론</h3>
+<p>DeepCache는 U-Net의 업샘플링 경로에서 고레벨 특징을 캐싱하고, 저레벨 특징만 업데이트하여 연산량을 줄이는 혁신적인 방법입니다. 이 방법을 적용하면 메모리 요구량은 약간 증가하지만, 전체 연산량은 크게 감소하여 실시간 추론 및 대규모 데이터셋 작업에서 큰 이점을 제공합니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>논문의 <strong>한계를 극복하기 위한 연구 흐름</strong>은 다음과 같은 세 가지 주요 영역으로 구분될 수 있습니다. 각 영역은 논문에서 지적된 한계(구조 의존성, 품질 저하, 가속화 한계)에 대응하며, 이를 개선하기 위한 다양한 연구 방향을 제시합니다.</p>
+<hr>
+<h3 id="1-구조-의존성-극복">1. <strong>구조 의존성 극복</strong></h3>
+<p>DeepCache는 <strong>U-Net 기반 모델</strong>에 의존적이며, 다른 아키텍처에 적용하기 어려울 수 있습니다. 이를 극복하기 위한 연구 방향은 아래와 같습니다.</p>
+<h4 id="1-범용-캐싱-기법-개발">(1) <strong>범용 캐싱 기법 개발</strong></h4>
+<ul>
+<li>DeepCache는 U-Net의 고유한 업샘플링 및 다운샘플링 구조를 활용합니다. 그러나 다른 모델에서도 적용 가능한 캐싱 전략을 설계할 필요가 있습니다.
+<ul>
+<li><strong>연구 흐름</strong>:
+<ul>
+<li><strong>Transformer 기반 확산 모델</strong>에서의 고레벨 특징 캐싱:
+<ul>
+<li>Attention 메커니즘에서 생성되는 고차원 표현을 시간적으로 캐싱하고 재활용하는 방법.</li>
+</ul>
+</li>
+<li><strong>GAN(Generative Adversarial Network) 구조 적용</strong>:
+<ul>
+<li>GAN의 생성기와 판별기 간의 중간 표현 캐싱.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>가능한 접근법</strong>:
+<ul>
+<li>구조적 의존성을 최소화하는 <strong>캐싱 모듈</strong>을 별도로 설계.</li>
+<li>모델-독립적인 고레벨 특징 추출 및 저장 방식 개발.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-dynamic-feature-adaptation">(2) <strong>Dynamic Feature Adaptation</strong></h4>
+<ul>
+<li>캐싱된 고레벨 특징이 특정 구조에 고정되지 않도록, **특징 적응(Adaptation)**을 위한 동적 모듈을 추가할 수 있습니다.
+<ul>
+<li>예: 특정 구조에서 고레벨 특징의 중요도가 변할 경우, 이를 학습으로 보정.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-end-to-end-framework-통합">(3) <strong>End-to-End Framework 통합</strong></h4>
+<ul>
+<li>캐싱 전략을 모델 설계 초기 단계에서 포함하도록 <strong>End-to-End 통합 아키텍처</strong> 설계.
+<ul>
+<li>연구 흐름: 캐싱 최적화를 기반으로 한 <strong>하이브리드 확산 모델</strong> 설계.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-품질-저하-문제-해결">2. <strong>품질 저하 문제 해결</strong></h3>
+<p>DeepCache는 캐싱 간격 ( N )이 커질수록 이미지 품질의 저하가 발생합니다. 이를 해결하기 위한 접근은 다음과 같습니다.</p>
+<h4 id="1-dynamic-caching-interval">(1) <strong>Dynamic Caching Interval</strong></h4>
+<ul>
+<li>캐싱 간격을 고정하지 않고, **이미지 품질 지표(FID, CLIP Score 등)**에 따라 동적으로 조정.
+<ul>
+<li><strong>연구 흐름</strong>:
+<ul>
+<li><strong>Adaptive Interval Control</strong>:
+<ul>
+<li>고레벨 특징의 유사성을 실시간으로 평가하여 ( N )을 자동으로 조정.</li>
+</ul>
+</li>
+<li>품질 저하가 관찰될 경우, 더 작은 간격으로 캐싱을 재조정.</li>
+</ul>
+</li>
+<li><strong>기술 구현</strong>:
+<ul>
+<li>유사성 평가를 위한 경량화된 네트워크 추가.</li>
+<li>고레벨 특징의 변화량(Temporal Consistency)을 계산하는 모듈 설계.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-다중-특징-결합multi-feature-fusion">(2) <strong>다중 특징 결합(Multi-Feature Fusion)</strong></h4>
+<ul>
+<li>품질 저하를 완화하기 위해, 캐싱된 고레벨 특징과 새롭게 계산된 특징을 <strong>혼합(fusion)</strong>.
+<ul>
+<li>예: Weighted Fusion
+[
+F_t^{\text{new}} = \alpha F_t^{\text{cached}} + (1 - \alpha) F_t^{\text{calculated}}
+]
+여기서 ( \alpha )는 학습 가능한 가중치.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-quality-aware-sampling">(3) <strong>Quality-Aware Sampling</strong></h4>
+<ul>
+<li>디노이징 단계에서 샘플링 전략을 조정하여 품질 손실을 최소화.
+<ul>
+<li><strong>Non-Uniform Sampling 강화</strong>:
+<ul>
+<li>캐싱 간격을 유사성이 높은 구간에서는 넓게, 변화가 많은 구간에서는 좁게 설정.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-fine-grained-feature-updating">(4) <strong>Fine-Grained Feature Updating</strong></h4>
+<ul>
+<li>캐싱된 고레벨 특징의 일부만 선택적으로 업데이트.
+<ul>
+<li>예: 중요한 채널이나 위치 정보만 업데이트.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-가속화-한계-극복">3. <strong>가속화 한계 극복</strong></h3>
+<p>DeepCache는 고레벨 특징의 캐싱을 통해 연산량을 줄이지만, 저레벨 특징 계산은 여전히 남아 있어 가속화 비율에 한계가 있습니다. 이를 개선하는 연구 흐름은 다음과 같습니다.</p>
+<h4 id="1-저레벨-특징-계산-최적화">(1) <strong>저레벨 특징 계산 최적화</strong></h4>
+<ul>
+<li>저레벨 특징 계산 자체를 경량화하거나, 이를 캐싱과 결합하여 가속화.
+<ul>
+<li><strong>연구 흐름</strong>:
+<ul>
+<li>저레벨 특징의 중요도를 학습하여, 중요도가 낮은 특징은 생략하거나 캐싱.</li>
+<li>저해상도 버전의 저레벨 특징 계산 후, 업스케일링.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-parallel-computing-integration">(2) <strong>Parallel Computing Integration</strong></h4>
+<ul>
+<li>캐싱과 병렬 연산을 결합하여 가속화 비율을 극대화.
+<ul>
+<li><strong>기술 구현</strong>:
+<ul>
+<li>캐싱된 고레벨 특징과 저레벨 특징 계산을 GPU의 여러 스레드로 병렬화.</li>
+<li>TensorRT, ONNX와 같은 최적화 도구를 활용한 실행 속도 개선.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-lightweight-architectures">(3) <strong>Lightweight Architectures</strong></h4>
+<ul>
+<li>U-Net의 특정 레이어를 제거하거나 경량화하여 추가적인 연산 절감을 도모.
+<ul>
+<li>연구 흐름:
+<ul>
+<li>기존 U-Net 대신 <strong>MobileNet</strong>과 같은 경량화된 아키텍처 채택.</li>
+<li>특정 레이어에서 채널 수를 줄이는 <strong>Layer Pruning</strong> 적용.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-feature-pruning">(4) <strong>Feature Pruning</strong></h4>
+<ul>
+<li>디노이징 단계에서 고레벨/저레벨 특징 중 덜 중요한 부분을 제거.
+<ul>
+<li><strong>연구 흐름</strong>:
+<ul>
+<li>중요도를 평가하는 Attention Mechanism 도입.</li>
+<li>중요도가 낮은 특징을 학습으로 판단하고 연산에서 제외.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="종합적인-연구-흐름">종합적인 연구 흐름</h3>
+<h4 id="결합-전략"><strong>결합 전략</strong></h4>
+<ol>
+<li>
+<p><strong>동적 캐싱(Dynamic Caching)</strong>:</p>
+<ul>
+<li>고레벨 특징의 유사성과 중요도를 실시간으로 평가.</li>
+<li>Adaptive Interval Control, Multi-Feature Fusion 적용.</li>
+</ul>
+</li>
+<li>
+<p><strong>하드웨어 최적화</strong>:</p>
+<ul>
+<li>GPU/TPU에서 병렬 처리 및 연산량 최적화.</li>
+<li>NVIDIA TensorRT와 같은 도구로 Inference Latency 감소.</li>
+</ul>
+</li>
+<li>
+<p><strong>하이브리드 아키텍처 설계</strong>:</p>
+<ul>
+<li>확산 모델 전용 경량 아키텍처와 캐싱 전략 통합.</li>
+</ul>
+</li>
+</ol>
+<h4 id="미래-연구-흐름"><strong>미래 연구 흐름</strong></h4>
+<ul>
+<li>고레벨 특징 외에 <strong>중간 특징(Mid-Level Features)</strong> 활용 연구.</li>
+<li>캐싱과 병렬 연산을 조합한 <strong>Real-Time Application</strong> 개발.</li>
+<li>품질 저하를 완화하기 위한 <strong>Generative Feedback Loop</strong> 도입.</li>
+</ul>
+<p>이러한 연구 방향은 DeepCache가 가진 한계를 극복하고, 더 넓은 모델 및 응용 분야에서 사용될 수 있도록 확장성을 높이는 데 기여할 것입니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/DeepCache-Accelerating-Diffusion-Models-for-Free/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/DeepCache-Accelerating-Diffusion-Models-for-Free/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Get-More-with-LESS-Synthesizing-Recurrence-with-KV-Cache-Compression-for-Efficient-LLM-Inference/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                Get More with LESS: Synthesizing Recurrence with KV Cache Compression for Efficient LLM Inference
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-12-09">
+                12月09日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Abseil-Tip-182-%EC%A0%95%EC%88%98%ED%98%95-%EB%B3%80%EC%88%98%EB%A5%BC-%EC%B4%88%EA%B8%B0%ED%99%94%ED%95%98%EC%84%B8%EC%9A%94/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Abseil Tip 182 정수형 변수를 초기화하세요!
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-12-09">
+                12月09日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-강점과-독창성">논문의 강점과 독창성</a></li>
+        <li><a href="#핵심-알고리즘-설명-예시-포함">핵심 알고리즘 설명 (예시 포함)</a></li>
+        <li><a href="#한계점">한계점</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-배경과-문제-정의">1. <strong>배경과 문제 정의</strong></a></li>
+        <li><a href="#2-deepcache-알고리즘의-주요-아이디어">2. <strong>DeepCache 알고리즘의 주요 아이디어</strong></a></li>
+        <li><a href="#3-deepcache의-작동-과정">3. <strong>DeepCache의 작동 과정</strong></a>
+          <ul>
+            <li><a href="#step-1-캐싱-단계"><strong>Step 1: 캐싱 단계</strong></a></li>
+            <li><a href="#step-2-재활용-단계"><strong>Step 2: 재활용 단계</strong></a></li>
+            <li><a href="#step-3-1n-전략"><strong>Step 3: 1:N 전략</strong></a></li>
+            <li><a href="#step-4-비균일-1n-전략-선택적"><strong>Step 4: 비균일 1:N 전략 (선택적)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-deepcache-알고리즘-예시">4. <strong>DeepCache 알고리즘 예시</strong></a>
+          <ul>
+            <li><a href="#입력-데이터"><strong>입력 데이터</strong>:</a></li>
+            <li><a href="#u-net-구조의-특징-계산"><strong>U-Net 구조의 특징 계산</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#5-deepcache-알고리즘의-수식">5. <strong>DeepCache 알고리즘의 수식</strong></a></li>
+        <li><a href="#6-deepcache의-장점">6. <strong>DeepCache의 장점</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-논문에서-제시한-주요-결과">1. <strong>논문에서 제시한 주요 결과</strong></a>
+          <ul>
+            <li><a href="#1-속도-향상">(1) <strong>속도 향상</strong></a></li>
+            <li><a href="#2-품질-유지">(2) <strong>품질 유지</strong></a></li>
+            <li><a href="#3-훈련-필요-없음">(3) <strong>훈련 필요 없음</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-deepcache의-특출난-점">2. <strong>DeepCache의 특출난 점</strong></a>
+          <ul>
+            <li><a href="#1-훈련-없는-가속화">(1) <strong>훈련 없는 가속화</strong></a></li>
+            <li><a href="#2-다양한-데이터셋과-모델에서의-범용성">(2) <strong>다양한 데이터셋과 모델에서의 범용성</strong></a></li>
+            <li><a href="#3-캐싱을-통한-연산-절감">(3) <strong>캐싱을 통한 연산 절감</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-결과를-뒷받침하는-논문의-논리">3. <strong>결과를 뒷받침하는 논문의 논리</strong></a>
+          <ul>
+            <li><a href="#1-시간적-일관성-활용">(1) <strong>시간적 일관성 활용</strong></a></li>
+            <li><a href="#2-u-net-구조-활용">(2) <strong>U-Net 구조 활용</strong></a></li>
+            <li><a href="#3-1n-및-비균일-캐싱-전략">(3) <strong>1:N 및 비균일 캐싱 전략</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-추가적인-분석">4. <strong>추가적인 분석</strong></a>
+          <ul>
+            <li><a href="#1-deepcache의-효과">(1) <strong>DeepCache의 효과</strong></a></li>
+            <li><a href="#2-deepcache의-장점은-모델-구조와-데이터에-따라-변동">(2) <strong>DeepCache의 장점은 모델 구조와 데이터에 따라 변동</strong></a></li>
+            <li><a href="#3-품질-저하-최소화의-이유">(3) <strong>품질 저하 최소화의 이유</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#5-제안된-방법의-개선-가능성">5. <strong>제안된 방법의 개선 가능성</strong></a>
+          <ul>
+            <li><a href="#1-모델-구조-최적화">(1) <strong>모델 구조 최적화</strong></a></li>
+            <li><a href="#2-동적-캐싱-간격">(2) <strong>동적 캐싱 간격</strong></a></li>
+            <li><a href="#3-다른-특징-추출-모델과-결합">(3) <strong>다른 특징 추출 모델과 결합</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#deepcache를-실제로-사용하기-위한-구현-요구-사항"><strong>DeepCache를 실제로 사용하기 위한 구현 요구 사항</strong></a></li>
+        <li><a href="#1-u-net-구조에서-캐싱-로직-추가">1. <strong>U-Net 구조에서 캐싱 로직 추가</strong></a>
+          <ul>
+            <li><a href="#1-기존-구조-수정">(1) <strong>기존 구조 수정</strong></a></li>
+            <li><a href="#2-캐싱을-위한-메모리-관리">(2) <strong>캐싱을 위한 메모리 관리</strong></a></li>
+            <li><a href="#3-1n-전략-구현">(3) <strong>1:N 전략 구현</strong></a></li>
+            <li><a href="#4-비균일-캐싱-로직선택-사항">(4) <strong>비균일 캐싱 로직(선택 사항)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-알고리즘-구현에-필요한-추가-컴퓨팅-자원">2. <strong>알고리즘 구현에 필요한 추가 컴퓨팅 자원</strong></a>
+          <ul>
+            <li><a href="#1-메모리-요구-사항">(1) <strong>메모리 요구 사항</strong></a></li>
+            <li><a href="#2-추가-연산량">(2) <strong>추가 연산량</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-추가적인-공수">3. <strong>추가적인 공수</strong></a>
+          <ul>
+            <li><a href="#1-기술적-요구-사항">(1) <strong>기술적 요구 사항</strong></a></li>
+            <li><a href="#2-필요한-개발-시간">(2) <strong>필요한 개발 시간</strong></a></li>
+            <li><a href="#3-실험-및-튜닝">(3) <strong>실험 및 튜닝</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-예상되는-가속-비율">4. <strong>예상되는 가속 비율</strong></a></li>
+        <li><a href="#결론-1">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-입력-데이터와-추론-과정"><strong>논문의 입력 데이터와 추론 과정</strong></a>
+          <ul>
+            <li><a href="#입력-데이터-1"><strong>입력 데이터</strong></a></li>
+            <li><a href="#추론-과정"><strong>추론 과정</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#예시-cifar-10-이미지-생성-32--32-해상도"><strong>예시: CIFAR-10 이미지 생성 (32 × 32 해상도)</strong></a>
+          <ul>
+            <li><a href="#입력-및-초기-설정"><strong>입력 및 초기 설정</strong></a></li>
+            <li><a href="#첫-번째-디노이징-단계--t--t-"><strong>첫 번째 디노이징 단계</strong> (( t = T ))</a></li>
+            <li><a href="#다음-단계--t--t-1-t-2-dots-1-"><strong>다음 단계</strong> (( t = T-1, T-2, \dots, 1 ))</a></li>
+            <li><a href="#최종-결과"><strong>최종 결과</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#모델-아키텍처의-구성"><strong>모델 아키텍처의 구성</strong></a>
+          <ul>
+            <li><a href="#u-net-구조"><strong>U-Net 구조</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#연산-및-메모리-요구량"><strong>연산 및 메모리 요구량</strong></a>
+          <ul>
+            <li><a href="#1-연산-요구량-macs"><strong>1. 연산 요구량 (MACs)</strong></a></li>
+            <li><a href="#2-메모리-요구량"><strong>2. 메모리 요구량</strong></a></li>
+            <li><a href="#예시-stable-diffusion-v15"><strong>예시: Stable Diffusion V1.5</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#컴퓨팅-요구량"><strong>컴퓨팅 요구량</strong></a>
+          <ul>
+            <li><a href="#1-연산량"><strong>1. 연산량</strong></a></li>
+            <li><a href="#2-가속-효과"><strong>2. 가속 효과</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-2">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-구조-의존성-극복">1. <strong>구조 의존성 극복</strong></a>
+          <ul>
+            <li><a href="#1-범용-캐싱-기법-개발">(1) <strong>범용 캐싱 기법 개발</strong></a></li>
+            <li><a href="#2-dynamic-feature-adaptation">(2) <strong>Dynamic Feature Adaptation</strong></a></li>
+            <li><a href="#3-end-to-end-framework-통합">(3) <strong>End-to-End Framework 통합</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-품질-저하-문제-해결">2. <strong>품질 저하 문제 해결</strong></a>
+          <ul>
+            <li><a href="#1-dynamic-caching-interval">(1) <strong>Dynamic Caching Interval</strong></a></li>
+            <li><a href="#2-다중-특징-결합multi-feature-fusion">(2) <strong>다중 특징 결합(Multi-Feature Fusion)</strong></a></li>
+            <li><a href="#3-quality-aware-sampling">(3) <strong>Quality-Aware Sampling</strong></a></li>
+            <li><a href="#4-fine-grained-feature-updating">(4) <strong>Fine-Grained Feature Updating</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-가속화-한계-극복">3. <strong>가속화 한계 극복</strong></a>
+          <ul>
+            <li><a href="#1-저레벨-특징-계산-최적화">(1) <strong>저레벨 특징 계산 최적화</strong></a></li>
+            <li><a href="#2-parallel-computing-integration">(2) <strong>Parallel Computing Integration</strong></a></li>
+            <li><a href="#3-lightweight-architectures">(3) <strong>Lightweight Architectures</strong></a></li>
+            <li><a href="#4-feature-pruning">(4) <strong>Feature Pruning</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#종합적인-연구-흐름">종합적인 연구 흐름</a>
+          <ul>
+            <li><a href="#결합-전략"><strong>결합 전략</strong></a></li>
+            <li><a href="#미래-연구-흐름"><strong>미래 연구 흐름</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

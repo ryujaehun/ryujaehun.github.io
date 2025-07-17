@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>2407.01906v2 on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/2407.01906v2/</link>
+    <description>Recent content in 2407.01906v2 on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Mon, 30 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/2407.01906v2/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Let the Expert Stick to His Last: Expert-Specialized Fine-Tuning for Sparse Architectural Large Language Models</title>
+      <link>http://192.168.1.11:1314/posts/Let-the-Expert-Stick-to-His-Last-Expert-Specialized-Fine-Tuning-for-Sparse-Architectural-Large-Language-Models/</link>
+      <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Let-the-Expert-Stick-to-His-Last-Expert-Specialized-Fine-Tuning-for-Sparse-Architectural-Large-Language-Models/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2407.01906v2&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;ESFT (Expert-Specialized Fine-Tuning)은 &lt;strong&gt;MoE LLM의 상위 5 ~ 15 % 전문가만 선택적으로 학습&lt;/strong&gt;해 &lt;strong&gt;파라미터·스토리지 90 % 절감&lt;/strong&gt;과 &lt;strong&gt;FFT급 성능&lt;/strong&gt;을 동시에 달성한, _Sparse LLM 시대의 새로운 PEFT 표준_이다.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

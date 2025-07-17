@@ -1,0 +1,4713 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Break the Sequential Dependency of LLM Inference Using LOOKAHEAD DECODING | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점 및 독창적인 지점 효율적인 병렬 디코딩: LOOKAHEAD..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/Break-the-Sequential-Dependency-of-LLM-Inference-Using-LOOKAHEAD-DECODING/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/Break-the-Sequential-Dependency-of-LLM-Inference-Using-LOOKAHEAD-DECODING/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="Break the Sequential Dependency of LLM Inference Using LOOKAHEAD DECODING">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점 및 독창적인 지점 효율적인 병렬 디코딩: LOOKAHEAD DECODING은 기존의 자동회귀 디코딩의 한계를 극복하기 위해 설계되었으며, 여러 토큰을 병렬로 생성하면서도 정확성을 유지하는 점이 강점입니다. 이는 계산 자원을 효율적으로 활용하여 디코딩 속도를 최대 1.8배(단일 GPU 기준), 다중 GPU에서 최대 4배까지 증가시킵니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-12-15T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-12-15T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="Break the Sequential Dependency of LLM Inference Using LOOKAHEAD DECODING">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점 및 독창적인 지점 효율적인 병렬 디코딩: LOOKAHEAD DECODING은 기존의 자동회귀 디코딩의 한계를 극복하기 위해 설계되었으며, 여러 토큰을 병렬로 생성하면서도 정확성을 유지하는 점이 강점입니다. 이는 계산 자원을 효율적으로 활용하여 디코딩 속도를 최대 1.8배(단일 GPU 기준), 다중 GPU에서 최대 4배까지 증가시킵니다.">
+
+
+  <meta itemprop="name" content="Break the Sequential Dependency of LLM Inference Using LOOKAHEAD DECODING">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점 및 독창적인 지점 효율적인 병렬 디코딩: LOOKAHEAD DECODING은 기존의 자동회귀 디코딩의 한계를 극복하기 위해 설계되었으며, 여러 토큰을 병렬로 생성하면서도 정확성을 유지하는 점이 강점입니다. 이는 계산 자원을 효율적으로 활용하여 디코딩 속도를 최대 1.8배(단일 GPU 기준), 다중 GPU에서 최대 4배까지 증가시킵니다.">
+  <meta itemprop="datePublished" content="2024-12-15T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-12-15T00:00:00+00:00">
+  <meta itemprop="wordCount" content="16365">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">Break the Sequential Dependency of LLM Inference Using LOOKAHEAD DECODING</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    Break the Sequential Dependency of LLM Inference Using LOOKAHEAD DECODING
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-12-15">
+          2024년 12월 15일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >33 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>16365 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2402.02057">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h3 id="논문의-강점-및-독창적인-지점">논문의 강점 및 독창적인 지점</h3>
+<ol>
+<li>
+<p><strong>효율적인 병렬 디코딩</strong>: LOOKAHEAD DECODING은 기존의 자동회귀 디코딩의 한계를 극복하기 위해 설계되었으며, 여러 토큰을 병렬로 생성하면서도 정확성을 유지하는 점이 강점입니다. 이는 계산 자원을 효율적으로 활용하여 디코딩 속도를 최대 1.8배(단일 GPU 기준), 다중 GPU에서 최대 4배까지 증가시킵니다.</p>
+</li>
+<li>
+<p><strong>보조 모델 불필요</strong>: 기존의 추측 기반 디코딩(speculative decoding)은 보조 모델을 요구하지만, LOOKAHEAD DECODING은 추가 모델 없이 정확한 병렬 디코딩을 구현합니다. 이는 모델 학습이나 데이터셋 일반화 문제를 해결합니다.</p>
+</li>
+<li>
+<p><strong>최신 기술과의 호환성</strong>: FlashAttention과 같은 메모리 효율적인 주의 메커니즘과 통합되어 추가적인 속도 향상이 가능하며, 다양한 샘플링 전략에서도 품질 저하 없이 사용할 수 있습니다.</p>
+</li>
+<li>
+<p><strong>확장성</strong>: FLOP(초당 부동소수점 연산) 증가에 따라 디코딩 단계 수를 선형적으로 줄일 수 있어, 멀티 GPU 환경에서도 높은 확장성을 보여줍니다.</p>
+</li>
+</ol>
+<hr>
+<h3 id="핵심-알고리즘-설명-lookahead-decoding">핵심 알고리즘 설명: LOOKAHEAD DECODING</h3>
+<p>LOOKAHEAD DECODING은 두 개의 주요 단계를 포함합니다:</p>
+<ol>
+<li><strong>Lookahead Branch</strong>: 여러 단계에 걸쳐 n-gram을 생성.</li>
+<li><strong>Verification Branch</strong>: 생성된 n-gram의 정확성을 검증.</li>
+</ol>
+<h4 id="알고리즘-예시">알고리즘 예시</h4>
+<h5 id="설정">설정:</h5>
+<ul>
+<li>n-gram 크기 ( N = 3 )</li>
+<li>윈도우 크기 ( W = 2 )</li>
+<li>입력 시퀀스: ( x_0 = [A, B, C] )</li>
+</ul>
+<h5 id="단계">단계:</h5>
+<ol>
+<li><strong>초기화</strong>: ( x_0 )를 기준으로 2개의 lookahead branch를 생성합니다.
+<ul>
+<li>Step ( t=1 ): ( x_0 = [A, B, C] ), ( w_{lookahead} = [_, _] )</li>
+</ul>
+</li>
+<li><strong>Lookahead 토큰 생성</strong>:
+<ul>
+<li>( w_{1} = [D, E] ): 두 위치에서 병렬로 토큰 생성.</li>
+</ul>
+</li>
+<li><strong>n-gram Pool에 추가</strong>:
+<ul>
+<li>( C_{pool} = {[B, C, D], [C, D, E]} ).</li>
+</ul>
+</li>
+<li><strong>Verification</strong>:
+<ul>
+<li>( [B, C, D] ): 이전 출력과 일치, 통과.</li>
+<li>( [C, D, E] ): 일부 불일치, 버림.</li>
+</ul>
+</li>
+<li><strong>업데이트 및 다음 단계 진행</strong>:
+<ul>
+<li>새롭게 생성된 토큰 ( D )를 통합, 다음 step 진행.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="한계점">한계점</h3>
+<ol>
+<li>
+<p><strong>추가 연산 부담</strong>: 각 단계에서 병렬로 많은 n-gram을 생성하고 검증하기 때문에, 연산 요구량이 증가합니다. A100 GPU에서는 7B 모델 기준 단일 단계에서 120배의 추가 FLOP가 요구됩니다.</p>
+</li>
+<li>
+<p><strong>메모리 제약</strong>: n-gram pool의 크기가 증가함에 따라, 메모리 요구량이 선형적으로 증가하여 메모리 효율성이 떨어질 수 있습니다.</p>
+</li>
+<li>
+<p><strong>소규모 GPU 환경 한계</strong>: RTX 3090 같은 소규모 GPU 환경에서는 A100 대비 낮은 속도 향상이 관찰됩니다.</p>
+</li>
+</ol>
+<hr>
+<h3 id="결론">결론</h3>
+<p>LOOKAHEAD DECODING은 LLM 디코딩의 효율성을 획기적으로 높일 수 있는 혁신적인 방법론으로, 높은 확장성과 정확성을 제공하면서도 추가 연산 부담이 존재합니다. 이를 통해 멀티 GPU 환경에서 특히 효과적으로 활용될 수 있는 강력한 기술임을 확인할 수 있습니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<h3 id="lookahead-decoding의-핵심-알고리즘-설명">LOOKAHEAD DECODING의 핵심 알고리즘 설명</h3>
+<p>LOOKAHEAD DECODING은 LLM 디코딩을 가속화하기 위해 <strong>n-gram 생성과 검증</strong>을 병렬로 수행하는 알고리즘입니다. 이 알고리즘은 두 가지 주요 컴포넌트로 구성됩니다:</p>
+<ol>
+<li><strong>Lookahead Branch</strong>: 병렬로 여러 위치의 n-gram을 생성.</li>
+<li><strong>Verification Branch</strong>: 생성된 n-gram의 정확성을 검증하여 최종 시퀀스에 반영.</li>
+</ol>
+<hr>
+<h3 id="알고리즘-과정-예시-기반-설명">알고리즘 과정: 예시 기반 설명</h3>
+<h4 id="설정-1"><strong>설정</strong></h4>
+<ul>
+<li><strong>윈도우 크기 ((W))</strong>: 3 (한 번에 3개의 토큰 병렬 생성)</li>
+<li><strong>n-gram 크기 ((N))</strong>: 3 (3개의 연속 토큰 생성 및 검증)</li>
+<li><strong>검증 단계 ((G))</strong>: 2 (병렬 검증 가능한 n-gram 수)</li>
+<li><strong>입력 시퀀스</strong>: (x_0 = [A, B]) (초기 프롬프트)</li>
+</ul>
+<h4 id="단계별-과정"><strong>단계별 과정</strong></h4>
+<ol>
+<li>
+<p><strong>초기화</strong></p>
+<ul>
+<li><strong>n-gram Pool</strong>: 비어있음 ((C_{pool} = {})).</li>
+<li><strong>출력 시퀀스 ((o))</strong>: 초기 상태 ((o = [A, B])).</li>
+</ul>
+</li>
+<li>
+<p><strong>Lookahead Branch - n-gram 생성</strong></p>
+<ul>
+<li><strong>현재 시퀀스</strong>: (o = [A, B]).</li>
+<li>Lookahead Branch는 (W=3)으로 병렬로 3개의 토큰을 생성.
+<ul>
+<li>Step (t=1): 병렬로 (D, E, F) 생성.</li>
+</ul>
+</li>
+<li>생성된 n-gram:
+<ul>
+<li>(n_1 = [B, D, E]),</li>
+<li>(n_2 = [D, E, F]).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>n-gram Pool 업데이트</strong></p>
+<ul>
+<li><strong>n-gram Pool</strong>에 추가:
+(C_{pool} = {[B, D, E], [D, E, F]}).</li>
+</ul>
+</li>
+<li>
+<p><strong>Verification Branch - 검증</strong></p>
+<ul>
+<li>(C_{pool})의 n-gram을 검증:
+<ul>
+<li>(n_1 = [B, D, E]): 검증 성공 (출력 시퀀스에 반영).</li>
+<li>(n_2 = [D, E, F]): 검증 실패 (제외됨).</li>
+</ul>
+</li>
+<li>검증 후 결과: (o = [A, B, D, E]).</li>
+</ul>
+</li>
+<li>
+<p><strong>다음 Lookahead 단계로 이동</strong></p>
+<ul>
+<li>새로운 시퀀스 (o = [A, B, D, E])를 기반으로 Step (t=2) 실행.</li>
+<li>병렬로 (G)개의 n-gram을 생성 및 검증.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="알고리즘-단계-요약">알고리즘 단계 요약</h3>
+<table>
+  <thead>
+      <tr>
+          <th>단계</th>
+          <th>작업 내용</th>
+          <th>결과</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>초기화</td>
+          <td>n-gram Pool 및 출력 시퀀스 초기화.</td>
+          <td>(C_{pool} = {}, o = [A, B])</td>
+      </tr>
+      <tr>
+          <td>Lookahead</td>
+          <td>병렬로 (W)개의 토큰 생성.</td>
+          <td>(D, E, F) 생성</td>
+      </tr>
+      <tr>
+          <td>Pool 업데이트</td>
+          <td>생성된 n-gram을 Pool에 저장.</td>
+          <td>(C_{pool} = {[B, D, E], [D, E, F]})</td>
+      </tr>
+      <tr>
+          <td>검증 (Verification)</td>
+          <td>Pool에서 유효한 n-gram 검증.</td>
+          <td>(o = [A, B, D, E])</td>
+      </tr>
+      <tr>
+          <td>반복 수행</td>
+          <td>검증 결과를 기반으로 다음 단계 수행.</td>
+          <td>최종 시퀀스 출력</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="lookahead-decoding의-핵심-특징">LOOKAHEAD DECODING의 핵심 특징</h3>
+<ol>
+<li>
+<p><strong>효율적 디코딩</strong>:</p>
+<ul>
+<li>병렬로 (W)개의 토큰 생성.</li>
+<li>불필요한 토큰은 검증 단계에서 필터링.</li>
+</ul>
+</li>
+<li>
+<p><strong>n-gram 기반 추론</strong>:</p>
+<ul>
+<li>n-gram Pool을 활용하여 과거 생성 이력을 효과적으로 관리.</li>
+</ul>
+</li>
+<li>
+<p><strong>정확성 유지</strong>:</p>
+<ul>
+<li>검증 단계를 통해 생성된 토큰이 기존 LLM의 출력 분포와 동일함을 보장.</li>
+</ul>
+</li>
+<li>
+<p><strong>확장성</strong>:</p>
+<ul>
+<li>(W), (N), (G)를 조절하여 GPU 자원에 맞게 알고리즘 최적화 가능.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="예시의-정리">예시의 정리</h3>
+<p>이 예시에서는 Lookahead Branch가 병렬로 (W=3)개의 토큰을 생성하고, 이를 n-gram Pool에 저장한 후 Verification Branch를 통해 유효한 토큰을 필터링합니다. 최종적으로, 생성된 (n)-gram 중 검증된 토큰만 시퀀스에 통합되어 LLM의 원래 성능을 유지하면서 디코딩 속도를 극대화합니다.</p>
+<h1 id="q--이-논문에서-사용하는-방법을-학습하기-위하여-어떤-데이터셋이-필요할까-그리고-어떻게-학습을-진행하면-될지-예시를-들어서-아주-자세하게-설명해줘">Q : 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될지 예시를 들어서 아주 자세하게 설명해줘</h1>
+<h3 id="lookahead-decoding을-학습하기-위한-데이터셋과-학습-절차">LOOKAHEAD DECODING을 학습하기 위한 데이터셋과 학습 절차</h3>
+<p>LOOKAHEAD DECODING 자체는 <strong>학습이 필요하지 않은 알고리즘</strong>입니다. 이는 LLM의 디코딩 효율을 높이는 <strong>추론(inference) 과정에서 활용되는 병렬 디코딩 방식</strong>입니다. 하지만 이 방법을 실제로 활용하거나 성능을 평가하기 위해서는 <strong>적합한 데이터셋과 실험 환경</strong>이 필요합니다.</p>
+<hr>
+<h2 id="1-학습-및-평가에-적합한-데이터셋">1. 학습 및 평가에 적합한 데이터셋</h2>
+<h3 id="11-데이터셋-선정-기준"><strong>1.1 데이터셋 선정 기준</strong></h3>
+<p>LOOKAHEAD DECODING은 <strong>텍스트 생성</strong>이 포함된 작업에서 성능을 평가하므로, 다음과 같은 유형의 데이터셋이 필요합니다:</p>
+<ol>
+<li><strong>다양한 길이의 시퀀스</strong>를 포함하여 디코딩 성능을 확인할 수 있는 데이터.</li>
+<li><strong>복잡한 상관관계</strong>를 가진 입력-출력 시퀀스를 요구하여 모델의 정확도를 검증할 수 있는 데이터.</li>
+<li><strong>다양한 도메인</strong>의 작업 (챗봇, 코드 생성, 요약 등)을 포함.</li>
+</ol>
+<h3 id="12-추천-데이터셋"><strong>1.2 추천 데이터셋</strong></h3>
+<ul>
+<li><strong>MT-Bench</strong>: 다양한 멀티턴 대화를 포함하여 챗봇 성능 평가.</li>
+<li><strong>HumanEval</strong>: 코드 생성 및 완성 성능을 평가하기 위한 데이터셋.</li>
+<li><strong>XSum</strong>: 뉴스 기사 요약과 같은 짧고 정확한 생성 작업.</li>
+<li><strong>CNN/Daily Mail</strong>: 길이가 긴 요약 작업을 평가하기 위한 데이터셋.</li>
+<li><strong>GSM8K</strong>: 수학 문제 해결을 통해 모델의 논리적 생성 성능을 평가.</li>
+<li><strong>ClassEval</strong>: 객체지향 프로그래밍에서 클래스 정의 자동 생성을 테스트.</li>
+</ul>
+<hr>
+<h2 id="2-학습-절차-설계">2. 학습 절차 설계</h2>
+<p>LOOKAHEAD DECODING은 모델 자체를 학습하는 것이 아니라 <strong>디코딩 효율성</strong>을 개선하기 위한 알고리즘이므로, 학습 절차라기보다는 <strong>성능 검증 실험 설계</strong>에 초점을 둡니다.</p>
+<h3 id="21-실험-환경-준비"><strong>2.1 실험 환경 준비</strong></h3>
+<ol>
+<li><strong>모델 준비</strong>:
+<ul>
+<li><strong>LLM 모델</strong>: LLaMA-2, GPT-4, 또는 CodeLlama와 같은 사전 학습된 대형 언어 모델.</li>
+<li>모델 크기: 7B, 13B, 70B 등 다양한 규모의 모델로 실험.</li>
+</ul>
+</li>
+<li><strong>하드웨어</strong>:
+<ul>
+<li>NVIDIA A100 GPU, RTX 3090 GPU 등 FLOP 용량과 메모리가 충분한 환경.</li>
+</ul>
+</li>
+<li><strong>프로그래밍 라이브러리</strong>:
+<ul>
+<li>PyTorch, HuggingFace Transformers, FlashAttention 구현 포함.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="22-실험-설계-예시"><strong>2.2 실험 설계 예시</strong></h3>
+<p>LOOKAHEAD DECODING의 성능을 확인하기 위해 다음 과정을 따릅니다.</p>
+<h4 id="1단계-실험-설정"><strong>1단계: 실험 설정</strong></h4>
+<ul>
+<li><strong>입력 데이터</strong>: MT-Bench의 다중 턴 대화 데이터.</li>
+<li><strong>평가 메트릭</strong>:
+<ol>
+<li>디코딩 속도: 초당 생성되는 토큰 수 (Tokens/sec).</li>
+<li>정확성: 원래 모델 출력과의 Rouge-L 점수 비교.</li>
+<li>자원 활용: FLOP 및 GPU 메모리 사용량 측정.</li>
+</ol>
+</li>
+</ul>
+<h4 id="2단계-모델-디코딩-비교"><strong>2단계: 모델 디코딩 비교</strong></h4>
+<ul>
+<li><strong>기준 모델</strong>: HuggingFace 구현의 greedy decoding.</li>
+<li><strong>LOOKAHEAD DECODING</strong>:
+<ul>
+<li>(W = 15) (윈도우 크기), (N = 5) (n-gram 크기), (G = 15) (병렬 검증 개수) 설정.</li>
+</ul>
+</li>
+<li><strong>실험</strong>:
+<ul>
+<li>같은 입력 데이터에서 두 디코딩 방식을 실행.</li>
+<li>속도 및 정확성을 비교.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3단계-다양한-gpu-환경에서-확장성-평가"><strong>3단계: 다양한 GPU 환경에서 확장성 평가</strong></h4>
+<ul>
+<li>GPU 수를 (1), (4), (8)로 늘려가며 성능 변화 측정.</li>
+<li>속도 증가율과 메모리 사용량을 확인.</li>
+</ul>
+<h4 id="4단계-데이터셋-도메인별-평가"><strong>4단계: 데이터셋 도메인별 평가</strong></h4>
+<ul>
+<li>MT-Bench, XSum, GSM8K 등 다양한 데이터셋으로 실험.</li>
+<li>도메인별 Lookahead Decoding의 유효성을 평가.</li>
+</ul>
+<hr>
+<h3 id="23-예시-실험"><strong>2.3 예시 실험</strong></h3>
+<h4 id="입력"><strong>입력</strong></h4>
+<ul>
+<li>MT-Bench의 샘플 입력:
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-0"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-0"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-0">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">Q: &#34;What are the main differences between supervised and unsupervised learning?&#34;</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-0';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+</li>
+</ul>
+<h4 id="출력-비교"><strong>출력 비교</strong></h4>
+<table>
+  <thead>
+      <tr>
+          <th>디코딩 방식</th>
+          <th>결과 텍스트</th>
+          <th>속도 (tokens/sec)</th>
+          <th>Rouge-L</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Greedy Decoding</strong></td>
+          <td>&ldquo;Supervised learning uses labeled data&hellip;&rdquo;</td>
+          <td>50</td>
+          <td>1.0</td>
+      </tr>
+      <tr>
+          <td><strong>LOOKAHEAD</strong></td>
+          <td>&ldquo;Supervised learning uses labeled data for training, while&hellip;&rdquo;</td>
+          <td>90</td>
+          <td>1.0</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="3-요약-lookahead-decoding-실험-구조화">3. 요약: LOOKAHEAD DECODING 실험 구조화</h3>
+<table>
+  <thead>
+      <tr>
+          <th>단계</th>
+          <th>작업 내용</th>
+          <th>필요 리소스</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>데이터 준비</strong></td>
+          <td>MT-Bench, HumanEval, XSum 등의 적합한 데이터셋 선택.</td>
+          <td>NLP 데이터셋</td>
+      </tr>
+      <tr>
+          <td><strong>모델 준비</strong></td>
+          <td>LLaMA-2, GPT-4 등 사전 학습된 모델 활용.</td>
+          <td>LLM 모델</td>
+      </tr>
+      <tr>
+          <td><strong>실험 설계</strong></td>
+          <td>다양한 (W, N, G) 설정으로 디코딩 속도와 정확성 비교.</td>
+          <td>PyTorch 코드 구현</td>
+      </tr>
+      <tr>
+          <td><strong>성능 평가</strong></td>
+          <td>Rouge-L, 초당 토큰 수, 메모리 사용량 등을 비교.</td>
+          <td>GPU 환경</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<p>학습 목적이 아니라 <strong>추론 최적화</strong>에 집중해야 하므로, LOOKAHEAD DECODING의 성능 검증에 초점을 두고 데이터셋 및 실험 환경을 구성하면 효과적으로 알고리즘의 성능을 평가하고 활용할 수 있습니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h3 id="논문의-결과와-특출난-점">논문의 결과와 특출난 점</h3>
+<p>LOOKAHEAD DECODING은 기존의 자동회귀 디코딩 방법론에 비해 <strong>속도와 확장성</strong> 측면에서 뛰어난 성능을 보입니다. 논문에서 제시된 주요 결과와 특징을 정리하면 다음과 같습니다.</p>
+<hr>
+<h3 id="1-논문의-주요-결과"><strong>1. 논문의 주요 결과</strong></h3>
+<ol>
+<li>
+<p><strong>디코딩 속도 향상</strong>:</p>
+<ul>
+<li><strong>MT-Bench</strong>에서 최대 <strong>1.8배</strong>(단일 GPU) ~ <strong>4배</strong>(다중 GPU) 속도 향상.</li>
+<li><strong>HumanEval</strong>(코드 생성)과 같은 작업에서는 토큰 예측의 반복성이 높아 최대 <strong>2.3배</strong> 속도 향상.</li>
+</ul>
+</li>
+<li>
+<p><strong>확장성</strong>:</p>
+<ul>
+<li>GPU 수를 늘릴수록 성능이 선형적으로 확장:
+<ul>
+<li>(W=15), (N=5), (G=15) 설정에서 GPU 8개를 사용할 경우 속도가 단일 GPU 대비 <strong>3~4배 증가</strong>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>정확도 유지</strong>:</p>
+<ul>
+<li>LOOKAHEAD DECODING은 검증 단계를 통해 LLM의 원래 출력 분포를 유지함.</li>
+<li>Rouge-L, Rouge-1 등의 점수가 Greedy Decoding과 동일.</li>
+</ul>
+</li>
+<li>
+<p><strong>추가 계산량 대비 효율적</strong>:</p>
+<ul>
+<li>A100 GPU 기준 FLOP 추가 요구량은 증가하지만, 메모리 대역폭이 병목인 디코딩 과정에서 실질적인 벽시계 시간 속도를 크게 감소시킴.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-다른-방법론과의-비교"><strong>2. 다른 방법론과의 비교</strong></h3>
+<h4 id="21-비교-기준"><strong>2.1 비교 기준</strong></h4>
+<table>
+  <thead>
+      <tr>
+          <th>특성</th>
+          <th>LOOKAHEAD DECODING</th>
+          <th>Speculative Decoding</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>속도</strong></td>
+          <td>1.8~4배 속도 향상</td>
+          <td>속도 향상은 있지만 토큰 수락률에 의존.</td>
+      </tr>
+      <tr>
+          <td><strong>추가 모델 필요성</strong></td>
+          <td>불필요 (보조 모델 없음)</td>
+          <td>Draft 모델 필요 (추가 학습, 데이터 일반화 어려움).</td>
+      </tr>
+      <tr>
+          <td><strong>정확도</strong></td>
+          <td>LLM 출력 분포 정확히 유지</td>
+          <td>토큰 수락률에 따라 정확도 저하 가능.</td>
+      </tr>
+      <tr>
+          <td><strong>확장성 (멀티 GPU)</strong></td>
+          <td>선형 확장 (병렬화 설계가 쉬움)</td>
+          <td>Draft 모델 병렬화 제약.</td>
+      </tr>
+      <tr>
+          <td><strong>FLOP 요구량</strong></td>
+          <td>높음 (디코딩 단계의 추가 연산)</td>
+          <td>상대적으로 낮음.</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="3-특출난-점과-그-이유"><strong>3. 특출난 점과 그 이유</strong></h3>
+<p>LOOKAHEAD DECODING의 특출난 점은 <strong>추가 모델 없이도 LLM 디코딩 속도를 획기적으로 향상</strong>시킨 점입니다. 이는 다음과 같은 두 가지 핵심 기법 덕분입니다.</p>
+<h4 id="31-lookahead-branch"><strong>3.1 Lookahead Branch</strong></h4>
+<ul>
+<li>병렬적으로 (W)개의 토큰을 생성하고, 각 단계에서 다수의 n-gram을 생성.</li>
+<li>Jacobi Decoding에서 착안하여 모든 위치의 토큰을 동시 업데이트.</li>
+<li><strong>효과</strong>:
+<ul>
+<li>기존 단일 토큰 생성의 병목을 제거.</li>
+<li>디코딩 단계를 줄여 전체 속도를 증가.</li>
+</ul>
+</li>
+</ul>
+<h4 id="32-verification-branch"><strong>3.2 Verification Branch</strong></h4>
+<ul>
+<li>생성된 n-gram의 정확성을 검증하여 LLM의 원래 출력 분포를 유지.</li>
+<li>잘못된 예측을 제거하며 다음 단계로 안전하게 진행.</li>
+<li><strong>효과</strong>:
+<ul>
+<li>Greedy Decoding처럼 정확도를 보장.</li>
+<li>기존 speculative decoding처럼 추가 모델 학습이나 데이터 일반화 문제를 제거.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-lookahead-decoding이-이런-결과를-도출한-이유"><strong>4. LOOKAHEAD DECODING이 이런 결과를 도출한 이유</strong></h3>
+<h4 id="41-논문에서-제시하는-이유"><strong>4.1 논문에서 제시하는 이유</strong></h4>
+<ol>
+<li>
+<p><strong>계산량 분배</strong>:</p>
+<ul>
+<li>디코딩 단계별 FLOP을 추가 투자하여 전체 디코딩 단계를 줄임.</li>
+<li>FLOP이 충분한 환경에서 디코딩 단계 감소는 벽시계 시간 단축으로 이어짐.</li>
+</ul>
+</li>
+<li>
+<p><strong>병렬화의 극대화</strong>:</p>
+<ul>
+<li>Lookahead Branch와 Verification Branch의 독립성을 활용하여 GPU 자원을 최적화.</li>
+<li>FlashAttention을 적용하여 메모리 I/O를 줄이고 속도 향상.</li>
+</ul>
+</li>
+<li>
+<p><strong>단순성 및 일반화</strong>:</p>
+<ul>
+<li>보조 모델 없이 LLM 자체만 활용하므로 모델의 일반화 및 재사용성이 높음.</li>
+<li>다양한 샘플링 방법에도 적용 가능.</li>
+</ul>
+</li>
+</ol>
+<h4 id="42-나의-생각"><strong>4.2 나의 생각</strong></h4>
+<p>논문이 제안하는 Lookahead Decoding은 기존 LLM 추론의 병목인 <strong>단일 토큰 생성</strong>을 근본적으로 해결하며, <strong>병렬성 극대화</strong>와 <strong>정확도 유지</strong>라는 두 마리 토끼를 잡은 방법론입니다. FLOP 증가가 제한적인 환경에서는 성능 향상이 제한될 수 있지만, 최신 GPU에서는 추가 FLOP의 영향을 최소화하면서도 디코딩 속도를 실질적으로 크게 향상시킵니다.</p>
+<p>특히, 추가 모델 없이 동작하는 점에서 단순함과 실용성이 뛰어나며, 다양한 LLM 아키텍처에 쉽게 통합 가능하다는 점이 다른 방법론과 비교했을 때 가장 큰 차별점으로 보입니다.</p>
+<hr>
+<h3 id="5-한계점"><strong>5. 한계점</strong></h3>
+<h4 id="51-추가-연산-부담"><strong>5.1 추가 연산 부담</strong></h4>
+<ul>
+<li>FLOP이 제한된 환경에서는 속도 이점이 제한적일 수 있음 (예: RTX 3090).</li>
+<li>추가 연산량이 메모리 대역폭 제한보다 높은 경우 성능이 감소.</li>
+</ul>
+<h4 id="52-복잡성"><strong>5.2 복잡성</strong></h4>
+<ul>
+<li>n-gram Pool 관리와 검증 과정의 설계가 추가 메모리 사용 및 코드 복잡성을 유발.</li>
+</ul>
+<h4 id="53-실험-의존성"><strong>5.3 실험 의존성</strong></h4>
+<ul>
+<li>논문 결과는 최신 GPU 환경(A100, FP16)에서의 성능을 기준으로 함. 저성능 GPU에서 동일한 성능 개선이 보장되지 않을 수 있음.</li>
+</ul>
+<hr>
+<h3 id="결론-1"><strong>결론</strong></h3>
+<p>LOOKAHEAD DECODING은 추가 모델 없이 병렬 디코딩을 구현하여 속도와 확장성에서 뛰어난 성능을 보여줍니다. 이 결과는 Lookahead Branch의 병렬 토큰 생성과 Verification Branch의 정확도 보장 메커니즘에 의해 가능하며, FLOP 자원이 충분한 최신 GPU 환경에서 특히 유용합니다. Speculative Decoding과 비교했을 때 단순성과 일반화 가능성이 높은 점이 가장 큰 차별화 요소입니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="논문의-입력-데이터와-추론-과정-예시">논문의 입력 데이터와 추론 과정 예시</h3>
+<hr>
+<h4 id="1-입력-데이터"><strong>1. 입력 데이터</strong></h4>
+<p>논문에서 사용하는 데이터는 텍스트 생성 작업에서 주로 사용되는 프롬프트입니다. 다음과 같은 입력 데이터를 가정할 수 있습니다:</p>
+<ul>
+<li><strong>예시 프롬프트</strong>:
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-1"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-1"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-1">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">Prompt: &#34;Explain the main differences between supervised and unsupervised learning.&#34;</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-1';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+</li>
+</ul>
+<hr>
+<h4 id="2-추론-과정"><strong>2. 추론 과정</strong></h4>
+<p>LOOKAHEAD DECODING의 추론은 크게 두 가지 주요 컴포넌트로 진행됩니다: <strong>Lookahead Branch</strong>와 <strong>Verification Branch</strong>.</p>
+<hr>
+<h5 id="21-lookahead-branch-병렬-n-gram-생성"><strong>2.1 Lookahead Branch (병렬 n-gram 생성)</strong></h5>
+<ul>
+<li>
+<p><strong>초기 상태</strong>:</p>
+<ul>
+<li>모델은 입력 프롬프트 (x_0 = \text{&ldquo;Explain the main differences&rdquo;})를 기반으로 다음 토큰을 생성해야 함.</li>
+<li><strong>윈도우 크기 ((W))</strong>: 3 (한 번에 3개의 토큰 병렬 생성).</li>
+<li><strong>n-gram 크기 ((N))</strong>: 3 (3개의 연속 토큰).</li>
+</ul>
+</li>
+<li>
+<p><strong>병렬 생성</strong>:</p>
+<ul>
+<li>Lookahead Branch는 (W=3)으로 병렬로 3개의 토큰을 생성:
+<ul>
+<li>(y_{1} = \text{&ldquo;are&rdquo;}),</li>
+<li>(y_{2} = \text{&ldquo;between&rdquo;}),</li>
+<li>(y_{3} = \text{&ldquo;supervised&rdquo;}).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>n-gram 생성</strong>:</p>
+<ul>
+<li>n-gram Pool에 다음 n-gram 저장:
+<ul>
+<li>([the, main, are]),</li>
+<li>([main, are, between]),</li>
+<li>([are, between, supervised]).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h5 id="22-verification-branch-n-gram-검증"><strong>2.2 Verification Branch (n-gram 검증)</strong></h5>
+<ul>
+<li>
+<p><strong>검증 과정</strong>:</p>
+<ul>
+<li>생성된 n-gram이 기존 LLM 출력 분포와 일치하는지 검증.</li>
+<li>각 n-gram에 대해 LLM의 확률 분포를 사용해 검증:
+<ul>
+<li>([the, main, are]): 확률 일치 → 채택.</li>
+<li>([main, are, between]): 확률 일치 → 채택.</li>
+<li>([are, between, supervised]): 확률 일치 → 채택.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>출력 업데이트</strong>:</p>
+<ul>
+<li>검증된 토큰을 최종 출력 시퀀스에 추가:
+<ul>
+<li>최종 출력: ([the, main, are, between, supervised]).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="3-최종-추론-결과"><strong>3. 최종 추론 결과</strong></h4>
+<p>LOOKAHEAD DECODING은 한 번의 단계에서 병렬로 (W)개의 토큰을 생성하고, 검증을 통해 정제하여 최종 출력에 반영합니다. 결과적으로 기존의 단일 토큰 생성 방식보다 빠른 디코딩 속도를 제공합니다.</p>
+<hr>
+<h3 id="모델-아키텍처-구성-및-컴퓨팅-요구량">모델 아키텍처 구성 및 컴퓨팅 요구량</h3>
+<hr>
+<h4 id="1-모델-아키텍처-구성"><strong>1. 모델 아키텍처 구성</strong></h4>
+<p>LOOKAHEAD DECODING은 LLM(예: LLaMA-2) 아키텍처에서 작동하며, 이 모델은 일반적인 Transformer 기반 아키텍처로 구성됩니다.</p>
+<ul>
+<li>
+<p><strong>구성 요소</strong>:</p>
+<ol>
+<li><strong>입력 임베딩</strong>: 입력 토큰을 고차원 벡터로 변환.</li>
+<li><strong>Transformer 블록</strong>:
+<ul>
+<li><strong>Self-Attention 메커니즘</strong>: 입력 간 상호작용을 모델링.</li>
+<li><strong>FFN (Feed Forward Network)</strong>: 비선형 변환 수행.</li>
+</ul>
+</li>
+<li><strong>출력 로지스틱</strong>: 다음 토큰 확률 분포 계산.</li>
+</ol>
+</li>
+<li>
+<p><strong>추가된 LOOKAHEAD 기능</strong>:</p>
+<ol>
+<li>Lookahead Branch: n-gram을 병렬 생성.</li>
+<li>Verification Branch: 병렬로 생성된 n-gram 검증.</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="2-모델-연산"><strong>2. 모델 연산</strong></h4>
+<h5 id="21-lookahead-branch의-연산"><strong>2.1 Lookahead Branch의 연산</strong></h5>
+<ul>
+<li><strong>병렬 토큰 생성</strong>:
+<ul>
+<li>각 윈도우((W))에 대해 다음 (N-1)개의 토큰 생성.</li>
+<li>Self-Attention과 FFN 연산이 각 윈도우에서 독립적으로 수행.</li>
+</ul>
+</li>
+<li><strong>추가 FLOP</strong>:
+<ul>
+<li>Lookahead Branch에서 (W)개의 병렬 생성에 대해 각 토큰의 Attention과 FFN 연산 수행.</li>
+<li>FLOP 증가:
+<ul>
+<li>A100 GPU 기준: 7B 모델에서 최대 (120 \times) 추가 FLOP.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="22-verification-branch의-연산"><strong>2.2 Verification Branch의 연산</strong></h5>
+<ul>
+<li><strong>검증</strong>:
+<ul>
+<li>n-gram Pool에 저장된 n-gram 각각을 모델 출력 확률 분포와 비교.</li>
+<li>(G)개의 n-gram 검증 병렬 수행.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="3-메모리-요구량"><strong>3. 메모리 요구량</strong></h4>
+<h5 id="31-attention-메커니즘"><strong>3.1 Attention 메커니즘</strong></h5>
+<ul>
+<li><strong>메모리 사용량</strong>: (O(W \cdot N^2)) (윈도우 크기와 n-gram 크기 기반).</li>
+<li>FlashAttention 적용 시 메모리 요구량 감소:
+<ul>
+<li>메모리 I/O 최적화로 연산량과 메모리 사용량 줄임.</li>
+</ul>
+</li>
+</ul>
+<h5 id="32-n-gram-pool"><strong>3.2 n-gram Pool</strong></h5>
+<ul>
+<li><strong>저장 요구량</strong>: 각 n-gram의 토큰 및 확률 분포 저장.</li>
+<li>Pool 크기가 커질수록 메모리 요구량 선형 증가.</li>
+</ul>
+<hr>
+<h4 id="4-flop-요구량"><strong>4. FLOP 요구량</strong></h4>
+<ul>
+<li>(W, N, G) 크기에 따라 추가 FLOP 발생:
+<ul>
+<li>Lookahead Branch: (W \cdot (N-1))개의 병렬 연산.</li>
+<li>Verification Branch: 각 단계에서 (G)개의 n-gram 검증.</li>
+</ul>
+</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>모델 크기</th>
+          <th>추가 FLOP (단일 단계)</th>
+          <th>A100에서 FLOP 비율</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>7B</strong></td>
+          <td>120배</td>
+          <td>높은 FLOP 여유 활용 가능</td>
+      </tr>
+      <tr>
+          <td><strong>13B</strong></td>
+          <td>80배</td>
+          <td>일부 FLOP 제한 가능</td>
+      </tr>
+      <tr>
+          <td><strong>34B</strong></td>
+          <td>56배</td>
+          <td>상대적으로 제한적</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="종합">종합</h3>
+<p>LOOKAHEAD DECODING은 Transformer 기반 LLM 아키텍처에 적합하며, <strong>Lookahead Branch</strong>와 <strong>Verification Branch</strong>를 통해 병렬성과 정확성을 동시에 확보합니다. 하지만 (W, N, G)의 증가로 인한 추가 FLOP과 메모리 요구량은 하드웨어 성능에 의존적입니다. 최신 GPU(A100)에서는 이러한 추가 연산이 유의미한 속도 향상으로 이어지지만, FLOP 제한이 큰 환경에서는 성능 향상이 제한될 수 있습니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<h3 id="lookahead-decoding의-한계를-극복하기-위한-연구-흐름">LOOKAHEAD DECODING의 한계를 극복하기 위한 연구 흐름</h3>
+<p>LOOKAHEAD DECODING은 기존의 LLM 디코딩 속도를 크게 향상시키는 기법이지만, 여전히 몇 가지 한계가 있습니다. 이를 극복하기 위한 연구 흐름과 관련된 방향을 정리하면 다음과 같습니다.</p>
+<hr>
+<h2 id="1-한계-및-이를-극복하기-위한-연구-흐름">1. 한계 및 이를 극복하기 위한 연구 흐름</h2>
+<h3 id="11-추가-계산량-및-flop-요구량"><strong>1.1 추가 계산량 및 FLOP 요구량</strong></h3>
+<h4 id="문제"><strong>문제</strong></h4>
+<ul>
+<li>Lookahead Decoding은 (W)와 (N) 크기에 따라 추가적인 FLOP 요구량이 발생합니다.</li>
+<li>A100과 같은 고성능 GPU에서는 성능 향상이 있지만, FLOP 제한이 있는 GPU에서는 오히려 성능 저하 가능.</li>
+</ul>
+<h4 id="연구-흐름"><strong>연구 흐름</strong></h4>
+<ol>
+<li>
+<p><strong>효율적인 Lookahead 연산 설계</strong>:</p>
+<ul>
+<li><strong>동적 Lookahead Window 크기 조정</strong>:
+<ul>
+<li>현재 디코딩 상황에 따라 (W)를 동적으로 조정해 필요 이상의 연산을 줄임.</li>
+</ul>
+</li>
+<li><strong>Lightweight Verification</strong>:
+<ul>
+<li>Verification Branch에서 n-gram 검증의 복잡도를 줄이는 경량화된 검증 알고리즘 설계.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>저비용 메모리 및 FLOP 최적화 기술</strong>:</p>
+<ul>
+<li>FlashAttention과 같은 메모리 I/O 최적화 기술을 확장.</li>
+<li>Attention 메커니즘을 sparsity 기반으로 설계해 연산량을 줄임 (Sparse Attention).</li>
+</ul>
+</li>
+<li>
+<p><strong>FLOP 요구량 감소를 위한 하드웨어 협력</strong>:</p>
+<ul>
+<li>NVIDIA H100과 같은 차세대 GPU의 Tensor Core를 활용한 병렬 연산 최적화 연구.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="12-메모리-사용량-증가"><strong>1.2 메모리 사용량 증가</strong></h3>
+<h4 id="문제-1"><strong>문제</strong></h4>
+<ul>
+<li>n-gram Pool의 크기가 커질수록 메모리 요구량이 선형적으로 증가.</li>
+<li>긴 시퀀스를 처리할 경우 Pool 관리 및 메모리 효율이 문제.</li>
+</ul>
+<h4 id="연구-흐름-1"><strong>연구 흐름</strong></h4>
+<ol>
+<li>
+<p><strong>Pool 관리 최적화</strong>:</p>
+<ul>
+<li><strong>n-gram 압축 기법</strong>:
+<ul>
+<li>불필요한 n-gram을 제거하거나, 생성된 n-gram을 요약하여 저장.</li>
+</ul>
+</li>
+<li><strong>가중치 기반 Pool 우선순위 관리</strong>:
+<ul>
+<li>더 유망한 n-gram을 우선적으로 검증하고, 불필요한 후보는 삭제.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>메모리 효율 최적화</strong>:</p>
+<ul>
+<li><strong>Offloading 전략</strong>:
+<ul>
+<li>Pool 데이터를 GPU 메모리에서 CPU 또는 디스크로 오프로드하여 메모리 사용량 줄임.</li>
+</ul>
+</li>
+<li><strong>Chunked Decoding</strong>:
+<ul>
+<li>긴 시퀀스를 여러 청크로 나누어 Lookahead 및 검증을 수행하여 메모리 요구량을 분산.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="13-낮은-acceptance-rate-검증-비율"><strong>1.3 낮은 Acceptance Rate (검증 비율)</strong></h3>
+<h4 id="문제-2"><strong>문제</strong></h4>
+<ul>
+<li>Verification Branch에서 생성된 n-gram의 일부만 검증을 통과하여 실제로 사용됨.</li>
+<li>낮은 Acceptance Rate는 불필요한 연산 낭비로 이어짐.</li>
+</ul>
+<h4 id="연구-흐름-2"><strong>연구 흐름</strong></h4>
+<ol>
+<li>
+<p><strong>생성 정확도 개선</strong>:</p>
+<ul>
+<li><strong>Lookahead Branch 개선</strong>:
+<ul>
+<li>n-gram 생성 시 과거 시퀀스의 더 많은 컨텍스트를 활용해 정확도를 높임.</li>
+<li>학습 기반 Lookahead 모델 도입:
+<ul>
+<li>사전 학습된 모델을 활용하여 더 정확한 n-gram을 생성.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Adaptive Verification</strong>:</p>
+<ul>
+<li>검증 단계를 더 효율적으로 설계:
+<ul>
+<li><strong>Probabilistic Verification</strong>:
+<ul>
+<li>낮은 확률을 가진 n-gram을 사전에 제외하여 검증 부담 감소.</li>
+</ul>
+</li>
+<li><strong>Multi-stage Verification</strong>:
+<ul>
+<li>검증을 단계적으로 수행해 낮은 품질의 n-gram을 조기에 필터링.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="14-소규모-gpu-환경에서의-활용-제약"><strong>1.4 소규모 GPU 환경에서의 활용 제약</strong></h3>
+<h4 id="문제-3"><strong>문제</strong></h4>
+<ul>
+<li>RTX 3090과 같은 FLOP 제한이 있는 GPU에서는 성능 향상이 제한됨.</li>
+<li>소규모 모델 또는 하드웨어에서의 사용성이 낮음.</li>
+</ul>
+<h4 id="연구-흐름-3"><strong>연구 흐름</strong></h4>
+<ol>
+<li>
+<p><strong>모델 압축 및 경량화</strong>:</p>
+<ul>
+<li>Pruning, Quantization을 적용하여 모델 크기를 줄이고 연산 요구량 감소.</li>
+<li>Low-rank Approximation으로 Attention 연산 최적화.</li>
+</ul>
+</li>
+<li>
+<p><strong>소규모 모델 전용 Lookahead 설계</strong>:</p>
+<ul>
+<li><strong>단축 Lookahead</strong>:
+<ul>
+<li>작은 (W)와 (N) 설정으로 소규모 모델에 맞는 경량화된 Lookahead Decoding 설계.</li>
+</ul>
+</li>
+<li><strong>Hybrid Approach</strong>:
+<ul>
+<li>FLOP 요구량이 적은 기존의 Greedy Decoding과 Lookahead Decoding을 상황에 따라 병합.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>하드웨어 최적화</strong>:</p>
+<ul>
+<li>소규모 GPU를 위한 Kernel 최적화 연구.</li>
+<li>병렬성을 극대화하기 위한 Tensor Core 기반 연산 적용.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="15-일반화-문제"><strong>1.5 일반화 문제</strong></h3>
+<h4 id="문제-4"><strong>문제</strong></h4>
+<ul>
+<li>모델 구조와 데이터셋에 따라 Lookahead Decoding의 성능 편차가 큼.</li>
+<li>다양한 데이터 도메인에서 성능 유지가 어려움.</li>
+</ul>
+<h4 id="연구-흐름-4"><strong>연구 흐름</strong></h4>
+<ol>
+<li>
+<p><strong>범용적인 Lookahead 설계</strong>:</p>
+<ul>
+<li>다양한 데이터셋에 적용 가능한 일반화된 Lookahead 알고리즘 설계.</li>
+<li>각 도메인 특화 설정 ((W, N, G)) 자동화.</li>
+</ul>
+</li>
+<li>
+<p><strong>Fine-tuning 기반 적응</strong>:</p>
+<ul>
+<li>특정 도메인에 대해 Lookahead Decoding의 파라미터를 학습 가능한 방식으로 조정.</li>
+<li>Reinforcement Learning 기반 적응적 파라미터 최적화.</li>
+</ul>
+</li>
+<li>
+<p><strong>다양한 샘플링 방법 지원</strong>:</p>
+<ul>
+<li>현재 Lookahead Decoding은 주로 Greedy Decoding에 최적화.</li>
+<li>Beam Search, Top-K 샘플링과의 호환성 연구.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="종합-1"><strong>종합</strong></h3>
+<table>
+  <thead>
+      <tr>
+          <th>한계</th>
+          <th>극복 방안</th>
+          <th>주요 연구 흐름</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>추가 계산량 증가</strong></td>
+          <td>동적 Lookahead Window, Lightweight Verification</td>
+          <td>Sparse Attention, FlashAttention 확장</td>
+      </tr>
+      <tr>
+          <td><strong>메모리 사용량 증가</strong></td>
+          <td>압축된 n-gram Pool 관리, Offloading</td>
+          <td>Pool 관리 최적화, Chunked Decoding</td>
+      </tr>
+      <tr>
+          <td><strong>낮은 Acceptance Rate</strong></td>
+          <td>Adaptive Verification, Multi-stage 검증</td>
+          <td>Probabilistic Verification, 학습 기반 Lookahead 모델</td>
+      </tr>
+      <tr>
+          <td><strong>소규모 GPU 환경 제약</strong></td>
+          <td>모델 압축, Hybrid Decoding</td>
+          <td>Low-rank Approximation, 경량화된 Lookahead 설계</td>
+      </tr>
+      <tr>
+          <td><strong>일반화 문제</strong></td>
+          <td>범용적인 Lookahead 설계, Fine-tuning 기반 적응</td>
+          <td>Reinforcement Learning 기반 파라미터 최적화</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="결론-2">결론</h3>
+<p>LOOKAHEAD DECODING은 디코딩 속도와 병렬성을 극대화하지만, 계산 및 메모리 요구량 증가, 낮은 Acceptance Rate 등의 한계를 보입니다. 이를 극복하기 위한 연구 흐름은 <strong>효율적인 연산 설계, 메모리 최적화, 소규모 하드웨어 적용성 개선, 범용화</strong>에 초점을 맞추고 있으며, Sparse Attention, Adaptive Verification, 경량화된 Lookahead 설계와 같은 최신 연구와의 결합이 유망한 방향으로 보입니다.</p>
+<h1 id="q-lookahead-decoding의-효율성에-영향을-미치는-핵심-파라미터는-무엇이며-각-파라미터w-n-g가-디코딩-성능에-미치는-구체적인-영향은-어떻게-나타나는가">Q. <strong>Lookahead Decoding의 효율성에 영향을 미치는 핵심 파라미터는 무엇이며, 각 파라미터((W), (N), (G))가 디코딩 성능에 미치는 구체적인 영향은 어떻게 나타나는가?</strong></h1>
+<ul>
+<li>(W): 병렬로 생성할 토큰의 수.</li>
+<li>(N): n-gram 크기.</li>
+<li>(G): 병렬로 검증 가능한 n-gram의 수.</li>
+<li>각 파라미터가 속도, 정확성, FLOP 요구량, 메모리 사용량에 미치는 상호작용을 분석할 필요가 있음.</li>
+</ul>
+<h3 id="lookahead-decoding의-효율성에-영향을-미치는-핵심-파라미터-분석">Lookahead Decoding의 효율성에 영향을 미치는 핵심 파라미터 분석</h3>
+<p>LOOKAHEAD DECODING은 세 가지 주요 파라미터 (W), (N), (G)에 의해 성능이 크게 좌우됩니다. 각각의 파라미터가 디코딩 속도, 정확성, FLOP 요구량, 메모리 사용량에 미치는 영향을 분석합니다.</p>
+<hr>
+<h3 id="1-w-병렬로-생성할-토큰의-수-lookahead-window-크기">1. <strong>(W): 병렬로 생성할 토큰의 수 (Lookahead Window 크기)</strong></h3>
+<h4 id="역할"><strong>역할</strong>:</h4>
+<ul>
+<li>한 번의 디코딩 단계에서 병렬로 생성되는 토큰의 수를 결정.</li>
+</ul>
+<h4 id="영향"><strong>영향</strong>:</h4>
+<ol>
+<li>
+<p><strong>속도</strong>:</p>
+<ul>
+<li>(W)가 클수록 병렬로 생성되는 토큰 수가 증가하여 디코딩 속도가 빨라짐.</li>
+<li>(W) 증가 → 디코딩 단계 수 감소 → 속도 향상.</li>
+</ul>
+</li>
+<li>
+<p><strong>정확성</strong>:</p>
+<ul>
+<li>너무 큰 (W)는 잘못된 토큰 생성 가능성을 높임(잘못된 n-gram 후보 증가).</li>
+<li>최적의 (W)는 모델이 충분히 정확한 토큰을 병렬 생성할 수 있는 범위 내에서 설정해야 함.</li>
+</ul>
+</li>
+<li>
+<p><strong>FLOP 요구량</strong>:</p>
+<ul>
+<li>(W)에 따라 한 번의 디코딩 단계에서 수행되는 연산량 증가.</li>
+<li>FLOP 복잡도: (O(W \cdot N^2)) (Attention 연산 기준).</li>
+</ul>
+</li>
+<li>
+<p><strong>메모리 사용량</strong>:</p>
+<ul>
+<li>병렬 생성 토큰 수 증가 → Attention 연산에서 (O(W^2)) 메모리 필요.</li>
+</ul>
+</li>
+</ol>
+<h4 id="적용-사례"><strong>적용 사례</strong>:</h4>
+<ul>
+<li>(W)는 GPU 자원의 한계와 디코딩 정확성의 균형을 맞추는 것이 중요.</li>
+<li>논문에서 (W=15)가 A100 GPU 기준으로 최적의 속도-정확성 균형을 제공.</li>
+</ul>
+<hr>
+<h3 id="2-n-n-gram-크기">2. <strong>(N): n-gram 크기</strong></h3>
+<h4 id="역할-1"><strong>역할</strong>:</h4>
+<ul>
+<li>Lookahead Branch에서 생성된 n-gram의 길이를 결정.</li>
+<li>Verification Branch에서 검증되는 토큰 그룹의 크기를 의미.</li>
+</ul>
+<h4 id="영향-1"><strong>영향</strong>:</h4>
+<ol>
+<li>
+<p><strong>속도</strong>:</p>
+<ul>
+<li>(N)이 커질수록 더 긴 n-gram을 한 번에 검증하므로, 단계 수가 감소 → 속도 증가.</li>
+<li>하지만 (N)이 너무 크면 잘못된 n-gram의 비율이 증가해 검증 효율 저하.</li>
+</ul>
+</li>
+<li>
+<p><strong>정확성</strong>:</p>
+<ul>
+<li>(N)이 크면, 잘못된 n-gram이 포함될 가능성이 커지므로 정확도 하락 가능.</li>
+<li>작은 (N)은 보수적인 검증을 수행하지만, 디코딩 속도가 느려짐.</li>
+</ul>
+</li>
+<li>
+<p><strong>FLOP 요구량</strong>:</p>
+<ul>
+<li>n-gram 생성과 검증 과정에서 FLOP 복잡도는 (O(W \cdot N)).</li>
+<li>(N) 증가 시 병렬 연산량 증가로 GPU FLOP 사용률 급증.</li>
+</ul>
+</li>
+<li>
+<p><strong>메모리 사용량</strong>:</p>
+<ul>
+<li>(N)이 클수록 n-gram Pool에 저장되는 데이터 크기 증가 → (O(N \cdot W)).</li>
+</ul>
+</li>
+</ol>
+<h4 id="적용-사례-1"><strong>적용 사례</strong>:</h4>
+<ul>
+<li>논문에서는 (N=5)가 적절한 속도와 정확성을 유지하는 최적의 값으로 설정됨.</li>
+</ul>
+<hr>
+<h3 id="3-g-병렬로-검증-가능한-n-gram의-수">3. <strong>(G): 병렬로 검증 가능한 n-gram의 수</strong></h3>
+<h4 id="역할-2"><strong>역할</strong>:</h4>
+<ul>
+<li>Verification Branch에서 한 번에 검증 가능한 n-gram의 최대 수.</li>
+</ul>
+<h4 id="영향-2"><strong>영향</strong>:</h4>
+<ol>
+<li>
+<p><strong>속도</strong>:</p>
+<ul>
+<li>(G)가 클수록 병렬로 더 많은 n-gram 검증 가능 → 검증 단계 병목 감소.</li>
+<li>하지만 너무 큰 (G)는 GPU 메모리 부담 증가로 병렬성 효율 저하.</li>
+</ul>
+</li>
+<li>
+<p><strong>정확성</strong>:</p>
+<ul>
+<li>(G) 증가 시 검증 효율성은 증가하지만, 병렬 검증에서 낮은 품질의 n-gram 포함 가능성 존재.</li>
+</ul>
+</li>
+<li>
+<p><strong>FLOP 요구량</strong>:</p>
+<ul>
+<li>(G)가 크면 검증 연산의 FLOP 사용량 증가.</li>
+<li>FLOP 복잡도: (O(G \cdot N)).</li>
+</ul>
+</li>
+<li>
+<p><strong>메모리 사용량</strong>:</p>
+<ul>
+<li>(G)에 따라 각 검증 단계에서 필요한 n-gram Pool 크기가 커짐 → (O(G \cdot N)).</li>
+</ul>
+</li>
+</ol>
+<h4 id="적용-사례-2"><strong>적용 사례</strong>:</h4>
+<ul>
+<li>논문에서는 (G=W)로 설정하여 병렬 검증 수와 Lookahead Window 크기를 일치시킴으로써 최대 병렬성을 제공.</li>
+</ul>
+<hr>
+<h3 id="4-파라미터-간-상호작용">4. <strong>파라미터 간 상호작용</strong></h3>
+<table>
+  <thead>
+      <tr>
+          <th>파라미터</th>
+          <th>속도에 미치는 영향</th>
+          <th>정확성에 미치는 영향</th>
+          <th>FLOP 요구량 영향</th>
+          <th>메모리 사용량 영향</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>(W)</td>
+          <td>병렬 생성 증가 → 속도 증가</td>
+          <td>너무 크면 잘못된 토큰 증가</td>
+          <td>(O(W \cdot N^2))</td>
+          <td>(O(W^2))</td>
+      </tr>
+      <tr>
+          <td>(N)</td>
+          <td>긴 n-gram 생성 → 단계 수 감소</td>
+          <td>너무 크면 잘못된 n-gram 증가</td>
+          <td>(O(W \cdot N))</td>
+          <td>(O(W \cdot N))</td>
+      </tr>
+      <tr>
+          <td>(G)</td>
+          <td>병렬 검증 증가 → 병목 감소</td>
+          <td>낮은 품질의 n-gram 포함 가능</td>
+          <td>(O(G \cdot N))</td>
+          <td>(O(G \cdot N))</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="5-결론-파라미터-튜닝-전략">5. <strong>결론: 파라미터 튜닝 전략</strong></h3>
+<ul>
+<li>
+<p><strong>GPU 자원 고려</strong>:</p>
+<ul>
+<li>고성능 GPU에서는 (W)와 (N)을 크게 설정해 디코딩 속도를 극대화.</li>
+<li>제한적인 GPU에서는 (W, N)을 줄여 메모리와 FLOP 요구량 감소.</li>
+</ul>
+</li>
+<li>
+<p><strong>작업 도메인 맞춤 설정</strong>:</p>
+<ul>
+<li>(W)와 (N)을 복잡한 도메인(예: 코드 생성)에서는 보수적으로 설정.</li>
+<li>(G)를 도메인에 따라 조정해 검증 효율 최적화.</li>
+</ul>
+</li>
+<li>
+<p><strong>권장 설정</strong>:</p>
+<ul>
+<li>A100 GPU 기준: (W=15), (N=5), (G=W)가 최적의 성능을 제공.</li>
+<li>RTX 3090과 같은 소규모 GPU에서는 (W=5), (N=3), (G=5)를 권장.</li>
+</ul>
+</li>
+</ul>
+<h1 id="q-현재-논문에서-제안된-verification-branch는-모든-n-gram을-동일한-방식으로-검증하는데-이를-효율화하거나-계층적으로-검증하는-방식예-multi-stage-verification이-추가된다면-성능에-어떤-변화가-있을까">Q 현재 논문에서 제안된 Verification Branch는 모든 n-gram을 동일한 방식으로 검증하는데, 이를 효율화하거나 계층적으로 검증하는 방식(예: Multi-stage Verification)이 추가된다면 성능에 어떤 변화가 있을까?</h1>
+<h1 id="a">A:</h1>
+<h3 id="multi-stage-verification-도입-시-성능-변화-분석"><strong>Multi-stage Verification 도입 시 성능 변화 분석</strong></h3>
+<p>현재 논문에서 제안된 Verification Branch는 <strong>모든 n-gram을 동일한 방식</strong>으로 검증합니다. 이는 단순하고 일반적인 방법이지만, <strong>불필요한 검증 비용</strong>과 <strong>낮은 효율성</strong>을 초래할 수 있습니다. 이를 해결하기 위해 <strong>Multi-stage Verification</strong>을 도입하면 성능의 여러 측면에서 긍정적인 변화를 기대할 수 있습니다.</p>
+<hr>
+<h3 id="1-multi-stage-verification-개념"><strong>1. Multi-stage Verification 개념</strong></h3>
+<ul>
+<li>Multi-stage Verification은 <strong>단계별로 점진적으로 검증을 수행</strong>하는 방식입니다.</li>
+<li><strong>단계별 전략</strong>:
+<ol>
+<li><strong>1단계 (Low-cost 필터링)</strong>: n-gram의 단순 특성을 기반으로 유망하지 않은 후보를 조기에 제외.</li>
+<li><strong>2단계 (확률 기반 검증)</strong>: LLM의 예측 분포와 비교하여 높은 가능성의 n-gram만 선별.</li>
+<li><strong>3단계 (정밀 검증)</strong>: 최종적으로 LLM의 출력 분포와 정확히 일치하는지 확인.</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="2-multi-stage-verification-도입-시-성능-변화"><strong>2. Multi-stage Verification 도입 시 성능 변화</strong></h3>
+<h4 id="21-디코딩-속도"><strong>2.1 디코딩 속도</strong></h4>
+<ul>
+<li><strong>향상</strong>:
+<ul>
+<li>초기 단계에서 잘못된 n-gram을 조기에 제외함으로써 불필요한 계산을 줄이고 속도를 높임.</li>
+<li>(G)개의 n-gram을 모두 검증하지 않아도 되므로 연산량 감소.</li>
+</ul>
+</li>
+<li><strong>변화 예상</strong>:
+<ul>
+<li>병렬 검증에 드는 FLOP이 줄어들어 <strong>전체 디코딩 시간이 단축</strong>.</li>
+</ul>
+</li>
+</ul>
+<h4 id="22-정확성"><strong>2.2 정확성</strong></h4>
+<ul>
+<li><strong>개선</strong>:
+<ul>
+<li>각 단계에서 점진적으로 검증 수준을 높이므로 잘못된 n-gram이 최종 출력으로 포함될 가능성 감소.</li>
+</ul>
+</li>
+<li><strong>변화 예상</strong>:
+<ul>
+<li>단순 검증 대비 높은 정확성 유지 가능.</li>
+<li>특히, 중요한 도메인(예: 코드 생성)에서 신뢰도 상승.</li>
+</ul>
+</li>
+</ul>
+<h4 id="23-flop-요구량"><strong>2.3 FLOP 요구량</strong></h4>
+<ul>
+<li><strong>감소</strong>:
+<ul>
+<li>초기 단계에서 대부분의 잘못된 n-gram을 제외하기 때문에 전체 검증에 필요한 연산량 감소.</li>
+</ul>
+</li>
+<li><strong>변화 예상</strong>:
+<ul>
+<li>FLOP 요구량은 각 단계에서 다르게 나타남:
+<ul>
+<li>1단계: 간단한 특성 비교 → 매우 적은 FLOP 필요.</li>
+<li>2단계: 확률 분포 기반 → 중간 수준 FLOP.</li>
+<li>3단계: 정밀 검증 → 기존과 유사한 FLOP.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="24-메모리-사용량"><strong>2.4 메모리 사용량</strong></h4>
+<ul>
+<li><strong>감소</strong>:
+<ul>
+<li>Pool에 포함된 n-gram 중 불필요한 후보를 초기 단계에서 제거하여 메모리 사용량 감소.</li>
+</ul>
+</li>
+<li><strong>변화 예상</strong>:
+<ul>
+<li>검증이 진행됨에 따라 Pool 크기가 점진적으로 감소 → 메모리 효율성 향상.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-multi-stage-verification-설계-시-고려사항"><strong>3. Multi-stage Verification 설계 시 고려사항</strong></h3>
+<h4 id="31-1단계-low-cost-필터링"><strong>3.1 1단계: Low-cost 필터링</strong></h4>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>단순 규칙(예: n-gram 시작 토큰이 이전 출력과 일치하지 않으면 제외).</li>
+<li>확률 분포 상위 (k%)만 유지.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>빠르게 불필요한 n-gram을 제외하여 다음 단계 연산 부담 감소.</li>
+</ul>
+</li>
+</ul>
+<h4 id="32-2단계-확률-기반-검증"><strong>3.2 2단계: 확률 기반 검증</strong></h4>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>각 n-gram의 출력 확률을 기반으로 상위 후보 선별.</li>
+<li>낮은 확률의 n-gram은 다음 단계로 전달하지 않음.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>높은 가능성을 가진 후보만 남겨 정확도를 유지하며 효율성 향상.</li>
+</ul>
+</li>
+</ul>
+<h4 id="33-3단계-정밀-검증"><strong>3.3 3단계: 정밀 검증</strong></h4>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>현재 논문의 검증 방식을 활용하여 최종적으로 LLM의 출력 분포와 일치 여부 확인.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>최종 검증 단계에서 높은 정확도 보장.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-multi-stage-verification의-성능-시뮬레이션"><strong>4. Multi-stage Verification의 성능 시뮬레이션</strong></h3>
+<h4 id="가정-설정"><strong>가정 설정</strong>:</h4>
+<ul>
+<li>(W=15), (N=5), (G=10) 설정.</li>
+<li>100개의 n-gram이 Pool에 포함되어 있음.</li>
+</ul>
+<h4 id="각-단계별-성능-변화"><strong>각 단계별 성능 변화</strong>:</h4>
+<table>
+  <thead>
+      <tr>
+          <th>단계</th>
+          <th>검증 대상 수 감소율</th>
+          <th>FLOP 감소율</th>
+          <th>메모리 감소율</th>
+          <th>예상 정확도 변화</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1단계: 필터링</td>
+          <td>약 60%</td>
+          <td>10~20%</td>
+          <td>50~60%</td>
+          <td>동일</td>
+      </tr>
+      <tr>
+          <td>2단계: 확률 검증</td>
+          <td>추가로 20% 감소</td>
+          <td>30~40%</td>
+          <td>30% 추가 감소</td>
+          <td>동일</td>
+      </tr>
+      <tr>
+          <td>3단계: 정밀 검증</td>
+          <td>최종 10~20%만 검증</td>
+          <td>기존 대비 50% 감소</td>
+          <td>메모리 최적화</td>
+          <td>동일 또는 약간 증가</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="5-논문-결과와의-비교"><strong>5. 논문 결과와의 비교</strong></h3>
+<table>
+  <thead>
+      <tr>
+          <th>특성</th>
+          <th>기존 Verification Branch</th>
+          <th>Multi-stage Verification 도입 시</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>속도</strong></td>
+          <td>모든 n-gram을 동일하게 검증 → 느림</td>
+          <td>초기 단계에서 잘못된 후보 제거 → 빠름</td>
+      </tr>
+      <tr>
+          <td><strong>정확성</strong></td>
+          <td>일부 불필요한 검증으로 낮아질 가능성 존재</td>
+          <td>단계별 정밀 검증 → 높은 정확성 유지</td>
+      </tr>
+      <tr>
+          <td><strong>FLOP 요구량</strong></td>
+          <td>모든 n-gram을 검증하므로 높음</td>
+          <td>단계를 거치며 FLOP 감소 → 연산 효율적</td>
+      </tr>
+      <tr>
+          <td><strong>메모리 사용량</strong></td>
+          <td>Pool 크기가 그대로 유지</td>
+          <td>각 단계에서 Pool 크기 감소 → 메모리 효율적 사용</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="6-multi-stage-verification-도입의-잠재적-한계"><strong>6. Multi-stage Verification 도입의 잠재적 한계</strong></h3>
+<ol>
+<li>
+<p><strong>설계 복잡성 증가</strong>:</p>
+<ul>
+<li>단계별 검증 메커니즘 구현으로 코드 복잡성이 증가.</li>
+<li>초기 단계에서 과도한 필터링이 발생하면 성능 저하 가능.</li>
+</ul>
+</li>
+<li>
+<p><strong>초기 단계에서의 결정 품질</strong>:</p>
+<ul>
+<li>초기 필터링 단계에서 중요한 후보가 잘못 제외될 경우 최종 정확도 하락 가능.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-3"><strong>결론</strong></h3>
+<p>Multi-stage Verification은 LOOKAHEAD DECODING의 성능을 크게 향상시킬 가능성이 있습니다. 이를 통해 디코딩 속도를 높이고 FLOP 및 메모리 요구량을 감소시키며, 높은 정확성을 유지할 수 있습니다. 하지만 단계별 설계의 복잡성을 관리하고, 초기 단계에서 필터링 품질을 유지하는 것이 성공적인 구현의 핵심입니다.</p>
+<h1 id="q---다양한-샘플링-기법예-beam-search-top-k-샘플링-top-p-샘플링에서-lookahead-decoding의-성능은-어떻게-변하며-이를-지원하기-위해-verification-branch를-어떻게-수정할-수-있을까">Q :  다양한 샘플링 기법(예: Beam Search, Top-K 샘플링, Top-P 샘플링)에서 Lookahead Decoding의 성능은 어떻게 변하며, 이를 지원하기 위해 Verification Branch를 어떻게 수정할 수 있을까?</h1>
+<h3 id="다양한-샘플링-기법에서-lookahead-decoding의-성능-변화와-verification-branch-수정-방안">다양한 샘플링 기법에서 Lookahead Decoding의 성능 변화와 Verification Branch 수정 방안</h3>
+<hr>
+<h3 id="1-샘플링-기법이-lookahead-decoding에-미치는-영향"><strong>1. 샘플링 기법이 Lookahead Decoding에 미치는 영향</strong></h3>
+<p>Lookahead Decoding은 기존의 Greedy Decoding에서 매우 효율적으로 작동하지만, 다양한 샘플링 기법을 사용할 경우 성능과 동작 방식이 달라질 수 있습니다. 샘플링 기법별 특성을 고려하여 Lookahead Decoding에 미치는 영향을 분석합니다.</p>
+<h4 id="11-beam-search"><strong>1.1 Beam Search</strong></h4>
+<ul>
+<li><strong>특성</strong>:
+<ul>
+<li>여러 후보 경로를 유지하며 최적의 시퀀스를 탐색.</li>
+<li>높은 정확도를 유지하지만 연산량 증가.</li>
+</ul>
+</li>
+<li><strong>영향</strong>:
+<ul>
+<li>(W)와 (N)의 크기에 따라 병렬성은 유지되지만, 각 Beam에서 생성된 n-gram에 대해 별도의 Verification이 필요하여 연산량 증가.</li>
+<li><strong>병목 현상</strong>: Beam 간 독립적 검증으로 인해 메모리 사용량과 FLOP 요구량 급증.</li>
+</ul>
+</li>
+</ul>
+<h4 id="12-top-k-샘플링"><strong>1.2 Top-K 샘플링</strong></h4>
+<ul>
+<li><strong>특성</strong>:
+<ul>
+<li>확률 분포 상위 (K)개의 토큰 중에서 샘플링.</li>
+<li>다양성을 높이는 대신 선택된 토큰의 품질이 보장되지 않을 수 있음.</li>
+</ul>
+</li>
+<li><strong>영향</strong>:
+<ul>
+<li>다양한 n-gram이 Pool에 포함되어 검증 부담 증가.</li>
+<li>(K) 값이 클수록 잘못된 n-gram 후보 증가 → 검증 효율 저하.</li>
+</ul>
+</li>
+</ul>
+<h4 id="13-top-p-샘플링-nucleus-sampling"><strong>1.3 Top-P 샘플링 (Nucleus Sampling)</strong></h4>
+<ul>
+<li><strong>특성</strong>:
+<ul>
+<li>누적 확률 (P) 이하의 토큰 집합에서 샘플링.</li>
+<li>확률 분포 기반으로 다양성과 품질을 조절.</li>
+</ul>
+</li>
+<li><strong>영향</strong>:
+<ul>
+<li>확률 (P)에 따라 n-gram의 다양성과 검증 복잡도가 크게 달라짐.</li>
+<li>작은 (P): Greedy Decoding과 유사하게 동작하여 Lookahead Decoding에 적합.</li>
+<li>큰 (P): 후보군 증가로 검증 효율 저하 가능.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-다양한-샘플링-기법-지원을-위한-verification-branch-수정-방안"><strong>2. 다양한 샘플링 기법 지원을 위한 Verification Branch 수정 방안</strong></h3>
+<h4 id="21-기본-verification-branch의-한계"><strong>2.1 기본 Verification Branch의 한계</strong></h4>
+<ul>
+<li>Greedy Decoding에서 모든 n-gram은 고정된 확률 분포에서 생성 → 간단한 검증으로 충분.</li>
+<li>샘플링 기법에서는 확률 기반 샘플링이 이루어지므로:
+<ul>
+<li><strong>다양한 n-gram 후보</strong>가 Pool에 추가.</li>
+<li>확률 분포의 불확실성 증가 → 검증 비용 상승.</li>
+</ul>
+</li>
+</ul>
+<h4 id="22-verification-branch-수정-방안"><strong>2.2 Verification Branch 수정 방안</strong></h4>
+<h5 id="1-beam-search-지원"><strong>(1) Beam Search 지원</strong></h5>
+<ol>
+<li><strong>Beam 단위 검증</strong>:
+<ul>
+<li>각 Beam 경로에서 독립적으로 n-gram을 생성하고 검증.</li>
+</ul>
+</li>
+<li><strong>Beam Prioritization</strong>:
+<ul>
+<li>높은 점수를 받은 Beam부터 검증 우선순위를 부여해 연산 부담 감소.</li>
+</ul>
+</li>
+<li><strong>병렬 검증 최적화</strong>:
+<ul>
+<li>Beam 내 병렬성을 활용해 GPU에서 효율적으로 검증 수행.</li>
+</ul>
+</li>
+</ol>
+<h5 id="2-top-k-샘플링-지원"><strong>(2) Top-K 샘플링 지원</strong></h5>
+<ol>
+<li><strong>확률 임계값 적용</strong>:
+<ul>
+<li>(K) 값이 클수록 확률 하위 (p%)의 n-gram은 사전에 제외.</li>
+<li>불필요한 후보를 줄여 검증 비용 최소화.</li>
+</ul>
+</li>
+<li><strong>다중 후보 검증</strong>:
+<ul>
+<li>상위 (K)개의 후보에 대해 병렬 검증 수행.</li>
+</ul>
+</li>
+<li><strong>Dynamic Pool Reduction</strong>:
+<ul>
+<li>낮은 확률의 후보군을 주기적으로 제거하여 Pool 크기를 제어.</li>
+</ul>
+</li>
+</ol>
+<h5 id="3-top-p-샘플링-지원"><strong>(3) Top-P 샘플링 지원</strong></h5>
+<ol>
+<li><strong>확률 기반 검증</strong>:
+<ul>
+<li>각 n-gram의 누적 확률을 계산하여 일정 임계값 (P&rsquo;) 이하만 검증.</li>
+</ul>
+</li>
+<li><strong>Adaptive Verification</strong>:
+<ul>
+<li>작은 (P): 모든 n-gram 검증(Greedy 방식과 유사).</li>
+<li>큰 (P): 확률이 낮은 후보는 초기 단계에서 제거.</li>
+</ul>
+</li>
+</ol>
+<h5 id="4-공통-개선-방안"><strong>(4) 공통 개선 방안</strong></h5>
+<ol>
+<li>
+<p><strong>확률 분포 활용</strong>:</p>
+<ul>
+<li>Lookahead Branch에서 생성된 각 n-gram의 확률 값을 함께 저장.</li>
+<li>낮은 확률 n-gram은 다음 단계에서 제외해 효율성 향상.</li>
+</ul>
+</li>
+<li>
+<p><strong>Multi-stage Verification 추가</strong>:</p>
+<ul>
+<li>1단계: 확률 기반 사전 필터링.</li>
+<li>2단계: 후보군 중 높은 확률 순서로 검증.</li>
+<li>3단계: LLM 분포와의 정밀 비교.</li>
+</ul>
+</li>
+<li>
+<p><strong>Verification Weighting</strong>:</p>
+<ul>
+<li>n-gram의 확률 점수에 기반해 검증 우선순위를 조정.</li>
+<li>우선순위가 낮은 n-gram은 검증 비용을 줄이기 위해 빠르게 필터링.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="3-성능-변화-예상"><strong>3. 성능 변화 예상</strong></h3>
+<table>
+  <thead>
+      <tr>
+          <th>샘플링 기법</th>
+          <th>수정된 Verification Branch 도입 시 성능 변화</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Beam Search</strong></td>
+          <td>- 독립적인 Beam 검증 → 메모리 사용량 증가.</td>
+      </tr>
+      <tr>
+          <td></td>
+          <td>- Beam Prioritization 도입 시 FLOP 감소 및 속도 향상.</td>
+      </tr>
+      <tr>
+          <td><strong>Top-K 샘플링</strong></td>
+          <td>- (K) 크기 조정으로 Pool 크기 감소 → 검증 비용 감소.</td>
+      </tr>
+      <tr>
+          <td></td>
+          <td>- Dynamic Pool Reduction으로 메모리 효율성 증가.</td>
+      </tr>
+      <tr>
+          <td><strong>Top-P 샘플링</strong></td>
+          <td>- (P) 증가 시 다양한 후보군 지원 → 검증 단계 증가.</td>
+      </tr>
+      <tr>
+          <td></td>
+          <td>- 작은 (P)에서 효율적으로 동작 → Greedy Decoding과 유사.</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="4-적용-사례"><strong>4. 적용 사례</strong></h3>
+<h4 id="41-top-k-샘플링-예시"><strong>4.1 Top-K 샘플링 예시</strong></h4>
+<ul>
+<li>설정: (K=10), (W=5), (N=3), (G=10).</li>
+<li><strong>초기 Pool</strong>: (n=50)개의 n-gram 후보 생성.</li>
+<li><strong>수정된 검증</strong>:
+<ol>
+<li>(K) 값 기준으로 상위 10개의 n-gram 필터링.</li>
+<li>필터링된 n-gram에 대해 확률 기반 검증 수행.</li>
+</ol>
+</li>
+</ul>
+<h4 id="42-top-p-샘플링-예시"><strong>4.2 Top-P 샘플링 예시</strong></h4>
+<ul>
+<li>설정: (P=0.9), (W=5), (N=3), (G=10).</li>
+<li><strong>초기 Pool</strong>: 확률 (P &gt; 0.9)에 해당하는 후보군만 저장.</li>
+<li><strong>검증 과정</strong>:
+<ol>
+<li>확률 분포 기반으로 후보군 축소.</li>
+<li>남은 후보군에 대해 병렬 검증 수행.</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="5-결론"><strong>5. 결론</strong></h3>
+<ul>
+<li><strong>샘플링 기법</strong>이 다양화되면 Lookahead Decoding의 기본 구조만으로는 효율성과 정확성을 유지하기 어려움.</li>
+<li>이를 해결하기 위해 Verification Branch를 <strong>확률 기반 필터링</strong>, <strong>Multi-stage Verification</strong>, <strong>Beam Prioritization</strong> 등의 방식으로 수정하여 연산 비용을 줄이고 정확도를 유지할 수 있음.</li>
+<li>다양한 샘플링 전략에서도 Lookahead Decoding의 병렬성과 확장성을 유지할 수 있도록 수정된 Verification Branch는 필수적입니다.</li>
+</ul>
+<h1 id="q--lookahead-decoding이-적합하지-않은-작업예-매우-긴-시퀀스-생성-극도로-높은-정확도가-요구되는-도메인은-무엇이며-이러한-제한을-극복하기-위한-알고리즘-개선-방안은-무엇인가">Q:  LOOKAHEAD DECODING이 적합하지 않은 작업(예: 매우 긴 시퀀스 생성, 극도로 높은 정확도가 요구되는 도메인)은 무엇이며, 이러한 제한을 극복하기 위한 알고리즘 개선 방안은 무엇인가?</h1>
+<h3 id="lookahead-decoding이-적합하지-않은-작업과-이를-극복하기-위한-개선-방안">LOOKAHEAD DECODING이 적합하지 않은 작업과 이를 극복하기 위한 개선 방안</h3>
+<p>LOOKAHEAD DECODING은 대형 언어 모델(LLM)의 디코딩 속도를 높이기 위한 혁신적인 방법이지만, 모든 작업에 적합하지는 않습니다. 특히, 아래와 같은 특정 작업에서는 성능 및 정확도의 한계가 나타날 수 있습니다. 이에 대한 제한점을 분석하고, 이를 극복하기 위한 알고리즘 개선 방안을 제안합니다.</p>
+<hr>
+<h2 id="1-lookahead-decoding이-적합하지-않은-작업"><strong>1. LOOKAHEAD DECODING이 적합하지 않은 작업</strong></h2>
+<h3 id="11-매우-긴-시퀀스-생성-작업"><strong>1.1 매우 긴 시퀀스 생성 작업</strong></h3>
+<h4 id="문제점"><strong>문제점</strong></h4>
+<ul>
+<li><strong>n-gram Pool 크기 증가</strong>:
+<ul>
+<li>긴 시퀀스를 생성할수록 (W), (N), (G) 설정에 따라 Pool 크기가 선형적으로 증가.</li>
+<li>Pool 관리 및 메모리 사용량 급증.</li>
+</ul>
+</li>
+<li><strong>메모리 대역폭 병목</strong>:
+<ul>
+<li>긴 시퀀스는 Attention 연산의 (O(L^2)) 메모리 복잡도로 인해 메모리 병목 발생.</li>
+</ul>
+</li>
+</ul>
+<h4 id="예시-작업"><strong>예시 작업</strong></h4>
+<ul>
+<li>소설 생성, 대규모 문서 요약, 장기 대화 모델링.</li>
+</ul>
+<hr>
+<h3 id="12-극도로-높은-정확도가-요구되는-도메인"><strong>1.2 극도로 높은 정확도가 요구되는 도메인</strong></h3>
+<h4 id="문제점-1"><strong>문제점</strong></h4>
+<ul>
+<li><strong>검증 과정의 정확성 한계</strong>:
+<ul>
+<li>Verification Branch는 (N)-gram 단위로 검증하므로, 전체 문맥에서 의미적으로 부적합한 n-gram이 포함될 가능성 존재.</li>
+<li>잘못된 n-gram이 수용되면 정확도 저하.</li>
+</ul>
+</li>
+<li><strong>n-gram 단위 검증의 제약</strong>:
+<ul>
+<li>문맥이 중요한 도메인에서는 토큰 간의 긴밀한 상관관계를 놓칠 수 있음.</li>
+</ul>
+</li>
+</ul>
+<h4 id="예시-작업-1"><strong>예시 작업</strong></h4>
+<ul>
+<li>코드 생성 (Code Completion), 수학 문제 해결, 논리적 추론.</li>
+</ul>
+<hr>
+<h3 id="13-샘플링-기반의-고다양성-작업"><strong>1.3 샘플링 기반의 고다양성 작업</strong></h3>
+<h4 id="문제점-2"><strong>문제점</strong></h4>
+<ul>
+<li><strong>다양성 유지의 어려움</strong>:
+<ul>
+<li>Lookahead Decoding은 기본적으로 Greedy Decoding에 최적화되어 있어, 샘플링 기법(Top-K, Top-P)을 사용한 다양한 결과 생성에서 성능 저하 가능.</li>
+</ul>
+</li>
+<li><strong>불확실성 증가</strong>:
+<ul>
+<li>다양한 후보가 Pool에 추가되면서 검증 과정의 연산량 증가 및 낮은 품질의 후보 포함.</li>
+</ul>
+</li>
+</ul>
+<h4 id="예시-작업-2"><strong>예시 작업</strong></h4>
+<ul>
+<li>창의적 텍스트 생성, 시나리오 작성.</li>
+</ul>
+<hr>
+<h2 id="2-제한을-극복하기-위한-알고리즘-개선-방안"><strong>2. 제한을 극복하기 위한 알고리즘 개선 방안</strong></h2>
+<h3 id="21-매우-긴-시퀀스-생성-문제-해결"><strong>2.1 매우 긴 시퀀스 생성 문제 해결</strong></h3>
+<h4 id="1-chunked-decoding"><strong>(1) Chunked Decoding</strong></h4>
+<ul>
+<li>긴 시퀀스를 여러 청크로 나누어 각 청크를 독립적으로 디코딩.</li>
+<li>청크 간 문맥 연결성을 유지하기 위해 Overlapping Window를 사용.</li>
+</ul>
+<p><strong>장점</strong>:</p>
+<ul>
+<li>메모리 사용량 선형 감소 ((O(W))).</li>
+<li>Pool 크기를 줄여 연산 및 검증 부담 완화.</li>
+</ul>
+<h4 id="2-memory-efficient-attention"><strong>(2) Memory-efficient Attention</strong></h4>
+<ul>
+<li>긴 시퀀스의 Attention 병목을 완화하기 위해 FlashAttention, Sparse Attention 적용.</li>
+<li><strong>Sparse Attention</strong>:
+<ul>
+<li>긴 시퀀스에서 중요한 토큰만 선택적으로 Attention에 포함.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-sliding-window-mechanism"><strong>(3) Sliding Window Mechanism</strong></h4>
+<ul>
+<li>n-gram Pool을 Sliding Window로 관리하여 가장 최근의 문맥에 기반한 n-gram만 유지.</li>
+<li>오래된 n-gram은 삭제하여 메모리 사용량 최소화.</li>
+</ul>
+<hr>
+<h3 id="22-높은-정확도가-필요한-작업-해결"><strong>2.2 높은 정확도가 필요한 작업 해결</strong></h3>
+<h4 id="1-context-aware-verification"><strong>(1) Context-aware Verification</strong></h4>
+<ul>
+<li>전체 시퀀스의 문맥을 고려한 검증 방식을 도입.</li>
+<li>n-gram 단위가 아닌, 문맥에 기반한 문장 단위 검증 수행.</li>
+</ul>
+<p><strong>예시</strong>:</p>
+<ul>
+<li>LLM의 Attention 값을 활용하여 n-gram이 전체 문맥에 미치는 영향을 분석.</li>
+<li>불일치가 높은 n-gram 제거.</li>
+</ul>
+<h4 id="2-adaptive-beam-search-integration"><strong>(2) Adaptive Beam Search Integration</strong></h4>
+<ul>
+<li>Lookahead Decoding과 Beam Search를 결합하여 정확도와 속도를 동시 개선.</li>
+<li>상위 Beam 경로에 대해서만 Lookahead 적용.</li>
+</ul>
+<h4 id="3-reinforcement-learning-기반-검증"><strong>(3) Reinforcement Learning 기반 검증</strong></h4>
+<ul>
+<li>검증 과정을 강화학습(RL)으로 최적화하여, 문맥상 가장 적합한 n-gram 선택.</li>
+<li>보상 함수로 전체 문맥 적합성 및 논리적 일관성 포함.</li>
+</ul>
+<hr>
+<h3 id="23-샘플링-기반-작업-해결"><strong>2.3 샘플링 기반 작업 해결</strong></h3>
+<h4 id="1-probabilistic-pool-filtering"><strong>(1) Probabilistic Pool Filtering</strong></h4>
+<ul>
+<li>샘플링 기법에서 생성된 n-gram의 확률 기반 사전 필터링.</li>
+<li>누적 확률 기준으로 (P &gt; 0.9)에 해당하는 후보만 유지.</li>
+</ul>
+<h4 id="2-diversity-aware-verification"><strong>(2) Diversity-aware Verification</strong></h4>
+<ul>
+<li>Pool의 다양성을 유지하도록 검증 메커니즘 수정.</li>
+<li>예시:
+<ul>
+<li>동일한 문맥에서 생성된 후보군 간 최대 유사성을 제한.</li>
+<li>유사한 n-gram을 중복 검증하지 않도록 처리.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-dynamic-sampling-aware-lookahead"><strong>(3) Dynamic Sampling-aware Lookahead</strong></h4>
+<ul>
+<li>샘플링 기법(Top-K, Top-P)에 따라 Lookahead Window 크기 (W), 검증 단위 (N), 병렬 검증 수 (G)를 동적으로 조정.</li>
+</ul>
+<hr>
+<h2 id="3-개선-방안의-성능-변화-예상"><strong>3. 개선 방안의 성능 변화 예상</strong></h2>
+<table>
+  <thead>
+      <tr>
+          <th>문제</th>
+          <th>기존 성능 한계</th>
+          <th>개선 방안 적용 후 성능 변화</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>긴 시퀀스 생성</strong></td>
+          <td>메모리 사용량 급증, Pool 크기 과도 증가</td>
+          <td>Chunked Decoding으로 메모리 사용량 감소</td>
+      </tr>
+      <tr>
+          <td></td>
+          <td></td>
+          <td>Sliding Window로 Pool 크기 효율화</td>
+      </tr>
+      <tr>
+          <td><strong>정확도 요구 작업</strong></td>
+          <td>잘못된 n-gram 검증 통과</td>
+          <td>Context-aware Verification으로 정확도 개선</td>
+      </tr>
+      <tr>
+          <td></td>
+          <td></td>
+          <td>Reinforcement Learning으로 문맥 적합성 향상</td>
+      </tr>
+      <tr>
+          <td><strong>샘플링 기반 작업</strong></td>
+          <td>다양한 후보 처리에 따른 검증 부담 증가</td>
+          <td>Diversity-aware Verification으로 효율 개선</td>
+      </tr>
+      <tr>
+          <td></td>
+          <td></td>
+          <td>Probabilistic Pool Filtering으로 연산량 감소</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="4-결론"><strong>4. 결론</strong></h2>
+<p>LOOKAHEAD DECODING은 긴 시퀀스 생성, 높은 정확도 요구, 샘플링 기반 작업에서 한계를 보이지만, 아래와 같은 개선 방안을 통해 성능을 극대화할 수 있습니다.</p>
+<ol>
+<li><strong>Chunked Decoding</strong>과 <strong>Sliding Window Mechanism</strong>으로 긴 시퀀스 생성 문제를 해결.</li>
+<li><strong>Context-aware Verification</strong>과 <strong>Adaptive Beam Search Integration</strong>으로 정확도 보장.</li>
+<li><strong>Diversity-aware Verification</strong>과 <strong>Dynamic Sampling-aware Lookahead</strong>으로 샘플링 기반 작업의 다양성을 유지하면서 효율성을 높임.</li>
+</ol>
+<p>이러한 개선은 Lookahead Decoding을 다양한 작업에 더욱 적합한 범용적 기법으로 확장할 수 있는 가능성을 제공합니다.</p>
+<h1 id="q--lookahead-decoding의-n-gram-pool이-실제로-생성되는-문맥과-얼마나-관련이-있는지-pool의-효율성을-더-높이기-위해-어떤-학습-기반-최적화-또는-경량화-전략이-적용될-수-있을까">Q : LOOKAHEAD DECODING의 n-gram Pool이 실제로 생성되는 문맥과 얼마나 관련이 있는지, Pool의 효율성을 더 높이기 위해 어떤 학습 기반 최적화 또는 경량화 전략이 적용될 수 있을까?</h1>
+<h3 id="lookahead-decoding의-n-gram-pool과-문맥-관련성-및-최적화-전략">LOOKAHEAD DECODING의 n-gram Pool과 문맥 관련성 및 최적화 전략</h3>
+<p>LOOKAHEAD DECODING의 성능은 <strong>n-gram Pool</strong>의 효율성과 문맥 관련성에 크게 의존합니다. n-gram Pool의 후보가 실제 문맥과 밀접하게 관련될수록 디코딩 정확성과 속도가 향상됩니다. 그러나 잘못된 후보가 Pool에 포함되거나 Pool의 크기가 과도하게 증가하면 메모리 사용량과 연산 부담이 증가할 수 있습니다. 이를 해결하기 위한 학습 기반 최적화 및 경량화 전략을 제안합니다.</p>
+<hr>
+<h3 id="1-n-gram-pool의-문맥-관련성-분석"><strong>1. n-gram Pool의 문맥 관련성 분석</strong></h3>
+<h4 id="11-문맥과의-관련성"><strong>1.1 문맥과의 관련성</strong></h4>
+<ol>
+<li>
+<p><strong>현재 생성 문맥과의 일치 여부</strong>:</p>
+<ul>
+<li>Lookahead Branch에서 생성된 n-gram이 현재 문맥과 얼마나 잘 연결되는지에 따라 Pool의 품질이 결정됨.</li>
+<li>잘못된 n-gram이 포함되면 Verification Branch에서 불필요한 검증 비용 증가.</li>
+</ul>
+</li>
+<li>
+<p><strong>미래 문맥과의 연결 가능성</strong>:</p>
+<ul>
+<li>n-gram이 생성될 가능성과 이후 토큰들에 기여할 확률에 따라 문맥 적합성이 달라짐.</li>
+<li>Greedy Decoding처럼 단일 최적화 경로를 따를 경우 적합성 높음.</li>
+<li>샘플링 기법(Top-K, Top-P)에서는 다양성 요구로 문맥 적합성이 상대적으로 낮아질 수 있음.</li>
+</ul>
+</li>
+</ol>
+<h4 id="12-문맥-관련성이-낮은-경우의-문제점"><strong>1.2 문맥 관련성이 낮은 경우의 문제점</strong></h4>
+<ol>
+<li><strong>불필요한 검증 비용</strong>:
+<ul>
+<li>잘못된 n-gram 후보를 검증하는 데 리소스 낭비.</li>
+</ul>
+</li>
+<li><strong>메모리 사용량 증가</strong>:
+<ul>
+<li>Pool에 포함된 불필요한 후보로 인해 메모리와 FLOP 요구량 증가.</li>
+</ul>
+</li>
+<li><strong>디코딩 정확도 저하</strong>:
+<ul>
+<li>낮은 품질의 n-gram이 검증을 통과하면 최종 디코딩 품질이 낮아질 가능성.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-pool-효율성을-높이기-위한-학습-기반-최적화-전략"><strong>2. Pool 효율성을 높이기 위한 학습 기반 최적화 전략</strong></h3>
+<h4 id="21-n-gram-생성-단계에서의-최적화"><strong>2.1 n-gram 생성 단계에서의 최적화</strong></h4>
+<h5 id="1-문맥-점수-기반-n-gram-필터링"><strong>(1) 문맥 점수 기반 n-gram 필터링</strong></h5>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>n-gram 생성 시 LLM의 Attention 가중치를 활용해 각 n-gram의 문맥 적합성을 점수화.</li>
+<li>낮은 점수를 가진 n-gram은 Pool에 추가하지 않음.</li>
+</ul>
+</li>
+<li><strong>예시</strong>:
+<ul>
+<li>Attention 분포에 따라 ([B, C, D])가 ([C, D, E])보다 문맥 적합성이 높으면 ([C, D, E])를 제외.</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-학습-기반-문맥-모델링"><strong>(2) 학습 기반 문맥 모델링</strong></h5>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>사전 학습된 언어 모델을 활용해 n-gram의 문맥 적합성을 평가.</li>
+<li>각 n-gram의 문맥 점수를 학습된 모델로 계산.</li>
+</ul>
+</li>
+<li><strong>예시</strong>:
+<ul>
+<li>BERT 또는 GPT와 같은 모델을 활용하여 생성된 n-gram과 현재 문맥 간의 유사도를 계산.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="22-pool-관리-단계에서의-최적화"><strong>2.2 Pool 관리 단계에서의 최적화</strong></h4>
+<h5 id="1-dynamic-pool-reduction"><strong>(1) Dynamic Pool Reduction</strong></h5>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>Pool에 포함된 n-gram 중 낮은 확률의 후보를 주기적으로 삭제.</li>
+<li>Pool 크기를 동적으로 조정해 메모리 사용량 감소.</li>
+</ul>
+</li>
+<li><strong>방법</strong>:
+<ul>
+<li>Top-K 또는 Top-P 기반으로 상위 (k%)만 유지.</li>
+</ul>
+</li>
+<li><strong>장점</strong>:
+<ul>
+<li>불필요한 후보를 제거해 검증 비용 절감.</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-frequency-aware-filtering"><strong>(2) Frequency-aware Filtering</strong></h5>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>Pool에서 자주 등장하는 n-gram을 우선적으로 유지하고, 희소한 n-gram을 삭제.</li>
+</ul>
+</li>
+<li><strong>방법</strong>:
+<ul>
+<li>n-gram의 빈도를 점검하여 낮은 빈도의 후보를 제거.</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-context-aware-sliding-window"><strong>(3) Context-aware Sliding Window</strong></h5>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>Pool 크기를 제한하고, Sliding Window 방식으로 최근 문맥에 적합한 n-gram만 유지.</li>
+</ul>
+</li>
+<li><strong>방법</strong>:
+<ul>
+<li>이전 (N)-step의 문맥에 기반해 Pool을 관리.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="23-verification-branch에서의-최적화"><strong>2.3 Verification Branch에서의 최적화</strong></h4>
+<h5 id="1-multi-stage-verification"><strong>(1) Multi-stage Verification</strong></h5>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>Pool에 포함된 n-gram을 문맥 적합성에 따라 단계적으로 검증.</li>
+<li>1단계: 저비용 확률 기반 검증 → 2단계: 정밀 문맥 검증.</li>
+</ul>
+</li>
+<li><strong>장점</strong>:
+<ul>
+<li>잘못된 n-gram을 조기에 제거해 검증 비용 절감.</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-reinforcement-learning-기반-최적화"><strong>(2) Reinforcement Learning 기반 최적화</strong></h5>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>검증 과정에서 강화학습(RL)을 활용해 Pool의 최적화를 자동화.</li>
+<li>보상 함수:
+<ul>
+<li>문맥 적합성이 높은 n-gram 보존.</li>
+<li>불필요한 n-gram 제거.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-diverse-verification"><strong>(3) Diverse Verification</strong></h5>
+<ul>
+<li><strong>아이디어</strong>:
+<ul>
+<li>Pool에서 유사한 n-gram이 중복 검증되지 않도록 처리.</li>
+</ul>
+</li>
+<li><strong>방법</strong>:
+<ul>
+<li>유사성 점수 기반으로 Pool 내의 중복 후보 제거.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-적용-예시"><strong>3. 적용 예시</strong></h3>
+<h4 id="31-학습-기반-문맥-점수-모델"><strong>3.1 학습 기반 문맥 점수 모델</strong></h4>
+<ul>
+<li><strong>입력</strong>:
+<ul>
+<li>현재 문맥: (&ldquo;The main difference is that&hellip;&rdquo;).</li>
+<li>생성된 n-gram 후보: ([B, C, D], [C, D, E], [D, E, F]).</li>
+</ul>
+</li>
+<li><strong>출력</strong>:
+<ul>
+<li>문맥 적합성 점수: ([0.9, 0.7, 0.4]).</li>
+<li>점수 기반으로 ([B, C, D])만 Pool에 추가.</li>
+</ul>
+</li>
+</ul>
+<h4 id="32-dynamic-pool-reduction"><strong>3.2 Dynamic Pool Reduction</strong></h4>
+<ul>
+<li><strong>입력</strong>:
+<ul>
+<li>Pool 크기: (N = 50).</li>
+<li>상위 (K = 10)만 유지.</li>
+</ul>
+</li>
+<li><strong>출력</strong>:
+<ul>
+<li>적합성이 높은 (10)개의 n-gram만 유지.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-기대-효과"><strong>4. 기대 효과</strong></h3>
+<table>
+  <thead>
+      <tr>
+          <th>전략</th>
+          <th>메모리 사용량 감소</th>
+          <th>검증 비용 감소</th>
+          <th>디코딩 정확도 개선</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>문맥 점수 기반 필터링</td>
+          <td>높음</td>
+          <td>중간</td>
+          <td>높음</td>
+      </tr>
+      <tr>
+          <td>Dynamic Pool Reduction</td>
+          <td>중간</td>
+          <td>높음</td>
+          <td>중간</td>
+      </tr>
+      <tr>
+          <td>Multi-stage Verification</td>
+          <td>중간</td>
+          <td>높음</td>
+          <td>높음</td>
+      </tr>
+      <tr>
+          <td>Reinforcement Learning</td>
+          <td>중간</td>
+          <td>중간</td>
+          <td>높음</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="5-결론-1"><strong>5. 결론</strong></h3>
+<p>n-gram Pool의 효율성을 높이기 위해 <strong>문맥 적합성을 평가하는 학습 기반 모델</strong>과 <strong>동적 Pool 관리 전략</strong>을 적용하면 메모리 사용량과 검증 비용을 줄이면서 디코딩 정확도를 유지할 수 있습니다. 특히, 문맥 점수 기반 필터링 및 Multi-stage Verification은 n-gram Pool이 실제 생성 문맥과 더욱 밀접하게 연결되도록 하여 Lookahead Decoding의 성능을 극대화할 수 있는 핵심 기술입니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/Break-the-Sequential-Dependency-of-LLM-Inference-Using-LOOKAHEAD-DECODING/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/Break-the-Sequential-Dependency-of-LLM-Inference-Using-LOOKAHEAD-DECODING/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Decoding-Speculative-Decoding/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                Decoding Speculative Decoding
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-12-15">
+                12月15日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Abseil-Tip-188-%EC%8A%A4%EB%A7%88%ED%8A%B8-%ED%8F%AC%EC%9D%B8%ED%84%B0%EB%A5%BC-%ED%95%A8%EC%88%98-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%A0-%EB%95%8C-%EC%A3%BC%EC%9D%98%ED%95%98%EC%84%B8%EC%9A%94/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Abseil Tip 188 스마트 포인터를 함수 매개변수로 사용할 때 주의하세요
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-12-15">
+                12月15日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-강점-및-독창적인-지점">논문의 강점 및 독창적인 지점</a></li>
+        <li><a href="#핵심-알고리즘-설명-lookahead-decoding">핵심 알고리즘 설명: LOOKAHEAD DECODING</a>
+          <ul>
+            <li><a href="#알고리즘-예시">알고리즘 예시</a></li>
+          </ul>
+        </li>
+        <li><a href="#한계점">한계점</a></li>
+        <li><a href="#결론">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#lookahead-decoding의-핵심-알고리즘-설명">LOOKAHEAD DECODING의 핵심 알고리즘 설명</a></li>
+        <li><a href="#알고리즘-과정-예시-기반-설명">알고리즘 과정: 예시 기반 설명</a>
+          <ul>
+            <li><a href="#설정-1"><strong>설정</strong></a></li>
+            <li><a href="#단계별-과정"><strong>단계별 과정</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#알고리즘-단계-요약">알고리즘 단계 요약</a></li>
+        <li><a href="#lookahead-decoding의-핵심-특징">LOOKAHEAD DECODING의 핵심 특징</a></li>
+        <li><a href="#예시의-정리">예시의 정리</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#lookahead-decoding을-학습하기-위한-데이터셋과-학습-절차">LOOKAHEAD DECODING을 학습하기 위한 데이터셋과 학습 절차</a></li>
+      </ul>
+    </li>
+    <li><a href="#1-학습-및-평가에-적합한-데이터셋">1. 학습 및 평가에 적합한 데이터셋</a>
+      <ul>
+        <li><a href="#11-데이터셋-선정-기준"><strong>1.1 데이터셋 선정 기준</strong></a></li>
+        <li><a href="#12-추천-데이터셋"><strong>1.2 추천 데이터셋</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#2-학습-절차-설계">2. 학습 절차 설계</a>
+      <ul>
+        <li><a href="#21-실험-환경-준비"><strong>2.1 실험 환경 준비</strong></a></li>
+        <li><a href="#22-실험-설계-예시"><strong>2.2 실험 설계 예시</strong></a>
+          <ul>
+            <li><a href="#1단계-실험-설정"><strong>1단계: 실험 설정</strong></a></li>
+            <li><a href="#2단계-모델-디코딩-비교"><strong>2단계: 모델 디코딩 비교</strong></a></li>
+            <li><a href="#3단계-다양한-gpu-환경에서-확장성-평가"><strong>3단계: 다양한 GPU 환경에서 확장성 평가</strong></a></li>
+            <li><a href="#4단계-데이터셋-도메인별-평가"><strong>4단계: 데이터셋 도메인별 평가</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#23-예시-실험"><strong>2.3 예시 실험</strong></a>
+          <ul>
+            <li><a href="#입력"><strong>입력</strong></a></li>
+            <li><a href="#출력-비교"><strong>출력 비교</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-요약-lookahead-decoding-실험-구조화">3. 요약: LOOKAHEAD DECODING 실험 구조화</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-결과와-특출난-점">논문의 결과와 특출난 점</a></li>
+        <li><a href="#1-논문의-주요-결과"><strong>1. 논문의 주요 결과</strong></a></li>
+        <li><a href="#2-다른-방법론과의-비교"><strong>2. 다른 방법론과의 비교</strong></a>
+          <ul>
+            <li><a href="#21-비교-기준"><strong>2.1 비교 기준</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-특출난-점과-그-이유"><strong>3. 특출난 점과 그 이유</strong></a>
+          <ul>
+            <li><a href="#31-lookahead-branch"><strong>3.1 Lookahead Branch</strong></a></li>
+            <li><a href="#32-verification-branch"><strong>3.2 Verification Branch</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-lookahead-decoding이-이런-결과를-도출한-이유"><strong>4. LOOKAHEAD DECODING이 이런 결과를 도출한 이유</strong></a>
+          <ul>
+            <li><a href="#41-논문에서-제시하는-이유"><strong>4.1 논문에서 제시하는 이유</strong></a></li>
+            <li><a href="#42-나의-생각"><strong>4.2 나의 생각</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#5-한계점"><strong>5. 한계점</strong></a>
+          <ul>
+            <li><a href="#51-추가-연산-부담"><strong>5.1 추가 연산 부담</strong></a></li>
+            <li><a href="#52-복잡성"><strong>5.2 복잡성</strong></a></li>
+            <li><a href="#53-실험-의존성"><strong>5.3 실험 의존성</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-1"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-입력-데이터와-추론-과정-예시">논문의 입력 데이터와 추론 과정 예시</a>
+          <ul>
+            <li><a href="#1-입력-데이터"><strong>1. 입력 데이터</strong></a></li>
+            <li><a href="#2-추론-과정"><strong>2. 추론 과정</strong></a></li>
+            <li><a href="#3-최종-추론-결과"><strong>3. 최종 추론 결과</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#모델-아키텍처-구성-및-컴퓨팅-요구량">모델 아키텍처 구성 및 컴퓨팅 요구량</a>
+          <ul>
+            <li><a href="#1-모델-아키텍처-구성"><strong>1. 모델 아키텍처 구성</strong></a></li>
+            <li><a href="#2-모델-연산"><strong>2. 모델 연산</strong></a></li>
+            <li><a href="#3-메모리-요구량"><strong>3. 메모리 요구량</strong></a></li>
+            <li><a href="#4-flop-요구량"><strong>4. FLOP 요구량</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#종합">종합</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#lookahead-decoding의-한계를-극복하기-위한-연구-흐름">LOOKAHEAD DECODING의 한계를 극복하기 위한 연구 흐름</a></li>
+      </ul>
+    </li>
+    <li><a href="#1-한계-및-이를-극복하기-위한-연구-흐름">1. 한계 및 이를 극복하기 위한 연구 흐름</a>
+      <ul>
+        <li><a href="#11-추가-계산량-및-flop-요구량"><strong>1.1 추가 계산량 및 FLOP 요구량</strong></a>
+          <ul>
+            <li><a href="#문제"><strong>문제</strong></a></li>
+            <li><a href="#연구-흐름"><strong>연구 흐름</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#12-메모리-사용량-증가"><strong>1.2 메모리 사용량 증가</strong></a>
+          <ul>
+            <li><a href="#문제-1"><strong>문제</strong></a></li>
+            <li><a href="#연구-흐름-1"><strong>연구 흐름</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#13-낮은-acceptance-rate-검증-비율"><strong>1.3 낮은 Acceptance Rate (검증 비율)</strong></a>
+          <ul>
+            <li><a href="#문제-2"><strong>문제</strong></a></li>
+            <li><a href="#연구-흐름-2"><strong>연구 흐름</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#14-소규모-gpu-환경에서의-활용-제약"><strong>1.4 소규모 GPU 환경에서의 활용 제약</strong></a>
+          <ul>
+            <li><a href="#문제-3"><strong>문제</strong></a></li>
+            <li><a href="#연구-흐름-3"><strong>연구 흐름</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#15-일반화-문제"><strong>1.5 일반화 문제</strong></a>
+          <ul>
+            <li><a href="#문제-4"><strong>문제</strong></a></li>
+            <li><a href="#연구-흐름-4"><strong>연구 흐름</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#종합-1"><strong>종합</strong></a></li>
+        <li><a href="#결론-2">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#lookahead-decoding의-효율성에-영향을-미치는-핵심-파라미터-분석">Lookahead Decoding의 효율성에 영향을 미치는 핵심 파라미터 분석</a></li>
+        <li><a href="#1-w-병렬로-생성할-토큰의-수-lookahead-window-크기">1. <strong>(W): 병렬로 생성할 토큰의 수 (Lookahead Window 크기)</strong></a>
+          <ul>
+            <li><a href="#역할"><strong>역할</strong>:</a></li>
+            <li><a href="#영향"><strong>영향</strong>:</a></li>
+            <li><a href="#적용-사례"><strong>적용 사례</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#2-n-n-gram-크기">2. <strong>(N): n-gram 크기</strong></a>
+          <ul>
+            <li><a href="#역할-1"><strong>역할</strong>:</a></li>
+            <li><a href="#영향-1"><strong>영향</strong>:</a></li>
+            <li><a href="#적용-사례-1"><strong>적용 사례</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#3-g-병렬로-검증-가능한-n-gram의-수">3. <strong>(G): 병렬로 검증 가능한 n-gram의 수</strong></a>
+          <ul>
+            <li><a href="#역할-2"><strong>역할</strong>:</a></li>
+            <li><a href="#영향-2"><strong>영향</strong>:</a></li>
+            <li><a href="#적용-사례-2"><strong>적용 사례</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#4-파라미터-간-상호작용">4. <strong>파라미터 간 상호작용</strong></a></li>
+        <li><a href="#5-결론-파라미터-튜닝-전략">5. <strong>결론: 파라미터 튜닝 전략</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#multi-stage-verification-도입-시-성능-변화-분석"><strong>Multi-stage Verification 도입 시 성능 변화 분석</strong></a></li>
+        <li><a href="#1-multi-stage-verification-개념"><strong>1. Multi-stage Verification 개념</strong></a></li>
+        <li><a href="#2-multi-stage-verification-도입-시-성능-변화"><strong>2. Multi-stage Verification 도입 시 성능 변화</strong></a>
+          <ul>
+            <li><a href="#21-디코딩-속도"><strong>2.1 디코딩 속도</strong></a></li>
+            <li><a href="#22-정확성"><strong>2.2 정확성</strong></a></li>
+            <li><a href="#23-flop-요구량"><strong>2.3 FLOP 요구량</strong></a></li>
+            <li><a href="#24-메모리-사용량"><strong>2.4 메모리 사용량</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-multi-stage-verification-설계-시-고려사항"><strong>3. Multi-stage Verification 설계 시 고려사항</strong></a>
+          <ul>
+            <li><a href="#31-1단계-low-cost-필터링"><strong>3.1 1단계: Low-cost 필터링</strong></a></li>
+            <li><a href="#32-2단계-확률-기반-검증"><strong>3.2 2단계: 확률 기반 검증</strong></a></li>
+            <li><a href="#33-3단계-정밀-검증"><strong>3.3 3단계: 정밀 검증</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-multi-stage-verification의-성능-시뮬레이션"><strong>4. Multi-stage Verification의 성능 시뮬레이션</strong></a>
+          <ul>
+            <li><a href="#가정-설정"><strong>가정 설정</strong>:</a></li>
+            <li><a href="#각-단계별-성능-변화"><strong>각 단계별 성능 변화</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#5-논문-결과와의-비교"><strong>5. 논문 결과와의 비교</strong></a></li>
+        <li><a href="#6-multi-stage-verification-도입의-잠재적-한계"><strong>6. Multi-stage Verification 도입의 잠재적 한계</strong></a></li>
+        <li><a href="#결론-3"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#다양한-샘플링-기법에서-lookahead-decoding의-성능-변화와-verification-branch-수정-방안">다양한 샘플링 기법에서 Lookahead Decoding의 성능 변화와 Verification Branch 수정 방안</a></li>
+        <li><a href="#1-샘플링-기법이-lookahead-decoding에-미치는-영향"><strong>1. 샘플링 기법이 Lookahead Decoding에 미치는 영향</strong></a>
+          <ul>
+            <li><a href="#11-beam-search"><strong>1.1 Beam Search</strong></a></li>
+            <li><a href="#12-top-k-샘플링"><strong>1.2 Top-K 샘플링</strong></a></li>
+            <li><a href="#13-top-p-샘플링-nucleus-sampling"><strong>1.3 Top-P 샘플링 (Nucleus Sampling)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-다양한-샘플링-기법-지원을-위한-verification-branch-수정-방안"><strong>2. 다양한 샘플링 기법 지원을 위한 Verification Branch 수정 방안</strong></a>
+          <ul>
+            <li><a href="#21-기본-verification-branch의-한계"><strong>2.1 기본 Verification Branch의 한계</strong></a></li>
+            <li><a href="#22-verification-branch-수정-방안"><strong>2.2 Verification Branch 수정 방안</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-성능-변화-예상"><strong>3. 성능 변화 예상</strong></a></li>
+        <li><a href="#4-적용-사례"><strong>4. 적용 사례</strong></a>
+          <ul>
+            <li><a href="#41-top-k-샘플링-예시"><strong>4.1 Top-K 샘플링 예시</strong></a></li>
+            <li><a href="#42-top-p-샘플링-예시"><strong>4.2 Top-P 샘플링 예시</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#5-결론"><strong>5. 결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#lookahead-decoding이-적합하지-않은-작업과-이를-극복하기-위한-개선-방안">LOOKAHEAD DECODING이 적합하지 않은 작업과 이를 극복하기 위한 개선 방안</a></li>
+      </ul>
+    </li>
+    <li><a href="#1-lookahead-decoding이-적합하지-않은-작업"><strong>1. LOOKAHEAD DECODING이 적합하지 않은 작업</strong></a>
+      <ul>
+        <li><a href="#11-매우-긴-시퀀스-생성-작업"><strong>1.1 매우 긴 시퀀스 생성 작업</strong></a>
+          <ul>
+            <li><a href="#문제점"><strong>문제점</strong></a></li>
+            <li><a href="#예시-작업"><strong>예시 작업</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#12-극도로-높은-정확도가-요구되는-도메인"><strong>1.2 극도로 높은 정확도가 요구되는 도메인</strong></a>
+          <ul>
+            <li><a href="#문제점-1"><strong>문제점</strong></a></li>
+            <li><a href="#예시-작업-1"><strong>예시 작업</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#13-샘플링-기반의-고다양성-작업"><strong>1.3 샘플링 기반의 고다양성 작업</strong></a>
+          <ul>
+            <li><a href="#문제점-2"><strong>문제점</strong></a></li>
+            <li><a href="#예시-작업-2"><strong>예시 작업</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#2-제한을-극복하기-위한-알고리즘-개선-방안"><strong>2. 제한을 극복하기 위한 알고리즘 개선 방안</strong></a>
+      <ul>
+        <li><a href="#21-매우-긴-시퀀스-생성-문제-해결"><strong>2.1 매우 긴 시퀀스 생성 문제 해결</strong></a>
+          <ul>
+            <li><a href="#1-chunked-decoding"><strong>(1) Chunked Decoding</strong></a></li>
+            <li><a href="#2-memory-efficient-attention"><strong>(2) Memory-efficient Attention</strong></a></li>
+            <li><a href="#3-sliding-window-mechanism"><strong>(3) Sliding Window Mechanism</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#22-높은-정확도가-필요한-작업-해결"><strong>2.2 높은 정확도가 필요한 작업 해결</strong></a>
+          <ul>
+            <li><a href="#1-context-aware-verification"><strong>(1) Context-aware Verification</strong></a></li>
+            <li><a href="#2-adaptive-beam-search-integration"><strong>(2) Adaptive Beam Search Integration</strong></a></li>
+            <li><a href="#3-reinforcement-learning-기반-검증"><strong>(3) Reinforcement Learning 기반 검증</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#23-샘플링-기반-작업-해결"><strong>2.3 샘플링 기반 작업 해결</strong></a>
+          <ul>
+            <li><a href="#1-probabilistic-pool-filtering"><strong>(1) Probabilistic Pool Filtering</strong></a></li>
+            <li><a href="#2-diversity-aware-verification"><strong>(2) Diversity-aware Verification</strong></a></li>
+            <li><a href="#3-dynamic-sampling-aware-lookahead"><strong>(3) Dynamic Sampling-aware Lookahead</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#3-개선-방안의-성능-변화-예상"><strong>3. 개선 방안의 성능 변화 예상</strong></a></li>
+    <li><a href="#4-결론"><strong>4. 결론</strong></a></li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#lookahead-decoding의-n-gram-pool과-문맥-관련성-및-최적화-전략">LOOKAHEAD DECODING의 n-gram Pool과 문맥 관련성 및 최적화 전략</a></li>
+        <li><a href="#1-n-gram-pool의-문맥-관련성-분석"><strong>1. n-gram Pool의 문맥 관련성 분석</strong></a>
+          <ul>
+            <li><a href="#11-문맥과의-관련성"><strong>1.1 문맥과의 관련성</strong></a></li>
+            <li><a href="#12-문맥-관련성이-낮은-경우의-문제점"><strong>1.2 문맥 관련성이 낮은 경우의 문제점</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-pool-효율성을-높이기-위한-학습-기반-최적화-전략"><strong>2. Pool 효율성을 높이기 위한 학습 기반 최적화 전략</strong></a>
+          <ul>
+            <li><a href="#21-n-gram-생성-단계에서의-최적화"><strong>2.1 n-gram 생성 단계에서의 최적화</strong></a></li>
+            <li><a href="#22-pool-관리-단계에서의-최적화"><strong>2.2 Pool 관리 단계에서의 최적화</strong></a></li>
+            <li><a href="#23-verification-branch에서의-최적화"><strong>2.3 Verification Branch에서의 최적화</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-적용-예시"><strong>3. 적용 예시</strong></a>
+          <ul>
+            <li><a href="#31-학습-기반-문맥-점수-모델"><strong>3.1 학습 기반 문맥 점수 모델</strong></a></li>
+            <li><a href="#32-dynamic-pool-reduction"><strong>3.2 Dynamic Pool Reduction</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-기대-효과"><strong>4. 기대 효과</strong></a></li>
+        <li><a href="#5-결론-1"><strong>5. 결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

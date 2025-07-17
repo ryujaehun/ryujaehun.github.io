@@ -1,0 +1,3162 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>NACL: AGeneral and Effective KV Cache Eviction Framework for LLMs at Inference Time | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 상세 분석 제목과 범위 이 논문은 **대규모 언어 모델(LLMs)**..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/NACL-AGeneral-and-Effective-KV-Cache-Eviction-Framework-for-LLMs-at-Inference-Time/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/NACL-AGeneral-and-Effective-KV-Cache-Eviction-Framework-for-LLMs-at-Inference-Time/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="NACL: AGeneral and Effective KV Cache Eviction Framework for LLMs at Inference Time">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 상세 분석 제목과 범위 이 논문은 **대규모 언어 모델(LLMs)**의 추론 과정에서 KV 캐시 관리를 최적화하여 메모리 사용량을 줄이고 성능을 유지하기 위한 NACL이라는 프레임워크를 제안합니다. 이 프레임워크는 **프록시 토큰 제거(Proxy-Tokens Eviction)**와 **랜덤 제거(Random Eviction)**를 결합하여 긴 문맥과 짧은 문맥 작업에서 높은 성능을 유지하면서 메모리 사용량을 효과적으로 줄이는 것을 목표로 합니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-11-25T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-11-25T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="NACL: AGeneral and Effective KV Cache Eviction Framework for LLMs at Inference Time">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 상세 분석 제목과 범위 이 논문은 **대규모 언어 모델(LLMs)**의 추론 과정에서 KV 캐시 관리를 최적화하여 메모리 사용량을 줄이고 성능을 유지하기 위한 NACL이라는 프레임워크를 제안합니다. 이 프레임워크는 **프록시 토큰 제거(Proxy-Tokens Eviction)**와 **랜덤 제거(Random Eviction)**를 결합하여 긴 문맥과 짧은 문맥 작업에서 높은 성능을 유지하면서 메모리 사용량을 효과적으로 줄이는 것을 목표로 합니다.">
+
+
+  <meta itemprop="name" content="NACL: AGeneral and Effective KV Cache Eviction Framework for LLMs at Inference Time">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문 상세 분석 제목과 범위 이 논문은 **대규모 언어 모델(LLMs)**의 추론 과정에서 KV 캐시 관리를 최적화하여 메모리 사용량을 줄이고 성능을 유지하기 위한 NACL이라는 프레임워크를 제안합니다. 이 프레임워크는 **프록시 토큰 제거(Proxy-Tokens Eviction)**와 **랜덤 제거(Random Eviction)**를 결합하여 긴 문맥과 짧은 문맥 작업에서 높은 성능을 유지하면서 메모리 사용량을 효과적으로 줄이는 것을 목표로 합니다.">
+  <meta itemprop="datePublished" content="2024-11-25T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-11-25T00:00:00+00:00">
+  <meta itemprop="wordCount" content="10305">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">NACL: AGeneral and Effective KV Cache Eviction Framework for LLMs at Inference Time</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    NACL: AGeneral and Effective KV Cache Eviction Framework for LLMs at Inference Time
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-11-25">
+          2024년 11월 25일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >21 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>10305 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2408.03675">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h3 id="논문-상세-분석"><strong>논문 상세 분석</strong></h3>
+<h4 id="제목과-범위"><strong>제목과 범위</strong></h4>
+<p>이 논문은 **대규모 언어 모델(LLMs)**의 추론 과정에서 <strong>KV 캐시 관리</strong>를 최적화하여 메모리 사용량을 줄이고 성능을 유지하기 위한 <strong>NACL</strong>이라는 프레임워크를 제안합니다. 이 프레임워크는 **프록시 토큰 제거(Proxy-Tokens Eviction)**와 **랜덤 제거(Random Eviction)**를 결합하여 긴 문맥과 짧은 문맥 작업에서 높은 성능을 유지하면서 메모리 사용량을 효과적으로 줄이는 것을 목표로 합니다.</p>
+<hr>
+<h3 id="논문의-강점과-독창성"><strong>논문의 강점과 독창성</strong></h3>
+<ol>
+<li>
+<p><strong>혁신적인 프레임워크:</strong></p>
+<ul>
+<li>NACL은 <strong>프록시 토큰 제거</strong>를 통해 중요한 정보를 전략적으로 식별하고, <strong>랜덤 제거</strong>를 통해 다양성을 확보하여 토큰 유지의 정확성과 강건성을 동시에 개선합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>효율성과 확장성:</strong></p>
+<ul>
+<li>KV 캐시 메모리를 <strong>최대 5배</strong> 줄이면서도 95% 이상의 성능을 유지해, 제한된 하드웨어에서 긴 문맥 작업을 수행할 수 있게 만듭니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>전역 최적화 접근 방식:</strong></p>
+<ul>
+<li>기존의 탐욕적 제거 방식과 달리, NACL은 <strong>인코딩 단계</strong>에서 전역 최적화를 수행하여 계산 복잡도를 (O(p+T))에서 (O(1))로 줄입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>작업 성능 개선:</strong></p>
+<ul>
+<li>NACL은 짧은 문맥과 긴 문맥 작업 모두에서 기존 방식보다 우수한 성능을 보이며, 높은 범용성과 강건성을 입증합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>FlashAttention과의 호환성:</strong></p>
+<ul>
+<li>현대적인 메모리 효율 메커니즘(예: FlashAttention)을 통합하여, 운영 오버헤드를 줄이고 실용성을 높였습니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="핵심-알고리즘-예시와-설명"><strong>핵심 알고리즘: 예시와 설명</strong></h3>
+<h4 id="핵심-개념-kv-캐시-제거"><strong>핵심 개념: KV 캐시 제거</strong></h4>
+<ul>
+<li>LLM은 토큰에 대한 중간 계산을 저장하기 위해 KV 캐시를 사용하지만, 이로 인해 과도한 메모리 사용이 발생합니다. NACL은 덜 중요한 토큰을 선택적으로 제거하여 메모리 사용을 최적화합니다.</li>
+</ul>
+<h4 id="예시-입력"><strong>예시 입력</strong></h4>
+<ul>
+<li><strong>입력 텍스트:</strong> &ldquo;The quick brown fox jumps over the lazy dog in a distant meadow.&rdquo;</li>
+<li><strong>캐시 예산:</strong> 원래 크기의 20%.</li>
+</ul>
+<h4 id="nacl의-처리-단계"><strong>NACL의 처리 단계</strong></h4>
+<ol>
+<li>
+<p><strong>인코딩 단계 (프록시 토큰 제거):</strong></p>
+<ul>
+<li><strong>프록시 선택:</strong> &ldquo;lazy dog&rdquo;, &ldquo;distant meadow&quot;와 같은 중요한 프레이즈를 프록시 토큰으로 식별.</li>
+<li><strong>어텐션 점수 계산:</strong> 프록시 토큰을 기준으로 전체 토큰의 중요도를 계산.</li>
+<li><strong>토큰 유지:</strong> 점수가 높은 토큰만 KV 캐시에 유지.</li>
+</ul>
+</li>
+<li>
+<p><strong>랜덤 제거 (생성 단계):</strong></p>
+<ul>
+<li><strong>샘플링 분포 생성:</strong> 정규화된 어텐션 점수를 기반으로 토큰을 랜덤하게 선택.</li>
+<li><strong>다양성 확보:</strong> 서로 다른 헤드와 레이어에서 다양한 토큰을 유지하여 문맥 정보를 풍부하게 유지.</li>
+</ul>
+</li>
+</ol>
+<h4 id="결과"><strong>결과</strong></h4>
+<p>&ldquo;lazy dog&rdquo;, &ldquo;fox&rdquo;, &ldquo;meadow&quot;와 같은 중요한 토큰은 유지되며, &ldquo;the&quot;나 &ldquo;in&quot;과 같은 불필요한 토큰은 제거됩니다. 이를 통해 메모리 사용을 줄이면서도 중요한 문맥 정보를 잃지 않습니다.</p>
+<hr>
+<h3 id="논문의-한계점"><strong>논문의 한계점</strong></h3>
+<ol>
+<li>
+<p><strong>프록시 토큰 의존성:</strong></p>
+<ul>
+<li>프록시 토큰 제거의 효과는 프록시 토큰을 얼마나 잘 식별하느냐에 따라 크게 좌우됩니다. 적절히 선택하지 못하면 성능 저하가 발생할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>랜덤 제거의 민감성:</strong></p>
+<ul>
+<li>랜덤 제거는 강건성을 향상시키지만, 과도한 랜덤성은 중요한 토큰의 손실로 이어질 수 있습니다. 특히 캐시 예산이 엄격한 경우에 문제가 될 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>확장성 문제:</strong></p>
+<ul>
+<li>초장문(128k 토큰 이상)에 대한 테스트가 충분하지 않아 해당 시나리오에서의 성능은 불확실합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>응용 범위 제한:</strong></p>
+<ul>
+<li>추론 효율성을 위해 설계되었으나, 파인튜닝이나 도메인별 학습 문제는 다루지 않습니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="기존-기법과-비교"><strong>기존 기법과 비교</strong></h3>
+<ul>
+<li><strong>H2O:</strong> 어텐션 점수 합계만을 사용해 탐욕적으로 토큰을 제거하지만, 어텐션 편향 문제가 있음.</li>
+<li><strong>MSRNN:</strong> 인접한 문맥만 강조하여 더 넓은 의존성을 간과.</li>
+<li><strong>NACL:</strong> 어텐션 기반과 확률적 접근 방식을 결합해 정확성과 메모리 절약 측면에서 우수한 성과를 냄.</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th><strong>방법</strong></th>
+          <th><strong>메모리 절약</strong></th>
+          <th><strong>성능 저하 (%)</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>H2O</td>
+          <td>4배</td>
+          <td>~4%</td>
+      </tr>
+      <tr>
+          <td>MSRNN</td>
+          <td>4배</td>
+          <td>~3%</td>
+      </tr>
+      <tr>
+          <td><strong>NACL</strong></td>
+          <td><strong>5배</strong></td>
+          <td><strong>&lt;1%</strong></td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="주요-통찰-및-영향"><strong>주요 통찰 및 영향</strong></h3>
+<ol>
+<li>
+<p><strong>효율적인 제거:</strong></p>
+<ul>
+<li>NACL은 인코딩 단계에서 한 번의 제거만으로 계산 오버헤드를 최소화하고, 토큰별 제거 방식보다 더 효과적입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>핵심 토큰 유지:</strong></p>
+<ul>
+<li>제한된 메모리에서도 중요한 토큰을 유지하여, 긴 문맥 작업에서도 정확한 추론을 가능하게 합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>랜덤성의 도입:</strong></p>
+<ul>
+<li>랜덤 제거는 어텐션 기반 방법의 편향 문제를 해결하며, 강건성과 적응성을 동시에 확보합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="최종-의견"><strong>최종 의견</strong></h3>
+<p>NACL은 KV 캐시 관리에서 효율성과 성능, 메모리 소비의 균형을 유지하는 혁신적인 접근 방식을 제시합니다. 초장문 작업 및 프록시 선택의 자동화 개선 등 추가 연구가 필요하지만, 이 혼합 접근법은 LLM 추론 최적화의 새로운 기준을 세우는 데 기여할 것입니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<h3 id="core-algorithm-of-the-paper-detailed-explanation-and-example"><strong>Core Algorithm of the Paper: Detailed Explanation and Example</strong></h3>
+<h4 id="understanding-the-algorithm"><strong>Understanding the Algorithm</strong></h4>
+<p>The NACL framework optimizes the <strong>KV cache eviction</strong> process by combining two key methods:</p>
+<ol>
+<li><strong>Proxy-Tokens Eviction</strong>: Focuses on identifying and retaining crucial tokens based on attention scores relative to selected proxy tokens.</li>
+<li><strong>Random Eviction</strong>: Adds randomness to the eviction process, improving the robustness of token retention by preserving diverse information across layers and attention heads.</li>
+</ol>
+<p>The algorithm is divided into <strong>two phases</strong>:</p>
+<ul>
+<li><strong>Encoding Phase</strong>: Processes the input text and performs a one-shot eviction of less important tokens.</li>
+<li><strong>Generation Phase</strong>: Handles token-by-token generation while periodically applying the eviction strategy.</li>
+</ul>
+<hr>
+<h3 id="step-by-step-example"><strong>Step-by-Step Example</strong></h3>
+<h4 id="scenario"><strong>Scenario</strong></h4>
+<p>We have a sentence:</p>
+<ul>
+<li><strong>Input Text</strong>: &ldquo;The quick brown fox jumps over the lazy dog in a distant meadow.&rdquo;</li>
+<li><strong>KV Cache Budget</strong>: Reduced to 30% of the original size.</li>
+</ul>
+<hr>
+<h3 id="phase-1-encoding-phase-proxy-tokens-eviction"><strong>Phase 1: Encoding Phase (Proxy-Tokens Eviction)</strong></h3>
+<ol>
+<li>
+<p><strong>Input Processing:</strong></p>
+<ul>
+<li>The model computes <strong>attention scores</strong> for all tokens. These scores represent how much attention each token receives in relation to others.</li>
+</ul>
+</li>
+<li>
+<p><strong>Proxy Token Selection:</strong></p>
+<ul>
+<li>Proxy tokens are selected from the input text. For instance, if the task involves understanding the sentence&rsquo;s key entities, <strong>&ldquo;lazy dog&rdquo;</strong> and <strong>&ldquo;distant meadow&rdquo;</strong> might be chosen as proxy tokens.</li>
+</ul>
+</li>
+<li>
+<p><strong>Token Importance Scoring:</strong></p>
+<ul>
+<li>The importance of each token is calculated based on its relationship to the proxy tokens. For example:
+<ul>
+<li>Token <strong>&ldquo;fox&rdquo;</strong> might score high because it’s central to the sentence&rsquo;s meaning.</li>
+<li>Tokens like <strong>&ldquo;the&rdquo;</strong> and <strong>&ldquo;in&rdquo;</strong> might score low as they are less meaningful.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Eviction Decision:</strong></p>
+<ul>
+<li>Tokens with the lowest scores are evicted from the KV cache. For example:
+<ul>
+<li>Retained Tokens: <strong>&ldquo;quick,&rdquo; &ldquo;fox,&rdquo; &ldquo;lazy dog,&rdquo; &ldquo;meadow.&rdquo;</strong></li>
+<li>Evicted Tokens: <strong>&ldquo;the,&rdquo; &ldquo;jumps,&rdquo; &ldquo;over,&rdquo; &ldquo;in.&rdquo;</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="phase-2-generation-phase-random-eviction"><strong>Phase 2: Generation Phase (Random Eviction)</strong></h3>
+<ol>
+<li>
+<p><strong>Token-by-Token Processing:</strong></p>
+<ul>
+<li>As the model generates new tokens (e.g., during text generation), the KV cache is updated.</li>
+</ul>
+</li>
+<li>
+<p><strong>Random Sampling for Diversity:</strong></p>
+<ul>
+<li>To ensure robustness, <strong>random eviction</strong> is applied alongside attention-based eviction:
+<ul>
+<li>A small portion of tokens is randomly retained, regardless of their scores.</li>
+<li>This ensures that important but low-scoring tokens (e.g., rare words) are not lost.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Periodic Eviction:</strong></p>
+<ul>
+<li>The eviction strategy is applied periodically during generation to manage memory usage.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="illustration-of-the-algorithm"><strong>Illustration of the Algorithm</strong></h3>
+<h4 id="before-eviction">Before Eviction:</h4>
+<ul>
+<li><strong>KV Cache Contains</strong>: [&ldquo;The,&rdquo; &ldquo;quick,&rdquo; &ldquo;brown,&rdquo; &ldquo;fox,&rdquo; &ldquo;jumps,&rdquo; &ldquo;over,&rdquo; &ldquo;the,&rdquo; &ldquo;lazy,&rdquo; &ldquo;dog,&rdquo; &ldquo;in,&rdquo; &ldquo;a,&rdquo; &ldquo;distant,&rdquo; &ldquo;meadow.&rdquo;]</li>
+</ul>
+<h4 id="after-proxy-tokens-eviction">After Proxy-Tokens Eviction:</h4>
+<ul>
+<li><strong>Retained</strong>: [&ldquo;quick,&rdquo; &ldquo;fox,&rdquo; &ldquo;lazy,&rdquo; &ldquo;dog,&rdquo; &ldquo;meadow.&rdquo;]</li>
+<li><strong>Evicted</strong>: [&ldquo;The,&rdquo; &ldquo;jumps,&rdquo; &ldquo;over,&rdquo; &ldquo;in,&rdquo; &ldquo;a.&rdquo;]</li>
+</ul>
+<h4 id="after-random-eviction-during-generation">After Random Eviction During Generation:</h4>
+<ul>
+<li>Random sampling ensures tokens like <strong>&ldquo;brown&rdquo;</strong> or <strong>&ldquo;distant&rdquo;</strong> (that might not have high scores) are occasionally retained for better context.</li>
+</ul>
+<hr>
+<h3 id="summary-of-the-process"><strong>Summary of the Process</strong></h3>
+<ol>
+<li>
+<p><strong>Proxy-Tokens Eviction:</strong></p>
+<ul>
+<li>Uses specific tokens (proxy tokens) to evaluate the importance of others.</li>
+<li>Retains tokens crucial for the task based on attention scores.</li>
+</ul>
+</li>
+<li>
+<p><strong>Random Eviction:</strong></p>
+<ul>
+<li>Adds randomness to avoid over-reliance on biased scores.</li>
+<li>Ensures diversity and robustness in token retention.</li>
+</ul>
+</li>
+<li>
+<p><strong>Hybrid Approach:</strong></p>
+<ul>
+<li>Combines deterministic and probabilistic methods for optimal memory usage without significant performance loss.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="translated-explanation-in-korean"><strong>Translated Explanation in Korean</strong></h3>
+<h4 id="논문의-핵심-알고리즘-자세한-설명과-예시"><strong>논문의 핵심 알고리즘: 자세한 설명과 예시</strong></h4>
+<h4 id="알고리즘-이해"><strong>알고리즘 이해</strong></h4>
+<p>NACL 프레임워크는 <strong>KV 캐시 제거</strong>를 최적화하기 위해 두 가지 주요 방법을 결합합니다.</p>
+<ol>
+<li><strong>프록시 토큰 제거(Proxy-Tokens Eviction)</strong>:
+<ul>
+<li>선택된 프록시 토큰과의 관계를 기반으로 중요한 토큰을 식별하고 유지합니다.</li>
+</ul>
+</li>
+<li><strong>랜덤 제거(Random Eviction)</strong>:
+<ul>
+<li>제거 과정에 무작위성을 추가하여 레이어와 어텐션 헤드 전반에 걸쳐 다양한 정보를 유지합니다.</li>
+</ul>
+</li>
+</ol>
+<p>알고리즘은 <strong>두 단계</strong>로 나뉩니다.</p>
+<ul>
+<li><strong>인코딩 단계</strong>: 입력 텍스트를 처리하고 덜 중요한 토큰을 한 번에 제거합니다.</li>
+<li><strong>생성 단계</strong>: 토큰을 하나씩 생성하면서 주기적으로 제거 전략을 적용합니다.</li>
+</ul>
+<hr>
+<h3 id="예시-단계별-설명"><strong>예시 단계별 설명</strong></h3>
+<h4 id="상황"><strong>상황</strong></h4>
+<p>다음과 같은 문장이 있습니다.</p>
+<ul>
+<li><strong>입력 텍스트</strong>: &ldquo;The quick brown fox jumps over the lazy dog in a distant meadow.&rdquo;</li>
+<li><strong>KV 캐시 예산</strong>: 원래 크기의 30%로 줄임.</li>
+</ul>
+<hr>
+<h3 id="1단계-인코딩-단계-프록시-토큰-제거"><strong>1단계: 인코딩 단계 (프록시 토큰 제거)</strong></h3>
+<ol>
+<li>
+<p><strong>입력 처리:</strong></p>
+<ul>
+<li>모델이 모든 토큰의 <strong>어텐션 점수</strong>를 계산합니다. 이 점수는 각 토큰이 다른 토큰과 얼마나 관련 있는지를 나타냅니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>프록시 토큰 선택:</strong></p>
+<ul>
+<li>입력 텍스트에서 프록시 토큰을 선택합니다. 예를 들어, 문장에서 주요 엔티티를 이해하는 작업이라면 **&ldquo;lazy dog&rdquo;**와 **&ldquo;distant meadow&rdquo;**가 선택될 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>토큰 중요도 점수 계산:</strong></p>
+<ul>
+<li>각 토큰의 중요도는 프록시 토큰과의 관계를 기반으로 계산됩니다. 예를 들어:
+<ul>
+<li><strong>&ldquo;fox&rdquo;</strong>: 문장의 의미에서 핵심적이므로 높은 점수를 받음.</li>
+<li><strong>&ldquo;the&rdquo;</strong> 및 <strong>&ldquo;in&rdquo;</strong>: 덜 중요하므로 낮은 점수를 받음.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>제거 결정:</strong></p>
+<ul>
+<li>점수가 가장 낮은 토큰은 KV 캐시에서 제거됩니다. 예를 들어:
+<ul>
+<li><strong>유지된 토큰</strong>: <strong>&ldquo;quick,&rdquo; &ldquo;fox,&rdquo; &ldquo;lazy dog,&rdquo; &ldquo;meadow.&rdquo;</strong></li>
+<li><strong>제거된 토큰</strong>: <strong>&ldquo;the,&rdquo; &ldquo;jumps,&rdquo; &ldquo;over,&rdquo; &ldquo;in.&rdquo;</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2단계-생성-단계-랜덤-제거"><strong>2단계: 생성 단계 (랜덤 제거)</strong></h3>
+<ol>
+<li>
+<p><strong>토큰별 처리:</strong></p>
+<ul>
+<li>모델이 새 토큰을 생성함에 따라 KV 캐시가 갱신됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>다양성 확보를 위한 랜덤 샘플링:</strong></p>
+<ul>
+<li>강건성을 확보하기 위해 <strong>랜덤 제거</strong>가 어텐션 기반 제거와 함께 적용됩니다.
+<ul>
+<li>일부 토큰은 점수와 관계없이 랜덤으로 유지됩니다.</li>
+<li>이를 통해 낮은 점수를 받았지만 중요한 토큰(예: 희귀 단어)이 손실되지 않도록 보장합니다.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>주기적 제거:</strong></p>
+<ul>
+<li>메모리 사용량을 관리하기 위해 주기적으로 제거 전략이 적용됩니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="알고리즘-예시"><strong>알고리즘 예시</strong></h3>
+<h4 id="제거-전">제거 전:</h4>
+<ul>
+<li><strong>KV 캐시 포함 토큰</strong>: [&ldquo;The,&rdquo; &ldquo;quick,&rdquo; &ldquo;brown,&rdquo; &ldquo;fox,&rdquo; &ldquo;jumps,&rdquo; &ldquo;over,&rdquo; &ldquo;the,&rdquo; &ldquo;lazy,&rdquo; &ldquo;dog,&rdquo; &ldquo;in,&rdquo; &ldquo;a,&rdquo; &ldquo;distant,&rdquo; &ldquo;meadow.&rdquo;]</li>
+</ul>
+<h4 id="프록시-토큰-제거-후">프록시 토큰 제거 후:</h4>
+<ul>
+<li><strong>유지됨</strong>: [&ldquo;quick,&rdquo; &ldquo;fox,&rdquo; &ldquo;lazy,&rdquo; &ldquo;dog,&rdquo; &ldquo;meadow.&rdquo;]</li>
+<li><strong>제거됨</strong>: [&ldquo;The,&rdquo; &ldquo;jumps,&rdquo; &ldquo;over,&rdquo; &ldquo;in,&rdquo; &ldquo;a.&rdquo;]</li>
+</ul>
+<h4 id="생성-단계에서-랜덤-제거-적용-후">생성 단계에서 랜덤 제거 적용 후:</h4>
+<ul>
+<li>랜덤 샘플링을 통해 <strong>&ldquo;brown&rdquo;</strong> 또는 **&ldquo;distant&rdquo;**와 같은 중요도는 낮지만 의미 있는 토큰이 유지됩니다.</li>
+</ul>
+<hr>
+<h3 id="요약"><strong>요약</strong></h3>
+<ol>
+<li>
+<p><strong>프록시 토큰 제거</strong>:</p>
+<ul>
+<li>특정 토큰(프록시 토큰)을 사용하여 다른 토큰의 중요도를 평가합니다.</li>
+<li>작업에 중요한 토큰을 어텐션 점수에 따라 유지합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>랜덤 제거</strong>:</p>
+<ul>
+<li>편향된 점수에 과도하게 의존하지 않도록 무작위성을 추가합니다.</li>
+<li>다양성과 강건성을 동시에 확보합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>혼합 접근법</strong>:</p>
+<ul>
+<li>결정론적 방식과 확률적 방식을 결합하여 메모리 사용을 최적화하면서 성능 손실을 최소화합니다.</li>
+</ul>
+</li>
+</ol>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h3 id="논문에서-제시한-결과-및-주요-성과"><strong>논문에서 제시한 결과 및 주요 성과</strong></h3>
+<h4 id="1-결과-요약"><strong>1. 결과 요약</strong></h4>
+<ol>
+<li>
+<p><strong>KV 캐시 감소 효과:</strong></p>
+<ul>
+<li>NACL은 <strong>최대 5배의 KV 캐시 메모리 감소</strong>를 이루었으며, 이 과정에서 모델 성능의 95% 이상을 유지했습니다.</li>
+<li>메모리 사용량을 대폭 줄이면서도, 긴 문맥 작업과 짧은 문맥 작업 모두에서 기존 방법론보다 우수한 성능을 보여주었습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>작업 성능 비교 (짧은 문맥):</strong></p>
+<ul>
+<li>NACL은 다양한 짧은 문맥 작업에서 기존 방법론(H2O, MSRNN 등)보다 <strong>3~4% 높은 성능</strong>을 기록했습니다.</li>
+<li>특히, 성능 감소율이 다른 방법론에 비해 훨씬 적었으며, <strong>거의 전체 캐시를 사용하는 경우와 유사한 성능</strong>을 보였습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>작업 성능 비교 (긴 문맥):</strong></p>
+<ul>
+<li>긴 문맥 작업에서도 NACL은 캐시 크기를 줄이는 설정(10<del>30% 예산)에서도 **기존 방법론보다 평균적으로 2</del>5% 높은 성능**을 보였습니다.</li>
+<li>특정 데이터셋(예: QMSum, HotpotQA)에서는, 캐시를 전혀 줄이지 않은 모델보다 <strong>더 나은 성능</strong>을 기록하기도 했습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>랜덤 제거와 프록시 토큰 제거의 효과:</strong></p>
+<ul>
+<li><strong>랜덤 제거(Random Eviction)</strong>: 다양한 문맥 정보를 보존해 성능을 약 <strong>9% 이상</strong> 개선.</li>
+<li><strong>프록시 토큰 제거(Proxy-Tokens Eviction)</strong>: 중요한 토큰의 정확한 유지로 약 <strong>28%의 성능 개선</strong>을 제공.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="다른-방법론과의-비교"><strong>다른 방법론과의 비교</strong></h3>
+<h4 id="1-기존-방법론과의-성능-차별성"><strong>1. 기존 방법론과의 성능 차별성</strong></h4>
+<table>
+  <thead>
+      <tr>
+          <th><strong>방법</strong></th>
+          <th><strong>메모리 감소율</strong></th>
+          <th><strong>성능 감소율</strong></th>
+          <th><strong>주요 문제점</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>H2O</strong></td>
+          <td>4배</td>
+          <td>4%</td>
+          <td>어텐션 점수에 기반해 초기/최근 토큰에 편향적.</td>
+      </tr>
+      <tr>
+          <td><strong>MSRNN</strong></td>
+          <td>4배</td>
+          <td>3%</td>
+          <td>현재 토큰 중심의 계산으로 전체 문맥 유지 부족.</td>
+      </tr>
+      <tr>
+          <td><strong>NACL</strong></td>
+          <td><strong>5배</strong></td>
+          <td><strong>&lt;1%</strong></td>
+          <td>프록시와 랜덤 결합으로 강건성과 다양성 확보.</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>H2O와 MSRNN은 어텐션 점수 기반의 단순한 제거 방식으로 인해, 긴 문맥에서 중요한 중간 토큰을 놓치거나, 특정 토큰에 편향된 결과를 보임.</li>
+<li>반면, NACL은 프록시 토큰과 랜덤 제거를 결합해, 성능 저하를 최소화하며 더 효과적으로 중요한 정보를 보존합니다.</li>
+</ul>
+<hr>
+<h4 id="2-nacl이-우수한-결과를-도출한-이유-논문이-제시하는-근거"><strong>2. NACL이 우수한 결과를 도출한 이유 (논문이 제시하는 근거)</strong></h4>
+<ol>
+<li>
+<p><strong>프록시 토큰 기반 제거(Proxy-Tokens Eviction):</strong></p>
+<ul>
+<li>기존의 H2O나 MSRNN과 달리, 특정 &ldquo;프록시 토큰&quot;을 사용하여 다른 토큰의 중요도를 계산합니다.</li>
+<li>프록시 토큰은 문맥적으로 중요한 토큰으로 구성되며, 어텐션 점수를 정규화해 과도한 편향을 방지합니다.</li>
+<li>이는 긴 문맥에서 <strong>중간 위치의 중요한 토큰</strong>을 더 잘 보존하도록 돕습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>랜덤 제거(Random Eviction):</strong></p>
+<ul>
+<li>어텐션 점수 기반 방법의 단점을 보완하기 위해 랜덤 샘플링을 추가했습니다.</li>
+<li>랜덤성은 <strong>저평가된 중요한 토큰</strong>이 선택될 가능성을 높이며, 다양한 문맥 정보를 유지합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>전역 최적화(Global Optimization):</strong></p>
+<ul>
+<li>기존 방법론은 단순 탐욕적(그리디) 방식으로, 매 단계마다 토큰을 제거했으나, NACL은 전역적인 최적화를 통해 한 번의 계산으로 최적의 제거 전략을 적용합니다.</li>
+<li>이 방식은 긴 문맥에서도 계산 효율성을 극대화합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>헤드별 다양성 보장(Head-wise Diversity):</strong></p>
+<ul>
+<li>각 어텐션 헤드가 서로 다른 제거 전략을 사용하여, 특정 레이어에 지나치게 의존하지 않도록 보장합니다.</li>
+<li>이로 인해 모델이 다양한 차원의 정보를 보존할 수 있습니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="nacl이-제시한-결과의-차별성을-가능케-한-핵심-요인"><strong>NACL이 제시한 결과의 차별성을 가능케 한 핵심 요인</strong></h3>
+<h4 id="1-프록시-토큰-제거"><strong>1. 프록시 토큰 제거</strong></h4>
+<ul>
+<li>프록시 토큰 제거는 어텐션 점수를 기반으로 하지만, 중요한 토큰을 결정할 때 특정 기준을 추가로 제공합니다.</li>
+<li>예를 들어, 질문 응답(task-oriented) 작업에서는 프록시 토큰이 질문 끝부분에서 선택되며, 이는 <strong>질문과 관련된 토큰을 더 잘 보존</strong>합니다.</li>
+</ul>
+<h4 id="2-랜덤-제거의-도입"><strong>2. 랜덤 제거의 도입</strong></h4>
+<ul>
+<li>기존 방법론은 어텐션 점수만을 사용하여 중요한 토큰을 선택했으나, 이는 장문의 경우 평탄화된 어텐션 분포로 인해 신뢰성이 낮아질 수 있습니다.</li>
+<li>랜덤 제거는 이러한 문제를 보완하며, 문맥 정보의 다양성을 유지합니다.</li>
+</ul>
+<h4 id="3-전역-최적화"><strong>3. 전역 최적화</strong></h4>
+<ul>
+<li>기존의 단계별 제거와 달리, 한 번의 계산으로 모든 토큰을 고려해 최적의 제거를 수행함으로써 성능과 계산 속도 모두에서 큰 개선을 이루었습니다.</li>
+</ul>
+<hr>
+<h3 id="나의-의견"><strong>나의 의견</strong></h3>
+<ol>
+<li>
+<p><strong>랜덤 제거의 가치</strong></p>
+<ul>
+<li>어텐션 기반 토큰 제거 방식은 특정 조건에서는 중요한 정보를 놓칠 가능성이 높습니다. 랜덤 제거는 이를 보완하며, <strong>다양한 문맥 정보를 유지</strong>해 예기치 못한 손실을 방지합니다. 이는 특히 긴 문맥 작업에서 효과적입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>프록시 토큰의 활용</strong></p>
+<ul>
+<li>프록시 토큰은 작업과 문맥에 따라 중요성을 설정하는 매우 합리적인 방식입니다. 그러나 이 방식은 <strong>프록시 토큰을 선택하는 기준</strong>에 따라 성능이 크게 달라질 수 있습니다. 이 기준을 모델이 자동으로 학습하도록 발전시킬 여지가 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>결과의 설득력</strong></p>
+<ul>
+<li>논문의 결과는 잘 설계된 실험과 비교를 통해 매우 설득력 있게 제시됩니다. 특히, 짧은 문맥 작업뿐만 아니라 긴 문맥 작업에서도 안정적으로 성능을 유지한다는 점이 인상적입니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론"><strong>결론</strong></h3>
+<p>NACL은 기존 KV 캐시 제거 방법론의 한계를 효과적으로 해결하며, 메모리 효율성과 성능을 동시에 개선했습니다. 특히, <strong>프록시 토큰 제거</strong>와 <strong>랜덤 제거</strong>의 조합은 편향을 최소화하고 강건성을 높이는 데 결정적인 역할을 했습니다. 앞으로 <strong>프록시 토큰 선택의 자동화</strong>와 **초장문(ultra-long text)**에 대한 추가 연구가 이루어진다면 더욱 강력한 프레임워크로 발전할 수 있을 것입니다.</p>
+<h1 id="q--이-논문에서-제시된-방법을-실제로-사용하려면-기존-방법에서-어떠한-구현이-추가적으로-필요하고-이러한-구현에-소모되는-공수-및-연산에-필요한-컴퓨팅-자원의-크기에-대해서-계산해줄-수-있겠니">Q : 이 논문에서 제시된 방법을 실제로 사용하려면 기존 방법에서 어떠한 구현이 추가적으로 필요하고 이러한 구현에 소모되는 공수 및 연산에 필요한 컴퓨팅 자원의 크기에 대해서 계산해줄 수 있겠니?</h1>
+<h3 id="논문에서-제시된-방법을-구현하기-위한-요구-사항-및-계산"><strong>논문에서 제시된 방법을 구현하기 위한 요구 사항 및 계산</strong></h3>
+<h4 id="1-추가-구현-요구-사항"><strong>1. 추가 구현 요구 사항</strong></h4>
+<h4 id="a-프록시-토큰-제거"><strong>a. 프록시 토큰 제거</strong></h4>
+<ul>
+<li><strong>추가 작업:</strong>
+<ul>
+<li><strong>프록시 토큰 선택:</strong> 입력 문맥에 따라 동적으로 프록시 토큰을 식별하는 로직 추가. 예를 들어, 작업 특성에 따라 질문 끝부분 또는 문서의 주요 키워드를 프록시 토큰으로 선택.</li>
+<li><strong>어텐션 점수 정규화:</strong> 프록시 토큰과 관련된 어텐션 점수를 계산하고, 이를 통해 덜 중요한 토큰을 식별하여 제거.</li>
+</ul>
+</li>
+<li><strong>통합 포인트:</strong>
+<ul>
+<li>어텐션 매트릭스를 활용하여 새로운 &ldquo;중요도 점수 계산&rdquo; 메커니즘을 KV 캐시 관리 시스템에 통합.</li>
+</ul>
+</li>
+</ul>
+<h4 id="b-랜덤-제거"><strong>b. 랜덤 제거</strong></h4>
+<ul>
+<li><strong>추가 작업:</strong>
+<ul>
+<li><strong>랜덤 샘플링 프로세스:</strong> 어텐션 점수 분포와 통합된 랜덤 샘플링 프로세스를 생성.</li>
+<li><strong>헤드 및 레이어 수준의 무작위화:</strong> 다양한 토큰 유지 전략을 위한 무작위화 메커니즘 추가.</li>
+</ul>
+</li>
+<li><strong>통합 포인트:</strong>
+<ul>
+<li>생성 단계에서 주기적으로 랜덤 제거를 적용하도록 제거 정책 확장.</li>
+</ul>
+</li>
+</ul>
+<h4 id="c-인코딩-단계에서의-단일-최적화"><strong>c. 인코딩 단계에서의 단일 최적화</strong></h4>
+<ul>
+<li><strong>추가 작업:</strong>
+<ul>
+<li>인코딩 단계에서 한 번의 계산으로 최적의 제거 전략을 수행하는 단일 패스 글로벌 최적화 전략 구현.</li>
+<li>FlashAttention-2와 같은 메모리 효율 라이브러리를 활용하여 어텐션 점수를 효율적으로 재계산.</li>
+</ul>
+</li>
+<li><strong>통합 포인트:</strong>
+<ul>
+<li>인코딩 단계 계산 방식을 최적화 로직에 맞게 조정.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-컴퓨팅-자원-요구-사항"><strong>2. 컴퓨팅 자원 요구 사항</strong></h3>
+<h4 id="a-메모리-오버헤드"><strong>a. 메모리 오버헤드</strong></h4>
+<ul>
+<li>
+<p><strong>프록시 토큰 제거:</strong></p>
+<ul>
+<li>어텐션 점수 계산은 다음을 저장하기 위해 추가 메모리가 필요:
+<ul>
+<li>프록시 토큰 인덱스.</li>
+<li>각 레이어의 어텐션 점수 매트릭스.</li>
+</ul>
+</li>
+<li>예상 메모리 사용량 증가는 다음과 같음:
+[
+O(L \times H \times T_{proxy})
+]
+여기서 (L)은 레이어 수, (H)는 어텐션 헤드 수, (T_{proxy})는 프록시 토큰 수(전체 토큰의 약 10~20%).</li>
+</ul>
+</li>
+<li>
+<p><strong>랜덤 제거:</strong></p>
+<ul>
+<li>샘플링 분포를 위한 추가 메모리가 필요하지만, 프록시 토큰과 비교하면 미미한 수준임.</li>
+</ul>
+</li>
+</ul>
+<h4 id="b-계산-오버헤드"><strong>b. 계산 오버헤드</strong></h4>
+<ol>
+<li>
+<p><strong>프록시 토큰 제거:</strong></p>
+<ul>
+<li>(L)개의 레이어와 (H)개의 어텐션 헤드에 대해, 어텐션 점수 감소 계산의 복잡도는 다음과 같음:
+[
+O(L \times H \times T_{input} \times T_{proxy})
+]
+여기서 (T_{input})은 입력 토큰 수. 만약 (T_{proxy} = 0.1 \times T_{input})라면, 기존 어텐션 점수 계산 대비 약 10%의 추가 계산 발생.</li>
+</ul>
+</li>
+<li>
+<p><strong>랜덤 제거:</strong></p>
+<ul>
+<li>어텐션 헤드와 레이어별로 소프트맥스 정규화와 랜덤 샘플링 수행:
+[
+O(L \times H \times T_{input})
+]</li>
+<li>약 5~10%의 오버헤드 추가.</li>
+</ul>
+</li>
+</ol>
+<h4 id="c-gpu-활용-및-시간"><strong>c. GPU 활용 및 시간</strong></h4>
+<ul>
+<li><strong>단일 노드 환경 (예: NVIDIA A100):</strong>
+<ul>
+<li>프록시 기반 계산 및 인코딩 최적화로 인해 4k 토큰 입력 시 <strong>10~15%의 추가 계산 시간</strong> 소요 예상.</li>
+<li>생성 단계에서의 랜덤 샘플링은 <strong>5% 미만의 미미한 영향</strong>을 미침.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-구현-노력-추정"><strong>3. 구현 노력 추정</strong></h3>
+<table>
+  <thead>
+      <tr>
+          <th><strong>작업</strong></th>
+          <th><strong>노력 수준</strong></th>
+          <th><strong>상세 설명</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>프록시 토큰 선택 로직</td>
+          <td>중간 (2~3주)</td>
+          <td>작업 메타데이터 또는 규칙에 기반해 프록시 토큰 선택 로직 구현.</td>
+      </tr>
+      <tr>
+          <td>어텐션 점수 축소</td>
+          <td>중간 (2주)</td>
+          <td>FlashAttention 등을 활용한 효율적 점수 계산 구현.</td>
+      </tr>
+      <tr>
+          <td>랜덤 제거 로직</td>
+          <td>낮음 (1~2주)</td>
+          <td>어텐션 헤드와 레이어별 샘플링 로직 추가.</td>
+      </tr>
+      <tr>
+          <td>글로벌 최적화</td>
+          <td>중간 (2~3주)</td>
+          <td>단일 계산 기반 최적의 제거 정책 구현.</td>
+      </tr>
+      <tr>
+          <td>테스트 및 통합</td>
+          <td>높음 (4~6주)</td>
+          <td>기존 파이프라인과의 통합 및 E2E(end-to-end) 테스트 수행.</td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>총 구현 소요 시간:</strong> LLM 파이프라인 및 GPU 최적화에 익숙한 팀 기준, 약 <strong>10~14주</strong>.</p>
+<hr>
+<h3 id="4-실제-활용-가능성"><strong>4. 실제 활용 가능성</strong></h3>
+<h4 id="도전-과제"><strong>도전 과제:</strong></h4>
+<ol>
+<li>
+<p><strong>프록시 토큰 선택:</strong></p>
+<ul>
+<li>작업별로 프록시 토큰을 선택하는 로직이 필요하며, 이를 일반화하기 위해 상당한 실험이 요구될 수 있음.</li>
+<li>프록시 토큰 선택을 임베딩 기반 자동화로 발전시키는 작업이 추가로 필요할 수 있음.</li>
+</ul>
+</li>
+<li>
+<p><strong>초장문(ultra-long context)에 대한 확장성:</strong></p>
+<ul>
+<li>32k 토큰을 초과하는 시퀀스에서는 GPU 메모리 요구량이 제한 요소가 될 수 있음.</li>
+</ul>
+</li>
+<li>
+<p><strong>기존 파이프라인과의 호환성:</strong></p>
+<ul>
+<li>하깅페이스(Hugging Face) 또는 OpenAI 시스템 등의 기존 KV 캐시 시스템을 수정해야 할 가능성이 있음.</li>
+</ul>
+</li>
+</ol>
+<h4 id="기대-효과"><strong>기대 효과:</strong></h4>
+<ol>
+<li>
+<p><strong>효율성 향상:</strong></p>
+<ul>
+<li>메모리 사용량을 최대 5배 줄이고, 성능 저하를 최소화.</li>
+<li>긴 문맥 처리에서 고비용 하드웨어 업그레이드의 필요성을 줄임.</li>
+</ul>
+</li>
+<li>
+<p><strong>이식성:</strong></p>
+<ul>
+<li>적절한 엔지니어링 노력으로 다양한 추론 프레임워크에 적응 가능.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-1"><strong>결론</strong></h3>
+<p>NACL을 실제 시스템에 구현하려면 프록시 토큰 로직과 글로벌 최적화를 위한 일부 엔지니어링 노력이 필요합니다. 계산 비용은 비교적 적게 증가(인코딩 단계에서 약 15~20%)하며, 메모리 절약과 확장성 향상을 고려할 때 투자 가치가 충분합니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="논문의-입력-데이터와-추론-과정에-대한-설명"><strong>논문의 입력 데이터와 추론 과정에 대한 설명</strong></h3>
+<h4 id="입력-데이터"><strong>입력 데이터</strong></h4>
+<p>이 논문에서 다루는 입력 데이터는 <strong>텍스트 시퀀스</strong>로, 대규모 언어 모델(LLM)이 처리할 긴 문맥과 짧은 문맥 작업을 포함합니다.</p>
+<h5 id="예시"><strong>예시</strong></h5>
+<ul>
+<li>
+<p><strong>짧은 문맥 작업</strong>:</p>
+<ul>
+<li>입력: &ldquo;What is the capital of France?&rdquo;</li>
+<li>작업: 질문에 대한 답변 생성.</li>
+</ul>
+</li>
+<li>
+<p><strong>긴 문맥 작업</strong>:</p>
+<ul>
+<li>입력: 32,000 토큰 이상의 긴 문서.
+<ul>
+<li>예: 연구 논문, 기술 문서 또는 책의 일부.</li>
+</ul>
+</li>
+<li>작업: 요약, 특정 질문에 대한 응답 생성, 또는 문서의 특정 섹션 탐색.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="추론-과정"><strong>추론 과정</strong></h3>
+<h4 id="1-인코딩-단계"><strong>1. 인코딩 단계</strong></h4>
+<ul>
+<li>
+<p><strong>입력 데이터 처리</strong>:</p>
+<ul>
+<li>입력된 텍스트는 토큰화되어 시퀀스 형태로 변환됩니다.
+<ul>
+<li>예: &ldquo;The quick brown fox jumps over the lazy dog&rdquo; → ([t_1, t_2, &hellip;, t_n])</li>
+<li>(t_i): 각 단어의 임베딩 벡터.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>어텐션 점수 계산</strong>:</p>
+<ul>
+<li>
+<p>각 토큰의 <strong>Query (Q)</strong>, <strong>Key (K)</strong>, <strong>Value (V)</strong> 벡터를 계산:
+[
+Q = X \cdot W_Q, , K = X \cdot W_K, , V = X \cdot W_V
+]
+(X): 입력 토큰 임베딩, (W_Q, W_K, W_V): 가중치 행렬.</p>
+</li>
+<li>
+<p>어텐션 점수 (A)를 계산:
+[
+A = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right)
+]</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>프록시 토큰 기반 중요도 평가</strong>:</p>
+<ul>
+<li>특정 작업과 관련된 <strong>프록시 토큰</strong>을 선택 (예: 질문의 끝부분).</li>
+<li>선택된 프록시 토큰에 기반해 중요도 점수 계산:
+[
+F_{\text{score}} = \sum_{t \in \text{Proxy Tokens}} \text{Softmax}(A_{t, *})
+]
+(A_{t, *}): 프록시 토큰과 모든 토큰 간의 어텐션 점수.</li>
+</ul>
+</li>
+<li>
+<p><strong>KV 캐시 초기화 및 토큰 제거</strong>:</p>
+<ul>
+<li>계산된 중요도 점수를 기준으로 중요하지 않은 토큰을 KV 캐시에서 제거:
+[
+K, V \rightarrow K_{\text{filtered}}, V_{\text{filtered}}
+]</li>
+<li>제거는 한 번의 최적화 단계로 수행.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="2-생성-단계"><strong>2. 생성 단계</strong></h4>
+<ul>
+<li>
+<p><strong>토큰-by-토큰 생성</strong>:</p>
+<ul>
+<li>새로운 토큰이 생성될 때마다 KV 캐시에 추가:
+[
+K_t = [K_{t-1}, Q_t], , V_t = [V_{t-1}, V_t]
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>랜덤 제거 적용</strong>:</p>
+<ul>
+<li>주기적으로 랜덤 샘플링을 통해 일부 토큰을 유지:
+<ul>
+<li>확률 분포:
+[
+P_{\text{random}} = \text{Softmax}(F_{\text{random}})
+]</li>
+<li>샘플링된 토큰 유지:
+[
+K_{\text{random}}, V_{\text{random}}
+]</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>출력 생성</strong>:</p>
+<ul>
+<li>유지된 KV 캐시와 새로운 입력을 사용해 다음 토큰을 생성:
+[
+P(y_t | y_{&lt;t}, X) = \text{Softmax}(W \cdot h_t)
+]
+(h_t): 현재 상태 벡터, (W): 출력 가중치 행렬.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="모델-아키텍처-구성"><strong>모델 아키텍처 구성</strong></h3>
+<h4 id="1-구성-요소"><strong>1. 구성 요소</strong></h4>
+<ul>
+<li>
+<p><strong>Transformer 기반 LLM</strong>:</p>
+<ul>
+<li>입력 임베딩 → 다중 헤드 어텐션 → 피드포워드 네트워크 → 출력.</li>
+</ul>
+</li>
+<li>
+<p><strong>KV 캐시 관리</strong>:</p>
+<ul>
+<li>각 레이어와 어텐션 헤드에서 KV 캐시를 유지:
+[
+\text{KV Cache} = {(K_1, V_1), (K_2, V_2), &hellip;, (K_L, V_L)}
+]</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-주요-연산"><strong>2. 주요 연산</strong></h4>
+<ul>
+<li>
+<p><strong>다중 헤드 어텐션</strong>:</p>
+<ul>
+<li>(H)개의 헤드에서 어텐션 계산:
+[
+\text{Attention}_h = \text{Softmax}\left(\frac{Q_h \cdot K_h^T}{\sqrt{d_k}}\right) \cdot V_h
+]</li>
+<li>모든 헤드의 결과를 합침:
+[
+\text{Output} = \text{Concat}(\text{Attention}_1, &hellip;, \text{Attention}_H) \cdot W_O
+]</li>
+</ul>
+</li>
+<li>
+<p><strong>피드포워드 네트워크 (FFN)</strong>:</p>
+<ul>
+<li>각 토큰 임베딩을 두 개의 선형 변환과 활성화 함수로 처리:
+[
+\text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2
+]</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="메모리-요구량-및-컴퓨팅-비용"><strong>메모리 요구량 및 컴퓨팅 비용</strong></h3>
+<h4 id="1-메모리-요구량"><strong>1. 메모리 요구량</strong></h4>
+<ul>
+<li>
+<p><strong>KV 캐시</strong>:</p>
+<ul>
+<li>레이어 수 (L), 어텐션 헤드 수 (H), 토큰 길이 (T), 임베딩 차원 (d):
+[
+\text{Memory} = O(L \cdot H \cdot T \cdot d)
+]</li>
+<li>긴 문맥(예: 32k 토큰)에서는 (&gt;50 , \text{GB}) 메모리 소요.</li>
+</ul>
+</li>
+<li>
+<p><strong>프록시 및 랜덤 제거 오버헤드</strong>:</p>
+<ul>
+<li>프록시 토큰의 어텐션 점수 계산:
+[
+O(L \cdot H \cdot T_{\text{proxy}} \cdot T)
+]</li>
+<li>랜덤 샘플링:
+[
+O(L \cdot H \cdot T)
+]</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-컴퓨팅-비용"><strong>2. 컴퓨팅 비용</strong></h4>
+<ul>
+<li>
+<p><strong>어텐션 계산</strong>:
+[
+O(L \cdot H \cdot T^2 \cdot d)
+]</p>
+<ul>
+<li>(T^2)에 비례하여 비용 증가.</li>
+<li>NACL은 프록시 및 랜덤 제거로 (T_{\text{proxy}} \ll T)인 경우 비용 감소 가능.</li>
+</ul>
+</li>
+<li>
+<p><strong>최적화 연산</strong>:</p>
+<ul>
+<li>한 번의 글로벌 최적화로 계산 단계 수를 줄여 기존 (O(p+T))에서 (O(1))로 단축.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결론-2"><strong>결론</strong></h3>
+<h4 id="추론-과정-요약"><strong>추론 과정 요약</strong></h4>
+<ol>
+<li>입력 데이터를 토큰화하고 어텐션 점수를 계산.</li>
+<li>프록시 토큰을 기반으로 중요도를 평가해 덜 중요한 토큰 제거.</li>
+<li>생성 단계에서는 랜덤 샘플링을 추가해 다양성을 보장.</li>
+<li>최적화된 KV 캐시를 사용해 결과를 생성.</li>
+</ol>
+<h4 id="모델-및-자원-요구량"><strong>모델 및 자원 요구량</strong></h4>
+<ul>
+<li>메모리 사용량은 긴 문맥에서 (O(L \cdot H \cdot T \cdot d))로 높지만, NACL의 제거 정책이 이를 대폭 절감.</li>
+<li>컴퓨팅 자원은 프록시와 랜덤 샘플링의 추가 연산을 포함해 약 10~15% 증가.</li>
+</ul>
+<p>NACL의 효율적인 제거 메커니즘은 긴 문맥 처리의 주요 병목을 해결하고, 계산 및 메모리 비용을 최적화하여 실질적으로 활용 가능한 솔루션을 제공합니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<h3 id="논문의-한계를-극복하기-위한-연구-방향-및-접근법"><strong>논문의 한계를 극복하기 위한 연구 방향 및 접근법</strong></h3>
+<p>NACL이 KV 캐시 최적화를 통해 메모리 절감과 성능 유지를 성공적으로 달성했지만, 논문에서는 몇 가지 한계를 언급하며 이를 해결하기 위한 추가 연구가 필요함을 시사합니다. 이러한 한계를 극복하기 위한 연구 흐름은 다음과 같은 방식으로 나눌 수 있습니다.</p>
+<hr>
+<h3 id="1-프록시-토큰-의존성-문제"><strong>1. 프록시 토큰 의존성 문제</strong></h3>
+<h4 id="한계"><strong>한계</strong></h4>
+<ul>
+<li>프록시 토큰의 선택이 모델 성능에 결정적 영향을 미침.</li>
+<li>작업마다 다른 프록시 토큰 선택 기준이 필요하며, 이를 수동으로 정의하는 방식은 비효율적이고 일반화가 어려움.</li>
+</ul>
+<h4 id="해결-방향"><strong>해결 방향</strong></h4>
+<ol>
+<li>
+<p><strong>프록시 토큰 자동 선택 알고리즘 개발</strong></p>
+<ul>
+<li><strong>어텐션 기반 선택</strong>:
+<ul>
+<li>모델의 어텐션 메커니즘을 활용해 입력 토큰 중 중요도가 높은 토큰을 자동으로 선택.</li>
+<li>기존 프록시 토큰 선택 방식을 개선하여 작업 특화 토큰뿐만 아니라 문맥 전반의 정보를 고려.</li>
+</ul>
+</li>
+<li><strong>학습 기반 접근법</strong>:
+<ul>
+<li>프록시 토큰 선택 과정을 학습 가능한 모듈로 설계.</li>
+<li>입력 데이터에 대해 중요한 토큰을 선택하는 <strong>프록시 예측 모델</strong>을 추가 학습.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>임베딩 유사성 활용</strong></p>
+<ul>
+<li>프록시 토큰을 선택할 때, 입력 데이터의 임베딩 공간에서 중심점(cluster center)을 찾는 방식 도입.</li>
+<li>주요 클러스터에 속하는 토큰을 프록시로 설정해 범용성을 높임.</li>
+</ul>
+</li>
+<li>
+<p><strong>다중 프록시 토큰 전략</strong></p>
+<ul>
+<li>단일 프록시 토큰 집합에 의존하지 않고, <strong>다중 프록시 집합</strong>을 도입하여 작업의 다양성과 일반화를 보장.</li>
+<li>예: 질문 응답 작업에서는 질문의 시작과 끝부분을 모두 고려.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-초장문ultra-long-context-처리"><strong>2. 초장문(Ultra-Long Context) 처리</strong></h3>
+<h4 id="한계-1"><strong>한계</strong></h4>
+<ul>
+<li>NACL은 128k 이상의 초장문 시나리오에서는 테스트되지 않았으며, 긴 문맥에서 프록시 토큰과 랜덤 제거가 효율적이지 않을 수 있음.</li>
+<li>메모리 요구량이 여전히 GPU 용량을 초과할 가능성이 존재.</li>
+</ul>
+<h4 id="해결-방향-1"><strong>해결 방향</strong></h4>
+<ol>
+<li>
+<p><strong>동적 캐시 할당</strong></p>
+<ul>
+<li>입력 토큰의 중요도에 따라 KV 캐시 공간을 <strong>동적으로 재분배</strong>.</li>
+<li>중요도가 낮은 레이어 또는 헤드에 할당된 캐시를 줄이고, 더 중요한 헤드에 자원을 집중.</li>
+</ul>
+</li>
+<li>
+<p><strong>분할 및 윈도잉(Windowing)</strong></p>
+<ul>
+<li>긴 시퀀스를 일정 길이로 분할한 후, 슬라이딩 윈도우 방식으로 처리.</li>
+<li>각 윈도우의 출력을 메모리 효율적으로 연결하여 전체 문맥을 유지.</li>
+</ul>
+</li>
+<li>
+<p><strong>압축된 KV 캐시 활용</strong></p>
+<ul>
+<li>중요한 정보를 유지하면서 KV 캐시를 더 작게 압축:
+<ul>
+<li><strong>양자화(Quantization)</strong>: KV 캐시의 부동소수점 표현을 정수로 변환하여 메모리 사용량 절감.</li>
+<li><strong>스파스 매트릭스(Sparse Matrix)</strong>: 중요도가 낮은 토큰의 캐시 항목을 제거해 스파스 구조를 도입.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>모듈화된 메모리 은닉층 추가</strong></p>
+<ul>
+<li>Transformer의 <strong>Recurrence Mechanism</strong>을 적용하여 중요한 정보를 캐시에 저장하지 않고 별도의 메모리 모듈에 유지.</li>
+<li>예: Reformer나 Longformer에서 사용되는 메커니즘을 결합.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="3-랜덤-제거의-신뢰성-문제"><strong>3. 랜덤 제거의 신뢰성 문제</strong></h3>
+<h4 id="한계-2"><strong>한계</strong></h4>
+<ul>
+<li>랜덤 제거는 토큰 중요도 평가와 무관하게 일부 토큰을 선택하므로, 중요한 정보를 잃을 가능성이 존재.</li>
+<li>랜덤성이 과도하게 적용되면 모델의 성능이 불안정해질 수 있음.</li>
+</ul>
+<h4 id="해결-방향-2"><strong>해결 방향</strong></h4>
+<ol>
+<li>
+<p><strong>랜덤 샘플링 정교화</strong></p>
+<ul>
+<li><strong>가중 랜덤 샘플링</strong>:
+<ul>
+<li>어텐션 점수와 무작위성을 결합한 <strong>가중치 기반 샘플링</strong> 도입.</li>
+<li>중요도가 높은 토큰은 선택 확률을 높이고, 낮은 토큰은 낮은 확률로 선택.</li>
+</ul>
+</li>
+<li>예:
+[
+P(t) = \alpha \cdot F_{\text{score}}(t) + (1 - \alpha) \cdot P_{\text{random}}
+]
+여기서 (\alpha)는 가중치를 조정하는 하이퍼파라미터.</li>
+</ul>
+</li>
+<li>
+<p><strong>다중 랜덤 제거 전략</strong></p>
+<ul>
+<li>레이어별 또는 헤드별로 서로 다른 랜덤 제거 정책을 사용하여 정보의 다양성을 극대화.</li>
+<li>레이어 간의 상호보완적인 랜덤 샘플링 전략 설계.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="4-평가-지표의-한계"><strong>4. 평가 지표의 한계</strong></h3>
+<h4 id="한계-3"><strong>한계</strong></h4>
+<ul>
+<li>현재 평가 방식은 주로 퍼플렉시티(perplexity)와 정확도를 기반으로 하며, 실제 응용 시나리오(긴 문맥 이해, 질문 응답 등)를 충분히 반영하지 못함.</li>
+</ul>
+<h4 id="해결-방향-3"><strong>해결 방향</strong></h4>
+<ol>
+<li>
+<p><strong>실제 작업 기반 평가</strong></p>
+<ul>
+<li>긴 문맥에서 실제 작업(예: 논문 요약, 문서 질의응답)에 대한 평가를 강화.</li>
+<li>사용 사례 기반 지표 설계:
+<ul>
+<li>처리 속도 (inference latency).</li>
+<li>메모리 사용량 대비 성능.</li>
+<li>문맥 보존률.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>다양한 입력 길이 테스트</strong></p>
+<ul>
+<li>짧은 문맥(1k~2k 토큰)과 긴 문맥(32k+ 토큰)을 모두 포함하는 <strong>다양한 입력 데이터셋</strong>에서 테스트 수행.</li>
+<li>입력 길이에 따른 성능 스케일링 분석.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="5-프레임워크-확장"><strong>5. 프레임워크 확장</strong></h3>
+<h4 id="한계-4"><strong>한계</strong></h4>
+<ul>
+<li>NACL은 추론 단계에서만 적용 가능하며, 학습 과정(파인튜닝 또는 사전 학습)에서는 활용되지 않음.</li>
+</ul>
+<h4 id="해결-방향-4"><strong>해결 방향</strong></h4>
+<ol>
+<li>
+<p><strong>학습 과정 통합</strong></p>
+<ul>
+<li>KV 캐시 제거 전략을 사전 학습 또는 파인튜닝 과정에 통합하여 <strong>학습된 제거 정책</strong>을 적용.</li>
+<li>학습 과정에서 프록시 토큰 선택 및 랜덤 제거 전략의 최적화를 함께 수행.</li>
+</ul>
+</li>
+<li>
+<p><strong>모델 구조 개선</strong></p>
+<ul>
+<li>NACL을 통합한 새로운 Transformer 아키텍처 설계:
+<ul>
+<li>어텐션 계산 단계에서 제거 메커니즘을 직접 내장.</li>
+<li>프록시 토큰과 랜덤 샘플링 모듈을 Transformer 내부에 포함.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론-3"><strong>결론</strong></h3>
+<p>NACL의 한계를 극복하기 위해 제안된 연구 흐름은 다음과 같은 주요 방향으로 요약할 수 있습니다:</p>
+<ol>
+<li><strong>프록시 토큰 선택 자동화</strong>를 통해 일반화와 효율성을 향상.</li>
+<li><strong>초장문 처리 기술</strong>(분할, 압축)을 활용하여 긴 문맥에서의 성능 보장.</li>
+<li><strong>랜덤 제거의 정교화</strong>로 신뢰성과 다양성을 동시 확보.</li>
+<li><strong>평가 지표 개선</strong>을 통해 실제 응용 시나리오에서의 유용성을 강조.</li>
+<li><strong>학습 과정 통합 및 모델 구조 개선</strong>으로 추론뿐만 아니라 학습에서도 활용 가능성 확대.</li>
+</ol>
+<p>이러한 접근법은 NACL의 실용성을 높이고, 더 넓은 응용 범위로 확장할 수 있는 기반을 제공합니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/NACL-AGeneral-and-Effective-KV-Cache-Eviction-Framework-for-LLMs-at-Inference-Time/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/NACL-AGeneral-and-Effective-KV-Cache-Eviction-Framework-for-LLMs-at-Inference-Time/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Palu-Compressing-KV-Cache-with-Low-Rank-Projection/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                Palu: Compressing KV-Cache with Low-Rank Projection
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-11-25">
+                11月25日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Abseil-Tip-99-%EB%B9%84%EB%A9%A4%EB%B2%84-%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EC%97%90%ED%8B%B0%EC%BC%93/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Abseil Tip 99 비멤버 인터페이스 에티켓
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-11-25">
+                11月25日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문-상세-분석"><strong>논문 상세 분석</strong></a>
+          <ul>
+            <li><a href="#제목과-범위"><strong>제목과 범위</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#논문의-강점과-독창성"><strong>논문의 강점과 독창성</strong></a></li>
+        <li><a href="#핵심-알고리즘-예시와-설명"><strong>핵심 알고리즘: 예시와 설명</strong></a>
+          <ul>
+            <li><a href="#핵심-개념-kv-캐시-제거"><strong>핵심 개념: KV 캐시 제거</strong></a></li>
+            <li><a href="#예시-입력"><strong>예시 입력</strong></a></li>
+            <li><a href="#nacl의-처리-단계"><strong>NACL의 처리 단계</strong></a></li>
+            <li><a href="#결과"><strong>결과</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#논문의-한계점"><strong>논문의 한계점</strong></a></li>
+        <li><a href="#기존-기법과-비교"><strong>기존 기법과 비교</strong></a></li>
+        <li><a href="#주요-통찰-및-영향"><strong>주요 통찰 및 영향</strong></a></li>
+        <li><a href="#최종-의견"><strong>최종 의견</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#core-algorithm-of-the-paper-detailed-explanation-and-example"><strong>Core Algorithm of the Paper: Detailed Explanation and Example</strong></a>
+          <ul>
+            <li><a href="#understanding-the-algorithm"><strong>Understanding the Algorithm</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#step-by-step-example"><strong>Step-by-Step Example</strong></a>
+          <ul>
+            <li><a href="#scenario"><strong>Scenario</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#phase-1-encoding-phase-proxy-tokens-eviction"><strong>Phase 1: Encoding Phase (Proxy-Tokens Eviction)</strong></a></li>
+        <li><a href="#phase-2-generation-phase-random-eviction"><strong>Phase 2: Generation Phase (Random Eviction)</strong></a></li>
+        <li><a href="#illustration-of-the-algorithm"><strong>Illustration of the Algorithm</strong></a>
+          <ul>
+            <li><a href="#before-eviction">Before Eviction:</a></li>
+            <li><a href="#after-proxy-tokens-eviction">After Proxy-Tokens Eviction:</a></li>
+            <li><a href="#after-random-eviction-during-generation">After Random Eviction During Generation:</a></li>
+          </ul>
+        </li>
+        <li><a href="#summary-of-the-process"><strong>Summary of the Process</strong></a></li>
+        <li><a href="#translated-explanation-in-korean"><strong>Translated Explanation in Korean</strong></a>
+          <ul>
+            <li><a href="#논문의-핵심-알고리즘-자세한-설명과-예시"><strong>논문의 핵심 알고리즘: 자세한 설명과 예시</strong></a></li>
+            <li><a href="#알고리즘-이해"><strong>알고리즘 이해</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#예시-단계별-설명"><strong>예시 단계별 설명</strong></a>
+          <ul>
+            <li><a href="#상황"><strong>상황</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#1단계-인코딩-단계-프록시-토큰-제거"><strong>1단계: 인코딩 단계 (프록시 토큰 제거)</strong></a></li>
+        <li><a href="#2단계-생성-단계-랜덤-제거"><strong>2단계: 생성 단계 (랜덤 제거)</strong></a></li>
+        <li><a href="#알고리즘-예시"><strong>알고리즘 예시</strong></a>
+          <ul>
+            <li><a href="#제거-전">제거 전:</a></li>
+            <li><a href="#프록시-토큰-제거-후">프록시 토큰 제거 후:</a></li>
+            <li><a href="#생성-단계에서-랜덤-제거-적용-후">생성 단계에서 랜덤 제거 적용 후:</a></li>
+          </ul>
+        </li>
+        <li><a href="#요약"><strong>요약</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문에서-제시한-결과-및-주요-성과"><strong>논문에서 제시한 결과 및 주요 성과</strong></a>
+          <ul>
+            <li><a href="#1-결과-요약"><strong>1. 결과 요약</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#다른-방법론과의-비교"><strong>다른 방법론과의 비교</strong></a>
+          <ul>
+            <li><a href="#1-기존-방법론과의-성능-차별성"><strong>1. 기존 방법론과의 성능 차별성</strong></a></li>
+            <li><a href="#2-nacl이-우수한-결과를-도출한-이유-논문이-제시하는-근거"><strong>2. NACL이 우수한 결과를 도출한 이유 (논문이 제시하는 근거)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#nacl이-제시한-결과의-차별성을-가능케-한-핵심-요인"><strong>NACL이 제시한 결과의 차별성을 가능케 한 핵심 요인</strong></a>
+          <ul>
+            <li><a href="#1-프록시-토큰-제거"><strong>1. 프록시 토큰 제거</strong></a></li>
+            <li><a href="#2-랜덤-제거의-도입"><strong>2. 랜덤 제거의 도입</strong></a></li>
+            <li><a href="#3-전역-최적화"><strong>3. 전역 최적화</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#나의-의견"><strong>나의 의견</strong></a></li>
+        <li><a href="#결론"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문에서-제시된-방법을-구현하기-위한-요구-사항-및-계산"><strong>논문에서 제시된 방법을 구현하기 위한 요구 사항 및 계산</strong></a>
+          <ul>
+            <li><a href="#1-추가-구현-요구-사항"><strong>1. 추가 구현 요구 사항</strong></a></li>
+            <li><a href="#a-프록시-토큰-제거"><strong>a. 프록시 토큰 제거</strong></a></li>
+            <li><a href="#b-랜덤-제거"><strong>b. 랜덤 제거</strong></a></li>
+            <li><a href="#c-인코딩-단계에서의-단일-최적화"><strong>c. 인코딩 단계에서의 단일 최적화</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-컴퓨팅-자원-요구-사항"><strong>2. 컴퓨팅 자원 요구 사항</strong></a>
+          <ul>
+            <li><a href="#a-메모리-오버헤드"><strong>a. 메모리 오버헤드</strong></a></li>
+            <li><a href="#b-계산-오버헤드"><strong>b. 계산 오버헤드</strong></a></li>
+            <li><a href="#c-gpu-활용-및-시간"><strong>c. GPU 활용 및 시간</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-구현-노력-추정"><strong>3. 구현 노력 추정</strong></a></li>
+        <li><a href="#4-실제-활용-가능성"><strong>4. 실제 활용 가능성</strong></a>
+          <ul>
+            <li><a href="#도전-과제"><strong>도전 과제:</strong></a></li>
+            <li><a href="#기대-효과"><strong>기대 효과:</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-1"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-입력-데이터와-추론-과정에-대한-설명"><strong>논문의 입력 데이터와 추론 과정에 대한 설명</strong></a>
+          <ul>
+            <li><a href="#입력-데이터"><strong>입력 데이터</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#추론-과정"><strong>추론 과정</strong></a>
+          <ul>
+            <li><a href="#1-인코딩-단계"><strong>1. 인코딩 단계</strong></a></li>
+            <li><a href="#2-생성-단계"><strong>2. 생성 단계</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#모델-아키텍처-구성"><strong>모델 아키텍처 구성</strong></a>
+          <ul>
+            <li><a href="#1-구성-요소"><strong>1. 구성 요소</strong></a></li>
+            <li><a href="#2-주요-연산"><strong>2. 주요 연산</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#메모리-요구량-및-컴퓨팅-비용"><strong>메모리 요구량 및 컴퓨팅 비용</strong></a>
+          <ul>
+            <li><a href="#1-메모리-요구량"><strong>1. 메모리 요구량</strong></a></li>
+            <li><a href="#2-컴퓨팅-비용"><strong>2. 컴퓨팅 비용</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-2"><strong>결론</strong></a>
+          <ul>
+            <li><a href="#추론-과정-요약"><strong>추론 과정 요약</strong></a></li>
+            <li><a href="#모델-및-자원-요구량"><strong>모델 및 자원 요구량</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-한계를-극복하기-위한-연구-방향-및-접근법"><strong>논문의 한계를 극복하기 위한 연구 방향 및 접근법</strong></a></li>
+        <li><a href="#1-프록시-토큰-의존성-문제"><strong>1. 프록시 토큰 의존성 문제</strong></a>
+          <ul>
+            <li><a href="#한계"><strong>한계</strong></a></li>
+            <li><a href="#해결-방향"><strong>해결 방향</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-초장문ultra-long-context-처리"><strong>2. 초장문(Ultra-Long Context) 처리</strong></a>
+          <ul>
+            <li><a href="#한계-1"><strong>한계</strong></a></li>
+            <li><a href="#해결-방향-1"><strong>해결 방향</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-랜덤-제거의-신뢰성-문제"><strong>3. 랜덤 제거의 신뢰성 문제</strong></a>
+          <ul>
+            <li><a href="#한계-2"><strong>한계</strong></a></li>
+            <li><a href="#해결-방향-2"><strong>해결 방향</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-평가-지표의-한계"><strong>4. 평가 지표의 한계</strong></a>
+          <ul>
+            <li><a href="#한계-3"><strong>한계</strong></a></li>
+            <li><a href="#해결-방향-3"><strong>해결 방향</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#5-프레임워크-확장"><strong>5. 프레임워크 확장</strong></a>
+          <ul>
+            <li><a href="#한계-4"><strong>한계</strong></a></li>
+            <li><a href="#해결-방향-4"><strong>해결 방향</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-3"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

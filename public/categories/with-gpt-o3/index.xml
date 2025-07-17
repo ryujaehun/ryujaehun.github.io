@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>With-Gpt-O3 on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/categories/with-gpt-o3/</link>
+    <description>Recent content in With-Gpt-O3 on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Thu, 26 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/categories/with-gpt-o3/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Accelerated Test-Time Scaling with Model-Free Speculative Sampling</title>
+      <link>http://192.168.1.11:1314/posts/Accelerated-Test-Time-Scaling-with-Model-Free-Speculative-Sampling/</link>
+      <pubDate>Thu, 26 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Accelerated-Test-Time-Scaling-with-Model-Free-Speculative-Sampling/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2506.04708v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;code&gt;STAND (STochastic Adaptive N-gram Drafting)&lt;/code&gt;은 &lt;strong&gt;추가 학습이나 별도 드래프트 모델 없이&lt;/strong&gt;도 대규모 LLM의 테스트-타임 스케일링(Test-Time Scaling)을 가속한다. 표준 오토리그레시브 디코딩 대비 &lt;strong&gt;추론 지연을 60 ~ 65 % 줄이고 처리량을 14 ~ 28 % 높이며 정확도는 유지&lt;/strong&gt;한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>KVzip: Query-Agnostic KV Cache Compression with Context Reconstruction</title>
+      <link>http://192.168.1.11:1314/posts/KVzip-Query-Agnostic-KV-Cache-Compression-with-Context-Reconstruction/</link>
+      <pubDate>Thu, 26 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/KVzip-Query-Agnostic-KV-Cache-Compression-with-Context-Reconstruction/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2505.23416v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;tldr&#34;&gt;⚡️TL;DR&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;KVzip&lt;/strong&gt;는 LLM의 KV 캐시를 &lt;em&gt;한 번&lt;/em&gt; 압축해도 이후 모든 질의 · 세션에서 재사용할 수 있도록 설계된 &lt;strong&gt;query-agnostic 캐시 컴프레서&lt;/strong&gt;다.&#xA;그 결과 &lt;strong&gt;정확도 손실 ≤ 3 pp&lt;/strong&gt;를 유지하면서 **레이턴시 2 × ↓, 메모리 60–394 × ↓**를 동시에 달성한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Compress, Gather, and Recompute: REFORMingLong-Context Processing in Transformers</title>
+      <link>http://192.168.1.11:1314/posts/Compress-Gather-and-Recompute-REFORMingLong-Context-Processing-in-Transformers/</link>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Compress-Gather-and-Recompute-REFORMingLong-Context-Processing-in-Transformers/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2506.01215v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;-reform-100만-토큰도-잊지-않는-llm-추론-파이프라인&#34;&gt;⚡️ REFORM: 100만 토큰도 잊지 않는 LLM 추론 파이프라인&lt;/h1&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;REFORM&lt;/strong&gt;은 &lt;em&gt;압축(Compress) → 선별(Gather) → 선택적 재계산(Recompute)&lt;/em&gt; 세 단계를 하나로 묶어,&lt;br&gt;&#xA;단일 H100 GPU에서도 &lt;strong&gt;100 만 토큰&lt;/strong&gt; 문맥을 &lt;em&gt;망각 없이&lt;/em&gt; 다루고 &lt;strong&gt;추론 지연·메모리&lt;/strong&gt;까지 줄여 준다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Mamba Drafters for Speculative Decoding</title>
+      <link>http://192.168.1.11:1314/posts/Mamba-Drafters-for-Speculative-Decoding/</link>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Mamba-Drafters-for-Speculative-Decoding/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2506.01206v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;-mamba-drafters-선형-ssm으로-외부-speculative-decoding-sota-다시-쓰기&#34;&gt;📝 Mamba Drafters: 선형 SSM으로 외부 Speculative Decoding SOTA 다시 쓰기&lt;/h1&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;Transformer 대신 &lt;strong&gt;Mamba SSM&lt;/strong&gt;을 외부 드래프터로 쓰고, &lt;strong&gt;트리 초안 + UCB 탐색&lt;/strong&gt;을 결합해 &lt;em&gt;재학습 없이&lt;/em&gt;도 Self-spec(EAGLE) 수준 속도·품질을 달성하며 메모리까지 절감했다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality, Long Context, and Next Generation Agentic Capabilities</title>
+      <link>http://192.168.1.11:1314/posts/Gemini-2.5-Pushing-the-Frontier-with-Advanced-Reasoning-Multimodality-Long-Context-and-Next-Generation-Agentic-Capabilities/</link>
+      <pubDate>Mon, 23 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Gemini-2.5-Pushing-the-Frontier-with-Advanced-Reasoning-Multimodality-Long-Context-and-Next-Generation-Agentic-Capabilities/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://storage.googleapis.com/deepmind-media/gemini/gemini_v2_5_report.pdf&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;gemini-25-1-m-토큰멀티모달초저지연-llm의-비밀을-벗기다&#34;&gt;Gemini 2.5: 1 M 토큰·멀티모달·초저지연 LLM의 비밀을 벗기다&lt;/h1&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&#xA;  &lt;blockquote&#xA;    class=&#34;border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1&#34;&gt;&#xA;    &lt;div class=&#34;prose prose-sm max-w-none&#34;&gt;&#xA;      &lt;p&gt;&lt;strong&gt;Sparse-MoE + Slice-Elastic TPU 학습 + Flash Distillation&lt;/strong&gt; 덕분에, Gemini 2.5는 1 M 토큰 컨텍스트와 비디오·오디오까지 통합하면서도 &lt;strong&gt;코딩·수학·롱컨텍스트·비디오&lt;/strong&gt; 벤치마크에서 GPT-4/Claude 4를 큰 폭으로 제치고, Flash 변형은 &lt;strong&gt;≈ 320 tokens/s&lt;/strong&gt;·비용 **35 %↓**로 “성능-지연-비용” Pareto 프런티어를 다시 그렸다.&lt;/p&gt;&#xA;    &lt;/div&gt;&#xA;  &lt;/blockquote&gt;</description>
+    </item>
+  </channel>
+</rss>

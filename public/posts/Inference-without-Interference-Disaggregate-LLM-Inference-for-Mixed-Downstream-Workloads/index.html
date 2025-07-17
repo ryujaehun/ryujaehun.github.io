@@ -1,0 +1,3329 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Inference without Interference: Disaggregate LLM Inference for Mixed Downstream Workloads | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 결론: TetriInfer의 주요 기여 및 핵심 아이디어 TetriInfer..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/Inference-without-Interference-Disaggregate-LLM-Inference-for-Mixed-Downstream-Workloads/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/Inference-without-Interference-Disaggregate-LLM-Inference-for-Mixed-Downstream-Workloads/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="Inference without Interference: Disaggregate LLM Inference for Mixed Downstream Workloads">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 결론: TetriInfer의 주요 기여 및 핵심 아이디어 TetriInfer는 대규모 언어 모델(LLM)의 추론 과정에서 발생하는 **간섭 문제(interference)**를 해결하기 위해 설계된 클라우드 기반 추론 시스템입니다. 주요 강점은 **사전 단계(prefill)**와 **디코드 단계(decode)**의 분리(disaggregation)와, 이를 통해 효율적인 자원 활용을 달성했다는 점입니다. 이를 기반으로 **TTFT(Time-To-First-Token)**를 97%, **작업 완료 시간(JCT)**을 47% 단축하고, **자원 효율성(performance per dollar)**을 최대 2.4배 개선했습니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-12-16T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-12-16T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="Inference without Interference: Disaggregate LLM Inference for Mixed Downstream Workloads">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 결론: TetriInfer의 주요 기여 및 핵심 아이디어 TetriInfer는 대규모 언어 모델(LLM)의 추론 과정에서 발생하는 **간섭 문제(interference)**를 해결하기 위해 설계된 클라우드 기반 추론 시스템입니다. 주요 강점은 **사전 단계(prefill)**와 **디코드 단계(decode)**의 분리(disaggregation)와, 이를 통해 효율적인 자원 활용을 달성했다는 점입니다. 이를 기반으로 **TTFT(Time-To-First-Token)**를 97%, **작업 완료 시간(JCT)**을 47% 단축하고, **자원 효율성(performance per dollar)**을 최대 2.4배 개선했습니다.">
+
+
+  <meta itemprop="name" content="Inference without Interference: Disaggregate LLM Inference for Mixed Downstream Workloads">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 결론: TetriInfer의 주요 기여 및 핵심 아이디어 TetriInfer는 대규모 언어 모델(LLM)의 추론 과정에서 발생하는 **간섭 문제(interference)**를 해결하기 위해 설계된 클라우드 기반 추론 시스템입니다. 주요 강점은 **사전 단계(prefill)**와 **디코드 단계(decode)**의 분리(disaggregation)와, 이를 통해 효율적인 자원 활용을 달성했다는 점입니다. 이를 기반으로 **TTFT(Time-To-First-Token)**를 97%, **작업 완료 시간(JCT)**을 47% 단축하고, **자원 효율성(performance per dollar)**을 최대 2.4배 개선했습니다.">
+  <meta itemprop="datePublished" content="2024-12-16T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-12-16T00:00:00+00:00">
+  <meta itemprop="wordCount" content="13717">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">Inference without Interference: Disaggregate LLM Inference for Mixed Downstream Workloads</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    Inference without Interference: Disaggregate LLM Inference for Mixed Downstream Workloads
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-12-16">
+          2024년 12월 16일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >28 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>13717 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2401.11181v1">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h3 id="결론-tetriinfer의-주요-기여-및-핵심-아이디어">결론: TetriInfer의 주요 기여 및 핵심 아이디어</h3>
+<p>TetriInfer는 대규모 언어 모델(LLM)의 추론 과정에서 발생하는 **간섭 문제(interference)**를 해결하기 위해 설계된 클라우드 기반 추론 시스템입니다. 주요 강점은 **사전 단계(prefill)**와 **디코드 단계(decode)**의 분리(disaggregation)와, 이를 통해 효율적인 자원 활용을 달성했다는 점입니다. 이를 기반으로 **TTFT(Time-To-First-Token)**를 97%, **작업 완료 시간(JCT)**을 47% 단축하고, **자원 효율성(performance per dollar)**을 최대 2.4배 개선했습니다.</p>
+<hr>
+<h3 id="강점과-독창성">강점과 독창성</h3>
+<h4 id="1-분리된-사전디코드-아키텍처">1. <strong>분리된 사전/디코드 아키텍처</strong></h4>
+<ul>
+<li><strong>기존 방식</strong>: 사전(prefill)과 디코드(decode) 요청이 같은 인스턴스에서 처리되어 성능 간섭을 초래함.</li>
+<li><strong>TetriInfer</strong>: 이를 분리하여 독립적으로 동작하도록 설계함으로써 성능 병목을 최소화.</li>
+<li>결과적으로 디코드 요청이 중첩되어도 간섭을 줄이고 작업 시간을 단축.</li>
+</ul>
+<h4 id="2-고정-크기-청킹chunked-prefill">2. <strong>고정 크기 청킹(Chunked Prefill)</strong></h4>
+<ul>
+<li><strong>문제</strong>: 긴 입력 프롬프트(prefill)가 자원을 과도하게 사용하여 다른 요청 처리에 지연을 유발.</li>
+<li><strong>해결책</strong>: 입력을 고정 크기로 나누어 처리하여 하드웨어의 계산 자원 활용도를 최적화.</li>
+</ul>
+<h4 id="3-예측-기반-이중-레벨-스케줄링">3. <strong>예측 기반 이중 레벨 스케줄링</strong></h4>
+<ul>
+<li>디코드 단계에서 발생할 자원 사용량(메모리 및 계산 시간)을 예측하는 모델을 활용.</li>
+<li>이를 바탕으로 간섭을 최소화하는 두 단계 스케줄링(중앙 스케줄링 및 로컬 스케줄링) 구현.</li>
+</ul>
+<h4 id="4-유연한-인스턴스-전환instance-flip">4. <strong>유연한 인스턴스 전환(Instance Flip)</strong></h4>
+<ul>
+<li>프롬프트 중심 작업(prefill-heavy) 또는 생성 중심 작업(decode-heavy)에 따라 사전/디코드 인스턴스를 동적으로 재구성.</li>
+</ul>
+<hr>
+<h3 id="핵심-알고리즘의-동작-과정-예시">핵심 알고리즘의 동작 과정 (예시)</h3>
+<ol>
+<li>
+<p><strong>입력</strong>: 긴 프롬프트와 짧은 디코드 요청이 혼재된 작업 요청들이 들어옴.</p>
+<ul>
+<li>프롬프트: &ldquo;Generate a detailed summary of&hellip;&rdquo;</li>
+<li>디코드 예상 길이: 50 tokens.</li>
+</ul>
+</li>
+<li>
+<p><strong>스케줄링 및 청킹</strong>:</p>
+<ul>
+<li>프롬프트는 고정 크기(예: 512 tokens)로 청킹되어 처리.</li>
+<li><strong>예측 모델</strong>은 디코드 길이를 분류(예: 50~100 tokens)하여 자원 요구량 추정.</li>
+</ul>
+</li>
+<li>
+<p><strong>사전 처리</strong>:</p>
+<ul>
+<li>각 청크가 독립적으로 처리되어 키-값(KV) 캐시를 생성.</li>
+<li>생성된 KV 캐시는 디코드 인스턴스로 전송.</li>
+</ul>
+</li>
+<li>
+<p><strong>디코드 처리</strong>:</p>
+<ul>
+<li>디코드 요청은 예상 길이와 현재 인스턴스 상태를 기반으로 분배.</li>
+<li>예를 들어, <strong>가벼운 디코드</strong>는 메모리 부담이 적은 인스턴스로 할당.</li>
+</ul>
+</li>
+<li>
+<p><strong>결과 출력</strong>:</p>
+<ul>
+<li>병렬 처리를 통해 모든 작업 완료 후 응답을 반환.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="한계점">한계점</h3>
+<ol>
+<li>
+<p><strong>프롬프트-디코드 모두가 무거운 작업(HPHD)에 비효율적</strong></p>
+<ul>
+<li>디코드와 사전을 분리하면서 발생하는 전송 및 관리 오버헤드로 인해 큰 이점이 없음.</li>
+<li>관련 실험에서 성능 개선이 미미하거나 오히려 자원 소모가 증가.</li>
+</ul>
+</li>
+<li>
+<p><strong>예측 모델의 제한</strong></p>
+<ul>
+<li>디코드 길이 예측이 정밀하지 않아 일부 스케줄링 정책의 최적 성능 미달.</li>
+<li>향후 더 정밀한 예측 모델 필요.</li>
+</ul>
+</li>
+<li>
+<p><strong>하드웨어 의존성</strong></p>
+<ul>
+<li>테스트는 NVIDIA V100 GPU를 중심으로 수행되었으며, 고급 네트워크 스택(NVLink 등)의 제한적인 구현으로 실제 배포 시 추가 검증이 필요.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="비교-및-요약">비교 및 요약</h3>
+<table>
+  <thead>
+      <tr>
+          <th>특징</th>
+          <th>TetriInfer</th>
+          <th>기존 vLLM</th>
+          <th>Sarathi</th>
+          <th>Splitwise</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>사전/디코드 분리</strong></td>
+          <td>✅</td>
+          <td>❌</td>
+          <td>❌</td>
+          <td>✅</td>
+      </tr>
+      <tr>
+          <td><strong>고정 크기 청킹</strong></td>
+          <td>✅</td>
+          <td>❌</td>
+          <td>✅</td>
+          <td>❌</td>
+      </tr>
+      <tr>
+          <td><strong>예측 기반 스케줄링</strong></td>
+          <td>✅</td>
+          <td>❌</td>
+          <td>❌</td>
+          <td>✅</td>
+      </tr>
+      <tr>
+          <td><strong>자원 효율성(perf/$)</strong></td>
+          <td>2.4배 개선</td>
+          <td>기준</td>
+          <td>미제공</td>
+          <td>일부 개선</td>
+      </tr>
+  </tbody>
+</table>
+<p>TetriInfer는 특히 <strong>혼합 워크로드</strong>에서 뛰어난 성능 개선을 보여주며, 간섭 문제를 해결하기 위한 아키텍처 설계의 새로운 기준을 제시했습니다. 하지만 무거운 작업에서는 추가적인 최적화 필요성이 남아 있습니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>논문의 핵심 알고리즘은 <strong>TetriInfer</strong>라는 시스템에서 작동하는 방식으로, 대규모 언어 모델(LLM)의 <strong>추론 요청 처리 과정에서 발생하는 간섭(interference)을 최소화</strong>하고, <strong>성능과 자원 효율성을 극대화</strong>하는 데 초점을 맞추고 있습니다. 이를 구현하기 위해 **사전 단계(prefill)**와 **디코드 단계(decode)**를 분리하고, 이를 지원하기 위한 <strong>고정 크기 청킹(chunked prefill)</strong> 및 <strong>예측 기반 이중 레벨 스케줄링</strong>을 사용합니다. 아래는 각 알고리즘과 과정을 예시를 들어 상세히 설명합니다.</p>
+<hr>
+<h2 id="1-prefill-단계-입력-청킹과-스케줄링">1. <strong>Prefill 단계: 입력 청킹과 스케줄링</strong></h2>
+<h3 id="알고리즘-개요">알고리즘 개요:</h3>
+<ul>
+<li><strong>문제</strong>: 긴 프롬프트(prefill 요청)가 하드웨어 자원을 초과적으로 점유해 병목을 초래.</li>
+<li><strong>해결책</strong>: 프롬프트를 고정 크기 청크(chunk)로 나누어 처리해 하드웨어 자원의 최적 활용.</li>
+</ul>
+<h3 id="예시">예시:</h3>
+<h4 id="입력">입력:</h4>
+<ul>
+<li>프롬프트: <code>&quot;Summarize the following document: [긴 텍스트]&quot;</code> (1,200 tokens)</li>
+</ul>
+<h4 id="처리-과정">처리 과정:</h4>
+<ol>
+<li>
+<p><strong>청킹</strong>: 프롬프트를 고정 크기(예: 512 tokens)로 나눔.</p>
+<ul>
+<li>청크 1: <code>Summarize the following document: [앞부분 512 tokens]</code></li>
+<li>청크 2: <code>[중간 512 tokens]</code></li>
+<li>청크 3: <code>[마지막 176 tokens (패딩 포함 512)]</code></li>
+</ul>
+</li>
+<li>
+<p><strong>스케줄링</strong>:</p>
+<ul>
+<li>청크들이 <strong>FCFS(First-Come-First-Serve)</strong> 또는 <strong>Shortest-Job-First(SJF)</strong> 정책에 따라 정렬.</li>
+<li>각 청크는 독립적으로 처리되어 **키-값 캐시(KV cache)**를 생성.</li>
+</ul>
+</li>
+<li>
+<p><strong>출력</strong>:</p>
+<ul>
+<li>각 청크에서 생성된 KV cache는 디코드 단계로 전달.</li>
+</ul>
+</li>
+</ol>
+<h3 id="효과">효과:</h3>
+<ul>
+<li>하드웨어가 계산이 포화되기 직전까지 효율적으로 사용됨.</li>
+<li>긴 프롬프트로 인해 발생하는 병목을 완화.</li>
+</ul>
+<hr>
+<h2 id="2-decode-단계-예측-기반-스케줄링">2. <strong>Decode 단계: 예측 기반 스케줄링</strong></h2>
+<h3 id="알고리즘-개요-1">알고리즘 개요:</h3>
+<ul>
+<li><strong>문제</strong>: 디코드 요청의 메모리 사용량 및 계산 요구량의 차이로 인해 간섭 발생.</li>
+<li><strong>해결책</strong>: 디코드 요청 길이를 예측하여 자원 사용량 기반으로 요청을 스케줄링.</li>
+</ul>
+<h3 id="예시-1">예시:</h3>
+<h4 id="입력-1">입력:</h4>
+<ul>
+<li>디코드 요청 1: <code>&quot;Explain the concept of entropy.&quot;</code> (예상 길이: 50 tokens)</li>
+<li>디코드 요청 2: <code>&quot;Generate a detailed story outline.&quot;</code> (예상 길이: 300 tokens)</li>
+</ul>
+<h4 id="처리-과정-1">처리 과정:</h4>
+<ol>
+<li>
+<p><strong>예측 모델 활용</strong>:</p>
+<ul>
+<li>OPT-125M과 같은 작은 예측 모델이 디코드 요청 길이를 추정.</li>
+<li>디코드 요청 1: 길이 범위 [50–100 tokens] → 가벼운 디코드(light decode)로 분류.</li>
+<li>디코드 요청 2: 길이 범위 [300–400 tokens] → 무거운 디코드(heavy decode)로 분류.</li>
+</ul>
+</li>
+<li>
+<p><strong>스케줄링</strong>:</p>
+<ul>
+<li>디코드 요청을 <strong>로컬 스케줄러</strong>가 관리:
+<ul>
+<li>가벼운 요청은 메모리 사용량이 적은 인스턴스로 배정.</li>
+<li>무거운 요청은 메모리 자원이 충분한 인스턴스로 배정.</li>
+</ul>
+</li>
+<li>두 요청 간의 간섭을 줄이기 위해 동적 배치(batch) 크기를 조정.</li>
+</ul>
+</li>
+<li>
+<p><strong>병렬 처리</strong>:</p>
+<ul>
+<li>KV cache 전송 후 각 요청이 개별적으로 처리.</li>
+<li>가벼운 요청은 빠르게 완료, 무거운 요청은 병렬로 진행.</li>
+</ul>
+</li>
+</ol>
+<h3 id="효과-1">효과:</h3>
+<ul>
+<li>메모리 충돌(head-of-line blocking)을 줄이고 디코드 간섭 완화.</li>
+<li>자원 사용량 기반 스케줄링으로 효율성 증가.</li>
+</ul>
+<hr>
+<h2 id="3-tetriinfer의-통합-워크플로">3. <strong>TetriInfer의 통합 워크플로</strong></h2>
+<h3 id="알고리즘-전체-동작-흐름">알고리즘 전체 동작 흐름:</h3>
+<h4 id="1단계-입력-스케줄링-및-청킹">1단계: <strong>입력 스케줄링 및 청킹</strong></h4>
+<ul>
+<li>긴 프롬프트 입력을 고정 크기로 나누고 최적화된 스케줄링 정책(SJF 등)으로 정렬.</li>
+</ul>
+<h4 id="2단계-사전-처리prefill">2단계: <strong>사전 처리(prefill)</strong></h4>
+<ul>
+<li>각 청크가 LLM을 통해 처리되어 KV 캐시 생성.</li>
+<li>생성된 캐시는 디코드 인스턴스로 전달.</li>
+</ul>
+<h4 id="3단계-디코드-처리decode">3단계: <strong>디코드 처리(decode)</strong></h4>
+<ul>
+<li>KV 캐시를 기반으로 디코드 요청이 처리.</li>
+<li>디코드 요청은 예상 길이를 기반으로 배치되어 간섭을 줄임.</li>
+</ul>
+<hr>
+<h3 id="정리-tetriinfer의-강점-요약">정리: TetriInfer의 강점 요약</h3>
+<table>
+  <thead>
+      <tr>
+          <th>기능</th>
+          <th>기존 시스템</th>
+          <th>TetriInfer</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>고정 크기 청킹</strong></td>
+          <td>❌</td>
+          <td>✅ 하드웨어 자원 최적화</td>
+      </tr>
+      <tr>
+          <td><strong>사전/디코드 분리</strong></td>
+          <td>❌</td>
+          <td>✅ 단계별 자원 간섭 최소화</td>
+      </tr>
+      <tr>
+          <td><strong>예측 기반 스케줄링</strong></td>
+          <td>❌</td>
+          <td>✅ 요청 길이 기반 자원 사용 최적화</td>
+      </tr>
+      <tr>
+          <td><strong>효율성(performance per $)</strong></td>
+          <td>기준 대비 낮음</td>
+          <td>2.4배 개선 (특히 디코드 중심 작업에서)</td>
+      </tr>
+  </tbody>
+</table>
+<p>TetriInfer의 설계는 입력 데이터의 불균형 및 작업 유형의 차이에 적응할 수 있는 유연성과 확장성을 제공합니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h3 id="결론-tetriinfer의-성과와-주요-기여">결론: <strong>TetriInfer의 성과와 주요 기여</strong></h3>
+<p>TetriInfer는 기존 방식과 비교해 <strong>LLM 추론 효율성을 크게 개선</strong>했으며, 특히 혼합 워크로드에서 <strong>Time-to-First-Token(TTFT)</strong>, <strong>Job Completion Time(JCT)</strong>, 및 <strong>자원 효율성(performance per dollar)</strong> 면에서 탁월한 성능을 보였습니다. 논문의 저자들은 이를 가능하게 한 핵심 요소로 <strong>사전/디코드 분리(disaggregation)</strong>, <strong>고정 크기 청킹(chunked prefill)</strong>, 그리고 **예측 기반 스케줄링(length-aware scheduling)**을 제시했습니다.</p>
+<hr>
+<h3 id="결과-요약-및-비교">결과 요약 및 비교</h3>
+<h4 id="실험-결과">실험 결과:</h4>
+<p>논문에서 제시한 TetriInfer와 기존 접근법의 성능 차이는 아래 표로 정리됩니다:</p>
+<table>
+  <thead>
+      <tr>
+          <th>워크로드 유형</th>
+          <th><strong>TTFT 개선율</strong></th>
+          <th><strong>JCT 개선율</strong></th>
+          <th><strong>자원 효율성(perf/$)</strong></th>
+          <th><strong>주요 원인</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Light Prefill + Light Decode</strong></td>
+          <td>44%</td>
+          <td>40%</td>
+          <td>1.4배</td>
+          <td>고정 크기 청킹으로 프롬프트 처리 효율 향상</td>
+      </tr>
+      <tr>
+          <td><strong>Light Prefill + Heavy Decode</strong></td>
+          <td>97%</td>
+          <td>47%</td>
+          <td>2.4배</td>
+          <td>디코드와 사전 분리, 예측 기반 디코드 스케줄링</td>
+      </tr>
+      <tr>
+          <td><strong>Heavy Prefill + Light Decode</strong></td>
+          <td>9%</td>
+          <td>23%</td>
+          <td><strong>낮아짐</strong> (-43%)</td>
+          <td>디코드 분리 효과 작고, 청킹 오버헤드 발생</td>
+      </tr>
+      <tr>
+          <td><strong>Heavy Prefill + Heavy Decode</strong></td>
+          <td>19%</td>
+          <td>19%</td>
+          <td>1.1배</td>
+          <td>디코드 분리 효과는 있지만 자원 소모 증가</td>
+      </tr>
+      <tr>
+          <td><strong>혼합 워크로드(Mixed)</strong></td>
+          <td>85%</td>
+          <td>50%</td>
+          <td>1.9배</td>
+          <td>분리된 처리와 동적 스케줄링의 조합</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="다른-방법론과-비교-tetriinfer의-특출난-점">다른 방법론과 비교: TetriInfer의 특출난 점</h3>
+<p>논문에서는 여러 기존 접근법과 TetriInfer를 비교하며 그 독창성을 강조합니다. 관련 내용을 정리한 표는 아래와 같습니다:</p>
+<table>
+  <thead>
+      <tr>
+          <th><strong>특징</strong></th>
+          <th><strong>TetriInfer</strong></th>
+          <th><strong>vLLM</strong></th>
+          <th><strong>Splitwise</strong></th>
+          <th><strong>Sarathi</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>사전/디코드 분리</strong></td>
+          <td>✅</td>
+          <td>❌</td>
+          <td>✅</td>
+          <td>❌</td>
+      </tr>
+      <tr>
+          <td><strong>고정 크기 청킹</strong></td>
+          <td>✅</td>
+          <td>❌</td>
+          <td>❌</td>
+          <td>✅</td>
+      </tr>
+      <tr>
+          <td><strong>예측 기반 디코드 스케줄링</strong></td>
+          <td>✅</td>
+          <td>❌</td>
+          <td>✅</td>
+          <td>❌</td>
+      </tr>
+      <tr>
+          <td><strong>혼합 워크로드 최적화</strong></td>
+          <td>✅</td>
+          <td>❌</td>
+          <td>일부 개선</td>
+          <td>❌</td>
+      </tr>
+      <tr>
+          <td><strong>자원 효율성(perf/$)</strong></td>
+          <td>탁월</td>
+          <td>기준</td>
+          <td>일부 개선</td>
+          <td>미제공</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="tetriinfer의-성능-향상의-이유와-논문에서-제시하는-근거">TetriInfer의 성능 향상의 이유와 논문에서 제시하는 근거</h3>
+<h4 id="1-사전디코드-분리-disaggregation-of-prefill-and-decode">1. <strong>사전/디코드 분리 (Disaggregation of Prefill and Decode)</strong></h4>
+<ul>
+<li><strong>문제</strong>: 기존 시스템은 프롬프트 사전(prefill)과 디코드(decode)를 같은 인스턴스에서 처리.
+<ul>
+<li>프롬프트는 <strong>계산 중심(compute-heavy)</strong> 작업.</li>
+<li>디코드는 <strong>메모리 중심(memory-intensive)</strong> 작업으로 상충 발생.</li>
+</ul>
+</li>
+<li><strong>TetriInfer의 해결책</strong>:
+<ul>
+<li>사전 작업과 디코드 작업을 <strong>별도의 인스턴스</strong>에서 처리하여 간섭 제거.</li>
+<li>디코드 요청은 예측된 길이 기반으로 <strong>메모리 최적화된 배치</strong>를 통해 처리.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-고정-크기-청킹-chunked-prefill">2. <strong>고정 크기 청킹 (Chunked Prefill)</strong></h4>
+<ul>
+<li><strong>문제</strong>: 긴 프롬프트는 하드웨어 자원을 과도하게 점유, 나머지 요청의 지연 유발.</li>
+<li><strong>TetriInfer의 해결책</strong>:
+<ul>
+<li>프롬프트를 고정 크기 청크(예: 512 tokens)로 분할하여 처리.</li>
+<li>하드웨어의 계산 자원이 초과되지 않도록 조정.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-예측-기반-디코드-스케줄링">3. <strong>예측 기반 디코드 스케줄링</strong></h4>
+<ul>
+<li><strong>문제</strong>: 디코드 요청은 길이에 따라 자원 소모량이 크게 다르며, 혼합 처리 시 간섭이 발생.</li>
+<li><strong>TetriInfer의 해결책</strong>:
+<ul>
+<li>작은 예측 모델(예: OPT-125M)을 활용하여 디코드 요청 길이를 사전 추정.</li>
+<li>예측 결과를 바탕으로 디코드 요청을 <strong>메모리 사용량 기반</strong>으로 분배.</li>
+</ul>
+</li>
+</ul>
+<h4 id="논문에서-제시하는-근거">논문에서 제시하는 근거:</h4>
+<ul>
+<li><strong>분리된 아키텍처의 효과</strong>: <strong>TTFT</strong>가 최대 97% 개선됨.</li>
+<li><strong>청킹의 효과</strong>: 프롬프트 처리 대기 시간이 86% 감소.</li>
+<li><strong>스케줄링 효과</strong>: 혼합 워크로드에서 **perf/$**가 2배 이상 개선.</li>
+</ul>
+<hr>
+<h3 id="개인-의견-tetriinfer의-설계와-결과의-상관성">개인 의견: TetriInfer의 설계와 결과의 상관성</h3>
+<h4 id="1-설계의-합리성">1. 설계의 합리성</h4>
+<p>TetriInfer는 **사전과 디코드의 상충(interference)**이라는 근본적인 문제를 해결하기 위해 설계되었습니다. 사전과 디코드의 분리는 독립적 작업 스케줄링을 가능하게 했으며, 고정 크기 청킹과 디코드 요청 예측은 <strong>자원 사용 효율을 극대화</strong>했습니다. 이 설계는 클라우드 환경에서 <strong>혼합 워크로드</strong>에 특히 적합하다고 판단됩니다.</p>
+<h4 id="2-한계와-개선-가능성">2. 한계와 개선 가능성</h4>
+<ul>
+<li><strong>Heavy Prefill + Heavy Decode 워크로드</strong>에서 자원 사용량이 증가한 점은 청킹과 분리로 인한 오버헤드가 원인으로 보입니다. 이를 개선하기 위해 디코드 캐시 전송을 최적화하거나, 스케줄링 모델의 정밀도를 높일 필요가 있습니다.</li>
+<li>예측 기반 스케줄링은 **예측 정확도(74.9%)**에 따라 성능이 제한될 수 있습니다. 예측 모델의 정밀도를 높이는 것이 장기적으로 필요합니다.</li>
+</ul>
+<h4 id="3-실용적-의미">3. 실용적 의미</h4>
+<p>이 논문은 <strong>혼합 워크로드 환경에서 LLM 서비스의 성능 최적화</strong>를 위한 새로운 기준을 제시했습니다. TetriInfer의 접근 방식은 <strong>단순한 자원 증가가 아닌 구조적 최적화</strong>를 통해 효율성을 개선했으며, 이는 클라우드 서비스 환경에서 중요한 기여라고 평가할 수 있습니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="논문의-입력-데이터와-추론-과정-예시를-통한-상세-설명">논문의 입력 데이터와 추론 과정: 예시를 통한 상세 설명</h3>
+<hr>
+<h4 id="입력-데이터의-특성"><strong>입력 데이터의 특성</strong></h4>
+<p>이 논문에서는 대규모 언어 모델(LLM) 추론에서 발생하는 간섭 문제를 해결하기 위해 <strong>혼합 워크로드</strong>를 대상으로 실험을 수행했습니다. <strong>ShareGPT</strong> 데이터셋을 활용해 프롬프트와 디코드 요청을 구성하며, 다양한 워크로드 유형을 생성합니다.</p>
+<ul>
+<li>
+<p><strong>프롬프트 데이터</strong>:</p>
+<ul>
+<li>길이가 긴 프롬프트는 주로 요약 요청이나 문서 분석과 같은 작업에서 발생.</li>
+<li>예: <code>&quot;Summarize the following document: [긴 텍스트]&quot;</code> (512~1,200 tokens)</li>
+</ul>
+</li>
+<li>
+<p><strong>디코드 데이터</strong>:</p>
+<ul>
+<li>응답의 길이는 짧거나 긴 요청이 혼합됨.</li>
+<li>짧은 디코드: <code>&quot;What is entropy?&quot;</code> (50 tokens)</li>
+<li>긴 디코드: <code>&quot;Write a detailed story outline for a novel.&quot;</code> (300~500 tokens)</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="추론-과정-예시"><strong>추론 과정 예시</strong></h4>
+<p><strong>목표</strong>: 긴 프롬프트와 짧은 디코드 요청을 처리하면서 간섭을 최소화.</p>
+<ol>
+<li>
+<p><strong>입력 데이터</strong>:</p>
+<ul>
+<li><strong>프롬프트</strong>: <code>&quot;Summarize the following document: [긴 텍스트]&quot;</code> (1,200 tokens)</li>
+<li><strong>디코드 요청</strong>:
+<ul>
+<li>요청 1: <code>&quot;What is entropy?&quot;</code> (50 tokens 예상)</li>
+<li>요청 2: <code>&quot;Write a detailed story outline.&quot;</code> (300 tokens 예상)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>1단계: 사전(prefill) 처리</strong></p>
+<ul>
+<li>
+<p>프롬프트를 <strong>고정 크기 청크</strong>로 나눔 (예: 512 tokens 단위).</p>
+</li>
+<li>
+<p>청킹 결과:</p>
+<ul>
+<li>청크 1: <code>[Summarize the following document: ...]</code> (512 tokens)</li>
+<li>청크 2: <code>[중간 텍스트...]</code> (512 tokens)</li>
+<li>청크 3: <code>[마지막 텍스트 (176 tokens + 패딩)]</code></li>
+</ul>
+</li>
+<li>
+<p><strong>청킹된 프롬프트</strong>는 LLM으로 전달되어 각 청크에서 **키-값 캐시(KV Cache)**가 생성됨.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>2단계: 디코드(decode) 처리</strong></p>
+<ul>
+<li><strong>디코드 요청 1</strong>: &ldquo;What is entropy?&ldquo;는 가벼운 디코드 요청으로 분류.</li>
+<li><strong>디코드 요청 2</strong>: &ldquo;Write a detailed story outline.&ldquo;는 무거운 디코드 요청으로 분류.</li>
+<li>각 디코드 요청은 **예측 모델(OPT-125M)**로 처리 자원을 추정하여 스케줄링:
+<ul>
+<li>요청 1: 짧은 길이 → 메모리와 계산 부담이 적은 인스턴스로 배정.</li>
+<li>요청 2: 긴 길이 → 메모리 여유가 많은 인스턴스로 배정.</li>
+</ul>
+</li>
+<li><strong>결과</strong>: 디코드가 병렬로 처리되어 각 요청에 대한 결과를 반환.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="모델-아키텍처-구성-및-연산-설명">모델 아키텍처: 구성 및 연산 설명</h3>
+<h4 id="1-주요-구성-요소"><strong>1. 주요 구성 요소</strong></h4>
+<p>TetriInfer의 모델 아키텍처는 아래와 같은 구성으로 이루어집니다:</p>
+<ol>
+<li>
+<p><strong>사전(prefill) 인스턴스</strong>:</p>
+<ul>
+<li><strong>고정 크기 청킹</strong> 및 프롬프트 처리.</li>
+<li>각 청크에서 **키-값 캐시(KV Cache)**를 생성.</li>
+<li>예측 모델(OPT-125M)을 통해 디코드 요청 길이를 추정.</li>
+</ul>
+</li>
+<li>
+<p><strong>디코드(decode) 인스턴스</strong>:</p>
+<ul>
+<li>사전 처리된 KV Cache를 받아 디코드 수행.</li>
+<li>디코드 요청의 길이와 자원 요구량에 따라 <strong>로컬 스케줄링</strong>.</li>
+</ul>
+</li>
+<li>
+<p><strong>중앙 제어부(Centralized Control Plane)</strong>:</p>
+<ul>
+<li>클러스터 상태 모니터링 및 사전/디코드 요청의 스케줄링 관리.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="2-연산-구성"><strong>2. 연산 구성</strong></h4>
+<p><strong>Transformer 아키텍처 기반 LLM (OPT-13B)</strong>:</p>
+<ul>
+<li>
+<p><strong>Self-Attention 연산</strong>:</p>
+<ul>
+<li>입력 토큰 간 상관성을 계산하는 핵심 연산.</li>
+<li>**O(N²·d)**의 계산량 필요 (N: 입력 토큰 수, d: 모델 차원).</li>
+<li>긴 프롬프트(1,200 tokens)는 짧은 디코드(50 tokens)에 비해 20배 이상의 계산량을 소모.</li>
+</ul>
+</li>
+<li>
+<p><strong>Feed-Forward Layer</strong>:</p>
+<ul>
+<li>토큰별 비선형 변환.</li>
+<li>계산량: <strong>O(N·d²)</strong> (N: 토큰 수, d: 모델 차원).</li>
+</ul>
+</li>
+<li>
+<p><strong>KV Cache 생성 및 활용</strong>:</p>
+<ul>
+<li>사전 단계에서 생성된 KV Cache는 디코드 단계에서 매번 재사용.</li>
+<li>메모리 요구량은 토큰 길이에 비례: <strong>O(N·d)</strong>.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="3-메모리-요구량"><strong>3. 메모리 요구량</strong></h4>
+<p><strong>OPT-13B 모델 기준</strong>:</p>
+<ul>
+<li><strong>모델 파라미터</strong>: 약 13B (≈26GB, FP16 사용).</li>
+<li><strong>KV Cache 메모리</strong>:
+<ul>
+<li>KV Cache 크기: <strong>토큰 길이 × 2 × d</strong> (key와 value 각각 저장).</li>
+<li>예: 1,200 tokens × 2 × 13,312-d 차원 ≈ 31MB (FP16 기준).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="4-계산-요구량"><strong>4. 계산 요구량</strong></h4>
+<p><strong>예시 시나리오 계산</strong>:</p>
+<ul>
+<li>프롬프트: 1,200 tokens, 디코드: 300 tokens</li>
+<li><strong>Self-Attention 연산량</strong>:
+<ul>
+<li>사전 단계: <strong>O(1,200²·13,312) ≈ 19.1B FLOPs</strong></li>
+<li>디코드 단계(300 tokens): <strong>O(300²·13,312) ≈ 1.2B FLOPs</strong></li>
+</ul>
+</li>
+<li><strong>Feed-Forward 연산량</strong>:
+<ul>
+<li>사전 단계: <strong>O(1,200·13,312²) ≈ 211B FLOPs</strong></li>
+<li>디코드 단계: <strong>O(300·13,312²) ≈ 52.8B FLOPs</strong></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="정리">정리</h3>
+<p>TetriInfer의 입력 데이터와 추론 과정은 고정 크기 청킹과 디코드 요청 예측 기반 스케줄링을 통해 효율적으로 처리됩니다. 모델 아키텍처는 대규모 Transformer(OPT-13B) 기반으로, <strong>사전 단계는 계산량이 주로 집중되고</strong>, <strong>디코드 단계는 메모리 사용량이 주요 병목</strong>으로 작용합니다. TetriInfer의 설계는 이러한 연산 및 메모리 요구량의 비대칭성을 고려해 사전과 디코드를 분리하고 최적화했습니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<h3 id="이-논문의-한계와-이를-극복하기-위한-연구-흐름">이 논문의 한계와 이를 극복하기 위한 연구 흐름</h3>
+<p>논문에서는 <strong>TetriInfer</strong>가 대규모 언어 모델(LLM) 추론 효율성을 크게 개선했지만, 몇 가지 한계를 명시적으로 제시하거나 간접적으로 암시했습니다. 이 한계들은 향후 연구 방향의 기회를 제공합니다. 아래는 한계를 극복하기 위한 관련 연구 흐름과 가능성을 정리한 내용입니다.</p>
+<hr>
+<h3 id="1-heavy-prefill--heavy-decode-작업에서의-한계">1. <strong>Heavy Prefill + Heavy Decode 작업에서의 한계</strong></h3>
+<h4 id="한계점-1">한계점:</h4>
+<ul>
+<li>프롬프트와 디코드 요청이 모두 무거운 워크로드에서 성능 향상이 제한적.</li>
+<li>디코드 분리로 인한 <strong>전송 오버헤드</strong>와 <strong>청킹 과정의 추가 계산</strong>으로 인해 오히려 자원 효율이 감소.</li>
+</ul>
+<h4 id="극복-방안">극복 방안:</h4>
+<h5 id="1-prefill-decode-통합-최적화-연구">(1) <strong>Prefill-Decode 통합 최적화 연구</strong></h5>
+<ul>
+<li>기존의 Sarathi(2023)와 같은 접근법을 적용해 <strong>청킹 과정에서도 디코드 단계와 동시 처리</strong>를 수행.</li>
+<li>예: Prefill-Decode를 동시에 처리하는 <strong>혼합 청킹 방식</strong>.</li>
+</ul>
+<h5 id="2-메모리-계산-통합-최적화">(2) <strong>메모리-계산 통합 최적화</strong></h5>
+<ul>
+<li>모델의 <strong>KV Cache 크기</strong>를 줄이고 전송 효율을 높이는 연구:
+<ul>
+<li><strong>압축 기술</strong>: KV Cache를 압축하여 네트워크 전송 크기 감소 (예: 양자화, Sparse Matrix 적용).</li>
+<li><strong>기존 연구</strong>: FlexGen(2023)은 메모리 사용량을 줄이는 기법으로 높은 워크로드 처리 효율을 달성.</li>
+<li><strong>미래 흐름</strong>: 전송 시 <strong>레이어 단위로 KV Cache를 압축</strong>하거나 필요 시에만 부분적으로 전송.</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-pipeline-parallelism-최적화">(3) <strong>Pipeline Parallelism 최적화</strong></h5>
+<ul>
+<li>모델을 단계별로 나누어 사전 단계의 일부 계산을 디코드 단계와 병렬 처리.</li>
+<li>Splitwise(2023)에서 제안한 <strong>Prefill-Decode 교차 처리 방식</strong>의 확장.</li>
+</ul>
+<hr>
+<h3 id="2-디코드-요청-예측-정확도의-한계">2. <strong>디코드 요청 예측 정확도의 한계</strong></h3>
+<h4 id="한계점-2">한계점:</h4>
+<ul>
+<li>디코드 요청 길이 예측의 정확도가 약 <strong>74.9%</strong> 수준으로 제한적.</li>
+<li>예측 오류는 디코드 스케줄링에서 비효율을 초래.</li>
+</ul>
+<h4 id="극복-방안-1">극복 방안:</h4>
+<h5 id="1-더-정교한-길이-예측-모델">(1) <strong>더 정교한 길이 예측 모델</strong></h5>
+<ul>
+<li>LLM 자체를 활용한 길이 예측 연구:
+<ul>
+<li>최근 GPT-4 기반 모델을 활용하여 디코드 요청의 길이와 자원 사용량을 정밀하게 추정.</li>
+<li>LLM 기반 학습 데이터 증가로 예측 정확도 개선 가능.</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-확률적-스케줄링">(2) <strong>확률적 스케줄링</strong></h5>
+<ul>
+<li>길이 예측의 불확실성을 고려한 스케줄링 알고리즘 개발:
+<ul>
+<li>요청 길이를 범위로 예측해 불확실성을 허용하는 <strong>확률적 모델 기반 스케줄링</strong>.</li>
+<li>Reserve-Dynamic 스케줄링 알고리즘에 예측 오차를 보정하는 매커니즘 추가.</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-실시간-학습-기반-예측">(3) <strong>실시간 학습 기반 예측</strong></h5>
+<ul>
+<li>디코드 중간 결과를 실시간으로 피드백 받아 모델 재학습:
+<ul>
+<li>Splitwise에서 적용된 <strong>온라인 학습 기반 길이 보정 기법</strong> 확장.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-디코드-단계에서-메모리-병목">3. <strong>디코드 단계에서 메모리 병목</strong></h3>
+<h4 id="한계점-3">한계점:</h4>
+<ul>
+<li>디코드 요청은 주로 메모리 소모가 많은 작업으로, 여러 요청이 동시에 처리될 경우 메모리 충돌 및 병목 발생.</li>
+</ul>
+<h4 id="극복-방안-2">극복 방안:</h4>
+<h5 id="1-메모리-재사용-최적화">(1) <strong>메모리 재사용 최적화</strong></h5>
+<ul>
+<li>vLLM에서 제안된 <strong>Paged Attention</strong> 방식을 확장:
+<ul>
+<li>KV Cache를 <strong>요청 길이에 따라 동적으로 관리</strong>하여 메모리 사용 효율 개선.</li>
+<li>기존 연구: FlexGen은 메모리 페이징과 GPU-CPU 간 전송 최적화를 통해 메모리 사용량 감소.</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-메모리-분할-및-공유">(2) <strong>메모리 분할 및 공유</strong></h5>
+<ul>
+<li>디코드 요청 길이에 따라 메모리를 논리적으로 분할:
+<ul>
+<li>가벼운 요청과 무거운 요청이 <strong>별도의 메모리 풀</strong>을 사용하도록 최적화.</li>
+<li>Splitwise의 <strong>Prefill-Decode 병렬 구조</strong>와 결합하여 메모리 상호작용 감소.</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-캐시-데이터-전송-효율-개선">(3) <strong>캐시 데이터 전송 효율 개선</strong></h5>
+<ul>
+<li>네트워크 전송에서 <strong>Zero-Copy 방식</strong> 도입:
+<ul>
+<li>GPU 간 데이터 전송에서 CPU 메모리를 거치지 않고 **Direct Memory Access(DMA)**를 사용.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-heavy-decode에서-ttft-개선의-한계">4. <strong>Heavy Decode에서 TTFT 개선의 한계</strong></h3>
+<h4 id="한계점-4">한계점:</h4>
+<ul>
+<li>디코드 단계에서 TTFT(Time-To-First-Token)는 길이에 비례하여 증가.</li>
+<li>가벼운 요청과 긴 요청이 혼합된 상황에서는 스케줄링의 병목 발생 가능.</li>
+</ul>
+<h4 id="극복-방안-3">극복 방안:</h4>
+<h5 id="1-token-level-병렬화">(1) <strong>Token-Level 병렬화</strong></h5>
+<ul>
+<li>FlashAttention(2022)처럼 <strong>토큰 단위 병렬화</strong>로 TTFT를 단축.</li>
+<li>디코드 요청이 긴 경우, 첫 번째 토큰 생성과 이후 토큰 생성을 병렬화.</li>
+</ul>
+<h5 id="2-가중치-공유-및-캐싱">(2) <strong>가중치 공유 및 캐싱</strong></h5>
+<ul>
+<li>긴 디코드 요청의 자원을 줄이기 위해 동일한 맥락에서의 요청끼리 가중치를 공유.</li>
+<li>공유 기반 추론은 GPTZip(2023)과 같은 <strong>가중치 압축 및 캐싱 방식</strong> 활용 가능.</li>
+</ul>
+<h5 id="3-디코드-단위-스케줄링-개선">(3) <strong>디코드 단위 스케줄링 개선</strong></h5>
+<ul>
+<li>디코드 요청을 더 작게 나눠 미리 생성된 KV Cache를 효율적으로 사용:
+<ul>
+<li>디코드 요청을 더 세분화하여 병렬로 처리하고 응답 시간 단축.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="5-워크로드-예측-및-인스턴스-전환">5. <strong>워크로드 예측 및 인스턴스 전환</strong></h3>
+<h4 id="한계점-5">한계점:</h4>
+<ul>
+<li>TetriInfer의 <strong>Instance Flip</strong>은 정적 규칙에 의존(예: 1분 동안 유휴 상태).</li>
+<li>워크로드 변화에 적응하기 위한 동적 정책 부족.</li>
+</ul>
+<h4 id="극복-방안-4">극복 방안:</h4>
+<h5 id="1-강화-학습-기반-인스턴스-전환">(1) <strong>강화 학습 기반 인스턴스 전환</strong></h5>
+<ul>
+<li>강화 학습(RL)을 활용해 동적 워크로드 환경에 최적화된 전환 정책 설계:
+<ul>
+<li>클러스터의 실시간 상태를 기반으로 사전/디코드 인스턴스 전환을 자동화.</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-다중-모드-전환">(2) <strong>다중 모드 전환</strong></h5>
+<ul>
+<li>사전과 디코드를 분리하는 대신 <strong>혼합 인스턴스</strong>를 도입:
+<ul>
+<li>경량 워크로드에서는 통합 처리, 중량 워크로드에서는 분리 처리.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="6-실험-환경의-제한">6. <strong>실험 환경의 제한</strong></h3>
+<h4 id="한계점-6">한계점:</h4>
+<ul>
+<li>논문에서 제시한 결과는 NVIDIA V100 GPU 기반 환경에서 테스트.</li>
+<li>최신 GPU 아키텍처(A100, H100)와 고속 네트워크 환경(NVLink, InfiniBand)에서의 검증 부족.</li>
+</ul>
+<h4 id="극복-방안-5">극복 방안:</h4>
+<h5 id="1-최신-하드웨어-활용">(1) <strong>최신 하드웨어 활용</strong></h5>
+<ul>
+<li>최신 GPU와 고속 네트워크를 활용한 벤치마크 실험 수행.</li>
+<li>H100의 <strong>Transformer Engine</strong>과 같은 하드웨어 가속기 활용.</li>
+</ul>
+<h5 id="2-cross-cloud-배포-실험">(2) <strong>Cross-Cloud 배포 실험</strong></h5>
+<ul>
+<li>Google Cloud TPU, AWS Inferentia와 같은 클라우드 전용 하드웨어에서 성능 비교 실험.</li>
+</ul>
+<hr>
+<h3 id="결론-연구-흐름의-방향성">결론: 연구 흐름의 방향성</h3>
+<p>TetriInfer의 한계를 극복하기 위해 <strong>디코드 최적화</strong>, <strong>KV Cache 전송 효율화</strong>, <strong>워크로드 예측 개선</strong>, 그리고 <strong>강화 학습 기반 적응형 스케줄링</strong>이 주요 연구 흐름으로 나타나고 있습니다. 이러한 접근법은 대규모 언어 모델 추론의 자원 효율성과 성능을 더욱 높이는 데 기여할 것입니다.</p>
+<h1 id="q--사전prefill과-디코드decode-작업의-분리disaggregation가-혼합-워크로드에서의-간섭interference을-어떻게-줄이는지-그리고-기존-통합-방식vllm-등-대비-성능-향상이-발생하는-근본적인-이유는-무엇인가">Q : 사전(prefill)과 디코드(decode) 작업의 분리(disaggregation)가 혼합 워크로드에서의 간섭(interference)을 어떻게 줄이는지, 그리고 기존 통합 방식(vLLM 등) 대비 성능 향상이 발생하는 근본적인 이유는 무엇인가?</h1>
+<h1 id="a">A:</h1>
+<h3 id="사전prefill과-디코드decode-작업의-분리가-간섭interference을-줄이는-이유"><strong>사전(prefill)과 디코드(decode) 작업의 분리가 간섭(interference)을 줄이는 이유</strong></h3>
+<hr>
+<h4 id="1-사전과-디코드의-작업-특성-차이">1. <strong>사전과 디코드의 작업 특성 차이</strong></h4>
+<ul>
+<li>
+<p><strong>사전(prefill)</strong>:</p>
+<ul>
+<li>주로 <strong>계산 중심(compute-heavy)</strong> 작업으로, 프롬프트 입력의 길이에 따라 계산 복잡도가 **O(N²)**로 증가.</li>
+<li>GPU의 계산 유닛 활용도가 높으며, 일정 길이 이상의 프롬프트는 하드웨어 포화 상태에 도달.</li>
+</ul>
+</li>
+<li>
+<p><strong>디코드(decode)</strong>:</p>
+<ul>
+<li><strong>메모리 중심(memory-intensive)</strong> 작업으로, 토큰 단위로 처리되며, 생성된 토큰 수에 따라 메모리와 대역폭 요구량이 선형적으로 증가.</li>
+<li>실시간 응답 속도(Time-to-First-Token, TTFT)와 생성 토큰 수가 중요한 성능 지표.</li>
+</ul>
+</li>
+<li>
+<p><strong>문제점</strong>:</p>
+<ul>
+<li>기존 방식(vLLM 등)은 <strong>사전과 디코드 작업을 동일한 인스턴스에서 실행</strong>하여 계산과 메모리 요구량이 상충(interference)을 초래.
+<ul>
+<li><strong>사전 작업</strong>의 계산 병목으로 인해 <strong>디코드 작업</strong>의 응답 지연 발생.</li>
+<li>메모리 대역폭이 디코드 작업에 집중되지 못해 **TTFT와 전체 작업 완료 시간(JCT)**이 증가.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="2-사전디코드-분리disaggregation의-효과">2. <strong>사전/디코드 분리(disaggregation)의 효과</strong></h4>
+<p>TetriInfer는 사전(prefill)과 디코드(decode) 작업을 별도 인스턴스로 분리하여 각각 독립적으로 실행합니다. 이로 인해 다음과 같은 개선이 이루어집니다:</p>
+<ol>
+<li>
+<p><strong>간섭(interference) 제거</strong>:</p>
+<ul>
+<li>사전 작업이 계산 자원을 소모해도 디코드 작업에 영향을 주지 않음.</li>
+<li>디코드 작업은 필요한 메모리 대역폭을 확보하여 실시간 처리가 가능.</li>
+</ul>
+</li>
+<li>
+<p><strong>작업 스케줄링 최적화</strong>:</p>
+<ul>
+<li>사전 작업과 디코드 작업의 특성을 고려해 별도로 스케줄링 가능.
+<ul>
+<li>사전 작업: 고정 크기 청킹(chunked prefill)으로 계산 부담 균등화.</li>
+<li>디코드 작업: 예상 길이 기반 메모리 최적화 스케줄링.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>자원 활용 효율 극대화</strong>:</p>
+<ul>
+<li>사전 인스턴스는 계산 자원(GPU 코어)을 최대로 활용.</li>
+<li>디코드 인스턴스는 메모리 대역폭과 캐싱 효율을 최적화.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="성능-향상이-발생하는-근본적인-이유"><strong>성능 향상이 발생하는 근본적인 이유</strong></h3>
+<hr>
+<h4 id="1-time-to-first-tokenttft-감소">1. <strong>Time-to-First-Token(TTFT) 감소</strong></h4>
+<ul>
+<li><strong>문제</strong>: 기존 통합 방식은 디코드 요청을 기다리는 동안 사전 작업이 완료될 때까지 대기.</li>
+<li><strong>TetriInfer의 개선</strong>:
+<ul>
+<li>사전 작업이 완료된 KV 캐시를 디코드 인스턴스로 즉시 전달하여 디코드 작업 시작.</li>
+<li>디코드 요청 길이에 따라 배치 크기를 동적으로 조정, <strong>최대 97% TTFT 개선</strong>.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-job-completion-timejct-감소">2. <strong>Job Completion Time(JCT) 감소</strong></h4>
+<ul>
+<li><strong>문제</strong>: 기존 방식은 사전과 디코드의 간섭으로 디코드 처리 속도가 느려짐.</li>
+<li><strong>TetriInfer의 개선</strong>:
+<ul>
+<li>사전과 디코드를 독립 처리하여 대기 시간이 감소.</li>
+<li>디코드 작업 간 메모리 자원 충돌을 예측 기반 스케줄링으로 완화, <strong>최대 50% JCT 개선</strong>.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-자원-효율성performance-per-dollar-증가">3. <strong>자원 효율성(performance per dollar) 증가</strong></h4>
+<ul>
+<li><strong>문제</strong>: 기존 방식은 사전 작업이 디코드 단계의 자원 활용도를 저하시킴.</li>
+<li><strong>TetriInfer의 개선</strong>:
+<ul>
+<li>사전과 디코드의 분리로 인스턴스의 자원 사용률 증가.</li>
+<li>혼합 워크로드에서 작업 간 자원 사용량을 균등하게 분배, <strong>최대 2.4배 효율 개선</strong>.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="구체적인-성능-향상-이유를-실험-결과로-설명"><strong>구체적인 성능 향상 이유를 실험 결과로 설명</strong></h3>
+<h4 id="실험-결과-1">실험 결과:</h4>
+<p>논문에서 제시한 실험 데이터를 기반으로 구체적인 성능 향상을 확인할 수 있습니다.</p>
+<table>
+  <thead>
+      <tr>
+          <th>워크로드 유형</th>
+          <th><strong>TTFT 개선</strong></th>
+          <th><strong>JCT 개선</strong></th>
+          <th><strong>자원 효율성(perf/$)</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Light Prefill + Heavy Decode</td>
+          <td>97%</td>
+          <td>47%</td>
+          <td>2.4배</td>
+      </tr>
+      <tr>
+          <td>Heavy Prefill + Heavy Decode</td>
+          <td>19%</td>
+          <td>19%</td>
+          <td>1.1배</td>
+      </tr>
+      <tr>
+          <td>혼합 워크로드</td>
+          <td>85%</td>
+          <td>50%</td>
+          <td>1.9배</td>
+      </tr>
+  </tbody>
+</table>
+<h4 id="성능-향상의-이유">성능 향상의 이유:</h4>
+<ol>
+<li><strong>Light Prefill + Heavy Decode</strong>:
+<ul>
+<li>디코드 중심 작업에서 분리된 인스턴스 설계로 디코드 작업이 계산 간섭 없이 최적의 메모리 대역폭 활용.</li>
+</ul>
+</li>
+<li><strong>Heavy Prefill + Heavy Decode</strong>:
+<ul>
+<li>긴 프롬프트와 긴 디코드 요청의 자원 사용량이 모두 높아 분리 효과가 상대적으로 적음.</li>
+</ul>
+</li>
+<li><strong>혼합 워크로드</strong>:
+<ul>
+<li>각 작업의 특성에 따라 스케줄링을 최적화하여 전체적인 효율 개선.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="결론"><strong>결론</strong></h3>
+<p>사전(prefill)과 디코드(decode)의 작업 특성 차이를 고려한 분리(disaggregation)는 간섭을 최소화하여 <strong>TTFT, JCT, 자원 효율성</strong> 모두에서 개선을 이끌어냈습니다. 이는 대규모 언어 모델 추론에서 혼합 워크로드가 발생하는 클라우드 환경에서 특히 효과적이며, 기존 통합 방식(vLLM 등)이 해결하지 못했던 자원 간 충돌 문제를 근본적으로 해결한 접근법으로 평가됩니다.</p>
+<h1 id="q--tetriinfer의-고정-크기-청킹chunked-prefill-및-예측-기반-디코드-스케줄링에서-발생하는-오버헤드는-무엇이며-이를-최소화하기-위해-어떤-추가적인-최적화가-가능할까">Q : TetriInfer의 고정 크기 청킹(chunked prefill) 및 예측 기반 디코드 스케줄링에서 발생하는 오버헤드는 무엇이며, 이를 최소화하기 위해 어떤 추가적인 최적화가 가능할까?</h1>
+<h3 id="tetriinfer의-고정-크기-청킹-및-예측-기반-디코드-스케줄링의-오버헤드"><strong>TetriInfer의 고정 크기 청킹 및 예측 기반 디코드 스케줄링의 오버헤드</strong></h3>
+<hr>
+<h4 id="1-고정-크기-청킹chunked-prefill에서의-오버헤드"><strong>1. 고정 크기 청킹(chunked prefill)에서의 오버헤드</strong></h4>
+<p>TetriInfer는 사전(prefill) 처리 시 입력 프롬프트를 고정 크기(예: 512 tokens)로 나눠 처리하여 하드웨어 계산 자원을 최적화합니다. 그러나 이 과정에서 다음과 같은 오버헤드가 발생합니다:</p>
+<ol>
+<li>
+<p><strong>추가적인 청킹 비용</strong>:</p>
+<ul>
+<li>긴 프롬프트를 고정 크기 청크로 분리하고 패딩하는 과정에서 추가적인 계산 비용 발생.</li>
+<li>청킹의 구현 복잡도가 증가하며, 이로 인해 작업 준비 시간이 늘어날 수 있음.</li>
+</ul>
+</li>
+<li>
+<p><strong>불필요한 패딩 처리</strong>:</p>
+<ul>
+<li>마지막 청크가 고정 크기를 채우지 못할 경우, 패딩된 부분이 모델의 계산에서 불필요한 연산을 유발.</li>
+<li>결과적으로 계산 자원이 효율적으로 사용되지 못함.</li>
+</ul>
+</li>
+<li>
+<p><strong>청킹된 요청의 캐싱 및 전송 오버헤드</strong>:</p>
+<ul>
+<li>각 청크별로 생성된 KV 캐시를 디코드 인스턴스로 전송해야 하므로, 네트워크 대역폭 소모가 증가.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="2-예측-기반-디코드-스케줄링에서의-오버헤드"><strong>2. 예측 기반 디코드 스케줄링에서의 오버헤드</strong></h4>
+<p>디코드 요청 길이를 사전에 예측하고, 이를 기반으로 자원을 분배하는 과정에서 발생하는 오버헤드는 다음과 같습니다:</p>
+<ol>
+<li>
+<p><strong>예측 모델 실행 비용</strong>:</p>
+<ul>
+<li>TetriInfer는 작은 모델(예: OPT-125M)을 사용해 디코드 요청 길이를 예측하지만, 이 역시 추가 계산 비용을 유발.</li>
+<li>특히 디코드 요청이 짧거나 단순한 경우, 예측 단계 자체가 비효율적일 수 있음.</li>
+</ul>
+</li>
+<li>
+<p><strong>예측 부정확성으로 인한 자원 낭비</strong>:</p>
+<ul>
+<li>길이 예측 정확도가 **74.9%**로 제한적이므로, 잘못된 예측으로 인해 메모리 또는 계산 자원이 비효율적으로 할당될 가능성이 있음.</li>
+<li>예측 오류가 클 경우 디코드 간 간섭이 발생해 작업 완료 시간이 증가.</li>
+</ul>
+</li>
+<li>
+<p><strong>스케줄링 복잡성</strong>:</p>
+<ul>
+<li>예측 정보를 기반으로 각 디코드 요청을 적합한 인스턴스로 배정하는 과정에서 스케줄링 지연 발생.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="오버헤드를-최소화하기-위한-추가적인-최적화"><strong>오버헤드를 최소화하기 위한 추가적인 최적화</strong></h3>
+<hr>
+<h4 id="1-고정-크기-청킹-최적화"><strong>1. 고정 크기 청킹 최적화</strong></h4>
+<h5 id="1-동적-크기-청킹dynamic-chunking">(1) <strong>동적 크기 청킹(Dynamic Chunking)</strong></h5>
+<ul>
+<li><strong>개선점</strong>:
+<ul>
+<li>고정 크기 대신 <strong>동적 크기</strong>로 청킹을 수행하여 패딩 오버헤드를 줄임.</li>
+<li>예: 청킹 크기를 하드웨어 리소스와 요청 길이에 따라 조정.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>계산 비용과 메모리 소모를 줄이고, 작업 준비 시간을 단축.</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-레이어-단위-캐싱-및-전송">(2) <strong>레이어 단위 캐싱 및 전송</strong></h5>
+<ul>
+<li><strong>개선점</strong>:
+<ul>
+<li>각 청크의 KV 캐시를 한꺼번에 전송하지 않고 <strong>레이어 단위</strong>로 전송.</li>
+<li>필요할 때만 해당 레이어의 캐시 데이터를 디코드 인스턴스로 전달.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>네트워크 전송 비용 감소.</li>
+<li>디코드 단계에서 필요한 데이터만 사용하므로 메모리 효율 개선.</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-프롬프트-병합merging-short-prompts">(3) <strong>프롬프트 병합(Merging Short Prompts)</strong></h5>
+<ul>
+<li><strong>개선점</strong>:
+<ul>
+<li>짧은 프롬프트를 그룹화하여 하나의 청크로 처리.</li>
+<li>예: 여러 짧은 요청(예: 50 tokens 이하)을 묶어 청킹.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>사전 단계에서 빈번한 작업 호출을 줄여 계산 자원 활용 최적화.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="2-예측-기반-디코드-스케줄링-최적화"><strong>2. 예측 기반 디코드 스케줄링 최적화</strong></h4>
+<h5 id="1-예측-모델의-경량화">(1) <strong>예측 모델의 경량화</strong></h5>
+<ul>
+<li><strong>개선점</strong>:
+<ul>
+<li>기존의 OPT-125M 대신 더 작은 모델(예: OPT-30M)을 사용하거나, <strong>지표 기반 통계 모델</strong>로 대체.</li>
+<li>예: 과거 요청 패턴을 활용한 히스토리 기반 길이 예측.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>예측 모델의 실행 비용 감소.</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-실시간-보정-알고리즘">(2) <strong>실시간 보정 알고리즘</strong></h5>
+<ul>
+<li><strong>개선점</strong>:
+<ul>
+<li>디코드 진행 상황을 실시간으로 모니터링하여 예측 길이를 동적으로 보정.</li>
+<li>예: 디코드 중간에 작업이 예상보다 길어지거나 짧아질 경우 스케줄링 수정.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>잘못된 예측으로 인한 자원 낭비 감소.</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-확률적-스케줄링probabilistic-scheduling">(3) <strong>확률적 스케줄링(Probabilistic Scheduling)</strong></h5>
+<ul>
+<li><strong>개선점</strong>:
+<ul>
+<li>요청 길이를 범위로 예측하고, 예측 범위의 상한/하한을 기반으로 스케줄링.</li>
+<li>예: 요청 길이가 100~200 tokens로 예측될 경우, <strong>메모리 여유가 있는 인스턴스</strong>에 할당.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>예측 오류의 영향을 완화하고, 자원 활용 효율성 증가.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="3-하드웨어-최적화"><strong>3. 하드웨어 최적화</strong></h4>
+<h5 id="1-zero-copy-메모리-전송">(1) <strong>Zero-Copy 메모리 전송</strong></h5>
+<ul>
+<li><strong>개선점</strong>:
+<ul>
+<li>KV 캐시 전송에서 GPU 간 직접 메모리 접근(DMA)을 활용하여 CPU 메모리 개입 제거.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>네트워크 전송 지연 및 메모리 복사 오버헤드 감소.</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-gpu-cpu-메모리-계층-최적화">(2) <strong>GPU-CPU 메모리 계층 최적화</strong></h5>
+<ul>
+<li><strong>개선점</strong>:
+<ul>
+<li>FlexGen(2023)에서 제안된 방식처럼, GPU와 CPU 간 페이징 기법을 활용.</li>
+<li>디코드 단계에서 사용하지 않는 캐시는 CPU 메모리로 오프로드.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>GPU 메모리 부담 완화 및 병목 감소.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="4-워크로드-기반-스케줄링-정책"><strong>4. 워크로드 기반 스케줄링 정책</strong></h4>
+<h5 id="1-워크로드-특화-인스턴스-구성">(1) <strong>워크로드 특화 인스턴스 구성</strong></h5>
+<ul>
+<li><strong>개선점</strong>:
+<ul>
+<li>디코드 요청의 길이에 따라 인스턴스를 <strong>경량 디코드</strong>와 <strong>중량 디코드</strong>로 분리.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>메모리와 계산 요구량의 상충을 줄이고, 스케줄링 효율 극대화.</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-강화-학습-기반-스케줄링">(2) <strong>강화 학습 기반 스케줄링</strong></h5>
+<ul>
+<li><strong>개선점</strong>:
+<ul>
+<li>강화 학습(RL)을 통해 워크로드 패턴을 학습하고, 최적의 디코드 자원 배치 전략을 설계.</li>
+</ul>
+</li>
+<li><strong>효과</strong>:
+<ul>
+<li>스케줄링 성능이 워크로드 변화에 자동 적응.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결론-1"><strong>결론</strong></h3>
+<p>TetriInfer의 <strong>고정 크기 청킹</strong>과 <strong>예측 기반 스케줄링</strong>은 혼합 워크로드 처리에서 성능 개선에 기여했지만, 오버헤드(청킹 비용, 예측 부정확성 등)가 여전히 존재합니다. 이를 최소화하기 위해 <strong>동적 청킹, 실시간 보정 알고리즘, 하드웨어 최적화, 워크로드 특화 스케줄링</strong>과 같은 추가적인 최적화를 통해 효율성을 더욱 높일 수 있습니다. 이러한 최적화는 대규모 언어 모델 추론의 실용적 적용 가능성을 한층 강화할 것입니다.</p>
+<h1 id="q--tetriinfer의-설계와-결과가-최신-하드웨어a100-h100-및-클라우드-기반-환경google-cloud-tpu-aws-inferentia에서-동일한-성능-이점을-제공할-수-있을까-하드웨어나-네트워크-환경에-따라-어떤-변형이-필요할까">Q : TetriInfer의 설계와 결과가 최신 하드웨어(A100, H100) 및 클라우드 기반 환경(Google Cloud TPU, AWS Inferentia)에서 동일한 성능 이점을 제공할 수 있을까? 하드웨어나 네트워크 환경에 따라 어떤 변형이 필요할까?</h1>
+<h3 id="tetriinfer의-설계와-최신-하드웨어-및-클라우드-기반-환경에서의-성능-이점"><strong>TetriInfer의 설계와 최신 하드웨어 및 클라우드 기반 환경에서의 성능 이점</strong></h3>
+<p>TetriInfer는 NVIDIA V100 GPU 기반 환경에서 설계되고 테스트되었으며, 최신 하드웨어(A100, H100) 및 클라우드 기반 환경에서 성능 이점을 제공할 가능성이 높습니다. 그러나 일부 설계 요소는 최신 하드웨어 및 네트워크 환경의 특성에 맞게 조정이 필요합니다.</p>
+<hr>
+<h3 id="1-최신-하드웨어-환경에서의-성능-이점-가능성"><strong>1. 최신 하드웨어 환경에서의 성능 이점 가능성</strong></h3>
+<h4 id="11-a100-및-h100-gpu"><strong>1.1 A100 및 H100 GPU</strong></h4>
+<ul>
+<li><strong>특징</strong>:
+<ul>
+<li><strong>A100</strong>: Tensor Core 지원, 대규모 배치 처리 및 Mixed Precision 연산 최적화.</li>
+<li><strong>H100</strong>: <strong>Transformer Engine</strong>을 통해 INT8 및 FP8 연산을 가속화, 메모리 대역폭 증가(NVLink 4.0).</li>
+</ul>
+</li>
+<li><strong>TetriInfer의 이점</strong>:
+<ul>
+<li><strong>고정 크기 청킹(chunked prefill)</strong>:
+<ul>
+<li>최신 GPU의 향상된 계산 성능과 메모리 대역폭으로 인해 더 큰 청킹 크기를 설정할 수 있음.</li>
+<li>FP8 연산과 같은 새로운 데이터 형식을 활용하면 추가적인 속도 향상 가능.</li>
+</ul>
+</li>
+<li><strong>예측 기반 디코드 스케줄링</strong>:
+<ul>
+<li>H100의 Transformer Engine은 디코드 요청 처리 속도를 크게 향상시킬 수 있으며, 메모리 병목이 감소.</li>
+<li>A100의 NVSwitch는 여러 GPU 간의 데이터 전송 속도를 증가시켜 KV 캐시 전송 지연을 줄일 수 있음.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="12-최신-하드웨어에서의-추가-가능성"><strong>1.2 최신 하드웨어에서의 추가 가능성</strong></h4>
+<ul>
+<li><strong>NVLink 4.0 (H100)</strong>:
+<ul>
+<li>900GB/s의 대역폭으로 GPU 간 데이터 전송을 가속화.</li>
+<li>TetriInfer의 KV 캐시 전송 시간이 V100보다 현저히 줄어들어 사전/디코드 간 분리의 효과가 더욱 극대화될 가능성.</li>
+</ul>
+</li>
+<li><strong>더 큰 GPU 메모리(A100: 40GB, H100: 80GB)</strong>:
+<ul>
+<li>디코드 요청의 메모리 병목이 줄어들어 더 큰 디코드 배치를 처리 가능.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-클라우드-기반-환경에서의-성능-이점-가능성"><strong>2. 클라우드 기반 환경에서의 성능 이점 가능성</strong></h3>
+<h4 id="21-google-cloud-tpu"><strong>2.1 Google Cloud TPU</strong></h4>
+<ul>
+<li><strong>특징</strong>:
+<ul>
+<li>Google Cloud TPU v4는 대규모 모델 추론에 최적화된 하드웨어로, 높은 대역폭 메모리와 네트워크 상호 연결 제공.</li>
+<li><strong>Mesh TensorFlow</strong> 기반 데이터 병렬 처리 가능.</li>
+</ul>
+</li>
+<li><strong>TetriInfer의 이점</strong>:
+<ul>
+<li><strong>고정 크기 청킹</strong>:
+<ul>
+<li>TPU의 대규모 병렬 처리 기능을 활용해 청킹된 프롬프트를 빠르게 처리.</li>
+</ul>
+</li>
+<li><strong>예측 기반 디코드 스케줄링</strong>:
+<ul>
+<li>TPU는 디코드 요청을 효율적으로 분배하는 데 적합한 <strong>시스템 아키텍처</strong>를 제공.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="22-aws-inferentia"><strong>2.2 AWS Inferentia</strong></h4>
+<ul>
+<li><strong>특징</strong>:
+<ul>
+<li>AWS Inferentia2는 대규모 추론 작업에 최적화된 전용 하드웨어로, 낮은 대기 시간과 높은 효율성을 목표로 설계.</li>
+<li><strong>Neuron SDK</strong>를 통해 메모리와 연산을 최적화 가능.</li>
+</ul>
+</li>
+<li><strong>TetriInfer의 이점</strong>:
+<ul>
+<li>사전/디코드 분리를 통해 워크로드를 효율적으로 분배하고, Neuron SDK의 최적화 기능을 활용 가능.</li>
+<li>디코드 요청을 Neuron Cores에 분배하여 병렬 처리 효율 극대화.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-하드웨어-및-네트워크-환경에-따른-변형"><strong>3. 하드웨어 및 네트워크 환경에 따른 변형</strong></h3>
+<h4 id="31-kv-캐시-전송-최적화"><strong>3.1 KV 캐시 전송 최적화</strong></h4>
+<ul>
+<li><strong>문제</strong>:
+<ul>
+<li>TetriInfer의 KV 캐시 전송은 V100의 PCIe 대역폭에 의존하여 느린 전송 속도를 보임.</li>
+</ul>
+</li>
+<li><strong>최신 하드웨어에서의 변형</strong>:
+<ul>
+<li><strong>NVLink(NVIDIA)</strong>:
+<ul>
+<li>GPU 간 전송을 NVLink를 활용한 <strong>Zero-Copy</strong>로 변경하여 전송 지연 감소.</li>
+</ul>
+</li>
+<li><strong>Cloud TPU</strong>:
+<ul>
+<li>TPU Pod 간 고속 네트워크를 활용하여 디코드 캐시를 실시간 전송.</li>
+</ul>
+</li>
+<li><strong>AWS Inferentia</strong>:
+<ul>
+<li>Neuron Cores와 호환되는 <strong>Neuron Direct Memory Access(DMA)</strong> 기술 적용.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="32-동적-청킹dynamic-chunking"><strong>3.2 동적 청킹(Dynamic Chunking)</strong></h4>
+<ul>
+<li><strong>문제</strong>:
+<ul>
+<li>고정 크기 청킹은 최신 하드웨어의 향상된 성능을 충분히 활용하지 못할 가능성.</li>
+</ul>
+</li>
+<li><strong>변형</strong>:
+<ul>
+<li>동적 청킹을 도입하여 하드웨어 자원 활용도를 극대화.</li>
+<li>하드웨어의 계산 및 메모리 한계에 따라 청킹 크기를 조정.</li>
+</ul>
+</li>
+</ul>
+<h4 id="33-디코드-요청-스케줄링-최적화"><strong>3.3 디코드 요청 스케줄링 최적화</strong></h4>
+<ul>
+<li><strong>문제</strong>:
+<ul>
+<li>디코드 요청 길이 예측이 부정확한 경우 자원 배분의 효율성이 낮아질 수 있음.</li>
+</ul>
+</li>
+<li><strong>변형</strong>:
+<ul>
+<li>강화 학습 기반 스케줄링:
+<ul>
+<li>A100/H100의 멀티-GPU 환경에서 디코드 요청을 실시간으로 분배.</li>
+</ul>
+</li>
+<li>클라우드 환경에서는 강화 학습을 활용한 워크로드 패턴 학습으로 요청 분배 최적화.</li>
+</ul>
+</li>
+</ul>
+<h4 id="34-메모리-사용-최적화"><strong>3.4 메모리 사용 최적화</strong></h4>
+<ul>
+<li><strong>문제</strong>:
+<ul>
+<li>고정 크기 메모리 예약은 최신 하드웨어의 유연한 메모리 관리 기능을 충분히 활용하지 못함.</li>
+</ul>
+</li>
+<li><strong>변형</strong>:
+<ul>
+<li>FlexGen과 같은 페이징 기반 메모리 최적화를 TetriInfer에 도입:
+<ul>
+<li>GPU 메모리가 초과될 경우 디코드 요청을 CPU로 오프로드.</li>
+<li>AWS Inferentia와 같은 하드웨어의 로컬 메모리와 연계.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결론-최신-환경에서의-tetriinfer-성능-전망"><strong>결론: 최신 환경에서의 TetriInfer 성능 전망</strong></h3>
+<h4 id="동일한-성능-이점-가능성"><strong>동일한 성능 이점 가능성</strong></h4>
+<ul>
+<li>최신 GPU(A100/H100)와 클라우드 하드웨어는 TetriInfer의 설계와 잘 맞아떨어지며, 특히 KV 캐시 전송 및 디코드 스케줄링에서 성능 향상이 기대됩니다.</li>
+</ul>
+<h4 id="필요한-변형"><strong>필요한 변형</strong></h4>
+<ul>
+<li>KV 캐시 전송에서 최신 네트워크 기술(NVLink, TPU Pod Interconnect)을 활용해 병목 현상을 줄이고, 고정 크기 청킹 대신 동적 청킹을 통해 자원 활용 효율을 극대화해야 합니다.</li>
+<li>클라우드 기반 환경에서는 강화 학습 기반 스케줄링 및 TPU/Neuron SDK와의 통합 최적화가 필요합니다.</li>
+</ul>
+<h4 id="미래-연구-방향"><strong>미래 연구 방향</strong></h4>
+<ul>
+<li>최신 하드웨어와 클라우드 환경에서 TetriInfer의 성능을 정량적으로 검증하고, 변형된 설계 요소의 효과를 실험적으로 입증하는 연구가 필요합니다.</li>
+</ul>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/Inference-without-Interference-Disaggregate-LLM-Inference-for-Mixed-Downstream-Workloads/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/Inference-without-Interference-Disaggregate-LLM-Inference-for-Mixed-Downstream-Workloads/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/INFERFLOW-AN-EFFICIENT-AND-HIGHLY-CONFIG-URABLE-INFERENCE-ENGINE-FOR-LARGE-LANGUAGE-MODELS/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                INFERFLOW: AN EFFICIENT AND HIGHLY CONFIG URABLE INFERENCE ENGINE FOR LARGE LANGUAGE MODELS
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-12-16">
+                12月16日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/DistServe-Disaggregating-Prefill-and-Decoding-for-Goodput-optimized-Large-Language-Model-Serving/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-12-16">
+                12月16日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#결론-tetriinfer의-주요-기여-및-핵심-아이디어">결론: TetriInfer의 주요 기여 및 핵심 아이디어</a></li>
+        <li><a href="#강점과-독창성">강점과 독창성</a>
+          <ul>
+            <li><a href="#1-분리된-사전디코드-아키텍처">1. <strong>분리된 사전/디코드 아키텍처</strong></a></li>
+            <li><a href="#2-고정-크기-청킹chunked-prefill">2. <strong>고정 크기 청킹(Chunked Prefill)</strong></a></li>
+            <li><a href="#3-예측-기반-이중-레벨-스케줄링">3. <strong>예측 기반 이중 레벨 스케줄링</strong></a></li>
+            <li><a href="#4-유연한-인스턴스-전환instance-flip">4. <strong>유연한 인스턴스 전환(Instance Flip)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#핵심-알고리즘의-동작-과정-예시">핵심 알고리즘의 동작 과정 (예시)</a></li>
+        <li><a href="#한계점">한계점</a></li>
+        <li><a href="#비교-및-요약">비교 및 요약</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#1-prefill-단계-입력-청킹과-스케줄링">1. <strong>Prefill 단계: 입력 청킹과 스케줄링</strong></a>
+      <ul>
+        <li><a href="#알고리즘-개요">알고리즘 개요:</a></li>
+        <li><a href="#예시">예시:</a>
+          <ul>
+            <li><a href="#입력">입력:</a></li>
+            <li><a href="#처리-과정">처리 과정:</a></li>
+          </ul>
+        </li>
+        <li><a href="#효과">효과:</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-decode-단계-예측-기반-스케줄링">2. <strong>Decode 단계: 예측 기반 스케줄링</strong></a>
+      <ul>
+        <li><a href="#알고리즘-개요-1">알고리즘 개요:</a></li>
+        <li><a href="#예시-1">예시:</a>
+          <ul>
+            <li><a href="#입력-1">입력:</a></li>
+            <li><a href="#처리-과정-1">처리 과정:</a></li>
+          </ul>
+        </li>
+        <li><a href="#효과-1">효과:</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-tetriinfer의-통합-워크플로">3. <strong>TetriInfer의 통합 워크플로</strong></a>
+      <ul>
+        <li><a href="#알고리즘-전체-동작-흐름">알고리즘 전체 동작 흐름:</a>
+          <ul>
+            <li><a href="#1단계-입력-스케줄링-및-청킹">1단계: <strong>입력 스케줄링 및 청킹</strong></a></li>
+            <li><a href="#2단계-사전-처리prefill">2단계: <strong>사전 처리(prefill)</strong></a></li>
+            <li><a href="#3단계-디코드-처리decode">3단계: <strong>디코드 처리(decode)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#정리-tetriinfer의-강점-요약">정리: TetriInfer의 강점 요약</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#결론-tetriinfer의-성과와-주요-기여">결론: <strong>TetriInfer의 성과와 주요 기여</strong></a></li>
+        <li><a href="#결과-요약-및-비교">결과 요약 및 비교</a>
+          <ul>
+            <li><a href="#실험-결과">실험 결과:</a></li>
+          </ul>
+        </li>
+        <li><a href="#다른-방법론과-비교-tetriinfer의-특출난-점">다른 방법론과 비교: TetriInfer의 특출난 점</a></li>
+        <li><a href="#tetriinfer의-성능-향상의-이유와-논문에서-제시하는-근거">TetriInfer의 성능 향상의 이유와 논문에서 제시하는 근거</a>
+          <ul>
+            <li><a href="#1-사전디코드-분리-disaggregation-of-prefill-and-decode">1. <strong>사전/디코드 분리 (Disaggregation of Prefill and Decode)</strong></a></li>
+            <li><a href="#2-고정-크기-청킹-chunked-prefill">2. <strong>고정 크기 청킹 (Chunked Prefill)</strong></a></li>
+            <li><a href="#3-예측-기반-디코드-스케줄링">3. <strong>예측 기반 디코드 스케줄링</strong></a></li>
+            <li><a href="#논문에서-제시하는-근거">논문에서 제시하는 근거:</a></li>
+          </ul>
+        </li>
+        <li><a href="#개인-의견-tetriinfer의-설계와-결과의-상관성">개인 의견: TetriInfer의 설계와 결과의 상관성</a>
+          <ul>
+            <li><a href="#1-설계의-합리성">1. 설계의 합리성</a></li>
+            <li><a href="#2-한계와-개선-가능성">2. 한계와 개선 가능성</a></li>
+            <li><a href="#3-실용적-의미">3. 실용적 의미</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-입력-데이터와-추론-과정-예시를-통한-상세-설명">논문의 입력 데이터와 추론 과정: 예시를 통한 상세 설명</a>
+          <ul>
+            <li><a href="#입력-데이터의-특성"><strong>입력 데이터의 특성</strong></a></li>
+            <li><a href="#추론-과정-예시"><strong>추론 과정 예시</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#모델-아키텍처-구성-및-연산-설명">모델 아키텍처: 구성 및 연산 설명</a>
+          <ul>
+            <li><a href="#1-주요-구성-요소"><strong>1. 주요 구성 요소</strong></a></li>
+            <li><a href="#2-연산-구성"><strong>2. 연산 구성</strong></a></li>
+            <li><a href="#3-메모리-요구량"><strong>3. 메모리 요구량</strong></a></li>
+            <li><a href="#4-계산-요구량"><strong>4. 계산 요구량</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#정리">정리</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#이-논문의-한계와-이를-극복하기-위한-연구-흐름">이 논문의 한계와 이를 극복하기 위한 연구 흐름</a></li>
+        <li><a href="#1-heavy-prefill--heavy-decode-작업에서의-한계">1. <strong>Heavy Prefill + Heavy Decode 작업에서의 한계</strong></a>
+          <ul>
+            <li><a href="#한계점-1">한계점:</a></li>
+            <li><a href="#극복-방안">극복 방안:</a></li>
+          </ul>
+        </li>
+        <li><a href="#2-디코드-요청-예측-정확도의-한계">2. <strong>디코드 요청 예측 정확도의 한계</strong></a>
+          <ul>
+            <li><a href="#한계점-2">한계점:</a></li>
+            <li><a href="#극복-방안-1">극복 방안:</a></li>
+          </ul>
+        </li>
+        <li><a href="#3-디코드-단계에서-메모리-병목">3. <strong>디코드 단계에서 메모리 병목</strong></a>
+          <ul>
+            <li><a href="#한계점-3">한계점:</a></li>
+            <li><a href="#극복-방안-2">극복 방안:</a></li>
+          </ul>
+        </li>
+        <li><a href="#4-heavy-decode에서-ttft-개선의-한계">4. <strong>Heavy Decode에서 TTFT 개선의 한계</strong></a>
+          <ul>
+            <li><a href="#한계점-4">한계점:</a></li>
+            <li><a href="#극복-방안-3">극복 방안:</a></li>
+          </ul>
+        </li>
+        <li><a href="#5-워크로드-예측-및-인스턴스-전환">5. <strong>워크로드 예측 및 인스턴스 전환</strong></a>
+          <ul>
+            <li><a href="#한계점-5">한계점:</a></li>
+            <li><a href="#극복-방안-4">극복 방안:</a></li>
+          </ul>
+        </li>
+        <li><a href="#6-실험-환경의-제한">6. <strong>실험 환경의 제한</strong></a>
+          <ul>
+            <li><a href="#한계점-6">한계점:</a></li>
+            <li><a href="#극복-방안-5">극복 방안:</a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-연구-흐름의-방향성">결론: 연구 흐름의 방향성</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#사전prefill과-디코드decode-작업의-분리가-간섭interference을-줄이는-이유"><strong>사전(prefill)과 디코드(decode) 작업의 분리가 간섭(interference)을 줄이는 이유</strong></a>
+          <ul>
+            <li><a href="#1-사전과-디코드의-작업-특성-차이">1. <strong>사전과 디코드의 작업 특성 차이</strong></a></li>
+            <li><a href="#2-사전디코드-분리disaggregation의-효과">2. <strong>사전/디코드 분리(disaggregation)의 효과</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#성능-향상이-발생하는-근본적인-이유"><strong>성능 향상이 발생하는 근본적인 이유</strong></a>
+          <ul>
+            <li><a href="#1-time-to-first-tokenttft-감소">1. <strong>Time-to-First-Token(TTFT) 감소</strong></a></li>
+            <li><a href="#2-job-completion-timejct-감소">2. <strong>Job Completion Time(JCT) 감소</strong></a></li>
+            <li><a href="#3-자원-효율성performance-per-dollar-증가">3. <strong>자원 효율성(performance per dollar) 증가</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#구체적인-성능-향상-이유를-실험-결과로-설명"><strong>구체적인 성능 향상 이유를 실험 결과로 설명</strong></a>
+          <ul>
+            <li><a href="#실험-결과-1">실험 결과:</a></li>
+            <li><a href="#성능-향상의-이유">성능 향상의 이유:</a></li>
+          </ul>
+        </li>
+        <li><a href="#결론"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#tetriinfer의-고정-크기-청킹-및-예측-기반-디코드-스케줄링의-오버헤드"><strong>TetriInfer의 고정 크기 청킹 및 예측 기반 디코드 스케줄링의 오버헤드</strong></a>
+          <ul>
+            <li><a href="#1-고정-크기-청킹chunked-prefill에서의-오버헤드"><strong>1. 고정 크기 청킹(chunked prefill)에서의 오버헤드</strong></a></li>
+            <li><a href="#2-예측-기반-디코드-스케줄링에서의-오버헤드"><strong>2. 예측 기반 디코드 스케줄링에서의 오버헤드</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#오버헤드를-최소화하기-위한-추가적인-최적화"><strong>오버헤드를 최소화하기 위한 추가적인 최적화</strong></a>
+          <ul>
+            <li><a href="#1-고정-크기-청킹-최적화"><strong>1. 고정 크기 청킹 최적화</strong></a></li>
+            <li><a href="#2-예측-기반-디코드-스케줄링-최적화"><strong>2. 예측 기반 디코드 스케줄링 최적화</strong></a></li>
+            <li><a href="#3-하드웨어-최적화"><strong>3. 하드웨어 최적화</strong></a></li>
+            <li><a href="#4-워크로드-기반-스케줄링-정책"><strong>4. 워크로드 기반 스케줄링 정책</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-1"><strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#tetriinfer의-설계와-최신-하드웨어-및-클라우드-기반-환경에서의-성능-이점"><strong>TetriInfer의 설계와 최신 하드웨어 및 클라우드 기반 환경에서의 성능 이점</strong></a></li>
+        <li><a href="#1-최신-하드웨어-환경에서의-성능-이점-가능성"><strong>1. 최신 하드웨어 환경에서의 성능 이점 가능성</strong></a>
+          <ul>
+            <li><a href="#11-a100-및-h100-gpu"><strong>1.1 A100 및 H100 GPU</strong></a></li>
+            <li><a href="#12-최신-하드웨어에서의-추가-가능성"><strong>1.2 최신 하드웨어에서의 추가 가능성</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-클라우드-기반-환경에서의-성능-이점-가능성"><strong>2. 클라우드 기반 환경에서의 성능 이점 가능성</strong></a>
+          <ul>
+            <li><a href="#21-google-cloud-tpu"><strong>2.1 Google Cloud TPU</strong></a></li>
+            <li><a href="#22-aws-inferentia"><strong>2.2 AWS Inferentia</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-하드웨어-및-네트워크-환경에-따른-변형"><strong>3. 하드웨어 및 네트워크 환경에 따른 변형</strong></a>
+          <ul>
+            <li><a href="#31-kv-캐시-전송-최적화"><strong>3.1 KV 캐시 전송 최적화</strong></a></li>
+            <li><a href="#32-동적-청킹dynamic-chunking"><strong>3.2 동적 청킹(Dynamic Chunking)</strong></a></li>
+            <li><a href="#33-디코드-요청-스케줄링-최적화"><strong>3.3 디코드 요청 스케줄링 최적화</strong></a></li>
+            <li><a href="#34-메모리-사용-최적화"><strong>3.4 메모리 사용 최적화</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#결론-최신-환경에서의-tetriinfer-성능-전망"><strong>결론: 최신 환경에서의 TetriInfer 성능 전망</strong></a>
+          <ul>
+            <li><a href="#동일한-성능-이점-가능성"><strong>동일한 성능 이점 가능성</strong></a></li>
+            <li><a href="#필요한-변형"><strong>필요한 변형</strong></a></li>
+            <li><a href="#미래-연구-방향"><strong>미래 연구 방향</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

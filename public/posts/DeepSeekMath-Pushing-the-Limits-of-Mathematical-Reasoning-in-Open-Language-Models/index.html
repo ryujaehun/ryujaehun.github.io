@@ -1,0 +1,2682 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 개요 및 강점
+논문 제목: DeepSeekMath: Pushing..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/DeepSeekMath-Pushing-the-Limits-of-Mathematical-Reasoning-in-Open-Language-Models/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/DeepSeekMath-Pushing-the-Limits-of-Mathematical-Reasoning-in-Open-Language-Models/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 개요 및 강점">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-02-07T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-02-07T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 개요 및 강점">
+
+
+  <meta itemprop="name" content="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 개요 및 강점">
+  <meta itemprop="datePublished" content="2025-02-07T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-02-07T00:00:00+00:00">
+  <meta itemprop="wordCount" content="18704">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2025-02-07">
+          2025년 02월 07일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >38 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>18704 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2402.03300v3">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<p>논문의 개요 및 강점</p>
+<p>논문 제목: DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models
+저자: Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song 외.</p>
+<p>이 논문은 수학적 추론 능력 향상을 목표로 한 오픈소스 언어 모델 DeepSeekMath 7B를 소개합니다. 이 모델은 기존의 DeepSeek-Coder-Base-v1.5 7B를 기반으로 1,200억 개의 수학 관련 토큰으로 추가 학습된 모델입니다. 모델은 MATH 벤치마크에서 **51.7%**의 정확도를 달성하여, Gemini-Ultra 및 GPT-4와 비슷한 수준에 근접했으며, 오픈소스 모델 중 최고 성능을 기록했습니다.</p>
+<p>논문의 강점 및 독창적인 요소
+1.	대규모 수학 데이터셋 구축
+•	DeepSeekMath Corpus는 1,200억 개의 수학 관련 토큰으로 구성된 대규모 고품질 데이터셋으로, 이는 Minerva 540B에서 사용된 데이터의 7배, OpenWebMath의 9배 규모입니다.
+•	FastText 기반의 데이터 필터링을 통해 웹에서 고품질 수학 데이터를 효과적으로 수집하고, 반복적인 수집과정을 통해 데이터 품질을 지속적으로 향상시켰습니다.
+2.	GRPO (Group Relative Policy Optimization)
+•	**PPO(Proximal Policy Optimization)**의 변형 알고리즘으로, critic 모델을 제거하고 그룹 평균 점수를 기반으로 학습하여 메모리 사용량을 줄이고 학습 효율을 개선했습니다.
+•	이 방식은 **reinforcement learning (RL)**을 통해 모델의 수학적 추론 능력을 효과적으로 향상시켰습니다.
+3.	오픈소스 모델 중 최고 성능 달성
+•	DeepSeekMath 7B는 MATH 벤치마크에서 **51.7%**의 정확도를 기록하며, 오픈소스 모델 중 최초로 50% 이상의 성능을 달성했습니다.
+•	Minerva 540B (540B 파라미터)보다 적은 파라미터 수(7B)에도 불구하고 뛰어난 성능을 보여, 고품질 데이터가 모델 크기보다 중요한 요소임을 입증했습니다.</p>
+<p>핵심 알고리즘: GRPO (Group Relative Policy Optimization)</p>
+<ol>
+<li>PPO와 GRPO의 차이점</li>
+</ol>
+<p>구분	PPO	GRPO
+Baseline	Critic 모델 기반 가치 함수 사용	그룹 평균 점수를 기반으로 Advantage 계산
+메모리 사용량	Critic 모델 추가로 높은 메모리 사용	Critic 모델 제거로 메모리 사용 절감
+효율성	복잡한 계산으로 인한 비효율	더 간단한 구조로 학습 효율성 향상
+적용 방식	개별 샘플의 보상에 기반	동일 질문에 대한 여러 샘플의 상대적 보상 비교 활용</p>
+<ol start="2">
+<li>GRPO의 학습 과정 예시</li>
+</ol>
+<p>문제: “3개의 사과가 있고, 친구가 2개를 더 줬다면 총 몇 개의 사과가 있는가?”
+1.	모델 샘플링:
+동일한 문제에 대해 모델이 여러 개의 답변(예: 5개)을 생성합니다.
+•	샘플 1: “3 + 2 = 5” (정답)
+•	샘플 2: “3 * 2 = 6” (오답)
+•	샘플 3: “3 + 2 = 5 사과” (정답)
+•	샘플 4: “3 - 2 = 1” (오답)
+•	샘플 5: “총 5개” (정답)
+2.	보상 계산:
+보상 모델이 각 답변의 정확도를 평가하여 점수를 부여합니다.
+•	샘플 1: +1
+•	샘플 2: -1
+•	샘플 3: +1
+•	샘플 4: -1
+•	샘플 5: +1
+3.	그룹 평균 보상 계산:
+전체 샘플의 평균 보상을 계산합니다.
+•	평균 보상 = (1 - 1 + 1 - 1 + 1) / 5 = 0.2
+4.	Advantage 계산 및 학습:
+각 샘플의 보상에서 평균 보상을 뺀 값을 Advantage로 사용하여 모델을 업데이트합니다.
+•	샘플 1: 1 - 0.2 = +0.8
+•	샘플 2: -1 - 0.2 = -1.2
+•	샘플 3: 1 - 0.2 = +0.8
+•	샘플 4: -1 - 0.2 = -1.2
+•	샘플 5: 1 - 0.2 = +0.8
+이 값을 기반으로 모델은 정확한 답변을 강화하고 오답을 억제합니다.</p>
+<p>한계점
+1.	기하학 및 정리 증명 성능의 한계
+•	논문에서는 모델이 삼각형이나 타원과 관련된 기하학 문제를 잘 해결하지 못한다고 언급했습니다. 이는 데이터 편향으로 인한 것으로 추정됩니다.
+2.	Few-shot 학습 성능의 한계
+•	GPT-4와 비교할 때, few-shot 학습 환경에서 성능 향상이 제한적입니다. 이는 모델 크기의 제약 때문일 수 있습니다.
+3.	arXiv 논문 데이터의 효과 미미
+•	많은 수학 관련 모델이 arXiv 논문 데이터를 사용하지만, 이 논문에서는 arXiv 데이터가 수학적 추론 능력 향상에 크게 기여하지 않음을 발견했습니다.</p>
+<p>결론</p>
+<p>DeepSeekMath 7B는 고품질 데이터셋과 **효율적인 RL 기법(GRPO)**을 통해 오픈소스 모델의 수학적 추론 능력을 획기적으로 향상시켰습니다. 모델 크기보다는 데이터 품질과 효율적인 학습 방법이 성능 향상에 중요한 요소임을 입증한 연구로, 앞으로 기하학적 문제 해결 및 few-shot 학습 능력 향상이 주요 개선 방향이 될 것입니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>논문의 핵심 알고리즘은 **Group Relative Policy Optimization (GRPO)**입니다. 이는 기존의 **Proximal Policy Optimization (PPO)**을 변형한 강화학습(즉, RL) 기법으로, 수학적 추론 능력을 향상시키는 데 최적화된 방식입니다.</p>
+<ol>
+<li>GRPO(Group Relative Policy Optimization)란?</li>
+</ol>
+<p>GRPO는 PPO의 critic 모델을 제거하고, 대신 그룹 평균 보상을 기준으로 학습하는 강화학습 알고리즘입니다. 이로 인해 메모리 사용량을 줄이고, 효율적인 학습이 가능합니다.
+•	PPO: 기존 PPO는 **가치 함수(value function)**를 통해 각 상태에서 얼마나 좋은지 평가합니다. 이 과정에서 critic 모델을 추가로 훈련해야 하므로 메모리와 계산 자원이 많이 소모됩니다.
+•	GRPO: Critic 모델을 사용하지 않고, 같은 문제에 대해 생성된 여러 답변 그룹의 상대적인 보상을 활용하여 모델을 업데이트합니다.</p>
+<ol start="2">
+<li>PPO와 GRPO 비교</li>
+</ol>
+<p>항목	PPO (Proximal Policy Optimization)	GRPO (Group Relative Policy Optimization)
+Baseline 계산	Critic 모델 기반 가치 함수 사용	그룹 내 평균 보상 사용
+메모리 사용	Critic 모델로 인해 메모리와 계산량이 많음	Critic 모델 제거로 메모리 사용량과 계산 비용 절감
+훈련 효율	보상 모델 및 가치 모델 동시 학습 필요	보상 모델만 필요하여 학습 효율성 증가
+보상 평가	개별 샘플의 절대적 성능 평가	동일 문제의 샘플들 간 상대적 성능 평가
+적용 대상	일반적인 언어 모델 강화 학습	수학적 추론과 같이 명확한 정답이 있는 문제에 최적화됨</p>
+<ol start="3">
+<li>GRPO의 작동 원리</li>
+</ol>
+<p>단계별 과정
+1.	질문에 대한 다수의 샘플 생성
+동일한 수학 문제에 대해 여러 개의 답변을 생성합니다. 예를 들어, 64개의 답변을 생성할 수 있습니다.
+2.	보상 모델을 통해 각 답변 평가
+각 답변을 보상 모델을 통해 채점합니다. 정답에 가까울수록 높은 점수를, 오답일수록 낮은 점수를 받습니다.
+3.	그룹 평균 보상 계산
+동일 문제의 여러 답변들의 평균 점수를 계산하여 baseline으로 사용합니다.
+4.	Advantage(이득) 계산
+각 답변의 보상에서 그룹 평균 보상을 뺀 값을 Advantage로 사용하여 모델을 업데이트합니다.
+•	Advantage = (개별 보상 - 그룹 평균 보상)
+5.	모델 업데이트
+Advantage 값에 따라 정답에 가까운 답변은 강화하고, 오답은 억제합니다.</p>
+<ol start="4">
+<li>예제: GRPO 알고리즘 적용</li>
+</ol>
+<p>문제:</p>
+<p>“3개의 사과가 있고, 친구가 2개를 더 줬다면 총 몇 개의 사과가 있는가?”</p>
+<p>1단계: 여러 개의 답변 샘플 생성</p>
+<p>모델은 아래와 같이 5개의 답변을 생성했다고 가정합니다.</p>
+<p>샘플 번호	생성된 답변
+샘플 1	“3 + 2 = 5” (정답)
+샘플 2	“3 * 2 = 6” (오답)
+샘플 3	“3 + 2 = 5 사과” (정답)
+샘플 4	“3 - 2 = 1” (오답)
+샘플 5	“총 5개” (정답)</p>
+<p>2단계: 보상 모델을 통한 평가</p>
+<p>보상 모델이 각 답변의 정확도를 평가하여 점수를 부여합니다.</p>
+<p>샘플 번호	답변	보상 점수
+샘플 1	“3 + 2 = 5”	+1
+샘플 2	“3 * 2 = 6”	-1
+샘플 3	“3 + 2 = 5 사과”	+1
+샘플 4	“3 - 2 = 1”	-1
+샘플 5	“총 5개”	+1</p>
+<p>3단계: 그룹 평균 보상 계산</p>
+<p>**그룹 평균 보상(Baseline)**은 모든 샘플의 보상 점수 평균입니다.
+•	그룹 평균 보상 = (1 + (-1) + 1 + (-1) + 1) / 5 = 0.2</p>
+<p>4단계: Advantage(이득) 계산</p>
+<p>Advantage = (개별 보상 - 그룹 평균 보상)</p>
+<p>샘플 번호	보상 점수	그룹 평균 보상(0.2)	Advantage (이득)
+샘플 1	+1	0.2	+0.8
+샘플 2	-1	0.2	-1.2
+샘플 3	+1	0.2	+0.8
+샘플 4	-1	0.2	-1.2
+샘플 5	+1	0.2	+0.8</p>
+<p>5단계: 모델 업데이트
+•	정답에 가까운 답변 (샘플 1, 3, 5): +0.8로 강화.
+•	오답 (샘플 2, 4): -1.2로 억제.</p>
+<p>이러한 과정을 통해 모델은 다음 번 유사한 문제에 대해 정확한 답변을 더 잘 생성하도록 학습됩니다.</p>
+<ol start="5">
+<li>GRPO의 장점 및 한계</li>
+</ol>
+<p>장점:
+1.	효율적인 메모리 사용
+Critic 모델을 제거하여 메모리 사용량을 줄이고, 연산 효율성을 높입니다.
+2.	수학적 문제에 최적화
+정답과 오답이 명확한 수학 문제에서는 그룹 내 상대적 평가가 절대적인 평가보다 효과적입니다.
+3.	강화학습의 성능 향상
+DeepSeekMath-RL 7B 모델은 GRPO를 통해 MATH 벤치마크에서 **51.7%**의 정확도를 기록하여 오픈소스 모델 중 최고 성능을 달성했습니다.</p>
+<p>한계:
+1.	데이터 편향 가능성
+그룹 내 보상이 상대적이기 때문에, 데이터셋에 편향이 존재할 경우 잘못된 방향으로 학습될 수 있습니다.
+2.	복잡한 문제에 대한 한계
+기하학적 문제나 추상적 개념이 필요한 문제에서는 GRPO의 효과가 제한적일 수 있습니다.</p>
+<ol start="6">
+<li>결론</li>
+</ol>
+<p>**GRPO(Group Relative Policy Optimization)**는 기존의 PPO보다 효율적이며, 특히 수학적 추론 능력을 강화하는 데 효과적입니다. 이 알고리즘을 통해 DeepSeekMath 모델은 GPT-4와 같은 대형 폐쇄형 모델에 근접한 성능을 달성했으며, 오픈소스 커뮤니티에서 중요한 성과를 보여주었습니다.</p>
+<h1 id="q--이-논문에서-사용하는-방법을-학습하기-위하여-어떤-데이터셋이-필요할까-그리고-어떻게-학습을-진행하면-될지-예시를-들어서-아주-자세하게-설명해줘">Q : 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될지 예시를 들어서 아주 자세하게 설명해줘</h1>
+<ol>
+<li>필요한 데이터셋</li>
+</ol>
+<p>논문에서는 DeepSeekMath 모델을 학습하기 위해 고품질 수학 데이터셋을 구축하고 다양한 학습 단계를 적용했습니다. 다음은 모델 학습을 위해 필요한 데이터셋 종류와 특성입니다.</p>
+<p>1.1. 데이터셋 종류</p>
+<p>데이터셋	설명	출처
+DeepSeekMath Corpus	1,200억 개의 수학 토큰으로 구성된 대규모 수학 데이터셋	Common Crawl에서 수집
+AlgebraicStack	수학 문제 풀이를 위한 코드 기반 데이터셋	GitHub 및 StackOverflow 등
+arXiv 논문	수학 및 과학 논문 데이터, 그러나 모델 성능 향상에는 제한적 효과	arXiv.org
+GSM8K	초등학교 수준의 수학 문제 데이터셋	Google Research
+MATH	고급 수학 문제(경시대회 수준) 데이터셋	Hendrycks et al. (2021)
+CMATH	중국어 수학 문제 데이터셋	Wei et al. (2023)
+Gaokao-MathQA	중국 대학 입시(가오카오) 수준의 수학 문제 데이터셋	Zhong et al. (2023)
+MMLU-STEM	다양한 과학, 기술, 공학, 수학(STEM) 문제를 포함한 멀티태스크 벤치마크	Hendrycks et al. (2020)
+HumanEval &amp; MBPP	수학적 문제 해결에 필요한 프로그래밍 데이터셋	OpenAI, Google</p>
+<p>1.2. 데이터셋 구축 방법 (DeepSeekMath Corpus)</p>
+<p>논문에서는 Common Crawl 데이터를 필터링하여 수학적 콘텐츠를 추출하는 과정을 거쳤습니다.
+1.	초기 시드 데이터:
+•	OpenWebMath와 같은 고품질 수학 웹 텍스트를 초기 시드로 사용.
+2.	FastText 기반 분류기 학습:
+•	시드 데이터를 이용해 수학 콘텐츠를 인식할 수 있는 FastText 모델 학습.
+3.	수학 데이터 수집:
+•	학습된 모델을 사용해 Common Crawl에서 수학적 웹 페이지를 수집.
+4.	데이터 정제 및 중복 제거:
+•	URL 중복 제거 및 품질 평가를 통해 불필요한 데이터를 제거.
+5.	다국어 데이터 포함:
+•	영어뿐 아니라 중국어 등 다양한 언어의 수학 데이터를 포함하여 모델의 다국어 수학 추론 능력을 강화.</p>
+<ol start="2">
+<li>학습 프로세스</li>
+</ol>
+<p>논문에서는 세 가지 주요 학습 단계를 통해 모델을 훈련했습니다.</p>
+<p>2.1. 1단계: 수학 사전학습 (Pre-training)</p>
+<p>목적:
+기존 DeepSeek-Coder-Base-v1.5 7B 모델을 기반으로 수학적 데이터로 사전 학습하여 수학 추론 능력 향상.</p>
+<p>방법:
+1.	데이터 구성:
+•	56%: DeepSeekMath Corpus (수학 데이터)
+•	20%: GitHub 코드 (프로그래밍 데이터)
+•	10%: arXiv 논문 (과학 데이터)
+•	10%: 자연어 데이터 (Common Crawl)
+•	4%: AlgebraicStack (수학 코드 데이터)
+2.	학습 세팅:
+•	토큰 수: 총 500억 개 토큰 학습.
+•	배치 크기: 10M 토큰.
+•	학습률: 4.2e-4 (초기), 이후 감소.
+3.	예시 (사전학습 단계):
+입력:</p>
+<p>문제: &ldquo;2x + 3 = 7일 때, x의 값을 구하시오.&rdquo;</p>
+<p>출력 (모델 초기 상태):</p>
+<p>&ldquo;2x + 3 = 7. x = 4&rdquo;</p>
+<p>학습 후 출력:</p>
+<p>&ldquo;2x + 3 = 7. 양변에서 3을 빼면 2x = 4. 양변을 2로 나누면 x = 2.&rdquo;</p>
+<p>2.2. 2단계: 지도학습 튜닝 (Supervised Fine-Tuning)</p>
+<p>목적:
+모델이 **수학적 사고의 흐름 (Chain-of-Thought)**을 따라 문제를 단계별로 해결하도록 지도.</p>
+<p>방법:
+1.	데이터 구성:
+•	GSM8K, MATH, CMATH 등의 데이터셋을 사용하여 문제와 해답을 단계별 설명으로 구성.
+2.	학습 세팅:
+•	총 학습 샘플 수: 776,000개.
+•	최대 컨텍스트 길이: 4,096 토큰.
+•	학습률: 5e-5.
+•	배치 크기: 256.
+3.	예시 (지도학습 튜닝 단계):
+입력 (문제):</p>
+<p>문제: &ldquo;한 상자에 사과가 12개 있고, 5개의 상자가 있다. 사과는 총 몇 개인가?&rdquo;</p>
+<p>출력 (학습 전):</p>
+<p>&ldquo;60&rdquo;</p>
+<p>출력 (학습 후):</p>
+<p>&ldquo;상자당 사과의 개수는 12개입니다. 5개의 상자가 있으므로, 총 사과의 개수는 12 * 5 = 60개입니다.&rdquo;</p>
+<p>2.3. 3단계: 강화학습 (Reinforcement Learning) - GRPO 적용</p>
+<p>목적:
+모델의 수학적 추론 능력을 **GRPO(Group Relative Policy Optimization)**를 통해 최적화.</p>
+<p>방법:
+1.	데이터 구성:
+•	144,000개의 문제 (GSM8K, MATH) 사용.
+•	64개의 샘플을 생성하여 각 문제에 대한 답변의 상대적 정확도 평가.
+2.	강화학습 프로세스:
+1.	샘플 생성:
+모델은 각 문제에 대해 64개의 답변을 생성.
+2.	보상 평가:
+보상 모델이 각 답변의 정확도를 평가.
+3.	그룹 평균 보상 계산:
+동일 문제의 답변들의 평균 점수를 baseline으로 설정.
+4.	Advantage 계산:
+각 답변의 보상에서 그룹 평균을 뺀 값을 Advantage로 사용.
+3.	학습 세팅:
+•	KL 페널티 계수: 0.04.
+•	학습률: 1e-6 (정책 모델).
+•	최대 길이: 1,024 토큰.
+•	배치 크기: 1,024.
+4.	예시 (GRPO 적용 단계):
+문제:</p>
+<p>&ldquo;한 상자에 사과가 12개 있고, 5개의 상자가 있다. 사과는 총 몇 개인가?&rdquo;</p>
+<p>샘플 생성 및 보상 평가:</p>
+<p>샘플	답변	보상 점수
+샘플 1	“12 * 5 = 60”	+1
+샘플 2	“12 + 5 = 17”	-1
+샘플 3	“사과는 총 60개입니다.”	+1
+샘플 4	“5개의 상자가 12개씩 = 60개”	+1
+샘플 5	“12 * 5 = 50”	-1</p>
+<p>그룹 평균 보상 계산:
+•	평균 보상 = (1 - 1 + 1 + 1 - 1) / 5 = 0.2
+Advantage 계산:
+•	샘플 1: 1 - 0.2 = +0.8
+•	샘플 2: -1 - 0.2 = -1.2
+•	샘플 3: 1 - 0.2 = +0.8
+•	샘플 4: 1 - 0.2 = +0.8
+•	샘플 5: -1 - 0.2 = -1.2
+모델 업데이트:
+•	**정답(샘플 1, 3, 4)**은 강화, **오답(샘플 2, 5)**은 억제.</p>
+<ol start="3">
+<li>
+<p>요약: 학습 과정</p>
+<ol>
+<li>수학 데이터셋 수집:
+•	Common Crawl에서 수학 관련 데이터를 수집 및 정제.</li>
+<li>사전 학습 (Pre-training):
+•	수학 데이터와 코드 데이터를 기반으로 모델의 기본 추론 능력 강화.</li>
+<li>지도 학습 튜닝 (Supervised Fine-Tuning):
+•	단계적 문제 해결(Chain-of-Thought) 방식으로 모델을 훈련.</li>
+<li>강화학습 (Reinforcement Learning, GRPO):
+•	모델이 생성한 여러 답변을 그룹화하여 상대적 보상을 평가하고 최적화.</li>
+</ol>
+</li>
+<li>
+<p>결론</p>
+</li>
+</ol>
+<p>DeepSeekMath 모델을 학습하기 위해서는 대규모 수학 데이터셋, 체계적인 지도학습 튜닝, 그리고 GRPO 기반 강화학습이 필수적입니다. 이러한 접근 방식은 모델이 복잡한 수학적 문제를 효과적으로 해결할 수 있도록 도와주며, 오픈소스 모델 중 최고 수준의 수학적 추론 능력을 달성할 수 있습니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<ol>
+<li>논문에서 제시한 주요 결과</li>
+</ol>
+<p>논문 *“DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models”*은 DeepSeekMath 7B 모델이 기존 오픈소스 모델을 뛰어넘는 수학적 추론 능력을 보여준다는 결과를 제시했습니다.</p>
+<p>1.1. 주요 성능 결과</p>
+<p>모델	GSM8K (초등 수학)	MATH (경시대회 수준)	CMATH (중국 수학)	Gaokao-MathQA (중국 대학입시)
+Minerva 540B	58.8%	33.6%	-	-
+Llemma 34B	54.0%	25.3%	56.1%	26.2%
+DeepSeekMath 7B	64.2%	36.2%	71.7%	35.3%
+DeepSeekMath-RL 7B	88.2%	51.7%	88.8%	46.8%</p>
+<pre><code>•	**MATH 벤치마크 (경시대회 수준)**에서 **51.7%**의 정확도를 달성하여 오픈소스 모델 중 **최초로 50%**를 돌파했습니다.
+•	Minerva 540B보다 **7배 작은 모델(7B)**임에도 불구하고 수학적 추론 성능에서 우위를 점했습니다.
+</code></pre>
+<ol start="2">
+<li>다른 방법론과의 비교 및 특출난 점</li>
+</ol>
+<p>2.1. 모델 크기 대비 성능</p>
+<p>모델	파라미터 수	MATH 정확도
+Minerva 540B	540B	33.6%
+Llemma 34B	34B	25.3%
+DeepSeekMath 7B	7B	36.2%
+DeepSeekMath-RL 7B	7B	51.7%</p>
+<pre><code>•	DeepSeekMath 7B는 7B라는 소규모 모델임에도 불구하고 Minerva 540B와 같은 대형 모델보다 높은 정확도를 기록했습니다.
+•	이는 모델 크기가 아닌 데이터 품질과 학습 방법론이 성능에 더 큰 영향을 미친다는 점을 시사합니다.
+</code></pre>
+<ol start="3">
+<li>논문에서 제시하는 성공 요인</li>
+</ol>
+<p>논문에서는 이러한 뛰어난 결과를 이끌어낸 두 가지 핵심 요소를 강조합니다:</p>
+<p>3.1. 대규모 고품질 수학 데이터셋 (DeepSeekMath Corpus)
+1.	1,200억 개의 수학 관련 토큰을 수집하여 모델 학습에 사용.
+2.	FastText 기반 필터링을 통해 Common Crawl 데이터에서 고품질 수학 콘텐츠만 선별.
+3.	다국어 지원: 영어뿐 아니라 중국어 수학 데이터를 포함하여 다국어 수학 추론 능력 강화.
+4.	arXiv 데이터 비중 감소: 기존에는 arXiv 논문을 활용한 모델이 많았으나, 논문에서는 arXiv 데이터가 수학적 추론 성능에 큰 기여를 하지 않음을 발견하고 웹 기반 수학 데이터에 집중.</p>
+<p>나의 생각:
+•	모델 크기와 상관없이 데이터 품질이 성능에 핵심적이라는 점은 중요한 발견입니다. 특히 arXiv 데이터가 기대와 달리 효과가 없다는 점은 흥미롭습니다. 이는 arXiv 논문이 이론적 설명에 집중되어 있고, 문제 해결 중심의 데이터가 부족하기 때문일 수 있습니다. 실제로 수학 문제를 많이 접할수록 모델이 실질적인 추론 능력을 향상시킬 수 있습니다.</p>
+<p>3.2. GRPO (Group Relative Policy Optimization) 알고리즘
+1.	기존 PPO(Proximal Policy Optimization)의 개선된 버전으로, critic 모델 없이 그룹 평균 보상을 기반으로 학습.
+2.	메모리 및 계산 효율성 향상: critic 모델을 제거하여 메모리 사용량 감소 및 학습 속도 개선.
+3.	수학 문제에 최적화된 보상 방식: 동일 문제에 대한 여러 답변의 상대적 정확도를 평가하여 정답에 가까운 답변을 강화.</p>
+<p>나의 생각:
+•	GRPO는 수학적 문제 해결에 매우 효과적입니다. 수학 문제는 정답이 명확하기 때문에 상대적 평가가 효율적으로 작동합니다. 일반적인 언어 모델의 경우 정답이 모호할 수 있지만, 수학에서는 정확한 답과 오답이 명확히 구분되므로 GRPO의 강점이 극대화됩니다.
+•	또한, 메모리 최적화로 인해 적은 자원으로도 고성능 모델을 학습할 수 있는 점이 중요합니다. 이는 연구 개발 비용을 줄이고 오픈소스 커뮤니티의 접근성을 높이는 긍정적인 요소입니다.</p>
+<ol start="4">
+<li>논문에서 제시한 성능 향상의 구체적인 이유</li>
+</ol>
+<p>성능 향상 요인	논문에서 제시하는 이유</p>
+<ol>
+<li>
+<p>고품질 수학 데이터셋	- Common Crawl 데이터에서 수학 콘텐츠만 선별하여 대규모 데이터셋 구축.- 다국어 수학 데이터 포함으로 다양한 언어 지원.</p>
+</li>
+<li>
+<p>코드 기반 사전학습	- DeepSeek-Coder로 사전 학습된 모델을 사용하여 코드 기반 논리적 추론 능력을 수학 문제 해결에 활용.</p>
+</li>
+<li>
+<p>GRPO 알고리즘	- Critic 모델 제거로 메모리 사용을 줄이고 효율성 향상.- 상대적 보상 평가로 수학 문제에 최적화된 강화학습 수행.</p>
+</li>
+<li>
+<p>데이터 필터링 및 중복 제거	- 데이터 중복 제거 및 품질 관리를 통해 학습 데이터의 노이즈를 최소화.</p>
+</li>
+<li>
+<p>나의 분석 및 추가적인 생각</p>
+</li>
+</ol>
+<p>5.1. 데이터 품질의 중요성
+•	이 논문은 **“모델의 크기보다 데이터 품질이 성능에 더 큰 영향을 준다”**는 중요한 메시지를 전달합니다.
+•	arXiv 논문 데이터의 제한적인 효과는 문제 해결 중심의 실용적인 데이터가 더 중요하다는 점을 시사합니다.
+•	다국어 데이터의 포함은 글로벌 수학 문제 해결 능력을 향상시켰으며, 이는 다국어 기반의 AI 발전에도 시사점을 줍니다.</p>
+<p>5.2. GRPO의 확장 가능성
+•	GRPO는 수학뿐 아니라 논리적 문제 해결이나 정답이 명확한 분야(예: 프로그래밍 문제, 논리 퍼즐 등)에도 효과적으로 적용될 수 있습니다.
+•	또한, 메모리 최적화로 인해 소규모 환경에서도 고성능 AI 모델을 개발할 수 있는 가능성을 열어줍니다.</p>
+<p>5.3. 한계와 향후 연구 방향
+•	기하학 및 정리 증명 분야에서 성능이 다소 부족한 점은 데이터 편향으로 인한 한계로 분석됩니다.
+•	Few-shot 학습에서 GPT-4보다 약한 성능을 보이는 것은 모델의 파라미터 크기와 관련이 있을 수 있으며, 이는 향후 모델 확장을 통해 개선 가능할 것입니다.</p>
+<ol start="6">
+<li>결론</li>
+</ol>
+<p>DeepSeekMath는 고품질 데이터셋과 GRPO 알고리즘을 통해 모델 크기에 상관없이 뛰어난 수학적 추론 능력을 보여줬습니다. 이는 데이터 중심 접근 방식과 효율적인 강화학습 기법이 AI 모델 성능 향상에 얼마나 중요한지를 명확히 보여주는 사례입니다.</p>
+<p>이러한 접근 방식은 앞으로 다른 분야의 AI 모델 개발에도 중요한 기준이 될 수 있으며, 자원 효율적인 AI 개발을 위한 좋은 방향성을 제시하고 있습니다.</p>
+<h1 id="q--이-논문에서-제시된-방법을-실제로-사용하려면-기존-방법에서-어떠한-구현이-추가적으로-필요하고-이러한-구현에-소모되는-공수-및-연산에-필요한-컴퓨팅-자원의-크기에-대해서-계산해줄-수-있겠니">Q : 이 논문에서 제시된 방법을 실제로 사용하려면 기존 방법에서 어떠한 구현이 추가적으로 필요하고 이러한 구현에 소모되는 공수 및 연산에 필요한 컴퓨팅 자원의 크기에 대해서 계산해줄 수 있겠니?</h1>
+<ol>
+<li>기존 방법과의 차이점 및 추가 구현 사항</li>
+</ol>
+<p>논문에서 제시한 DeepSeekMath 모델을 실제로 사용하기 위해서는 기존 LLM 학습 파이프라인에 몇 가지 추가 구현이 필요합니다. 주로 데이터 수집 및 처리, 강화학습 알고리즘(GRPO), 그리고 모델 튜닝 부분에서 변경사항이 발생합니다.</p>
+<p>1.1. 추가 구현 사항</p>
+<p>기존 방법	DeepSeekMath의 추가 구현 요소	세부 설명
+일반 LLM 사전학습	수학 특화 데이터셋 구축 및 전처리	- Common Crawl 데이터에서 수학 콘텐츠를 선별하기 위한 FastText 분류기 개발- 데이터 정제 및 중복 제거 파이프라인 구현
+지도 학습 (Supervised Fine-Tuning)	수학 문제에 특화된 단계별 해설 데이터 구축	- Chain-of-Thought 및 Program-of-Thought 형식으로 데이터를 재구성- 다국어(특히 중국어) 데이터 지원
+PPO 기반 강화학습	GRPO (Group Relative Policy Optimization) 알고리즘 구현	- Critic 모델 제거 및 그룹 평균 보상 기반의 Advantage 계산 로직 추가- 그룹 샘플링 및 상대적 보상 평가 시스템 구현
+기본 데이터셋 사용	벤치마크 데이터셋 필터링 및 Decontamination	- 모델 평가에 사용되는 데이터셋(GSM8K, MATH 등)이 학습 데이터에 포함되지 않도록 데이터 클렌징 알고리즘 추가
+단일 언어 데이터셋(영어 중심)	다국어 데이터셋 처리 (특히 중국어 수학 문제)	- 중국어 수학 데이터셋 처리 및 학습 파이프라인에 통합</p>
+<ol start="2">
+<li>추가 구현에 필요한 공수 및 리소스 분석</li>
+</ol>
+<p>논문에서 제시된 추가적인 구현을 적용하기 위해 필요한 시간(공수), 연산 자원(컴퓨팅 파워), 그리고 데이터 저장 공간을 분석해보겠습니다.</p>
+<p>2.1. 데이터 수집 및 전처리 공정
+1.	Common Crawl 데이터 수집 및 필터링
+•	규모: 약 40억 개의 웹 페이지 중 수학 관련 데이터를 선별.
+•	FastText 분류기 학습: OpenWebMath 데이터를 기반으로 500,000개의 긍정 샘플과 500,000개의 부정 샘플로 모델을 학습.
+2.	추가 데이터 정제 (중복 제거 및 품질 필터링)
+•	URL 기반 중복 제거 및 품질 평가 시스템 개발.
+•	4회 반복(iterative) 수집 프로세스를 통해 1,200억 개 토큰 확보.</p>
+<p>단계	필요 리소스	추정 소요 시간
+FastText 분류기 학습	CPU 클러스터 (256 코어), 메모리 256GB	1<del>2일 (초기 학습 및 검증)
+데이터 수집 및 필터링	대규모 스토리지 (수 TB), 분산 크롤러 인프라	3</del>5일 (반복적 필터링 및 검증 포함)
+중복 제거 및 품질 평가	Spark/Hadoop 기반 클러스터, 메모리 512GB	2~3일 (전체 데이터 처리)</p>
+<p>2.2. 사전학습 (Pre-training)
+•	모델: DeepSeek-Coder-Base-v1.5 (7B) 기반
+•	학습 데이터: 500억 개 토큰 (DeepSeekMath Corpus 56%, 코드 20%, arXiv 10%)
+•	GPU 요구 사항: A100 80GB GPU 기준 64개 노드</p>
+<p>세부 항목	리소스	소요 시간
+사전학습 (500B 토큰)	64 x A100 80GB GPU (NVIDIA), 10M 토큰/배치	약 20~25일 (FP16 mixed precision)
+학습 메모리	GPU 메모리 총 5.1TB
+저장 공간	모델 체크포인트: 20TB 이상</p>
+<p>2.3. 지도학습 튜닝 (Supervised Fine-Tuning)
+•	데이터: 776,000개 문제 (Chain-of-Thought, Program-of-Thought 형식)
+•	컨텍스트 길이: 4K 토큰
+•	GPU 요구 사항: A100 GPU 32개</p>
+<p>세부 항목	리소스	소요 시간
+지도학습 튜닝	32 x A100 GPU (최대 컨텍스트 4K)	2~3일
+저장 공간	체크포인트 및 튜닝 데이터: 5TB</p>
+<p>2.4. 강화학습 (GRPO) 구현 및 학습
+1.	GRPO 알고리즘 구현:
+•	PPO 대비 Critic 모델 제거, 그룹 평균 보상 계산 로직 추가.
+•	문제당 64개의 샘플을 생성하고 그룹화하여 보상을 비교.
+2.	강화학습 과정:
+•	144,000개의 수학 문제에 대해 학습.
+•	64개 샘플 생성 후 그룹 평균 보상을 기반으로 Advantage 계산.</p>
+<p>세부 항목	리소스	소요 시간
+GRPO 알고리즘 구현	강화학습 프레임워크 수정 (PPO 기반 코드 확장)	1<del>2주 (엔지니어링 작업)
+강화학습 수행 (144K 문제)	64 x A100 GPU, 그룹별 샘플링 및 보상 평가	5</del>7일
+메모리 요구량	GPU 메모리 총 5.1TB (Critic 모델 제거로 최적화)</p>
+<ol start="3">
+<li>총 컴퓨팅 자원 및 공수 요약</li>
+</ol>
+<p>단계	컴퓨팅 자원	추정 소요 시간	비고
+데이터 수집 및 전처리	CPU 클러스터 (256 코어), 512GB 메모리	5<del>7일	FastText 분류 및 필터링 파이프라인 구축
+사전학습 (Pre-training)	64 x A100 80GB GPU, 20TB 스토리지	20</del>25일	500억 토큰 학습
+지도학습 튜닝 (SFT)	32 x A100 80GB GPU	2<del>3일	776K Chain-of-Thought 튜닝
+GRPO 강화학습	64 x A100 80GB GPU	5</del>7일	Critic 제거로 메모리 절감 효과 있음
+총합	최대 64 x A100 GPU	약 1.5개월	데이터 준비 포함 전체 프로세스</p>
+<ol start="4">
+<li>비교: 기존 PPO 방식과의 자원 차이</li>
+</ol>
+<p>항목	PPO (기존 방식)	GRPO (DeepSeekMath)
+Critic 모델 필요 여부	필요 (추가적인 모델 학습)	불필요 (그룹 평균 보상 사용)
+GPU 메모리 사용량	+30% (Critic 모델로 인한 추가 사용)	-30% (Critic 제거로 최적화)
+학습 속도	상대적으로 느림	30~40% 가속화 가능
+보상 계산 복잡성	개별 보상 평가	그룹 내 상대적 평가로 단순화</p>
+<ol start="5">
+<li>결론 및 나의 의견
+<ol>
+<li>추가 구현 복잡성:
+•	GRPO 알고리즘 구현은 기존 PPO 코드베이스를 확장하는 방식으로 약 1~2주의 엔지니어링 작업이 필요합니다. Critic 모델 제거 및 그룹 보상 계산 로직이 핵심적인 변경 사항입니다.</li>
+<li>컴퓨팅 자원 최적화:
+•	Critic 모델을 제거함으로써 메모리 사용량이 줄고, GPU 자원을 보다 효율적으로 활용할 수 있습니다. 이는 학습 속도를 30~40% 가량 개선시킵니다.</li>
+<li>비용 효율성:
+•	대형 모델이 아닌 7B 규모의 모델로 Minerva 540B와 유사한 성능을 달성할 수 있는 점은 비용 및 자원 측면에서 매우 유리합니다. 실제 산업적 적용 시 GPU 비용 절감에 중요한 기여를 할 것입니다.</li>
+<li>적용 가능성:
+•	GRPO는 수학적 문제 외에도 프로그래밍 문제나 논리 퍼즐처럼 정답이 명확한 문제에도 쉽게 확장할 수 있습니다. 오픈소스 환경에서도 접근 가능한 자원 범위 내에서 뛰어난 성능을 낼 수 있다는 점이 가장 큰 장점입니다.</li>
+</ol>
+</li>
+</ol>
+<p>결론적으로, 논문에서 제시한 DeepSeekMath 학습 방식은 기존 LLM 학습 파이프라인에 데이터 필터링 및 강화학습 최적화를 추가하여 모델 크기 대비 높은 성능을 달성할 수 있는 혁신적인 방법론으로 평가할 수 있습니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<ol>
+<li>DeepSeekMath 모델의 입력 데이터 및 추론 과정</li>
+</ol>
+<p>1.1. 입력 데이터 구성</p>
+<p>DeepSeekMath 모델의 입력 데이터는 일반적인 자연어 처리(NLP) 모델과 유사하지만, 수학 문제 해결에 특화된 형식을 갖추고 있습니다. 이 모델은 특히 Chain-of-Thought (CoT) 및 Program-of-Thought (PoT) 추론 방식을 사용하여 수학 문제를 단계적으로 해결하도록 설계되었습니다.</p>
+<p>예시 1: Chain-of-Thought (CoT) 방식</p>
+<p>문제:
+“한 상자에 사과가 12개 있고, 5개의 상자가 있다. 사과는 총 몇 개인가?”</p>
+<p>입력 형식 (CoT):</p>
+<p>문제: 한 상자에 사과가 12개 있고, 5개의 상자가 있다. 사과는 총 몇 개인가?
+단계별로 생각해보자:</p>
+<p>모델 출력 (CoT):</p>
+<p>1단계: 상자당 사과의 개수는 12개입니다.
+2단계: 상자의 개수는 5개입니다.
+3단계: 총 사과의 개수는 12 * 5 = 60개입니다.
+답: 60</p>
+<p>예시 2: Program-of-Thought (PoT) 방식</p>
+<p>문제:
+“한 상자에 사과가 12개 있고, 5개의 상자가 있다. 사과는 총 몇 개인가?”</p>
+<p>입력 형식 (PoT):</p>
+<p>문제: 한 상자에 사과가 12개 있고, 5개의 상자가 있다. 사과는 총 몇 개인가?
+다음과 같은 파이썬 코드를 작성해보자:</p>
+<p>모델 출력 (PoT):</p>
+<h1 id="상자당-사과-개수">상자당 사과 개수</h1>
+<p>apples_per_box = 12</p>
+<h1 id="상자-개수">상자 개수</h1>
+<p>number_of_boxes = 5</p>
+<h1 id="총-사과-개수">총 사과 개수</h1>
+<p>total_apples = apples_per_box * number_of_boxes
+print(total_apples)  # 출력: 60</p>
+<p>이 방식은 모델이 코드를 작성하도록 유도하여 계산 오류 가능성을 줄이고 정확한 결과를 도출하는 데 도움을 줍니다.</p>
+<p>1.2. 추론 과정 (Inference Process)</p>
+<p>DeepSeekMath 모델은 입력된 문제를 처리하기 위해 다단계 추론 프로세스를 사용합니다. 이 과정은 크게 토큰화(Tokenization), 인코딩(Encoding), **디코딩(Decoding)**의 세 단계로 나눌 수 있습니다.</p>
+<p>1.2.1. 단계별 추론 과정
+1.	토큰화 (Tokenization)
+•	입력된 텍스트를 모델이 이해할 수 있는 토큰 단위로 변환.
+•	예시 문장: “한 상자에 사과가 12개 있고, 5개의 상자가 있다.”
+→ 토큰화 결과: [101, 1234, 345, 5678, 12, 3456, 789, 5, 3456, 1012, 102]
+2.	인코딩 (Encoding)
+•	Transformer 인코더를 통해 입력 토큰의 문맥적 의미를 파악.
+•	수학적 문제에서는 수량, 단위, 연산 기호 등 구조화된 정보를 효과적으로 인코딩.
+3.	디코딩 (Decoding)
+•	디코더가 단계별 reasoning을 수행하며 Chain-of-Thought 또는 Program-of-Thought 형식으로 답변 생성.
+•	모델은 이전 토큰과 문맥 정보를 활용해 다음 토큰을 예측.
+4.	후처리 (Post-processing)
+•	수학 문제의 경우 코드 실행 또는 결과 검증을 통해 최종 답변 도출.</p>
+<ol start="2">
+<li>모델 아키텍처 구성</li>
+</ol>
+<p>DeepSeekMath는 Transformer 기반 아키텍처를 사용하며, 특히 **DeepSeek-Coder-Base-v1.5 (7B)**를 기반으로 수학적 추론 능력을 강화했습니다.</p>
+<p>2.1. 모델 구성 요소</p>
+<p>구성 요소	세부 설명
+파라미터 수	7B (70억 개)
+레이어 수	32개의 Transformer 블록
+히든 크기	4,096 차원
+어텐션 헤드 수	32개의 다중 어텐션 헤드
+컨텍스트 길이	최대 4,096 토큰 처리 가능
+포지셔널 인코딩	상대적 위치 인코딩 (RoPE) 사용
+토크나이저	100K 크기의 토큰 사전 사용
+활성화 함수	GELU (Gaussian Error Linear Unit)
+정규화 기법	RMSNorm (Root Mean Square Layer Normalization)</p>
+<p>2.2. 아키텍처 다이어그램</p>
+<p>입력 텍스트 (수학 문제)
+│
+[Tokenization]
+│
+[Embedding Layer]
+│
+──────────────────────────────────────────────────────
+│                  Transformer Layers (32개)          │
+│    ┌──────────────┐   ┌──────────────┐               │
+│    │ Multi-Head   │   │ Feed Forward │               │
+│    │ Self-Attention│ →│  Neural Net  │ → LayerNorm  │
+│    └──────────────┘   └──────────────┘               │
+│           (반복 32회)                               │
+──────────────────────────────────────────────────────
+│
+[Output Layer]
+│
+단계별 Reasoning 출력 (Chain-of-Thought 또는 Program-of-Thought)</p>
+<ol start="3">
+<li>모델 연산 및 메모리 요구량</li>
+</ol>
+<p>3.1. 연산량 분석
+1.	플롭스(FLOPs) 계산:
+Transformer 모델의 연산량은 다음 공식으로 근사할 수 있습니다.
+￼
+DeepSeekMath 모델 기준:
+•	레이어 수: 32
+•	시퀀스 길이: 4,096 (최대 입력 길이)
+•	히든 차원: 4,096
+￼
+2.	추론 속도:
+•	A100 80GB GPU 기준, 배치 크기 1에서 1초당 10~15 토큰 처리 가능.</p>
+<p>3.2. 메모리 요구량
+1.	모델 파라미터 저장:
+•	7B 파라미터 → FP16(2바이트)로 저장 시 약 14GB.
+2.	추론 시 메모리 사용량:
+•	4,096 토큰 입력 시, 모델 파라미터 + 중간 활성화 값으로 총 약 24<del>30GB의 GPU 메모리 필요.
+•	배치 크기 1</del>2로 처리 시 A100 40GB GPU 1개로도 충분.</p>
+<ol start="4">
+<li>컴퓨팅 자원 요구량</li>
+</ol>
+<p>4.1. 훈련 시 요구 사항
+1.	GPU 요구 사항:
+•	A100 80GB GPU 기준 64개 사용.
+•	Mixed Precision (FP16) 적용 시 메모리 최적화 가능.
+2.	훈련 시간:
+•	500억 개 토큰 학습 시 약 20<del>25일 소요 (사전학습).
+•	**지도학습 튜닝(SFT)**은 약 2</del>3일 소요.</p>
+<p>4.2. 추론 시 요구 사항
+1.	단일 GPU 추론:
+•	A100 40GB GPU 1개로 단일 수학 문제 처리 가능.
+•	추론 속도: 초당 10~15 토큰 생성 (4K 컨텍스트 기준).
+2.	대규모 배치 처리:
+•	멀티 GPU 분산 환경에서 배치 처리가 가능.
+•	예: 8개 A100 GPU로 100개 문제 동시 처리 가능.</p>
+<ol start="5">
+<li>결론 및 나의 의견
+<ol>
+<li>입력 데이터와 추론 방식:
+•	Chain-of-Thought 및 Program-of-Thought 방식을 통해 수학 문제를 단계적으로 해결하는 추론 방식이 정확도 향상에 핵심적인 역할을 했습니다.</li>
+<li>모델 아키텍처:
+•	7B 파라미터라는 상대적으로 작은 모델 크기에도 불구하고 효율적인 데이터 구성과 강화학습(GRPO) 기법으로 뛰어난 성능을 달성했습니다.</li>
+<li>컴퓨팅 자원 최적화:
+•	Critic 모델 제거로 메모리와 연산 자원을 절감하면서도 성능을 유지하거나 향상시키는 GRPO 기법은 산업적 적용에서 매우 효율적인 접근 방식이라고 생각합니다.</li>
+<li>추론 효율성:
+•	다국어 수학 문제 처리 능력과 코드 기반 reasoning을 활용한 정확한 추론은 실제 응용 분야(교육, 연구 등)에서도 높은 활용 가능성을 보여줍니다.</li>
+</ol>
+</li>
+</ol>
+<p>결론적으로, DeepSeekMath의 입력 데이터 구성, 추론 과정, 모델 아키텍처, 그리고 최적화된 연산 및 메모리 관리 방식은 수학적 추론에 특화된 LLM의 성공적인 사례로 볼 수 있습니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<ol>
+<li>논문에서 언급한 한계</li>
+</ol>
+<p>DeepSeekMath 논문에서는 모델의 뛰어난 성능에도 불구하고 다음과 같은 한계점을 명확하게 지적하고 있습니다.</p>
+<p>1.1. 기하학 및 정리 증명 능력의 한계
+•	기하학 문제(삼각형, 타원 등)와 수학 정리 증명(Formal Theorem Proving) 분야에서 성능이 GPT-4 같은 폐쇄형 모델에 비해 떨어짐.
+•	이는 주로 데이터 편향 및 모델 아키텍처의 한계로 인한 것으로 분석.</p>
+<p>1.2. Few-shot 학습 성능의 부족
+•	GPT-4와 같은 대형 모델은 few-shot 환경에서 성능이 크게 향상되는 반면, DeepSeekMath는 zero-shot과 few-shot 환경에서 성능 차이가 거의 없음.
+•	이는 모델의 파라미터 수와 컨텍스트 처리 능력의 한계로 추정.</p>
+<p>1.3. 데이터 소스의 한계
+•	arXiv 논문 데이터는 모델 성능 향상에 크게 기여하지 않음.
+•	기하학적 데이터나 비정형 수학 문제에 대한 데이터가 부족하여 특정 분야 성능이 제한됨.</p>
+<ol start="2">
+<li>한계를 극복하기 위한 연구 흐름 및 방법론</li>
+</ol>
+<p>2.1. 기하학 및 정리 증명 능력 강화</p>
+<p>문제: 기하학 문제와 수학 정리 증명에서 DeepSeekMath의 성능이 제한됨.</p>
+<p>2.1.1. 멀티모달 학습 (Multimodal Learning)</p>
+<p>설명:
+기하학 문제는 텍스트 기반 정보뿐 아니라 시각적 정보(도형, 그래프 등)의 이해가 필수적입니다. 멀티모달 모델은 텍스트 + 이미지 데이터를 함께 처리하여 기하학 문제 해결 능력을 강화할 수 있습니다.</p>
+<p>대표 연구 흐름:
+1.	Gemini Models (Google DeepMind, 2023)
+•	멀티모달 입력 처리를 통해 수학 및 기하학 문제 해결 능력 강화.
+2.	MathVista (OpenAI, 2024)
+•	수학 문제와 시각적 도형을 결합하여 추론하는 멀티모달 학습 시스템.</p>
+<p>적용 방안:
+•	DeepSeekMath에 이미지 인코더(예: CLIP, ViT)를 결합하여 기하학 문제 해결 능력 확장.
+•	기하학 데이터셋(예: GeoQA, DiagramQA) 수집 및 학습에 포함.</p>
+<p>2.1.2. 증명 보조 시스템 통합 (Formal Theorem Proving Integration)</p>
+<p>설명:
+수학 정리 증명은 **형식적 추론(formal reasoning)**과 논리적 구조화가 필수적입니다. 형식 증명 보조 도구(예: Isabelle, Coq)와 통합하면 모델의 증명 능력을 향상시킬 수 있습니다.</p>
+<p>대표 연구 흐름:
+1.	MiniF2F Benchmark (Zheng et al., 2021)
+•	형식 논증(formal proof) 데이터셋을 기반으로 자동 증명 모델 개발.
+2.	ProofWriter (Tafjord et al., 2021)
+•	논리적 추론을 통한 자동 증명 모델 개발.</p>
+<p>적용 방안:
+•	DeepSeekMath에 자동 증명 도구(예: Isabelle, Lean)를 통합하여 형식 증명 데이터 학습.
+•	CoT + Formal Proof 방식으로 문제 해결 단계에 논리적 검증 과정 추가.</p>
+<p>2.2. Few-shot 학습 성능 향상</p>
+<p>문제: Few-shot 학습 환경에서 DeepSeekMath의 성능 향상이 제한적임.</p>
+<p>2.2.1. Memory-Augmented Networks (메모리 강화 네트워크)</p>
+<p>설명:
+기존 Transformer 모델은 긴 문맥을 유지하는 데 한계가 있습니다. 외부 메모리 모듈을 도입하여 long-context 처리 능력을 강화할 수 있습니다.</p>
+<p>대표 연구 흐름:
+1.	RETRO (Retrieval-Enhanced Transformer) (Borgeaud et al., 2021)
+•	외부 데이터베이스 검색을 통해 문맥을 강화하고 모델의 추론 능력 향상.
+2.	MemGPT (2023)
+•	장기 메모리 관리를 통해 대규모 문맥을 효과적으로 유지하는 모델.</p>
+<p>적용 방안:
+•	DeepSeekMath에 검색 기반 메모리 모듈(예: Faiss, ElasticSearch)을 추가하여 수학 문제의 문맥 및 풀이 기록을 활용.
+•	Few-shot 학습 시 이전 문제 해결 기록을 참고하여 추론 강화.</p>
+<p>2.2.2. Prompt Tuning 및 Adapter Methods</p>
+<p>설명:
+모델 전체를 재학습하지 않고 프롬프트 조정(Prompt Tuning) 또는 Adapter Layer를 추가하여 특정 태스크에 대한 적응력을 향상시킬 수 있습니다.</p>
+<p>대표 연구 흐름:
+1.	Prefix-Tuning (Li &amp; Liang, 2021)
+•	프롬프트 앞에 고정된 벡터를 추가하여 모델의 출력을 조정하는 방법.
+2.	LoRA (Low-Rank Adaptation) (Hu et al., 2021)
+•	저차원 어댑터 레이어를 추가하여 파라미터 수를 줄이면서 성능 개선.</p>
+<p>적용 방안:
+•	DeepSeekMath에 LoRA를 적용하여 few-shot 태스크에 대한 빠른 적응력을 확보.
+•	프롬프트 최적화 기법을 활용하여 문제 유형별 프롬프트를 자동으로 조정.</p>
+<p>2.3. 데이터 소스 다양화 및 품질 향상</p>
+<p>문제: 데이터의 편향성과 특정 분야(기하학, 비정형 문제 등)에 대한 데이터 부족.</p>
+<p>2.3.1. Synthetic Data Generation (합성 데이터 생성)</p>
+<p>설명:
+기존 데이터셋의 한계를 극복하기 위해 AI 기반 데이터 생성을 활용하여 기하학 문제, 비정형 문제 등 다양한 데이터셋을 생성.</p>
+<p>대표 연구 흐름:
+1.	Self-Play 및 Curriculum Learning
+•	모델이 스스로 문제를 생성하고 해결하는 과정에서 학습을 지속적으로 강화.
+2.	MetaMath (Yu et al., 2023)
+•	모델 자체로부터 수학 문제를 생성하고, 이를 다시 학습 데이터로 활용하는 방식.</p>
+<p>적용 방안:
+•	DeepSeekMath에 자체 생성 문제를 학습 데이터에 추가하여 데이터 다양성 확보.
+•	Curriculum Learning을 통해 쉬운 문제에서 복잡한 문제로 점진적으로 학습.</p>
+<p>2.3.2. 다국어 및 다문화 수학 데이터셋 확대</p>
+<p>설명:
+영어 중심의 데이터셋에서 벗어나 다국어 수학 데이터(중국어, 일본어, 독일어 등)를 포함하면 다양한 문제 유형에 대한 적응력이 향상됩니다.</p>
+<p>대표 연구 흐름:
+1.	MGSM-zh (Shi et al., 2023)
+•	중국어 수학 문제 데이터셋으로, 영어 데이터만으로는 학습할 수 없는 문제 유형 제공.
+2.	Gaokao-MathQA (Zhong et al., 2023)
+•	중국 대학 입시(가오카오) 수준의 다양한 문제 포함.</p>
+<p>적용 방안:
+•	DeepSeekMath에 다국어 데이터셋을 추가하여 문화적 다양성을 반영한 문제 해결 능력 강화.
+•	다국어 프롬프트 최적화를 통해 비영어권 문제에 대한 성능 향상.</p>
+<ol start="3">
+<li>
+<p>향후 연구 방향 제안</p>
+<ol>
+<li>멀티모달 모델 개발:
+•	기하학 문제 해결을 위해 이미지 인코딩 및 시각적 데이터 처리 능력 강화.</li>
+<li>형식 논증 자동화:
+•	자동 증명 도구(예: Isabelle, Lean)와의 통합으로 정리 증명 능력 강화.</li>
+<li>메모리 강화 및 검색 기반 학습:
+•	Memory-Augmented Networks 및 검색 기반 추론을 통해 long-context 문제 해결 능력 향상.</li>
+<li>합성 데이터 활용 및 Curriculum Learning:
+•	AI 기반 문제 생성을 통해 데이터 다양성을 확보하고, 단계적 학습을 통해 문제 해결 능력 강화.</li>
+<li>다국어 및 다문화 수학 데이터셋 확대:
+•	다국어 데이터셋을 포함하여 글로벌 수학 문제 해결 능력을 강화하고 문화적 편향을 줄이는 방향으로 발전.</li>
+</ol>
+</li>
+<li>
+<p>결론 및 나의 의견</p>
+</li>
+</ol>
+<p>DeepSeekMath는 수학적 추론 분야에서 강력한 성능을 보여주었지만, 기하학 문제, 형식 논증, 그리고 few-shot 학습에서의 한계가 명확합니다. 이러한 한계를 극복하기 위해 멀티모달 학습, 형식 증명 통합, 검색 기반 메모리 강화, 그리고 다국어 데이터셋의 활용이 중요한 연구 방향이 될 것입니다.</p>
+<p>특히, 멀티모달 모델링은 기하학 문제 해결에 필수적이며, 증명 보조 시스템과의 통합은 모델의 논리적 정확성을 높이는 데 기여할 것입니다. 또한, 합성 데이터 생성 및 Curriculum Learning을 통해 데이터의 다양성을 확보하고, 프롬프트 최적화 및 LoRA 기법을 활용하여 few-shot 학습 환경에서도 높은 성능을 기대할 수 있습니다.</p>
+<h1 id="q--deepseekmath-모델이-기존-오픈소스-모델보다-뛰어난-수학적-추론-성능을-달성할-수-있었던-핵심적인-데이터-처리-및-학습-전략은-무엇인가">Q : DeepSeekMath 모델이 기존 오픈소스 모델보다 뛰어난 수학적 추론 성능을 달성할 수 있었던 핵심적인 데이터 처리 및 학습 전략은 무엇인가?</h1>
+<p>DeepSeekMath 모델이 기존 오픈소스 모델보다 뛰어난 수학적 추론 성능을 달성할 수 있었던 핵심적인 요소는 크게 데이터 처리 전략과 학습 전략으로 나눌 수 있습니다.</p>
+<ol>
+<li>핵심 데이터 처리 전략</li>
+</ol>
+<p>1.1. 대규모 고품질 수학 데이터셋 (DeepSeekMath Corpus)
+•	1,200억 개의 수학 관련 토큰을 포함한 대규모 데이터셋을 구축하여 기존 오픈소스 모델보다 더 방대한 수학적 지식을 학습.
+•	Common Crawl 데이터에서 FastText 분류기를 활용해 수학 콘텐츠를 자동 선별.
+•	초기에는 OpenWebMath 데이터를 사용하여 FastText 모델을 학습한 후, 이를 통해 추가적인 수학 데이터를 수집.
+•	수집된 데이터에 대해 **반복적인 필터링(iterative filtering)**과 중복 제거를 수행하여 품질을 보장.</p>
+<p>1.2. 다국어 데이터 포함
+•	영어 외에도 중국어 수학 데이터(CMATH, Gaokao-MathQA 등)를 포함하여 모델의 다국어 수학 추론 능력을 강화.
+•	다국어 데이터로 인해 중국어 수학 문제에서도 기존 오픈소스 모델보다 높은 성능을 달성.</p>
+<p>1.3. 불필요한 데이터 제거
+•	arXiv 논문 데이터가 수학적 추론 능력 향상에 제한적이라는 결과에 따라 해당 데이터를 최소화.
+•	모델 평가에 사용되는 데이터셋(GSM8K, MATH 등)이 학습 데이터에 포함되지 않도록 데이터 클렌징(Decontamination) 수행.</p>
+<ol start="2">
+<li>핵심 학습 전략</li>
+</ol>
+<p>2.1. 코드 사전학습 (Code Pre-training)
+•	DeepSeek-Coder-Base-v1.5 (7B) 모델을 기반으로 학습을 시작.
+•	프로그래밍 언어와 수학적 표현의 유사성을 활용하여 논리적 추론 능력을 강화.
+•	코드 기반 학습이 수학 문제 해결 능력뿐 아니라 일반적인 추론 능력까지 향상시킴.</p>
+<p>2.2. 단계별 지도 학습 (Supervised Fine-Tuning)
+•	Chain-of-Thought (CoT) 및 Program-of-Thought (PoT) 방식을 사용하여 단계별 문제 해결 과정을 학습.
+•	단순한 정답 예측이 아닌 문제 해결 과정 자체를 학습함으로써 복잡한 수학 문제에도 강한 성능을 보임.</p>
+<p>2.3. GRPO (Group Relative Policy Optimization) 알고리즘
+•	기존의 **PPO(Proximal Policy Optimization)**를 개선한 GRPO 알고리즘을 도입.
+•	Critic 모델을 제거하고 그룹 평균 보상을 활용하여 메모리 효율성을 개선.
+•	동일 문제에 대해 여러 샘플을 생성하고 상대적 보상 평가를 통해 모델의 추론 능력을 강화.
+•	이 방식은 정답과 오답이 명확한 수학 문제에 특히 효과적이며, 기존 오픈소스 모델 대비 **10~15%**의 성능 향상을 가져옴.</p>
+<ol start="3">
+<li>결론</li>
+</ol>
+<p>DeepSeekMath의 성공은 대규모 고품질 수학 데이터셋 구축, 코드 기반 사전학습, 그리고 효율적인 강화학습(GRPO) 전략의 결합 덕분입니다. 이 모든 요소가 기존 오픈소스 모델이 달성하지 못한 50% 이상의 MATH 벤치마크 정확도라는 성과로 이어졌습니다.</p>
+<h1 id="q--grpogroup-relative-policy-optimization-알고리즘이-기존-ppoproximal-policy-optimization-대비-수학-문제-해결에-어떤-구조적-이점을-제공하며-이로-인해-실제-성능-향상이-어떻게-이루어졌는가">Q : GRPO(Group Relative Policy Optimization) 알고리즘이 기존 PPO(Proximal Policy Optimization) 대비 수학 문제 해결에 어떤 구조적 이점을 제공하며, 이로 인해 실제 성능 향상이 어떻게 이루어졌는가?</h1>
+<p>GRPO(Group Relative Policy Optimization) 알고리즘은 기존의 **PPO(Proximal Policy Optimization)**를 개선하여 수학 문제 해결에 특화된 강화학습 기법입니다. 이 알고리즘은 수학적 추론에서 메모리 효율성, 학습 안정성, 그리고 정확성을 모두 향상시켰습니다.</p>
+<ol>
+<li>PPO와 GRPO의 구조적 차이</li>
+</ol>
+<p>구분	PPO (Proximal Policy Optimization)	GRPO (Group Relative Policy Optimization)
+Critic 모델 사용	Critic 모델을 사용하여 상태-가치 함수(Value Function)를 추정	Critic 모델 제거, 대신 그룹 평균 보상을 기반으로 Advantage 계산
+보상 평가 방식	개별 샘플의 보상을 평가하여 절대적 기준으로 Advantage 계산	동일 문제에 대한 여러 샘플의 상대적 보상을 활용하여 Advantage 계산
+메모리 사용량	Critic 모델로 인해 메모리 사용량 증가	Critic 모델 제거로 메모리 사용량 감소 및 계산 효율성 증가
+훈련 안정성	Critic 모델 학습의 불안정성으로 인해 훈련이 불안정할 수 있음	그룹 내 상대 평가로 인해 훈련의 일관성과 안정성 증가
+수학 문제 적합성	일반적인 강화학습 문제에 적합, 정답/오답 구분이 명확하지 않은 문제에 효과적	정답/오답이 명확한 수학 문제에 최적화되어 성능 향상</p>
+<ol start="2">
+<li>GRPO의 구조적 이점</li>
+</ol>
+<p>2.1. Critic 모델 제거로 인한 메모리 및 연산 최적화
+•	PPO는 Actor-Critic 구조를 사용하여 정책(Policy)과 가치(Value) 모델을 동시에 학습합니다.
+•	Critic 모델은 **상태-가치 함수(V(s))**를 추정하는데, 이는 대규모 메모리와 추가적인 연산 자원을 요구합니다.
+•	GRPO는 Critic 모델을 제거하고, 동일한 문제에 대한 여러 샘플의 그룹 평균 보상을 사용하여 **Advantage(이득)**를 계산합니다.
+•	이로 인해 메모리 사용량이 30% 이상 감소하고, 학습 속도는 30~40% 향상되었습니다.</p>
+<p>결론:
+수학 문제 해결에서는 절대적 가치 함수보다는 상대적 평가가 더 효과적이며, Critic 모델 제거로 인한 자원 최적화가 성능 향상에 기여했습니다.</p>
+<p>2.2. 그룹 상대 평가로 인한 학습 안정성 및 정확성 향상
+•	PPO는 개별 샘플의 보상에 따라 절대적 기준으로 모델을 업데이트합니다. 이 방식은 보상 모델의 편향이나 노이즈에 민감할 수 있습니다.
+•	GRPO는 동일한 문제에 대한 여러 샘플을 생성하고, 이들의 상대적 성능을 비교하여 보상을 부여합니다.
+•	정답에 가까운 샘플은 강화되고, 오답에 가까운 샘플은 억제됩니다.
+•	이 방식은 수학 문제처럼 정답/오답이 명확한 경우에 특히 효과적입니다.</p>
+<p>결론:
+그룹 상대 평가 방식은 훈련의 일관성과 안정성을 높이며, 특히 정답이 명확한 수학 문제에서 정확성을 크게 향상시킵니다.</p>
+<ol start="3">
+<li>실제 성능 향상</li>
+</ol>
+<p>3.1. 벤치마크 성능 향상</p>
+<p>모델	GSM8K (초등 수학)	MATH (경시대회 수준)	CMATH (중국 수학)
+DeepSeekMath-Instruct 7B	82.9%	46.8%	84.6%
+DeepSeekMath-RL 7B (GRPO 적용)	88.2%	51.7%	88.8%</p>
+<pre><code>•	**MATH 벤치마크 (경시대회 수준)**에서 5% 이상의 절대 성능 향상을 달성.
+•	GSM8K 및 CMATH에서도 각각 5% 이상의 성능 향상을 기록.
+</code></pre>
+<p>3.2. 강화학습 과정의 효율성
+•	샘플 수: GRPO는 문제당 64개의 샘플을 생성하여 그룹 내 상대 평가를 수행.
+•	학습 속도: Critic 모델을 제거하여 학습 속도가 기존 PPO 대비 30~40% 가속화.
+•	메모리 사용량: Critic 모델 제거로 인해 30% 이상의 메모리 절감.</p>
+<ol start="4">
+<li>
+<p>왜 GRPO가 수학 문제에 더 적합한가?</p>
+<ol>
+<li>정답/오답의 명확성:
+수학 문제는 정답이 명확하기 때문에 상대적 평가가 더 효과적입니다. GRPO는 동일 문제에 대한 정답에 가까운 샘플을 강화하고, 오답을 억제하는 방식으로 정확도를 높입니다.</li>
+<li>보상 모델의 불안정성 감소:
+PPO의 경우 보상 모델의 편향이나 노이즈에 민감하지만, GRPO는 상대 평가를 통해 이러한 문제를 완화합니다.</li>
+<li>효율성 및 확장성:
+Critic 모델을 제거하여 메모리 사용량과 계산 자원을 최적화했으며, 이는 대규모 모델 학습이나 실시간 추론에 유리합니다.</li>
+</ol>
+</li>
+<li>
+<p>결론</p>
+</li>
+</ol>
+<p>**GRPO(Group Relative Policy Optimization)**는 기존 PPO의 구조적 한계를 극복하여 수학 문제 해결에 최적화된 강화학습 기법을 제공합니다. Critic 모델 제거로 인한 메모리 최적화, 그룹 상대 평가를 통한 학습 안정성 및 정확성 향상은 DeepSeekMath 모델이 기존 오픈소스 모델 대비 뛰어난 성능을 달성하는 데 핵심적인 역할을 했습니다. 이로 인해 MATH 벤치마크에서 오픈소스 모델 최초로 50% 이상의 정확도를 달성할 수 있었습니다.</p>
+<h1 id="q--논문에서-지적한-모델의-한계기하학-문제-해결-정리-증명-few-shot-학습-등를-극복하기-위해-어떤-데이터셋-확장-모델-아키텍처-개선-또는-학습-방법론이-추가적으로-필요할까">Q : 논문에서 지적한 모델의 한계(기하학 문제 해결, 정리 증명, few-shot 학습 등)를 극복하기 위해 어떤 데이터셋 확장, 모델 아키텍처 개선 또는 학습 방법론이 추가적으로 필요할까?</h1>
+<p>DeepSeekMath 논문에서 지적한 한계(기하학 문제 해결, 정리 증명, few-shot 학습 등)를 극복하기 위해서는 데이터셋 확장, 모델 아키텍처 개선, 그리고 학습 방법론의 보완이 필요합니다. 다음은 이러한 한계를 해결하기 위한 구체적인 방안입니다.</p>
+<ol>
+<li>기하학 문제 해결 능력 향상</li>
+</ol>
+<p>문제:</p>
+<p>기하학 문제(삼각형, 타원 등)에 대한 DeepSeekMath의 성능이 GPT-4와 같은 폐쇄형 모델보다 부족.</p>
+<p>1.1. 데이터셋 확장
+1.	멀티모달 수학 데이터셋 활용
+•	기하학 문제는 텍스트와 이미지(도형, 그래프) 정보를 함께 이해해야 하므로, 멀티모달 데이터셋의 도입이 필요.
+추천 데이터셋:
+•	DiagramQA: 도형과 수학 문제를 결합한 질의응답 데이터셋.
+•	GeoQA: 기하학 문제를 시각적 도형과 함께 제공하는 데이터셋.
+•	MathVista: 시각적 정보와 수학적 텍스트를 통합한 문제를 제공.
+2.	기하학 문제의 다양성 확보
+•	다양한 난이도의 기하학 문제(초등 수준부터 대학 수준까지)를 포함하는 데이터셋 구축.
+•	수학 경시대회(IMO) 및 고등학교 입시 문제 수집.</p>
+<p>1.2. 모델 아키텍처 개선
+1.	멀티모달 아키텍처 통합
+•	텍스트 + 이미지 입력을 처리할 수 있는 멀티모달 Transformer 아키텍처로 확장.
+적용 모델:
+•	CLIP (Contrastive Language-Image Pretraining): 텍스트와 이미지를 연결하는 멀티모달 모델.
+•	BLIP-2 (Bootstrapping Language-Image Pretraining): 시각적 입력과 언어 모델을 결합하여 복잡한 문제 해결 능력 강화.
+2.	시각적 추론 모듈 추가
+•	기하학 문제에 대한 시각적 reasoning을 수행할 수 있는 Graph Neural Networks (GNN) 또는 Vision Transformers (ViT) 도입.</p>
+<p>1.3. 학습 방법론 보완
+1.	시각적 reasoning 강화를 위한 Curriculum Learning
+•	**기본 기하학 개념(점, 선, 각)**부터 **복잡한 문제(삼각형의 외심, 원의 접선 문제)**로 점진적으로 학습하는 커리큘럼 학습 적용.
+2.	도형 설명 생성 태스크 추가
+•	기하학 문제를 해결하는 과정에서 도형을 설명하는 텍스트 생성 태스크를 추가하여 시각적 정보와 언어 정보 간의 연결을 강화.</p>
+<ol start="2">
+<li>정리 증명(Theorem Proving) 능력 강화</li>
+</ol>
+<p>문제:</p>
+<p>DeepSeekMath의 정리 증명(Formal Theorem Proving) 능력이 제한적이며, GPT-4 같은 모델에 비해 성능이 떨어짐.</p>
+<p>2.1. 데이터셋 확장
+1.	형식 수학 증명 데이터셋 활용
+•	정리 증명을 위해 형식 논증(formal proofs) 데이터셋을 추가 학습해야 함.
+추천 데이터셋:
+•	miniF2F: 자동 정리 증명을 위한 형식 수학 데이터셋 (Isabelle, Lean 등).
+•	ProofWiki: 다양한 수학 정리와 증명을 포함한 위키 기반 데이터셋.
+•	Metamath: 수학적 논증을 기계적으로 검증하기 위한 데이터셋.
+2.	유럽 수학 경시대회(IMO) 및 논문 기반 데이터 수집
+•	**국제 수학 올림피아드(IMO)**와 수학 저널에서 복잡한 증명 문제 수집.</p>
+<p>2.2. 모델 아키텍처 개선
+1.	Symbolic Reasoning 모델 통합
+•	수학적 증명은 **상징적 추론(symbolic reasoning)**이 필수적이므로, 기호 기반 모델과 언어 모델의 통합이 필요.
+적용 모델:
+•	Lean-GPT: Lean 증명 보조기와 GPT 기반 언어 모델을 결합한 모델.
+•	Isabelle Integration: Isabelle 증명 보조기와의 통합을 통해 자동 증명 기능 강화.
+2.	Program Synthesis와의 결합
+•	수학적 증명을 코드 작성 문제로 변환하여 Program Synthesis 기법을 적용.
+적용 모델:
+•	CoqGym: Coq 증명 보조기를 활용한 자동 증명 학습 환경.</p>
+<p>2.3. 학습 방법론 보완
+1.	Proof Sketching and Completion
+•	모델이 **정리의 개요(sketch)**를 먼저 작성한 후, 세부 증명 단계를 **자동으로 완성(completion)**하도록 학습.
+2.	Self-Play 학습
+•	모델이 자체적으로 정리를 생성하고 증명하는 Self-Play 방식을 도입하여 증명 능력 강화.</p>
+<ol start="3">
+<li>Few-shot 학습 성능 향상</li>
+</ol>
+<p>문제:</p>
+<p>Few-shot 학습 환경에서 DeepSeekMath의 성능 향상이 제한적이며, GPT-4에 비해 적응력이 부족.</p>
+<p>3.1. 데이터셋 확장
+1.	Meta-Learning 데이터셋 활용
+•	다양한 문제 유형에 대한 메타 러닝(Meta-Learning) 데이터셋을 활용하여 모델의 빠른 적응력을 강화.
+추천 데이터셋:
+•	MetaMath: 다양한 수학 문제 유형에 대한 적응 학습을 위한 데이터셋.
+•	MathInstruct: 수학 문제 해결을 위한 프롬프트 최적화 데이터셋.
+2.	다양한 문제 유형의 샘플링
+•	쉬운 문제부터 어려운 문제까지 다양한 난이도의 문제를 포함하여 few-shot 학습 성능 향상.</p>
+<p>3.2. 모델 아키텍처 개선
+1.	Memory-Augmented Networks (메모리 강화 네트워크)
+•	모델이 이전 학습 경험을 기억하고 활용할 수 있도록 외부 메모리 모듈을 도입.
+적용 모델:
+•	RETRO (Retrieval-Enhanced Transformer): 외부 데이터베이스 검색을 통해 문맥을 강화.
+•	MemGPT: 장기 메모리를 활용하여 few-shot 학습 성능 향상.
+2.	Adapter Layers 및 LoRA 기법
+•	모델 전체를 재학습하지 않고, 특정 태스크에 적응할 수 있도록 Adapter Layers나 LoRA (Low-Rank Adaptation) 기법을 활용.</p>
+<p>3.3. 학습 방법론 보완
+1.	Prompt Tuning 및 Prefix Tuning
+•	프롬프트 최적화를 통해 모델이 주어진 문제에 더 빠르게 적응하도록 학습.
+적용 방법:
+•	Prefix-Tuning: 입력 시퀀스 앞에 고정된 벡터를 추가하여 모델 출력을 조정.
+•	AutoPrompt: 모델이 스스로 최적의 프롬프트를 생성하도록 학습.
+2.	Curriculum Learning (커리큘럼 학습)
+•	쉬운 문제부터 복잡한 문제로 점진적으로 학습하여 모델의 적응력을 강화.</p>
+<ol start="4">
+<li>결론 및 종합적인 전략
+<ol>
+<li>기하학 문제 해결을 위해 멀티모달 학습(텍스트+이미지)과 시각적 reasoning 강화를 위한 모델 아키텍처 개선이 필요합니다.</li>
+<li>정리 증명 능력 향상을 위해 형식 증명 데이터셋 확장과 증명 보조 시스템(Isabelle, Coq)과의 통합이 중요합니다.</li>
+<li>Few-shot 학습 성능 향상을 위해 Memory-Augmented Networks와 프롬프트 최적화 기법을 활용하여 빠른 적응력을 확보해야 합니다.</li>
+</ol>
+</li>
+</ol>
+<p>이러한 전략을 통해 DeepSeekMath 모델의 현재 한계를 극복하고 수학적 추론 능력을 더욱 강화할 수 있을 것입니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/DeepSeekMath-Pushing-the-Limits-of-Mathematical-Reasoning-in-Open-Language-Models/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/DeepSeekMath-Pushing-the-Limits-of-Mathematical-Reasoning-in-Open-Language-Models/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/DeepSeek-LLM-Scaling-Open-Source-Language-Models-with-Longtermism/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                DeepSeek LLM: Scaling Open-Source Language Models with Longtermism
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2025-02-05">
+                02月05日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/DeepSeek-Coder-When-the-Large-Language-Model-Meets-Programming-The-Rise-of-Code-Intelligence/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                DeepSeek-Coder: When the Large Language Model Meets Programming - The Rise of Code Intelligence
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2025-02-07">
+                02月07日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents"></nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

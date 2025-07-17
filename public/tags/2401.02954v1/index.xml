@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>2401.02954v1 on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/2401.02954v1/</link>
+    <description>Recent content in 2401.02954v1 on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Sun, 29 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/2401.02954v1/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>DeepSeek LLM: Scaling Open-Source Language Models with Longtermism</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-LLM-Scaling-Open-Source-Language-Models-with-Longtermism/</link>
+      <pubDate>Sun, 29 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-LLM-Scaling-Open-Source-Language-Models-with-Longtermism/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2401.02954v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;FLOPs / token로 재정의한 &lt;em&gt;DeepSeek Scaling Law&lt;/em&gt; 하나로 모델·데이터·하이퍼파라미터를 자동 결정하여, 2 T token만으로 67 B 파라미터 모델이 LLaMA-2 70 B를 코드·수학·대화·다국어에서 추월했다.&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;hr&gt;</description>
+    </item>
+  </channel>
+</rss>

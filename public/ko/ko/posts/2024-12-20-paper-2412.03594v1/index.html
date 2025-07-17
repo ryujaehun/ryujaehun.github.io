@@ -1,0 +1,404 @@
+<!doctype html><html lang=ko-kr data-theme=claude><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta http-equiv=X-UA-Compatible content="IE=edge"><title>Sharing and Throughput-oriented Token Batching | Jaehun's Blog</title><meta name=description content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점 및 독창적인 지점 1.	Global Prefix Sharing..."><meta name=keywords content="개발,프로그래밍,에세이"><meta name=author content><meta name=language content="ko"><meta name=robots content="index, follow"><link rel=canonical href=https://jaehun.me/ko/ko/posts/2024-12-20-paper-2412.03594v1/><link rel=icon type=image/svg+xml href=/favicon.svg><link rel=manifest href=/site.webmanifest><meta property="og:url" content="https://jaehun.me/ko/ko/posts/2024-12-20-paper-2412.03594v1/"><meta property="og:site_name" content="Jaehun's Blog"><meta property="og:title" content="Sharing and Throughput-oriented Token Batching"><meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점 및 독창적인 지점 1.	Global Prefix Sharing의 명시적 적용 기존의 LLM 추론 엔진은 LRU 기반 캐시를 사용해 접두사(prefix)를 공유했지만, 이는 대규모 배치에서 최적화를 달성하지 못했습니다. BatchLLM은 전역적으로 접두사를 명시적으로 식별하고 관리하여 공유 접두사를 최대로 재사용하도록 설계되었습니다. •	결과: Token 저장 비율에서 vLLM 대비 약 10% 이상의 개선. 2.	Throughput 중심의 Token Batching Token 배치를 GPU 메모리 사용량 기반으로 조정하여 더 큰 배치를 구성하고 “Valley” 현상(이전 배치에서 GPU가 비효율적으로 작동하는 상태)을 줄였습니다. •	GPU 활용률 향상: 최대 15%의 처리 시간 단축. 3.	Attention 커널 최적화 기존의 다중 커널 접근 대신, 수평적 융합(Horizontal Fusion)을 적용해 커널 호출 오버헤드와 대기 시간을 줄였습니다. 이는 특히 접두사 공유의 효과를 극대화합니다. •	성능 향상: vLLM 대비 최대 1.5~2배 향상된 처리량. 4.	적응형 스케줄링 요청의 프롬프트 길이 및 디코딩 비율에 따라 작업을 재정렬하여, 긴 디코딩 요청을 우선 처리하고 효율적으로 배치를 구성합니다. 이는 처리량과 GPU 사용률을 모두 높입니다."><meta property="og:locale" content="ko_kr"><meta property="og:type" content="article"><meta property="article:section" content="ko"><meta property="article:published_time" content="2024-12-20T00:00:00+00:00"><meta property="article:modified_time" content="2024-12-20T00:00:00+00:00"><meta property="og:image" content="https://jaehun.me/images/og-default.avif"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://jaehun.me/images/og-default.avif"><meta name=twitter:title content="Sharing and Throughput-oriented Token Batching"><meta name=twitter:description content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점 및 독창적인 지점 1.	Global Prefix Sharing의 명시적 적용 기존의 LLM 추론 엔진은 LRU 기반 캐시를 사용해 접두사(prefix)를 공유했지만, 이는 대규모 배치에서 최적화를 달성하지 못했습니다. BatchLLM은 전역적으로 접두사를 명시적으로 식별하고 관리하여 공유 접두사를 최대로 재사용하도록 설계되었습니다. •	결과: Token 저장 비율에서 vLLM 대비 약 10% 이상의 개선. 2.	Throughput 중심의 Token Batching Token 배치를 GPU 메모리 사용량 기반으로 조정하여 더 큰 배치를 구성하고 “Valley” 현상(이전 배치에서 GPU가 비효율적으로 작동하는 상태)을 줄였습니다. •	GPU 활용률 향상: 최대 15%의 처리 시간 단축. 3.	Attention 커널 최적화 기존의 다중 커널 접근 대신, 수평적 융합(Horizontal Fusion)을 적용해 커널 호출 오버헤드와 대기 시간을 줄였습니다. 이는 특히 접두사 공유의 효과를 극대화합니다. •	성능 향상: vLLM 대비 최대 1.5~2배 향상된 처리량. 4.	적응형 스케줄링 요청의 프롬프트 길이 및 디코딩 비율에 따라 작업을 재정렬하여, 긴 디코딩 요청을 우선 처리하고 효율적으로 배치를 구성합니다. 이는 처리량과 GPU 사용률을 모두 높입니다."><meta itemprop=name content="Sharing and Throughput-oriented Token Batching"><meta itemprop=description content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 논문의 강점 및 독창적인 지점 1.	Global Prefix Sharing의 명시적 적용 기존의 LLM 추론 엔진은 LRU 기반 캐시를 사용해 접두사(prefix)를 공유했지만, 이는 대규모 배치에서 최적화를 달성하지 못했습니다. BatchLLM은 전역적으로 접두사를 명시적으로 식별하고 관리하여 공유 접두사를 최대로 재사용하도록 설계되었습니다. •	결과: Token 저장 비율에서 vLLM 대비 약 10% 이상의 개선. 2.	Throughput 중심의 Token Batching Token 배치를 GPU 메모리 사용량 기반으로 조정하여 더 큰 배치를 구성하고 “Valley” 현상(이전 배치에서 GPU가 비효율적으로 작동하는 상태)을 줄였습니다. •	GPU 활용률 향상: 최대 15%의 처리 시간 단축. 3.	Attention 커널 최적화 기존의 다중 커널 접근 대신, 수평적 융합(Horizontal Fusion)을 적용해 커널 호출 오버헤드와 대기 시간을 줄였습니다. 이는 특히 접두사 공유의 효과를 극대화합니다. •	성능 향상: vLLM 대비 최대 1.5~2배 향상된 처리량. 4.	적응형 스케줄링 요청의 프롬프트 길이 및 디코딩 비율에 따라 작업을 재정렬하여, 긴 디코딩 요청을 우선 처리하고 효율적으로 배치를 구성합니다. 이는 처리량과 GPU 사용률을 모두 높입니다."><meta itemprop=datePublished content="2024-12-20T00:00:00+00:00"><meta itemprop=dateModified content="2024-12-20T00:00:00+00:00"><meta itemprop=wordCount content="11284"><meta itemprop=image content="https://jaehun.me/images/og-default.avif"><meta itemprop=keywords content="Paper-Review,With-Gpt"><script>window.HUGO_SEARCH_CONFIG={searchIndexURL:'"/ko/index.json"'}</script><script>window.HUGO_GALLERY_CONFIG={justified_gallery:!1,lightbox:!1,justified:"{}",lightbox_options:"{}"}</script><link rel=stylesheet href=/css/compiled.min.9165cace5b80a5be5daad6ea96eb2abc20a18a3f41d7fed7f0335b689fdf7883.css integrity="sha256-kWXKzluApb5dqtbqlusqvCChij9B1/7X8DNbaJ/feIM=" crossorigin=anonymous><link rel=stylesheet href=/css/chroma.min.491df36221f739b5948a747a0351f100ee7ccaaf466d9f46288bf06de1d59123.css integrity="sha256-SR3zYiH3ObWUinR6A1HxAO58yq9GbZ9GKIvwbeHVkSM=" crossorigin=anonymous><script src=/js/main.ba969e49a7a874e6938fe689a7dcaa00cb64cb4d429c2cf98d09bde512a16c6d.js integrity="sha256-upaeSaeodOaTj+aJp9yqAMtky01CnCz5jQm95RKhbG0=" crossorigin=anonymous></script><script src=/js/gumshoe.polyfills.min.js></script><script src=/js/toc.70654aebf0b738a78ae2df95297cc10ebc6e590f3c942dd1325fa852f50038b2.js integrity="sha256-cGVK6/C3OKeK4t+VKXzBDrxuWQ88lC3RMl+oUvUAOLI=" crossorigin=anonymous defer></script><script src=/js/search.de3eba3540834efb8328121784bff4774e06362412ee41eee665f5b4f987f393.js integrity="sha256-3j66NUCDTvuDKBIXhL/0d04GNiQS7kHu5mX1tPmH85M=" crossorigin=anonymous defer></script><script src=/js/dock.e02f422517e001d9fb6bea1e9e8b0e89e9d2e486ad4641f275bb3e36ce2ae79f.js integrity="sha256-4C9CJRfgAdn7a+oenosOienS5IatRkHydbs+Ns4q558=" crossorigin=anonymous defer></script><script>(function(){const e=localStorage.getItem("theme")||"system",n=localStorage.getItem("colorScheme")||"claude";document.documentElement.setAttribute("data-theme",n);function t(){e==="dark"||e==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches?document.documentElement.classList.add("dark"):document.documentElement.classList.remove("dark")}t(),e==="system"&&window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",t)})()</script></head><body class="bg-background text-foreground min-h-screen antialiased"><div id=reading-progress-container class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out" data-height=3 data-smooth-scroll=true data-hide-on-complete=false><div class="reading-progress-bg w-full"></div><div id=reading-progress-bar class="from-primary to-primary/80 reading-progress-bar
+transition-all duration-150 ease-out
+absolute top-0 left-0 w-0 bg-gradient-to-r"></div></div><script>(function(){"use strict";const t=document.getElementById("reading-progress-container"),o=document.getElementById("reading-progress-bar");if(!t||!o)return;const a={smoothScroll:t.dataset.smoothScroll==="true",hideOnComplete:t.dataset.hideOnComplete==="true"};let n=!0,l=null;function r(){const t=window.pageYOffset||document.documentElement.scrollTop,n=document.documentElement.scrollHeight,s=window.innerHeight,e=n-s;return e<=0?0:Math.min(Math.max(t/e*100,0),100)}function c(){const e=r();o.style.width=e+"%",a.hideOnComplete&&e>=99.5?n&&(t.style.opacity="0",n=!1):n||(t.style.opacity="1",n=!0)}let s=!1;function e(){s||(requestAnimationFrame(()=>{c(),s=!1}),s=!0)}function i(){window.addEventListener("scroll",e,{passive:!0}),window.addEventListener("resize",e,{passive:!0}),document.addEventListener("visibilitychange",()=>{document.hidden||e()}),e(),window.addEventListener("beforeunload",()=>{window.removeEventListener("scroll",e),window.removeEventListener("resize",e)})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",i):i()})()</script><header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6"><div class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm"><div class="hidden w-full items-center md:flex"><div class="flex items-center"><a href=/ko/ class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full transition-transform duration-200 hover:scale-105" aria-label="Jaehun's Blog"><img src=/images/logo.svg alt="Jaehun's Blog" class="h-full w-full object-cover"></a></div><nav class="mx-8 flex flex-1 items-center justify-center"><div class="flex items-center space-x-1"><a href=/ko/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.posts"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+<span>게시글
+</span></a><a href=/ko/categories/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.categories"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+<span>카테고리
+</span></a><a href=/ko/tags/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.tags"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512.0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828.0l-7-7A1.994 1.994.0 013 12V7a4 4 0 014-4z"/></svg>
+<span>태그
+</span></a><a href=/ko/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.archives"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+<span>아카이브</span></a></div></nav><div class="flex items-center space-x-2"><div class=relative><button id=language-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95" data-dropdown-type=language aria-label="언어 변경" aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="언어 변경"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8 6 6m-7 0 6-6 2-3M2 5h12M7 2h1m14 20-5-10-5 10m2-4h6"/></svg></button><div id=language-dropdown class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out" data-dropdown-type=language role=menu aria-labelledby=language-toggle><a href=/ko/ class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role=menuitem aria-current=true><span class=font-medium>한국어</span></a><a href=/en/ class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role=menuitem><span class=font-medium>English</span></a></div></div><div class=relative><button id=color-scheme-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95" data-dropdown-type=color-scheme aria-label="테마 변경" aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="테마 변경"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z"/></svg></button><div id=color-scheme-dropdown class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out" data-dropdown-type=color-scheme><button data-color-scheme=claude class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme=default class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme=bumblebee class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme=emerald class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme=nord class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme=sunset class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme=abyss class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme=dracula class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme=amethyst class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme=slate class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme=twitter class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div></div><div class=relative><button id=theme-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95" data-dropdown-type=theme aria-label="테마 변경" aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5 sun-icon hidden relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="라이트"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+<svg class="h-5 w-5 moon-icon hidden relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="다크"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg>
+<svg class="h-5 w-5 system-icon hidden relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="시스템"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17 9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5A2 2 0 003 5v10a2 2 0 002 2z"/></svg></button><div id=theme-dropdown class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out" data-dropdown-type=theme><button data-theme=light class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+<svg class="h-5 w-5 mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="라이트"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg><span>라이트</span></button><button data-theme=dark class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+<svg class="h-5 w-5 mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="다크"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg><span>다크</span></button><button data-theme=system class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+<svg class="h-5 w-5 mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="시스템"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17 9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5A2 2 0 003 5v10a2 2 0 002 2z"/></svg><span>시스템</span></button></div></div></div></div><div class="flex w-full items-center justify-between md:hidden"><div class=relative><button id=mobile-menu-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200" data-dropdown-type=mobile-menu aria-label=메뉴 aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="메뉴"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button><div id=mobile-menu class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden" data-dropdown-type=mobile-menu role=menu aria-labelledby=mobile-menu-toggle><nav class="flex flex-col"><a href=/ko/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none" role=menuitem><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.posts"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+<span>게시글
+</span></a><a href=/ko/categories/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none" role=menuitem><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.categories"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+<span>카테고리
+</span></a><a href=/ko/tags/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none" role=menuitem><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.tags"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512.0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828.0l-7-7A1.994 1.994.0 013 12V7a4 4 0 014-4z"/></svg>
+<span>태그
+</span></a><a href=/ko/ class="nav-link
+text-muted-foreground hover:text-primary hover:bg-primary/10
+focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none" role=menuitem><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="nav.archives"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+<span>아카이브</span></a></nav></div></div><div class="flex items-center space-x-2"><div class=relative><button id=language-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95" data-dropdown-type=language aria-label="언어 변경" aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="언어 변경"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8 6 6m-7 0 6-6 2-3M2 5h12M7 2h1m14 20-5-10-5 10m2-4h6"/></svg></button><div id=language-dropdown class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out" data-dropdown-type=language role=menu aria-labelledby=language-toggle><a href=/ko/ class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role=menuitem aria-current=true><span class=font-medium>한국어</span></a><a href=/en/ class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role=menuitem><span class=font-medium>English</span></a></div></div><div class=relative><button id=color-scheme-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95" data-dropdown-type=color-scheme aria-label="테마 변경" aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="테마 변경"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z"/></svg></button><div id=color-scheme-dropdown class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out" data-dropdown-type=color-scheme><button data-color-scheme=claude class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme=default class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme=bumblebee class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme=emerald class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme=nord class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme=sunset class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme=abyss class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme=dracula class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme=amethyst class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme=slate class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme=twitter class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div></div><div class=relative><button id=theme-toggle class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95" data-dropdown-type=theme aria-label="테마 변경" aria-expanded=false aria-haspopup=true>
+<svg class="h-5 w-5 sun-icon hidden relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="라이트"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+<svg class="h-5 w-5 moon-icon hidden relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="다크"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg>
+<svg class="h-5 w-5 system-icon hidden relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="시스템"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17 9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5A2 2 0 003 5v10a2 2 0 002 2z"/></svg></button><div id=theme-dropdown class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out" data-dropdown-type=theme><button data-theme=light class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+<svg class="h-5 w-5 mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="라이트"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg><span>라이트</span></button><button data-theme=dark class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+<svg class="h-5 w-5 mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="다크"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg><span>다크</span></button><button data-theme=system class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+<svg class="h-5 w-5 mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="시스템"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17 9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5A2 2 0 003 5v10a2 2 0 002 2z"/></svg><span>시스템</span></button></div></div></div></div></div></header><main class="mx-auto max-w-4xl px-4 py-6"><nav class="breadcrumb mb-4 md:mb-6 py-1" aria-label=경로><ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1"><li class=flex-shrink-0><a href=/ko/ class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="홈"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11 2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+<span class="max-w-[4rem] md:max-w-none truncate">홈</span></a></li><li class="flex items-center gap-1 md:gap-2 min-w-0"><span class="text-muted-foreground/50 flex-shrink-0"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></span><div class="flex items-center gap-1 md:gap-2 min-w-0"><a href=/ko class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5A2 2 0 003 7z"/></svg>
+<span class="max-w-[4rem] md:max-w-none truncate">Ko</span>
+</a><span class="text-muted-foreground/50 flex-shrink-0"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></span>
+<span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+<span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">Sharing and Throughput-oriented Token Batching</span></span></div></li></ol></nav><header class=mb-8><h1 class="text-foreground mb-4 text-3xl font-bold md:text-4xl">Sharing and Throughput-oriented Token Batching</h1></header><article class="prose prose-neutral dark:prose-invert max-w-none"><p><a href=https://arxiv.org/abs/2412.03594v1>논문 링크</a></p><h1 id=q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘>Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1><p>논문의 강점 및 독창적인 지점
+1. Global Prefix Sharing의 명시적 적용
+기존의 LLM 추론 엔진은 LRU 기반 캐시를 사용해 접두사(prefix)를 공유했지만, 이는 대규모 배치에서 최적화를 달성하지 못했습니다. BatchLLM은 전역적으로 접두사를 명시적으로 식별하고 관리하여 공유 접두사를 최대로 재사용하도록 설계되었습니다.
+• 결과: Token 저장 비율에서 vLLM 대비 약 10% 이상의 개선.
+2. Throughput 중심의 Token Batching
+Token 배치를 GPU 메모리 사용량 기반으로 조정하여 더 큰 배치를 구성하고 “Valley” 현상(이전 배치에서 GPU가 비효율적으로 작동하는 상태)을 줄였습니다.
+• GPU 활용률 향상: 최대 15%의 처리 시간 단축.
+3. Attention 커널 최적화
+기존의 다중 커널 접근 대신, 수평적 융합(Horizontal Fusion)을 적용해 커널 호출 오버헤드와 대기 시간을 줄였습니다. 이는 특히 접두사 공유의 효과를 극대화합니다.
+• 성능 향상: vLLM 대비 최대 1.5~2배 향상된 처리량.
+4. 적응형 스케줄링
+요청의 프롬프트 길이 및 디코딩 비율에 따라 작업을 재정렬하여, 긴 디코딩 요청을 우선 처리하고 효율적으로 배치를 구성합니다. 이는 처리량과 GPU 사용률을 모두 높입니다.</p><p>핵심 알고리즘 설명 및 예시</p><p>BatchLLM의 주요 알고리즘인 Dynamic Programming 기반 접두사 재사용 최적화를 간단한 예시로 설명합니다.</p><p>입력 데이터 (Pseudo Prompts):
+• 프롬프트 1: a b c d e
+• 프롬프트 2: b a b
+• 프롬프트 3: b a c d</p><p>알고리즘 단계:
+1. 접두사 트리 구성:
+• 노드는 접두사를 표현하며, 공통된 접두사를 가지는 하위 노드를 병합하여 Compact Prefix Tree로 구성합니다.
+2. Dynamic Programming을 통한 접두사 최적화:
+• 하위 노드에서 공통 접두사의 재사용 이익(리프 노드 간 중복 저장 방지)을 계산합니다.
+• Gain(저장된 Token 수)과 Penalty(병합의 계산 오버헤드)를 비교하여 병합 여부 결정.
+• 예시에서, b a가 공통 접두사로 최대한 병합됩니다.
+3. 결과 트리:
+최적화된 트리는 공통 접두사가 최대한 공유되며, GPU 메모리와 계산량을 줄이는 구조로 단순화됩니다.</p><p>논문의 한계점
+1. Triton 커널 성능의 제약
+Triton 기반 FlashAttention이 CUDA 기반 구현 대비 성능에서 다소 부족합니다. 이는 GPU 메모리 충돌 및 공유 메모리 사용 최적화 부족 때문으로 분석됩니다.
+• 해결 방안: Split-K 기법 도입을 통한 GPU 유닛 활용 극대화 필요.
+2. 테스트 데이터의 제한적 일반화
+산업 워크로드를 기반으로 데이터셋을 구성했으나, 다양한 응용 프로그램에서의 성능 보장은 여전히 검증되지 않았습니다.
+3. 사전 처리 오버헤드
+접두사 식별에 따른 사전 처리 시간이 전체 성능에는 큰 영향을 미치지 않지만, 데이터 스케일 증가 시 병목 현상이 발생할 가능성이 있습니다.</p><p>정리</p><p>BatchLLM은 대규모 배치 작업을 효율적으로 처리하기 위한 혁신적인 접근 방식을 제시하며, 특히 GPU 활용률과 처리량에서 큰 개선을 보였습니다. 하지만 커널 수준의 성능 한계와 데이터 일반화의 필요성은 향후 연구에서 보완될 필요가 있습니다.</p><h1 id=q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘>Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1><p>논문의 핵심 알고리즘은 BatchLLM의 Dynamic Programming 기반 접두사 재사용 최적화입니다. 이 알고리즘은 대규모 배치에서 공유 접두사를 효율적으로 재사용하여 GPU 메모리 사용량을 줄이고 처리량을 높이는 것을 목표로 합니다.</p><p>아래에서 예시와 함께 자세히 설명하겠습니다.</p><p>핵심 알고리즘: 접두사 재사용 최적화</p><p>BatchLLM은 Compact Prefix Tree를 사용하여 입력 데이터를 구조화하고, Dynamic Programming(DP)을 통해 공유 접두사를 최적화합니다. 주요 아이디어는 공통된 접두사의 재사용을 극대화하여 메모리 소모와 중복 계산을 줄이는 것입니다.</p><p>예시 입력 데이터</p><p>6개의 프롬프트가 있다고 가정:
+1. 프롬프트 1: a b c d e
+2. 프롬프트 2: b a b
+3. 프롬프트 3: b a c d
+4. 프롬프트 4: b a a b c d e a b c
+5. 프롬프트 5: b a a b c d e a d e a
+6. 프롬프트 6: b b c d e a b c</p><p>단계별 알고리즘 과정</p><ol><li><p>접두사 트리 생성
+• **Compact Prefix Tree(압축 접두사 트리)**를 구성하여 각 프롬프트의 공통 접두사를 트리로 표현.
+• 초기 트리는 아래와 같이 구성됩니다:</p><pre><code>Root
+ |
+b
+ |
+</code></pre><p>a b
+| |
+a c
+| |
+b c d e</p><p>• 각 노드는 접두사를 표현하며, 동일한 접두사를 공유하는 하위 노드가 병합됩니다.</p></li><li><p>Dynamic Programming을 통한 최적화</p></li></ol><p>DP를 통해 접두사의 **재사용 이득(Gain)**과 **병합 비용(Penalty)**를 계산하여 병합 여부를 결정합니다.
+• 이득(Gain): 접두사에 의해 절약되는 토큰 수.
+예: b a를 공유하면, 하위 노드의 중복 계산을 피할 수 있음.
+• 비용(Penalty): 병합으로 인한 추가 메모리 사용 또는 계산 오버헤드.</p><p>DP 알고리즘의 과정
+1. 하위 노드 재귀적으로 최적화:
+• 트리의 가장 하위 노드부터 시작하여 각 노드의 접두사를 최대한 재사용.
+• 예를 들어, b a와 관련된 하위 노드를 병합.
+2. 병합 여부 결정:
+• 각 노드의 하위 접두사들의 이득(Gain)과 비용(Penalty)을 비교.
+• 이득이 더 크다면 병합 수행.
+3. 최적화된 트리 결과:
+최적화 이후의 트리는 아래와 같습니다:</p><pre><code>   Root
+    |
+   b
+    |
+a       b
+|       |
+a       c d
+|       |
+</code></pre><p>b c e a</p><ol start=3><li>토큰 재사용률 계산</li></ol><p>최적화된 트리를 기반으로, 접두사 재사용으로 절약된 토큰 수를 계산:
+• 저장 비율 (Saving Ratio):
+[
+R_{saving} = \left(1 - \frac{N_{processed\tokens}}{N{original_tokens}}\right) \times 100
+]
+여기서:
+• ￼: 최적화 후 처리된 토큰 수.
+• ￼: 최적화 전 처리된 토큰 수.</p><p>정리</p><p>BatchLLM의 접두사 최적화 알고리즘은 다음과 같은 과정을 통해 GPU 메모리와 계산량을 줄입니다:
+1. 입력 데이터를 Compact Prefix Tree로 구조화:
+• 공통된 접두사를 트리의 공유 노드로 변환.
+2. Dynamic Programming을 적용해 공통 접두사 최적화:
+• 접두사 병합의 이득과 비용을 비교하여 최적화를 수행.
+3. 최적화된 트리를 사용하여 GPU 메모리 효율성 향상:
+• 접두사를 최대한 공유하여 처리량 증가.</p><p>이 알고리즘은 실제 실험에서 최대 55%의 토큰 재사용을 달성하였으며, 기존 방법 대비 1.1~2배의 처리량 증가를 보였습니다.</p><h1 id=q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘>Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1><p>논문 결과 분석 및 특출난 점</p><p>BatchLLM의 실험 결과는 기존 방법론(vLLM)과 비교하여 매우 우수한 성능 향상을 보여줍니다. 특히, 처리량(Throughput)에서 1.1~2배의 성능 개선을 달성하며, 이는 다음의 주요 개선사항과 관련이 있습니다:</p><ol><li><p>논문 결과 요약</p><ol><li>Throughput Improvement:
+• Microbenchmark: 공유 접두사의 길이가 길거나 공유 정도가 높은 경우, BatchLLM은 vLLM 대비 최대 2배의 처리량 향상을 보여줍니다.
+• 산업 워크로드:
+• Case 1 (긴 접두사): vLLM 대비 1.3배 처리량 증가.
+• Case 2 (짧은 접두사): vLLM 대비 1.47배 처리량 증가.
+• 결론: 접두사가 길고 공유도가 높은 경우 성능이 더욱 극대화.</li><li>Token Reuse Ratio:
+• vLLM: 약 44.2%의 토큰 재사용률.
+• BatchLLM: 약 54.9%의 재사용률로 10% 이상 개선.</li><li>GPU Utilization:
+• GPU 사용률을 증가시켜 처리량을 안정적으로 유지하며 “Valley Effect”를 완화.
+• 메모리 중심의 Token Batching을 통해 배치 크기를 최적화하여 GPU가 과부하 상태에 도달하지 않도록 조정.</li></ol></li><li><p>다른 방법론과의 비교 (특출난 점)</p></li></ol><p>방법론 접두사 처리 방식 토큰 배치 방식 성능 특징
+vLLM LRU 기반 캐싱 요청 단위 배치 낮은 재사용률과 비효율적인 배치 크기
+BatchLLM 전역 접두사 식별 (Explicit Identification) 메모리 중심 배치 높은 GPU 활용률과 처리량</p><p>특출난 점:
+1. 접두사의 전역적 재사용 (Global Prefix Sharing):
+• 기존 vLLM은 LRU 정책으로 공유 접두사를 관리하여 캐싱된 접두사가 자주 교체(Eviction)되는 문제가 발생.
+• BatchLLM은 전체 배치에서 접두사를 명시적으로 식별해 재사용률을 극대화.
+• 결과: vLLM 대비 약 10%의 추가 토큰 재사용.
+2. 메모리 중심 배치 (Memory-Centric Token Batching):
+• 기존 vLLM은 요청 수를 기준으로 배치를 형성하여 GPU 메모리를 최적 활용하지 못함.
+• BatchLLM은 GPU 메모리와 토큰 배치 크기를 동시에 고려하여 배치 크기를 최적화.
+• 결과: GPU 메모리 활용도가 개선되고 처리량 증가.
+3. Attention 커널 최적화:
+• 기존 방법론은 각 접두사별 Attention을 개별 커널로 처리하여 오버헤드가 발생.
+• BatchLLM은 Horizontal Fusion을 통해 커널 호출을 줄이고 연산을 병렬화.
+• 결과: 특히 긴 접두사에서 처리 속도 향상.</p><ol start=3><li>논문에서 제기하는 주요 개선 방법과 이유</li></ol><p>논문에서 제시하는 주요 기법:
+1. 전역 접두사 식별 (Explicit Global Prefix Identification):
+• 접두사 트리를 Dynamic Programming으로 최적화하여, 공유 접두사를 단일 레벨로 확장.
+• 이유: 멀티레벨 접두사보다 단일 레벨 접두사가 관리와 연산에서 더 효율적.
+• 성과: Token 저장률에서 거의 손실 없이 간소화된 구조 달성.
+2. 토큰 배치 최적화 (Memory-Centric Token Batching):
+• GPU 메모리 사용량을 기준으로 배치를 형성.
+• 이유: 기존 요청 기반 배치가 GPU 메모리 낭비를 초래했기 때문.
+• 성과: “Valley Effect” 완화 및 배치 크기 증대로 GPU 활용률 극대화.
+3. Attention 연산의 수평적 융합 (Horizontal Fusion of Attention Kernel):
+• 접두사와 고유 컨텍스트의 Attention 연산을 단일 커널에서 수행.
+• 이유: 기존의 커널 분할 방식이 커널 호출 오버헤드와 Tail Effect를 유발.
+• 성과: 긴 접두사에서 GPU 처리량 향상.</p><ol start=4><li>나의 생각과 추가적인 분석</li></ol><p>논문의 기여:</p><p>BatchLLM은 전역적이고 구조적인 접근 방식을 통해 대규모 LLM 배치 작업에서의 병목현상을 효과적으로 해결하였습니다. 특히, GPU 메모리와 처리량 간의 균형을 유지하는 것이 특출납니다.</p><p>추가적으로 고려해야 할 점:
+1. 다양한 환경에서의 일반화:
+• 실험이 특정 GPU(A100, MI200)와 데이터셋에 집중되어 있습니다. 다양한 하드웨어 및 작업에서의 성능 평가가 필요합니다.
+• 예: 극단적으로 짧은 프롬프트나 비공유 프롬프트에서도 최적화가 유효한지 검증.
+2. Triton 커널의 한계:
+• CUDA 기반 FlashAttention보다 Triton 기반 구현의 성능이 낮습니다.
+• GPU 메모리 병렬 처리를 더욱 최적화해야 함.
+3. 추가적인 최적화 가능성:
+• Split-K 또는 보다 정교한 배치 크기 조정을 통해 GPU 처리 유닛 활용을 극대화할 수 있을 것으로 보입니다.</p><p>정리</p><p>BatchLLM은 대규모 배치 LLM 작업의 병목 현상을 해결하기 위한 혁신적인 방법을 제안했습니다. 특히, 전역적 접두사 관리와 GPU 메모리 중심의 배치 최적화를 통해 성능을 크게 향상시켰습니다. 그러나 더 넓은 범위의 데이터 및 하드웨어에서 추가 실험이 필요하며, Triton 기반 커널 최적화와 같은 기술적 과제가 남아 있습니다.</p><h1 id=q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘>Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1><p>논문의 입력 데이터 및 추론 과정</p><p>BatchLLM은 대규모 배치 입력과 공유 접두사(Prefix Sharing) 특성을 가진 데이터에 최적화된 추론 과정을 설계하였습니다. 논문의 핵심은 이러한 데이터를 효율적으로 처리하여 GPU 메모리 사용을 줄이고 처리량을 높이는 것입니다.</p><ol><li>입력 데이터</li></ol><p>데이터 구성</p><p>입력 데이터는 공유 접두사와 고유 컨텍스트로 구성된 프롬프트입니다:
+1. 공유 접두사: 여러 요청 간에 공통으로 사용되는 부분 (e.g., 같은 문서나 지시문).
+2. 고유 컨텍스트: 요청별로 고유한 부분 (e.g., 개별 사용자 질의).</p><p>예시</p><p>6개의 요청 데이터가 아래와 같이 주어진다고 가정:
+• 요청 1: 문서 A, 질의 1
+• 요청 2: 문서 A, 질의 2
+• 요청 3: 문서 B, 질의 1
+• 요청 4: 문서 B, 질의 2
+• 요청 5: 문서 B, 질의 3
+• 요청 6: 문서 C, 질의 1</p><p>데이터의 주요 특성
+• 공유 접두사: 문서 A, B, C는 여러 요청에서 공유됨.
+• 고유 컨텍스트: 각 요청의 질의는 고유함.</p><ol start=2><li>추론 과정 (Inference Pipeline)</li></ol><p>BatchLLM의 추론 과정은 크게 3단계로 이루어집니다:</p><p>1단계: 접두사 식별 및 트리 구조화
+• 접두사 트리 생성: 공유 접두사를 Compact Prefix Tree로 표현.
+• 예를 들어, 요청 1과 2의 공유 접두사는 문서 A이며, 요청 3, 4, 5는 문서 B를 공유.
+• Dynamic Programming: 트리에서 최적화된 공유 접두사를 식별하여 토큰 재사용 극대화.</p><p>2단계: 토큰 배치 (Token Batching)
+• 요청 데이터를 공유 접두사 그룹으로 클러스터링.
+• 배치 구성은 GPU 메모리 사용량과 요청 크기에 따라 동적으로 조정.
+• 예: 문서 A 관련 요청 2개는 같은 배치에 포함.
+• 고유 컨텍스트와 디코딩 토큰을 섞어 처리량을 극대화.</p><p>3단계: Attention 계산
+• 공유 접두사에 대해 한 번만 Attention 계산 수행.
+• Horizontal Fusion을 적용해 접두사와 고유 컨텍스트의 Attention 연산을 하나의 커널에서 병합.</p><ol start=3><li>모델 아키텍처</li></ol><p>BatchLLM은 Transformer 기반의 LLM을 사용하며, 다음과 같은 주요 구성 요소를 포함합니다:</p><ol><li><p>모델 구성
+• Embedding Layer: 입력 토큰을 고차원 벡터로 변환.
+• Multi-Head Self-Attention (MHSA):
+• 주요 연산:
+• Query (￼), Key (￼), Value (￼) 행렬 생성.
+• ￼.
+• Feed-Forward Layer:
+• ￼.
+• Layer Normalization:
+• 입력값 정규화.
+• Decoder: Autoregressive 방식으로 하나씩 토큰을 생성.</p></li><li><p>연산량 및 메모리 요구량
+• Attention 메모리 요구량:
+• 단일 토큰당 메모리 요구량:
+￼
+• 예: Mistral-7B 모델 (￼):
+• 한 토큰당 ￼.
+• 2048개의 토큰 시 ￼.
+• Attention 연산량:
+• ￼: ￼은 토큰 수, ￼는 임베딩 차원.
+• 긴 접두사에서 연산량이 크게 증가.
+• Feed-Forward 연산량:
+• ￼: ￼는 임베딩 차원.</p></li><li><p>BatchLLM의 최적화 방법
+• 메모리 사용 감소:
+• 접두사 재사용을 통해 KV 캐시의 메모리 요구량 감소.
+• 결과적으로 더 큰 배치를 처리 가능.
+• 연산 효율성 증가:
+• Horizontal Fusion으로 커널 호출 오버헤드 제거.
+• 접두사와 고유 컨텍스트를 하나의 커널에서 처리.</p></li><li><p>컴퓨팅 및 메모리 요구량 분석</p></li></ol><p>BatchLLM은 LLM 추론의 두 단계에서의 자원 사용을 최적화합니다:</p><ol><li><p>Prefill 단계 (접두사 처리)
+• 연산: 접두사에 대한 Attention 계산이 병렬적으로 수행됨.
+• 메모리 요구량: KV 캐시 크기와 접두사의 길이에 비례.</p></li><li><p>Decoding 단계
+• 연산: 이전 단계의 결과를 활용하여 Autoregressive 방식으로 토큰 생성.
+• 메모리 요구량: 공유 접두사의 재사용을 통해 디코딩 토큰 처리 효율 증가.</p></li></ol><p>정리</p><p>BatchLLM의 입력 데이터와 추론 과정은 공유 접두사를 효율적으로 재사용하여 GPU 메모리 사용량을 줄이고 연산량을 최적화합니다. 이 과정은 Dynamic Programming 기반 접두사 최적화, 메모리 중심의 배치 구성, 그리고 수평적 커널 병합을 통해 달성됩니다. 이를 통해 기존 방법론 대비 처리량과 자원 사용 효율이 크게 개선되었습니다.</p><h1 id=q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘>Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1><p>이 논문의 한계</p><p>BatchLLM은 대규모 배치 작업에서 공유 접두사(prefix)를 효율적으로 처리하는 데 초점을 맞췄지만, 여전히 몇 가지 한계를 가지고 있습니다:
+1. Triton 커널의 성능 제약
+• CUDA 기반 구현에 비해 Triton 기반 Attention 커널이 낮은 성능을 보임.
+• 원인: 메모리 충돌, 비효율적인 공유 메모리 사용 등.
+2. 테스트 범위의 제한성
+• 특정 GPU(A100, MI200) 및 데이터셋에 의존하여 일반화 가능성 검증이 부족함.
+• 극단적으로 짧거나 비공유 프롬프트와 같은 경우에서 성능이 불확실.
+3. 접두사 식별 및 트리 관리 오버헤드
+• 접두사 식별 과정이 데이터 스케일이 증가하면 병목현상이 될 가능성 존재.
+4. 추론 최적화의 확장성 부족
+• 대규모 분산 환경에서의 동작이 명시적으로 검증되지 않음.</p><p>한계를 극복하기 위한 연구 흐름</p><p>이 논문에서 제시된 한계를 극복하기 위해 다음과 같은 연구 흐름이 주목받고 있습니다:</p><ol><li>고성능 커널 최적화</li></ol><p>Triton 기반 구현의 성능 문제를 극복하기 위해 다양한 GPU 커널 최적화 기술이 연구되고 있습니다.
+• Split-K 및 병렬 컴퓨팅 최적화
+• 긴 접두사로 인한 연산 병목현상을 해소하기 위해 Split-K 기법을 도입.
+• 대규모 키-값 쌍을 효율적으로 분할하여 병렬 처리 성능 향상.
+• CUDA로의 전환 또는 개선된 Triton 컴파일러 사용
+• CUDA 기반 FlashAttention과 같은 고성능 커널로 전환하여 성능 향상.
+• Triton에서의 공유 메모리 충돌 최소화를 위한 새로운 컴파일러 기술 개발.
+• 메모리 레이턴시 최적화
+• 기존 Attention 연산에서 메모리 접근 패턴을 최적화하여 레이턴시 감소.</p><p>관련 연구:
+• FlashAttention 2.0on 연산에서 메모리 접근을 최소화하기 위한 새로운 접근법.</p><ol start=2><li>대규모 분산 환경에서의 효율성 향상</li></ol><p>BatchLLM의 주요 초점은 단일 GPU에서의 성능 최적화에 있으나, 실제 산업 환경에서는 대규모 분산 처리가 요구됩니다.
+• 분산 접두사 관리
+• 분산 환경에서 접두사를 전역적으로 식별하고 공유할 수 있는 방법 연구.
+• 요청을 분산 서버 간에 최적으로 배치하는 방법론 개발.
+• KV 캐시 공유 최적화
+• 대규모 분산 환경에서 KV 캐시를 효율적으로 관리하기 위한 분산 캐싱 알고리즘.</p><p>관련 연구:
+• MemServe : 분산 LLM최적화 연구.
+• Orca : 분산 처리 시 토큰 배치와 메다룬 연구.</p><ol start=3><li>접두사 식별 및 트리 관리 개선</li></ol><p>접두사 식별 과정의 오버헤드를 줄이고 데이터 확장성을 확보하기 위한 연구가 진행 중입니다.
+• 온라인 접두사 학습
+• 정적 트리 생성 대신 실시간으로 접두사를 학습하고 최적화.
+• 트리 업데이트 비용을 줄이고 대규모 데이터에서 효율성 확보.
+• 접두사 압축 알고리즘
+• Dynamic Programming의 복잡도를 줄이기 위해 접두사 압축 및 클러스터링 알고리즘 적용.</p><p>관련 연구:
+• PromptCache : 접두사를 효율적으로 저장하고 재사용하기 위한 도</p><ol start=4><li>테스트 데이터 다양성 확대</li></ol><p>다양한 환경과 데이터 유형에서 BatchLLM의 성능을 검증하려는 연구 흐름이 있습니다.
+• 다양한 입력 길이 및 분포 테스트
+• 매우 짧은 접두사나 비공유 프롬프트에서 성능 테스트.
+• 공유 접두사가 없는 데이터셋에 대해 배치 크기와 GPU 사용률 최적화 방안 연구.
+• 다양한 GPU 및 하드웨어 환경에서의 성능 검증
+• 차세대 GPU(H100 등)에서의 최적화 적용성 평가.
+• 저비용 GPU에서의 경량화된 최적화 연구.</p><ol start=5><li>토큰 배치 최적화의 일반화</li></ol><p>메모리 중심 배치 최적화 기법을 다른 작업에 일반화하려는 연구가 진행되고 있습니다.
+• 다양한 모델 크기와 작업 유형에 적용
+• 소형 LLM 또는 멀티모달 작업에서 배치 최적화 적용.
+• 예: 디코딩이 아닌 순차적 예측 작업.
+• 배치 크기 동적 조정
+• 작업 부하에 따라 배치 크기를 동적으로 조정하는 알고리즘 개발.</p><p>관련 연구:
+• DeepSpeed-FastGen : 대규모 배치 토큰 생성의 처리 속도 향상 연구.</p><p>###chLLM의 한계를 극복하기 위한 연구 흐름은 고성능 커널 최적화, 대규모 분산 처리 환경에서의 효율성 향상, 접두사 관리 개선, 다양한 데이터 및 하드웨어 환경에서의 확장성 확보, 토큰 배치 최적화의 일반화로 나뉩니다. 특히, 대규모 접두사 공유 데이터에서 효율성을 극대화하는 방법론과 더불어, 다양한 데이터 분포와 하드웨어에서 일반화된 성능을 보장하려는 연구가 활발히 진행되고 있습니다. 이러한 흐름은 BatchLLM의 잠재력을 더욱 확장하고 실제 산업 환경에서의 활용도를 높일 것으로 기대됩니다.</p><h1 id=q--batchllm의-dynamic-programming-기반-접두사-식별-및-재사용-최적화-과정이-실제로-어떤-유형의-데이터에서-가장-큰-이점을-제공하며-다른-데이터-유형에서는-성능이-어떻게-변할-수-있는가>Q : BatchLLM의 Dynamic Programming 기반 접두사 식별 및 재사용 최적화 과정이 실제로 어떤 유형의 데이터에서 가장 큰 이점을 제공하며, 다른 데이터 유형에서는 성능이 어떻게 변할 수 있는가?</h1><p>BatchLLM의 Dynamic Programming 기반 접두사 식별 및 재사용 최적화</p><p>BatchLLM에서 Dynamic Programming(DP) 기반의 접두사 식별 및 최적화는 데이터의 접두사 공유 정도와 고유 컨텍스트의 비율에 따라 그 성능 효과가 달라집니다. 아래에서 데이터 유형별로 이 기법의 강점과 한계를 분석합니다.</p><ol><li><p>가장 큰 이점을 제공하는 데이터 유형</p><ol><li>공유 접두사가 긴 데이터
+• 특징: 다수의 요청에서 긴 접두사를 공유하며, 고유 컨텍스트가 상대적으로 짧음.
+• 예시 데이터:
+• 문서 요약 작업 (e.g., 동일 문서에 대해 여러 요약 요청).
+• 검색 엔진의 스니펫 생성 (e.g., 동일 웹 문서 + 다양한 사용자 질의).
+• 효과:
+• 긴 접두사를 한 번만 계산하고 여러 요청에서 재사용.
+• 접두사 계산에 필요한 GPU 메모리와 연산량 대폭 감소.
+• GPU 활용도가 높아지고 처리량이 증가.</li><li>접두사 공유 요청이 많은 데이터
+• 특징: 공유 접두사 하나에 다수의 요청이 연결됨 (공유도 높음).
+• 예시 데이터:
+• 추천 시스템에서 동일 사용자 그룹에 대한 질의.
+• 대규모 채팅 기록 분석.
+• 효과:
+• 공유도가 높을수록 접두사 재사용률이 극대화.
+• 메모리 사용량과 연산량의 선형 감소.</li></ol></li><li><p>성능이 제한적인 데이터 유형</p><ol><li>고유 컨텍스트가 긴 데이터
+• 특징: 요청별 고유 컨텍스트가 길고 접두사는 상대적으로 짧음.
+• 예시 데이터:
+• 검색 엔진에서 다양한 문서에 대한 질의.
+• 사용자 정의 작업이 많은 번역 작업.
+• 한계:
+• 공유 접두사가 짧아 재사용 가능한 연산량이 제한적.
+• GPU 메모리 절약 효과가 감소.
+• 대안: 이 경우 BatchLLM의 효과는 제한적이며, 대신 고유 컨텍스트의 연산 최적화가 더 중요.</li><li>접두사가 거의 없는 데이터
+• 특징: 요청 간에 공통된 접두사가 없거나 매우 짧음.
+• 예시 데이터:
+• 개별 사용자의 독립적인 질의 (e.g., 다양한 주제의 질문).
+• 한계:
+• 접두사 재사용이 불가능하여 BatchLLM의 강점이 발휘되지 않음.
+• 기존의 vLLM이나 다른 최적화 방법과 성능 차이가 적음.</li></ol></li><li><p>성능 변화 요약</p></li></ol><p>데이터 유형 접두사 길이 공유도 BatchLLM 효과
+긴 접두사 + 짧은 고유 컨텍스트 김 높음 매우 큼
+짧은 접두사 + 긴 고유 컨텍스트 짧음 낮음 제한적
+접두사가 거의 없는 데이터 없음 없음 효과 없음
+중간 길이 접두사 + 중간 공유도 중간 중간 중간 수준</p><p>정리</p><p>BatchLLM은 긴 접두사를 공유하는 데이터 또는 접두사 공유도가 높은 데이터에서 가장 큰 성능 향상을 제공합니다. 반면, 고유 컨텍스트가 긴 데이터나 접두사가 거의 없는 데이터에서는 그 효과가 제한적입니다. 이러한 경우, 고유 컨텍스트 처리 최적화나 다른 배치 기법이 더 적합할 수 있습니다. 따라서 BatchLLM은 데이터 특성에 따라 선택적으로 적용될 때 최대의 효과를 발휘할 수 있습니다.</p><h1 id=q--메모리-중심의-토큰-배치-방식이-기존의-요청-중심-배치-방식과-비교해-gpu-메모리-사용-효율성을-구체적으로-어떻게-개선했는지-특히-valley-effect를-해결하는-데-얼마나-효과적인지>Q : 메모리 중심의 토큰 배치 방식이 기존의 요청 중심 배치 방식과 비교해 GPU 메모리 사용 효율성을 구체적으로 어떻게 개선했는지, 특히 “Valley Effect”를 해결하는 데 얼마나 효과적인지?</h1><p>메모리 중심의 토큰 배치 방식과 기존 요청 중심 배치 방식 비교</p><p>BatchLLM에서 도입된 **메모리 중심의 토큰 배치(Memory-Centric Token Batching)**는 기존 **요청 중심 배치(Request-Centric Batching)**에 비해 GPU 메모리 사용 효율성을 크게 개선하며, 특히 **“Valley Effect”**를 해결하는 데 효과적입니다. 이를 비교하고, 개선된 점과 효과를 구체적으로 살펴보겠습니다.</p><ol><li><p>기존 요청 중심 배치 방식의 문제점</p><ol><li>요청 기반 배치 제한
+• 요청 단위로 배치를 구성하며, 각 배치의 요청 수에 고정된 상한선을 설정.
+• 요청 수가 상한에 도달하면 GPU 메모리 사용량과 관계없이 배치가 종료.
+• 결과: 토큰 수가 충분하지 않은 상태에서 배치가 실행되어 GPU 자원이 비효율적으로 사용됨.</li><li>Valley Effect
+• 디코딩 중심의 작업에서, GPU 메모리와 연산 자원이 최대치에 도달하지 못하는 낮은 토큰 수의 배치가 주기적으로 발생.
+• 이유:
+• 요청이 불균형적으로 분포.
+• 디코딩 단계에서 추가 토큰이 배치에 적절히 결합되지 않음.
+• 결과: 처리량 저하와 비효율적인 메모리 활용.</li></ol></li><li><p>메모리 중심의 토큰 배치 방식</p></li></ol><p>BatchLLM은 GPU 메모리 사용량과 작업 부하를 기준으로 배치를 동적으로 구성합니다. 주요 개선 사항은 다음과 같습니다:</p><ol><li><p>GPU 메모리 중심 배치
+• 배치 구성 시 GPU 메모리 사용량의 상한선을 설정(￼)하여 토큰 배치를 동적으로 조정.
+• 요청 수 상한 대신, 남은 GPU 메모리에 따라 추가 토큰을 배치.
+• 효과:
+• 배치 크기를 GPU 메모리에 맞게 확장하여 처리량 극대화.
+• 메모리가 허용하는 한 더 많은 디코딩 토큰 및 프리필(pre-fill) 토큰을 추가.</p></li><li><p>디코딩 및 프리필 토큰의 결합
+• 디코딩 단계에서 생성된 토큰과 프리필 단계의 토큰을 하나의 배치로 통합.
+• 디코딩 단계의 짧은 토큰들이 비효율적으로 처리되지 않도록 프리필 단계의 긴 토큰과 혼합.
+• 효과:
+• GPU의 연산 유닛 활용 극대화.
+• Valley Effect 완화.</p></li><li><p>동적 배치 크기 조정
+• 특정 작업의 부하에 따라 배치 크기를 동적으로 확장하거나 축소.
+• 요청 간 길이가 균일하지 않아도 배치가 GPU 메모리에 최적화되어 처리.</p></li><li><p>Valley Effect 해결</p></li></ol><p>Valley Effect는 GPU 자원이 비효율적으로 사용되는 문제로, BatchLLM은 이를 다음과 같이 완화합니다:</p><p>Valley Effect 완화 기법
+1. 큰 배치 형성:
+• 메모리 기반 배치를 통해 짧은 디코딩 토큰도 프리필 토큰과 함께 배치되므로 배치 크기 증가.
+• 결과적으로 각 배치에서 GPU가 더 많은 연산을 수행.
+2. 연산 집중도 증가:
+• 디코딩 토큰과 프리필 토큰의 혼합은 연산 집중도를 높여 GPU 활용도를 극대화.
+3. 토큰 수 “저점” 제거:
+• 기존 요청 중심 방식에서는 배치 내 토큰 수의 “저점”이 빈번하게 발생.
+• 메모리 중심 배치로 이러한 “저점”을 제거.</p><p>실험 결과
+• 논문에서 제공한 데이터(산업 워크로드, Figure 2 & 6):
+• 기존 vLLM에서 Valley Effect로 인해 배치당 토큰 수가 주기적으로 감소(Valleys 발생).
+• BatchLLM의 메모리 중심 배치로 Valley가 완화되어 전체 배치에서 GPU 사용률이 더 균일해짐.
+• GPU 사용률 증가로 처리량이 최대 **15%**까지 향상.</p><ol start=4><li>요청 중심 배치와 메모리 중심 배치의 비교</li></ol><p>특징 요청 중심 배치 메모리 중심 배치
+배치 구성 기준 요청 수 상한 (정적) GPU 메모리 사용량 (동적)
+디코딩 및 프리필 결합 없음 (분리 처리) 결합하여 처리
+배치 크기 조정 요청 길이에 따라 비효율적 동적 크기 조정으로 효율적
+Valley Effect 빈번하게 발생 완화됨
+GPU 메모리 활용도 낮음 높음</p><ol start=5><li>정리</li></ol><p>메모리 중심의 토큰 배치 방식은 GPU 메모리 사용량을 최적화하여 처리량과 GPU 활용도를 크게 향상시킵니다. 특히 Valley Effect를 완화함으로써 배치 내 토큰 수가 안정적으로 유지되며, 디코딩과 프리필 토큰을 결합하여 연산 집중도를 높입니다. 실험 결과에서 처리량이 최대 15% 증가하였으며, 이는 요청 중심 배치 방식에서 발생하는 병목현상을 성공적으로 해결한 사례로 볼 수 있습니다.</p><h1 id=q--triton-기반-attention-커널의-성능이-cuda-기반-커널보다-낮은-이유는-무엇이며-이러한-성능-격차를-줄이기-위한-batchllm의-개선-가능성은-무엇인가>Q : Triton 기반 Attention 커널의 성능이 CUDA 기반 커널보다 낮은 이유는 무엇이며, 이러한 성능 격차를 줄이기 위한 BatchLLM의 개선 가능성은 무엇인가?</h1><p>Triton 기반 Attention 커널의 성능 한계와 CUDA 기반 커널과의 성능 격차</p><p>Triton 기반 Attention 커널은 BatchLLM에서 사용된 핵심 기술 중 하나지만, CUDA 기반 Attention 커널과 비교했을 때 성능이 낮은 이유는 다음과 같습니다:</p><ol><li>Triton 기반 Attention 커널의 성능 한계</li></ol><p>1.1 공유 메모리 관리의 비효율성
+• 공유 메모리 충돌:
+• Triton은 고수준 언어로 작성되어 GPU 메모리 계층에 대한 세부적인 제어가 부족.
+• CUDA는 개발자가 공유 메모리 접근 패턴을 미세하게 조정 가능하지만, Triton은 자동화된 최적화를 의존.
+• 결과: 공유 메모리 뱅크 충돌이 발생하여 메모리 대기 시간이 증가.</p><p>1.2 자동 컴파일러의 최적화 한계
+• 컴파일 수준의 최적화 부족:
+• Triton은 GPU 코드의 템플릿을 자동 생성하는 구조로, CUDA의 수동 최적화에 비해 컴파일된 커널의 성능이 낮음.
+• 특히, 복잡한 계산이 포함된 Attention 커널에서는 CUDA가 더 높은 최적화를 제공.
+• 예: CUDA는 스트리밍 메모리 전송을 세부적으로 관리해 메모리 대역폭 병목을 완화.</p><p>1.3 병렬 처리 효율성 부족
+• Triton은 GPU 워프(warp) 단위 병렬 처리를 CUDA처럼 세밀히 조정할 수 없음.
+• 이는 Warp Divergence(병렬 처리의 비효율성) 문제를 유발하여 커널 성능 저하로 이어짐.</p><p>1.4 플랫폼 간 성능 균일성 유지로 인한 제약
+• Triton은 **다양한 GPU 플랫폼(NVIDIA 및 AMD)**에서 실행 가능하도록 설계되었기 때문에 특정 플랫폼에 최적화되지 않음.
+• CUDA는 NVIDIA GPU에 최적화된 성능을 제공, 특히 메모리 대역폭과 실행 스케줄링에서 이점을 가짐.</p><ol start=2><li><p>BatchLLM에서 Triton 사용의 의의와 문제점
+• BatchLLM에서 Triton 선택의 이유:
+• NVIDIA와 AMD GPU에서 모두 사용 가능.
+• 단일 소스로 멀티플랫폼 호환성을 제공.
+• Triton의 고수준 API는 코드 작성의 생산성을 향상.
+• 문제점:
+• GPU 자원 사용 효율성과 실행 성능에서 CUDA 대비 부족.
+• FlashAttention와 같은 최신 CUDA 기반 커널과의 성능 격차 존재.</p></li><li><p>성능 격차를 줄이기 위한 BatchLLM의 개선 가능성</p></li></ol><p>3.1 Triton 기반 커널 최적화
+1. 공유 메모리 접근 패턴 최적화:
+• Triton 커널에서 메모리 뱅크 충돌을 줄이는 방식으로 메모리 접근을 리팩터링.
+• 예: Split-K 방식 사용 → Key/Value 매트릭스를 분할 처리해 메모리 충돌 완화.
+2. Triton 내 수동 메모리 관리 강화:
+• Triton의 기본 자동 최적화 대신, 공유 메모리와 레지스터를 수동으로 관리.
+• 특정 블록과 스레드에 최적화된 메모리 배치 전략 도입.
+3. Tiling 기법 개선:
+• 문제: 현재 Triton의 타일 크기는 자동 튜닝(auto-tuning)에 의존.
+• 개선 방향: 다양한 데이터셋에 적합한 타일 크기를 사전에 설계해 컴파일.</p><p>3.2 CUDA 기반 커널로 전환
+1. CUDA FlashAttention 통합:
+• CUDA 기반 FlashAttention은 IO 대역폭 최적화를 통해 성능 격차를 줄임.
+• BatchLLM에 CUDA FlashAttention을 통합하여 NVIDIA GPU 환경에서 성능 최대화.
+2. CUDA와 Triton의 하이브리드 접근:
+• Triton은 AMD GPU와 같은 다중 플랫폼 지원에 집중.
+• NVIDIA GPU에서는 CUDA를 활용해 성능을 극대화.</p><p>3.3 분산 처리와 메모리 관리의 개선
+1. Attention 계산의 분산 처리:
+• 긴 접두사 또는 큰 배치에서 Attention 계산을 여러 GPU에 분산.
+• 예: Multi-GPU 환경에서 Key-Value 캐시를 효율적으로 분배.
+2. KV 캐시 압축 및 관리 개선:
+• 현재 KV 캐시는 메모리 소모량이 높음.
+• Triton 커널에서 KV 캐시 압축 알고리즘을 활용해 메모리 사용을 줄이고 캐싱 효율성을 높임.</p><ol start=4><li>정리 및 제안</li></ol><p>Triton 기반 Attention 커널은 다중 플랫폼 지원과 개발 생산성 측면에서 장점이 있지만, CUDA 대비 성능 격차가 존재합니다. 이 격차를 줄이기 위해서는 Triton의 메모리 접근 최적화와 분산 처리 확장성 강화가 필요하며, GPU 플랫폼별로 CUDA와 Triton을 하이브리드로 사용하는 전략이 BatchLLM의 성능을 한 단계 더 끌어올릴 수 있을 것입니다.</p><p>장기적으로, Triton 컴파일러의 개선과 고성능 CUDA 커널의 선택적 통합이 BatchLLM의 성능 향상에 큰 역할을 할 것으로 예상됩니다.</p></article></main><footer class="mx-auto max-w-4xl px-4 py-8"><div class="px-6 py-6"><nav class=mb-6><div class="flex flex-wrap items-center justify-center gap-1"><a href=/index.xml class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="RSS Feed"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18.0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
+<span>RSS Feed</span></a></div></nav><div class="border-border mb-6 border-t"></div><div class="flex flex-col items-center justify-between gap-4 md:flex-row"><div class="text-muted-foreground text-sm"><p>&copy; 2025 Jaehun's Blog.
+모든 권리 보유.</p></div><div class="flex items-center gap-3"><a href=https://github.com/ryujaehun target=_blank rel="noopener noreferrer" class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none" title=GitHub aria-label=GitHub><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8.0 00-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35.0-3.5.0.0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35.0 3.5A5.4 5.4.0 004 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+</a><a href=https://www.linkedin.com/in/jaehunryu/ target=_blank rel="noopener noreferrer" class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none" title=Linkedin aria-label=Linkedin><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+</a><a href=mailto:jaehunryu@icloud.com class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none" title=Email aria-label=Email><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="Email"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22.0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5A2 2 0 003 7v10a2 2 0 002 2z"/></svg></a></div></div></div></footer><div id=dock class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0" role=toolbar aria-label="바로가기 도구 모음"><nav class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3"><button id=dock-back class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2" title=뒤로 aria-label=뒤로>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+<span class="hidden sm:inline">뒤로</span></button><div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div><button id=dock-toc class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2" title=목차 aria-label=목차>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+<span class="hidden sm:inline">목차</span></button><div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div><button id=dock-search class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2" title=검색 aria-label=검색>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5A7 7 0 113 10a7 7 0 0114 0z"/></svg>
+<span class="hidden md:inline">검색</span></button><div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div><button id=dock-top class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2" title="맨 위로" aria-label="맨 위로">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+<span class="hidden sm:inline">맨 위로</span></button></nav></div><div id=toc-overlay class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300" role=dialog aria-modal=true aria-labelledby=toc-title></div><div id=toc-card class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2" role=dialog aria-modal=true aria-labelledby=toc-title><div class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md"><div class="border-border bg-muted/30 flex items-center justify-between border-b p-4"><div class="flex items-center gap-3"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg><h2 id=toc-title class="text-foreground text-lg font-semibold">목차</h2></div><button id=toc-close class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none" title=닫기 aria-label=닫기>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/></svg></button></div><div class="max-h-96 overflow-y-auto p-4"><nav id=toc-nav class=toc-scrollbar aria-label="글 목차"><div id=toc-content><nav id=TableOfContents></nav></div></nav></div><div class="border-border bg-muted/20 border-t px-4 py-3"><div class="text-muted-foreground text-center text-xs"><span>제목을 클릭하면 해당 위치로 이동합니다</span></div></div></div></div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css integrity=sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js integrity=sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6 crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js integrity=sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh crossorigin=anonymous></script><script>function initKaTeX(){if(typeof renderMathInElement=="undefined"){setTimeout(initKaTeX,100);return}var e=[{display:!0,left:"$$",right:"$$"},{display:!1,left:"$",right:"$"}];renderMathInElement(document.body,{delimiters:e,throwOnError:!1,errorColor:"#cc0000",fleqn:!1,leqno:!1,trust:!1})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",initKaTeX):initKaTeX()</script><div id=search-overlay class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div><div id=search-modal class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300"><div class="border-border flex items-center gap-3 border-b p-4"><div class="text-muted-foreground h-5 w-5 flex-shrink-0"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5A7 7 0 113 10a7 7 0 0114 0z"/></svg></div><div class="relative flex-1"><button id=search-clear class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200" title=지우기 aria-label=지우기>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/></svg>
+</button>
+<input id=search-input type=text placeholder="게시글 검색..." class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none" autocomplete=off spellcheck=false></div><button id=search-close class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200" title=닫기 aria-label=닫기>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/></svg></button></div><div id=search-results class="max-h-96 overflow-y-auto"><div id=search-empty class="flex flex-col items-center justify-center py-12 text-center"><div class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5A7 7 0 113 10a7 7 0 0114 0z"/></svg></div><h3 class="text-foreground mb-2 text-lg font-semibold">검색 시작</h3><p class="text-muted-foreground text-sm">검색어를 입력하세요</p></div><div id=search-loading class="flex hidden items-center justify-center py-8"><div class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div><span class=text-muted-foreground>검색 중...</span></div><div id=search-no-results class="flex hidden flex-col items-center justify-center py-12 text-center"><div class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg></div><h3 class="text-foreground mb-2 text-lg font-semibold">검색 결과 없음</h3><p class="text-muted-foreground text-sm">다른 검색어로 시도해보세요</p></div><div id=search-results-list class=hidden><div id=search-stats class="text-muted-foreground border-border border-b px-4 py-3 text-sm" data-template="%d개의 결과 찾음"></div><div id=search-items class="divide-border divide-y"></div></div></div><div class="border-border bg-muted/20 border-t px-4 py-3"><div class="text-muted-foreground flex items-center justify-between text-xs"><div class="flex items-center gap-2 md:gap-4"><div class="flex items-center gap-1"><kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs">↑↓</kbd>
+<span class="hidden sm:inline">이동</span></div><div class="flex items-center gap-1"><kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs">↵</kbd>
+<span class="hidden sm:inline">선택</span></div><div class="flex items-center gap-1"><kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs">ESC</kbd>
+<span class="hidden sm:inline">닫기</span></div></div><div class="search-hint-desktop flex items-center gap-1"><kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs">⌘K</kbd>
+<span>단축키</span></div></div></div></div></body></html>

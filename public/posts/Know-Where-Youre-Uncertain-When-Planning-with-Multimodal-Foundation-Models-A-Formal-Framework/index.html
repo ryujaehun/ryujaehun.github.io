@@ -1,0 +1,2341 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Know Where You&#39;re Uncertain When Planning with Multimodal Foundation Models: A Formal Framework | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 이 논문(&ldquo;KNOW WHERE YOU&rsquo;RE..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/Know-Where-Youre-Uncertain-When-Planning-with-Multimodal-Foundation-Models-A-Formal-Framework/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/Know-Where-Youre-Uncertain-When-Planning-with-Multimodal-Foundation-Models-A-Formal-Framework/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="Know Where You&#39;re Uncertain When Planning with Multimodal Foundation Models: A Formal Framework">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 이 논문(“KNOW WHERE YOU’RE UNCERTAIN WHEN PLANNING WITH MULTIMODAL FOUNDATION MODELS: A FORMAL FRAMEWORK”)은 로봇이 멀티모달 파운데이션 모델(시각과 언어를 함께 이해하는 모델)을 사용하여 계획을 수립할 때 발생하는 불확실성을 체계적으로 분석하고 해결하는 새로운 프레임워크를 제시합니다. 논문을 정밀하게 분석하여 강점과 독창성, 핵심 알고리즘의 작동 방식, 그리고 잠재적인 한계점을 설명해 드리겠습니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-06-10T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-06-10T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="Know Where You&#39;re Uncertain When Planning with Multimodal Foundation Models: A Formal Framework">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 이 논문(“KNOW WHERE YOU’RE UNCERTAIN WHEN PLANNING WITH MULTIMODAL FOUNDATION MODELS: A FORMAL FRAMEWORK”)은 로봇이 멀티모달 파운데이션 모델(시각과 언어를 함께 이해하는 모델)을 사용하여 계획을 수립할 때 발생하는 불확실성을 체계적으로 분석하고 해결하는 새로운 프레임워크를 제시합니다. 논문을 정밀하게 분석하여 강점과 독창성, 핵심 알고리즘의 작동 방식, 그리고 잠재적인 한계점을 설명해 드리겠습니다.">
+
+
+  <meta itemprop="name" content="Know Where You&#39;re Uncertain When Planning with Multimodal Foundation Models: A Formal Framework">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 이 논문(“KNOW WHERE YOU’RE UNCERTAIN WHEN PLANNING WITH MULTIMODAL FOUNDATION MODELS: A FORMAL FRAMEWORK”)은 로봇이 멀티모달 파운데이션 모델(시각과 언어를 함께 이해하는 모델)을 사용하여 계획을 수립할 때 발생하는 불확실성을 체계적으로 분석하고 해결하는 새로운 프레임워크를 제시합니다. 논문을 정밀하게 분석하여 강점과 독창성, 핵심 알고리즘의 작동 방식, 그리고 잠재적인 한계점을 설명해 드리겠습니다.">
+  <meta itemprop="datePublished" content="2025-06-10T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-06-10T00:00:00+00:00">
+  <meta itemprop="wordCount" content="17141">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gemini-2.5-Pro(preview),MLSYS2025">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">Know Where You&#39;re Uncertain When Planning with Multimodal Foundation Models: A Formal Framework</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    Know Where You&#39;re Uncertain When Planning with Multimodal Foundation Models: A Formal Framework
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2025-06-10">
+          2025년 06월 10일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >35 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>17141 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gemini-2.5-propreview/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gemini-2.5-pro(preview)
+                </a>
+              
+                <a
+                  href="/categories/MLSYS2025/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  MLSYS2025
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://openreview.net/pdf?id=HPHrIBlJYw">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<p>이 논문(&ldquo;KNOW WHERE YOU&rsquo;RE UNCERTAIN WHEN PLANNING WITH MULTIMODAL FOUNDATION MODELS: A FORMAL FRAMEWORK&rdquo;)은 로봇이 멀티모달 파운데이션 모델(시각과 언어를 함께 이해하는 모델)을 사용하여 계획을 수립할 때 발생하는 불확실성을 체계적으로 분석하고 해결하는 새로운 프레임워크를 제시합니다. 논문을 정밀하게 분석하여 강점과 독창성, 핵심 알고리즘의 작동 방식, 그리고 잠재적인 한계점을 설명해 드리겠습니다.</p>
+<h3 id="논문의-강점과-독창적인-지점">논문의 강점과 독창적인 지점</h3>
+<p>이 논문의 가장 큰 독창성이자 강점은 멀티모달 모델에서 발생하는 불확실성을 단일한 값으로 취급하지 않고, <strong>두 가지 주요 원인으로 &lsquo;분리(Disentangle)&lsquo;하여 각각을 정량화하고 맞춤형으로 해결했다는 점</strong>입니다.</p>
+<ol>
+<li>
+<p><strong>불확실성의 분리 (Uncertainty Disentanglement):</strong></p>
+<ul>
+<li>[cite_start]기존 연구들은 모델이 내놓은 결과물의 불확실성을 하나의 &lsquo;덩어리&rsquo;로 측정했습니다[cite: 35, 36]. [cite_start]이 경우, 계획이 실패했을 때 그 원인이 &lsquo;잘못 봐서(인식 오류)&lsquo;인지 &lsquo;계획을 잘못 짜서(의사결정 오류)&lsquo;인지 알기 어려웠습니다[cite: 12].</li>
+<li>이 논문은 불확실성을 다음과 같이 명확히 두 종류로 정의하고 분리했습니다.
+<ul>
+<li>[cite_start]<strong>인식 불확실성 (Perception Uncertainty):</strong> 모델이 시각적 데이터를 얼마나 정확하게 이해하고 해석하는지에 대한 불확실성입니다 (예: 객체 인식, 위치 파악의 어려움)[cite: 18].</li>
+<li>[cite_start]<strong>의사결정 불확실성 (Decision Uncertainty):</strong> 인식이 완벽하더라도, 주어진 임무 명세(specification)를 만족하는 행동 계획을 생성하는 능력에 대한 불확실성입니다[cite: 20, 22].</li>
+</ul>
+</li>
+<li>[cite_start]이러한 분리는 문제의 근본 원인을 진단하고, 각 문제에 맞는 해결책(개입, Intervention)을 적용할 수 있게 하는 혁신적인 접근법입니다[cite: 13, 24].</li>
+</ul>
+</li>
+<li>
+<p><strong>새로운 정량화 방법론:</strong></p>
+<ul>
+<li>[cite_start]<strong>인식 불확실성:</strong> &lsquo;등각 예측(Conformal Prediction)&rsquo; 기법을 사용하여 모델의 신뢰도 점수를 통계적으로 보정된 확률 값으로 변환합니다[cite: 5, 26]. [cite_start]이는 단순히 모델이 출력하는 소프트맥스 점수보다 훨씬 신뢰할 수 있는 불확실성 척도를 제공합니다[cite: 63, 64].</li>
+<li>[cite_start]<strong>의사결정 불확실성:</strong> **&lsquo;정형 기법 기반 예측(Formal-Methods-Driven Prediction, FMDP)&rsquo;**이라는 독창적인 방법을 제안했습니다[cite: 27, 86]. [cite_start]이는 사람이 일일이 정답 계획을 제공할 필요 없이, 사전에 정의된 &lsquo;안전 규칙&rsquo;이나 &lsquo;임무 규칙&rsquo;(예: &ldquo;보행자가 있으면 항상 멈춘다&rdquo;)을 생성된 계획이 만족하는지 자동으로 검증하는 방식입니다[cite: 76, 41]. 이 검증 결과를 바탕으로 등각 예측을 적용하여 의사결정의 신뢰도를 정량화합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>목표 지향적 개입 (Targeted Interventions):</strong></p>
+<ul>
+<li>분리된 불확실성 측정치를 바탕으로 두 가지의 구체적이고 효과적인 해결책을 구현했습니다.
+<ul>
+<li>[cite_start]<strong>능동적 감지 (Active Sensing):</strong> 인식 불확실성이 높게 측정되면(즉, 무언가 잘못 볼 확률이 높으면), 계획 생성을 멈추고 카메라 각도를 바꾸거나 잠시 기다린 후 다시 관찰하여 확실한 시각적 정보를 얻도록 합니다[cite: 6, 29, 126].</li>
+<li>[cite_start]<strong>자동화된 정제 (Automated Refinement):</strong> 인식 불확실성이 <em>낮고</em> 의사결정 불확실성도 <em>낮은</em>(즉, 확실하게 보고 규칙도 잘 지킨) 데이터만을 자동으로 수집하여 모델을 미세조정(fine-tuning)합니다[cite: 124, 146]. [cite_start]이를 통해 사람의 개입 없이도 모델이 점차 임무 명세를 더 잘 따르는 계획을 생성하도록 학습시킬 수 있습니다[cite: 30, 150].</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>[cite_start]이러한 접근을 통해, 이 연구는 실제 및 시뮬레이션 환경에서 모델 성능의 변동성을 최대 40% 줄이고 임무 성공률을 5% 향상시키는 성과를 보였습니다[cite: 7, 32].</p>
+<h3 id="핵심-알고리즘-과정-예시">핵심 알고리즘 과정 예시</h3>
+<p>논문의 그림 4와 8에 나온 자율주행 시나리오를 바탕으로 핵심 알고리즘의 전체 과정을 설명하겠습니다.</p>
+<p><strong>시나리오:</strong> 로봇 자동차가 교차로에 접근 중입니다. 이미지에는 빨간불과 횡단보도를 건너는 보행자가 보입니다. 이때 모델에게 &ldquo;신호등에서 우회전하세요&quot;라는 임무가 주어집니다.</p>
+<p><strong>1단계: 입력 및 인식 불확실성 측정</strong></p>
+<ul>
+<li>[cite_start]<strong>입력:</strong> 로봇은 현재 카메라 이미지와 &ldquo;신호등에서 우회전하세요&quot;라는 텍스트 프롬프트를 입력받습니다[cite: 47].</li>
+<li>[cite_start]<strong>인식:</strong> 모델의 비전 인코더(Vision Encoder)는 이미지를 분석하여 &lsquo;자동차&rsquo;, &lsquo;빨간 신호등&rsquo;, &lsquo;보행자&rsquo; 등의 객체를 탐지합니다[cite: 49].</li>
+<li><strong>인식 불확실성 계산 ($u_p$):</strong> 각 탐지된 객체에 대해 모델은 신뢰도 점수를 출력합니다. [cite_start]이 점수는 사전에 계산된 &lsquo;인식 불일치 분포(Perception Nonconformity Distribution)&lsquo;와 등각 예측 공식(Eq. 5)을 통해 보정됩니다[cite: 170]. 예를 들어, 보행자가 명확하게 보여서 보정된 인식 불확실성 점수가 $u_p = 0.9$로 계산되었다고 가정합니다.</li>
+<li>[cite_start]<strong>1차 개입 (능동적 감지):</strong> 시스템은 이 점수를 사전에 설정된 임계값($t_p$, 예: 0.7)과 비교합니다[cite: 130]. $0.9 \ge 0.7$ 이므로 인식 불확실성이 낮다고 판단하고, 재관찰 없이 다음 단계로 진행합니다. [cite_start]만약 그림자가 많아 보행자가 불분명하여 $u_p$가 0.6으로 나왔다면, 시스템은 계획 생성을 멈추고 &ldquo;재관찰(Re-Observe)&ldquo;을 수행했을 것입니다[cite: 131].</li>
+</ul>
+<p><strong>2단계: 계획 생성 및 의사결정 불확실성 측정</strong></p>
+<ul>
+<li>[cite_start]<strong>계획 생성:</strong> 이제 신뢰성 있는 시각 정보(이미지 임베딩)와 텍스트 프롬프트가 텍스트 생성기(Text Generator)로 전달됩니다[cite: 50]. 생성기는 다음과 같은 계획과 원시 신뢰도(raw confidence) 점수를 출력합니다:
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><strong>계획:</strong> &ldquo;1. 보행자를 기다립니다. 2. 우회전합니다.&rdquo;
+<strong>원시 신뢰도:</strong> 0.88</p>
+    </div>
+  </blockquote>
+
+</li>
+<li><strong>의사결정 불확실성 계산 ($u_d$) - FMDP:</strong>
+<ol>
+<li>[cite_start]<strong>자동화된 검증:</strong> 이 계획(&ldquo;1. 보행자를 기다립니다&hellip;&quot;)은 알고리즘 1에 따라 컴퓨터가 이해할 수 있는 형식인 &lsquo;크립키 구조(Kripke Structure)&lsquo;로 변환됩니다[cite: 91, 93].</li>
+<li>[cite_start]<strong>규칙 확인:</strong> 시스템은 이 크립키 구조가 사전에 정의된 논리 명세(예: $\phi_{2}=\Box$(pedestrian → wait), 즉 &ldquo;항상 보행자가 있으면 기다려야 한다&rdquo;)를 만족하는지 모델 체커(Model Checker)를 통해 검증합니다[cite: 99]. 위 계획은 이 규칙을 만족하므로 &lsquo;통과&rsquo; 판정을 받습니다.</li>
+<li>[cite_start]<strong>$u_d$ 계산:</strong> 모델이 출력한 원시 신뢰도 점수(0.88)는 사전에 구축된 &lsquo;의사결정 불일치 분포&rsquo;와 등각 예측 공식(Eq. 8)을 통해 최종 의사결정 불확실성 점수 $u_d$로 보정됩니다[cite: 108]. 예를 들어, $u_d = 0.95$로 계산되었다고 가정합니다.</li>
+</ol>
+</li>
+</ul>
+<p><strong>3단계: 최종 개입 (실행 결정)</strong></p>
+<ul>
+<li>[cite_start]<strong>실행 여부 판단:</strong> 시스템은 계산된 의사결정 불확실성 점수($u_d=0.95$)를 실행 임계값($t_d$, 예: 0.7)과 비교합니다[cite: 121].</li>
+<li>[cite_start]<strong>결과:</strong> $0.95 \ge 0.7$ 이므로, 시스템은 이 계획이 안전하고 임무 명세를 잘 따를 것이라고 판단하여 <strong>계획을 실행</strong>합니다[cite: 121].</li>
+</ul>
+<p>만약 모델이 &ldquo;신호등이 빨간불이니 그냥 우회전하세요&quot;라는 위험한 계획을 생성했다면, 이 계획은 모델 체킹 단계에서 $\phi_{2}$ 규칙을 위반하여 &lsquo;실패&rsquo; 판정을 받았을 것입니다. [cite_start]이런 경우, 보정된 $u_d$ 값은 임계값 $t_d$보다 훨씬 낮게 나와서 계획 실행이 거부되었을 것입니다[cite: 228]. 이것이 바로 이 프레임워크의 핵심 안전장치입니다.</p>
+<h3 id="논문의-한계점">논문의 한계점</h3>
+<p>이 논문은 매우 독창적이고 강력하지만 몇 가지 잠재적인 한계점을 가지고 있습니다.</p>
+<ol>
+<li>
+<p>[cite_start]<strong>정형 명세의 완전성 문제:</strong> FMDP의 효과는 사전에 정의된 논리 명세($\Phi$)의 품질과 완전성에 크게 의존합니다[cite: 83]. 복잡한 실제 운전 상황의 모든 안전 규칙과 엣지 케이스를 사람이 완벽하게 논리식으로 정의하기는 어렵습니다. 만약 명세에 허점이 있다면, 모델은 그 허점을 파고드는 잘못된 행동을 &lsquo;안전하다&rsquo;고 학습할 수 있습니다.</p>
+</li>
+<li>
+<p>[cite_start]<strong>자연어 계획의 해석 모호성:</strong> 알고리즘 1은 자연어 계획을 크립키 구조로 변환합니다[cite: 91]. 그러나 자연어는 본질적으로 모호성을 내포합니다. [cite_start]저자들은 인-컨텍스트 예시(in-context examples)를 통해 생성되는 계획의 문장 구조와 어휘를 제한한다고 언급했지만[cite: 167], 예상치 못한 복잡하거나 비정형적인 표현이 나올 경우 파싱 오류가 발생하여 검증 과정 전체가 왜곡될 수 있습니다.</p>
+</li>
+<li>
+<p>[cite_start]<strong>계산 복잡성:</strong> 저자들도 인정한 바와 같이, 모델 체킹은 검증해야 할 상태(state)의 수에 비례하고, 논리 명세에 포함된 원자 명제(atomic proposition)의 수에 따라 지수적으로 복잡도가 증가합니다[cite: 116]. 따라서 매우 복잡한 시나리오나 수십 개의 규칙을 동시에 검증해야 하는 상황에서는 실시간 계획 수립에 병목이 될 수 있습니다. [cite_start](이 때문에 저자들은 검증 과정을 오프라인으로 처리하고 온라인에서는 이미 계산된 분포를 통해 추정만 합니다 [cite: 118, 119]).</p>
+</li>
+<li>
+<p><strong>다루지 않은 다른 종류의 불확실성:</strong> 이 논문은 인식과 의사결정 불확실성에 집중합니다. 하지만 로봇 시스템에는 다른 종류의 불확실성도 존재합니다. 예를 들어, <strong>실행 불확실성</strong>(바퀴가 미끄러지거나 로봇 팔이 정밀하게 움직이지 못하는 경우)이나 <strong>세상 모델의 불확실성</strong>(관찰과 실행 사이에 세상이 예상치 못하게 변하는 경우) 등은 다루지 않았습니다. [cite_start]저자들도 향후 과제로 이를 언급하고 있습니다[cite: 234].</p>
+</li>
+<li>
+<p>[cite_start]<strong>보정 데이터의 분포 의존성:</strong> 등각 예측은 보정용 데이터셋과 실제 테스트 데이터가 동일한 확률 분포(i.i.d. assumption)를 따른다고 가정합니다[cite: 55, 57]. 만약 로봇이 낮에 도심에서 학습(보정) 데이터를 수집하고, 밤이나 시골길처럼 완전히 다른 환경에 놓인다면, 보정된 불확실성 점수의 신뢰도가 떨어질 수 있습니다.</p>
+</li>
+</ol>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<h2 id="논문의-핵심-알고리즘-상세-설명-예시-기반">논문의 핵심 알고리즘 상세 설명 (예시 기반)</h2>
+<p>이 논문의 핵심 알고리즘은 **&lsquo;불확실성 분리 및 정량화 파이프라인&rsquo;**입니다. [cite_start]이 파이프라인은 로봇이 시각 정보와 임무 지시를 받아 행동 계획을 생성하고 실행하기까지의 전 과정에서, 발생할 수 있는 &lsquo;인식&rsquo;과 &lsquo;의사결정&rsquo;의 불확실성을 단계별로 측정하고, 그 결과에 따라 지능적으로 다음 행동(재관찰, 계획 수정, 실행)을 결정하는 체계입니다[cite: 3].</p>
+<p>아래는 논문의 사례 연구(그림 8)를 바탕으로 알고리즘의 각 단계를 아주 자세하게 설명한 것입니다.</p>
+<hr>
+<h3 id="예시-시나리오"><strong>예시 시나리오</strong></h3>
+<ul>
+<li>[cite_start]<strong>입력 이미지:</strong> 교차로에 <strong>빨간불</strong>이 켜져 있고, <strong>횡단보도에 보행자</strong>가 지나가고 있는 상황입니다[cite: 204].</li>
+<li><strong>입력 텍스트 프롬프트:</strong> &ldquo;<strong>정지 표지판</strong>에서 우회전하세요.&rdquo; [cite_start](실제 이미지와는 불일치하는 지시)[cite: 212].</li>
+<li><strong>목표:</strong> 이 상황에서 안전 규칙을 모두 준수하는 최적의 행동 계획을 생성하고 실행 여부를 결정하는 것.</li>
+</ul>
+<hr>
+<h3 id="핵심-알고리즘-단계별-과정"><strong>핵심 알고리즘 단계별 과정</strong></h3>
+<h4 id="1단계-인식-불확실성perception-uncertainty-측정"><strong>1단계: 인식 불확실성(Perception Uncertainty) 측정</strong></h4>
+<p>로봇이 계획을 세우기 전, 현재 상황을 &lsquo;제대로&rsquo; 보고 있는지부터 확인합니다.</p>
+<ol>
+<li>[cite_start]<strong>객체 탐지:</strong> 모델의 비전 인코더(Vision Encoder)가 입력 이미지를 분석하여 주요 객체들(&lsquo;빨간 신호등&rsquo;, &lsquo;자동차&rsquo;, &lsquo;보행자&rsquo;)을 탐지합니다[cite: 49, 154].</li>
+<li>[cite_start]<strong>신뢰도 보정:</strong> 각 탐지된 객체에 대해 모델은 원시적인 신뢰도 점수(예: 소프트맥스 값)를 출력합니다[cite: 48]. 이 점수는 그대로 사용되지 않습니다. [cite_start]대신, 사전에 &lsquo;등각 예측(Conformal Prediction)&rsquo; 기법으로 보정된 **인식 불확실성 점수 ($u_p$)**로 변환됩니다[cite: 64, 74].
+<ul>
+<li>[cite_start]<strong>작동 원리:</strong> 미리 수집된 보정용 데이터셋(calibration set)에서 모델의 예측이 얼마나 맞았는지를 바탕으로 &lsquo;불일치 점수 분포&rsquo;를 만들어 둡니다[cite: 68, 69]. [cite_start]새로운 이미지의 신뢰도 점수가 이 분포에서 어느 위치에 해당하는지를 계산하여, 통계적으로 유의미한 &ldquo;정확히 예측했을 확률의 하한값&quot;을 구합니다[cite: 60].</li>
+</ul>
+</li>
+<li>[cite_start]<strong>능동적 감지(Active Sensing) 결정:</strong> 계산된 인식 불확실성 점수($u_p$)를 사전에 설정된 임계값($t_p$, 예: 0.7)과 비교합니다[cite: 130, 176].
+<ul>
+<li><strong>결과:</strong> 이 예시에서는 신호등과 보행자가 명확하게 보이므로, $u_p$가 임계값($t_p$)보다 높게 측정됩니다 (예: $u_p=0.9$). [cite_start]따라서 시스템은 &ldquo;인식이 신뢰할 만하다&quot;고 판단하고 다음 단계로 진행합니다[cite: 130]. [cite_start]만약 객체가 심하게 가려져 있거나 그림자 때문에 인식이 불확실하여 $u_p &lt; t_p$ 라면, 시스템은 계획 생성을 멈추고 카메라 각도를 바꾸는 등의 &lsquo;재관찰&rsquo;을 먼저 수행합니다[cite: 131].</li>
+</ul>
+</li>
+</ol>
+<h4 id="2단계-행동-계획-생성"><strong>2단계: 행동 계획 생성</strong></h4>
+<p>[cite_start]신뢰할 수 있는 시각 정보가 확보되면, 모델의 텍스트 생성기(Text Generator)는 이 정보와 입력 프롬프트를 종합하여 행동 계획을 만듭니다[cite: 50].</p>
+<ul>
+<li>
+<p><strong>생성된 계획 (논문의 정제된 모델 기준):</strong></p>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p>[cite_start]1. 신호등이 초록불로 바뀔 때까지 기다립니다[cite: 221].
+[cite_start]2. 우회전합니다[cite: 221].</p>
+    </div>
+  </blockquote>
+
+<ul>
+<li><strong>주목할 점:</strong> 모델은 프롬프트의 오류(&ldquo;정지 표지판&rdquo;)를 무시하고, 실제 이미지의 핵심 정보(&lsquo;빨간불&rsquo;, &lsquo;보행자&rsquo;)를 바탕으로 안전한 계획을 생성했습니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="3단계-의사결정-불확실성decision-uncertainty-측정---fmdp"><strong>3단계: 의사결정 불확실성(Decision Uncertainty) 측정 - FMDP</strong></h4>
+<p>생성된 계획이 &lsquo;과연 안전하고 합리적인가&rsquo;를 검증하는 가장 핵심적인 단계입니다. [cite_start]이는 **정형 기법 기반 예측(FMDP, Formal-Methods-Driven Prediction)**을 통해 이루어집니다[cite: 27, 86].</p>
+<ol>
+<li>[cite_start]<strong>계획의 정형적 변환 (알고리즘 1):</strong> 생성된 자연어 계획을 컴퓨터가 검증할 수 있는 &lsquo;크립키 구조(Kripke Structure)&lsquo;라는 상태 전이 다이어그램으로 변환합니다[cite: 91, 93].
+<ul>
+<li>(초기 상태: 빨간불, 보행자 있음) → (상태 1: &lsquo;기다림&rsquo; 실행) → (상태 2: &lsquo;우회전&rsquo; 실행) → (상태 3: 임무 완료)</li>
+</ul>
+</li>
+<li>[cite_start]<strong>모델 체킹(Model Checking)을 통한 규칙 검증:</strong> 변환된 크립키 구조가 사전에 정의된 안전 및 교통 규칙(Temporal Logic Specifications)을 위반하지 않는지 자동으로 확인합니다[cite: 46, 99].
+<ul>
+<li>[cite_start]<strong>사전 정의된 규칙의 예[cite: 159]:</strong>
+<ul>
+<li>$\phi_1 = \Box \neg$(red light $\land$ move forward)  <em>(항상, 빨간불일 때 전진하면 안 된다)</em></li>
+<li>$\phi_2 = \Box$(pedestrian → wait) <em>(항상, 보행자가 있으면 기다려야 한다)</em></li>
+</ul>
+</li>
+<li><strong>검증 결과:</strong> 위에서 생성된 계획(&ldquo;기다린 후 우회전&rdquo;)은 이 규칙들을 모두 만족하므로 &lsquo;검증 통과&rsquo; 판정을 받습니다.</li>
+</ul>
+</li>
+<li>[cite_start]<strong>불확실성 점수($u_d$) 계산:</strong> 모델이 계획을 생성할 때 함께 출력한 원시 신뢰도 점수(예: 0.92)를 다시 한번 등각 예측 기법으로 보정하여 최종 **의사결정 불확실성 점수($u_d$)**를 계산합니다[cite: 108].
+<ul>
+<li>[cite_start]<strong>작동 원리:</strong> &lsquo;인식&rsquo; 단계와 유사하게, 사전에 &lsquo;모델 체킹을 통과한&rsquo; 계획들의 신뢰도 점수 분포를 미리 만들어 둡니다[cite: 101, 104]. [cite_start]현재 계획의 신뢰도 점수가 이 &lsquo;성공 사례 분포&rsquo;에서 얼마나 믿을 만한 위치에 있는지를 계산하여 &ldquo;이 계획이 모든 규칙을 만족할 확률의 하한값&quot;을 구합니다[cite: 84, 113].</li>
+</ul>
+</li>
+</ol>
+<h4 id="4단계-최종-실행-결정"><strong>4단계: 최종 실행 결정</strong></h4>
+<p>이제 모든 불확실성 점검이 끝났습니다. 시스템은 최종적으로 이 계획을 실행할지 말지를 결정합니다.</p>
+<ol>
+<li>[cite_start]<strong>실행 여부 판단:</strong> 계산된 의사결정 불확실성 점수($u_d$)를 최종 실행 임계값($t_d$, 예: 0.7)과 비교합니다[cite: 120, 121].</li>
+<li>[cite_start]<strong>최종 행동:</strong> 만약 $u_d=0.95$로 계산되었다면, $u_d \ge t_d$ 조건을 만족하므로 시스템은 **&ldquo;이 계획은 안전하고 신뢰할 수 있으니 실행하라&rdquo;**고 최종 결정을 내립니다[cite: 121]. [cite_start]만약 모델이 &ldquo;보행자를 무시하고 우회전하라&quot;는 위험한 계획을 내놓았다면, 3단계의 모델 체킹에서 실패하여 $u_d$ 값이 매우 낮게(예: 0.1) 측정되었을 것이고, 결국 $u_d &lt; t_d$ 이므로 계획은 실행되지 않고 폐기되었을 것입니다[cite: 228].</li>
+</ol>
+<h3 id="알고리즘-요약"><strong>알고리즘 요약</strong></h3>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">단계</th>
+          <th style="text-align: left">수행 내용</th>
+          <th style="text-align: left">주요 기술/알고리즘</th>
+          <th style="text-align: left">결과물</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><strong>1. 인식</strong></td>
+          <td style="text-align: left">이미지 속 객체들이 얼마나 확실하게 보이는지 측정</td>
+          <td style="text-align: left">등각 예측 (Conformal Prediction)</td>
+          <td style="text-align: left">인식 불확실성 점수 ($u_p$)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>2. 계획</strong></td>
+          <td style="text-align: left">신뢰성 있는 시각 정보 기반으로 행동 계획 생성</td>
+          <td style="text-align: left">멀티모달 파운데이션 모델</td>
+          <td style="text-align: left">텍스트 계획</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>3. 의사결정</strong></td>
+          <td style="text-align: left">생성된 계획이 안전 규칙을 준수하는지 검증하고 정량화</td>
+          <td style="text-align: left">정형 기법(Formal Methods), 모델 체킹, 등각 예측 (FMDP)</td>
+          <td style="text-align: left">의사결정 불확실성 점수 ($u_d$)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>4. 실행</strong></td>
+          <td style="text-align: left">측정된 불확실성 점수가 모두 임계값을 통과하면 계획 실행</td>
+          <td style="text-align: left">임계값 비교</td>
+          <td style="text-align: left">실행 또는 거부</td>
+      </tr>
+  </tbody>
+</table>
+<p>이처럼 논문의 핵심 알고리즘은 &lsquo;보고-생각하고-검증하고-행동하는&rsquo; 인간의 의사결정 과정과 유사하게, 각 단계의 불확실성을 체계적으로 관리하여 로봇의 안정성과 신뢰도를 극대화하는 정교한 프레임워크입니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<p>이 논문이 제시한 결과와 그 원인에 대해 논문의 설명과 저의 분석을 종합하여 자세히 알려드리겠습니다.</p>
+<hr>
+<h3 id="논문에서-제시된-상세한-결과-"><strong>논문에서 제시된 상세한 결과</strong> 📊</h3>
+<p>이 연구는 제안된 &lsquo;불확실성 분리 프레임워크&rsquo;가 실제 성능 향상으로 이어진다는 것을 여러 지표를 통해 구체적으로 보여줍니다.</p>
+<ul>
+<li>
+<p>[cite_start]<strong>핵심 성능 향상:</strong> 벤치마크(단순 미세조정) 방법론 대비, 제안된 프레임워크는 <strong>임무 명세 충족 확률(성공률)을 최대 5% 향상</strong>시키고, 성능의 <strong>표준편차(변동성)를 40%까지 감소</strong>시켰습니다[cite: 7, 201]. 이는 모델이 더 정확할 뿐만 아니라, 훨씬 더 일관되고 예측 가능하게 작동한다는 의미입니다.</p>
+</li>
+<li>
+<p>[cite_start]<strong>개입(Intervention)의 단계별 효과 (Table 2)[cite: 193]:</strong></p>
+<ul>
+<li>[cite_start]<strong>능동적 감지(Active Sensing) 적용 시:</strong> 아무것도 적용하지 않은 &lsquo;순정 모델&rsquo;에 능동적 감지만 추가해도, 평균 인식 불확실성 점수가 0.842에서 0.936으로 크게 상승했습니다[cite: 193]. 이는 더 확실한 시각 정보만을 사용하게 되었다는 뜻입니다.</li>
+<li>[cite_start]<strong>자동화된 정제(Automated Refinement) 적용 시:</strong> 제안된 프레임워크로 미세조정한 모델은 벤치마크 모델 대비 **평균 의사결정 불확실성 점수(0.931 → 0.955)**와 <strong>명세 충족 확률(0.933 → 0.959)</strong> 모두에서 더 높은 점수를 기록했습니다[cite: 193]. [cite_start]특히 <strong>성능 표준편차</strong>가 0.048에서 0.025로 거의 절반 수준으로 줄어든 것이 인상적입니다[cite: 193].</li>
+</ul>
+</li>
+<li>
+<p><strong>안전성 및 효율성:</strong></p>
+<ul>
+<li><strong>실행 단계의 안전장치:</strong> 미세조정 후에도 100% 완벽하지 않은 계획들이 생성되었지만(50개 중 4개), 이 계획들은 모두 제안된 &lsquo;의사결정 불확실성 점수&rsquo;가 임계값(0.7)보다 낮았습니다. [cite_start]이 점수를 기준으로 실행을 통제하자 <strong>규칙 위반 확률이 8%에서 0%로 감소</strong>했습니다[cite: 227, 228].</li>
+<li>[cite_start]<strong>학습 효율성:</strong> 제안된 프레임워크는 벤치마크에 비해 더 부드럽고 낮은 손실(loss) 값으로 수렴하는 모습을 보였습니다(그림 6)[cite: 187, 194].</li>
+<li>[cite_start]<strong>Sim2Real 이전 성능:</strong> 시뮬레이션 데이터로만 학습했음에도 불구하고, 실제 환경 데이터에서 <strong>95% 이상의 명세 충족 확률</strong>을 보여주어 뛰어난 일반화 성능을 입증했습니다[cite: 209].</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="다른-방법론과-비교되는-특출난-점-"><strong>다른 방법론과 비교되는 특출난 점</strong> ✨</h3>
+<ol>
+<li>
+<p>[cite_start]<strong>&lsquo;블랙박스&rsquo; 탈피와 진단 능력:</strong> 기존 연구들은 모델의 불확실성을 하나의 뭉뚱그려진 값으로 측정했습니다[cite: 35]. [cite_start]반면 이 연구는 불확실성을 <strong>&lsquo;인식(Perception)&lsquo;과 &lsquo;의사결정(Decision)&lsquo;으로 분리</strong>하여, 실패의 근본 원인이 &lsquo;잘못 본 것&rsquo;인지 &lsquo;잘못 생각한 것&rsquo;인지 진단할 수 있게 했습니다[cite: 12]. 이 진단 능력이 가장 큰 차별점입니다.</p>
+</li>
+<li>
+<p>[cite_start]<strong>맞춤형 문제 해결:</strong> 원인 진단이 가능해지자, 문제에 맞는 **목표 지향적 개입(Targeted Intervention)**이 가능해졌습니다[cite: 16].</p>
+<ul>
+<li>인식 문제 → **능동적 감지(Active Sensing)**로 해결</li>
+<li>의사결정 문제 → **자동화된 정제(Automated Refinement)**로 해결</li>
+<li>이는 마치 의사가 열이 나는 환자에게 무작정 해열제를 주는 대신, 원인이 세균 감염이면 항생제를, 바이러스 감염이면 항바이러스제를 처방하는 것과 같습니다.</li>
+</ul>
+</li>
+<li>
+<p>[cite_start]<strong>확장 가능한 자동화:</strong> 의사결정 불확실성을 측정하는 FMDP는 사람이 일일이 정답 계획을 만들어줄 필요가 없습니다[cite: 38, 41]. [cite_start]대신, 컴퓨터가 검증할 수 있는 &lsquo;정형 규칙&rsquo;을 사용하므로, 데이터 생성 및 모델 정제 과정을 <strong>자동화하고 확장하기 용이</strong>합니다[cite: 76].</p>
+</li>
+</ol>
+<hr>
+<h3 id="결과-도출-원인에-대한-논문의-분석-"><strong>결과 도출 원인에 대한 논문의 분석</strong> 📝</h3>
+<p>논문은 이러한 뛰어난 결과가 나온 이유를 다음과 같이 설명합니다.</p>
+<ul>
+<li>
+<p>[cite_start]<strong>핵심 원인: 분리를 통한 맞춤형 개입의 시너지:</strong> 논문은 이 모든 성능 향상이 **&ldquo;두 개입(능동적 감지, 자동화된 정제)의 시너지 효과&rdquo;**와, 이를 가능하게 한 <strong>&ldquo;불확실성 분리(uncertainty disentanglement)의 중요성&rdquo;</strong> 덕분이라고 명시적으로 밝히고 있습니다[cite: 8, 33].</p>
+</li>
+<li>
+<p>[cite_start]<strong>자동화된 정제의 우월성:</strong> 벤치마크 대비 미세조정 성능이 우월했던 가장 직접적인 이유는 <strong>&lsquo;학습 데이터의 품질&rsquo;</strong> 입니다[cite: 186].</p>
+<ul>
+<li>[cite_start]벤치마크는 모든 이미지를 일단 사용하지만, 제안된 프레임워크는 <strong>1차적으로 인식 불확실성이 높은(모호하게 보이는) 이미지를 걸러냅니다</strong>[cite: 186].</li>
+<li>이렇게 깨끗한 시각적 데이터에서 생성된 계획들만 정형적으로 검증하여 &lsquo;최고 품질&rsquo;의 데이터만으로 모델을 학습시킵니다. [cite_start]이는 모델이 모호하거나 잘못된 데이터로부터 잘못된 패턴을 학습할 위험을 원천적으로 차단합니다[cite: 208].</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="결과-도출-원인에-대한-나의-생각-ai의-분석-"><strong>결과 도출 원인에 대한 나의 생각 (AI의 분석)</strong> 🤖</h3>
+<p>논문의 분석에 전적으로 동의하며, 효과의 근본 원리를 다음과 같이 요약할 수 있습니다.</p>
+<ol>
+<li>
+<p><strong>&ldquo;Garbage In, Garbage Out&rdquo; 원칙의 엄격한 적용:</strong> 이 프레임워크의 성공은 &ldquo;쓰레기가 들어가면 쓰레기가 나온다&quot;는 컴퓨터 과학의 기본 원칙을 모델 학습에 매우 정교하게 적용한 결과입니다. &lsquo;자동화된 정제&rsquo; 과정은 사실상 <strong>고도로 지능화된 데이터 필터링 및 정제 파이프라인</strong>입니다.</p>
+<ul>
+<li>1단계 필터링: <code>인식 불확실성</code>을 기준으로 시각적 &lsquo;노이즈&rsquo;를 제거합니다.</li>
+<li>2단계 필터링: <code>의사결정 불확실성(FMDP)</code>을 기준으로 논리적 &lsquo;오류&rsquo;를 제거합니다.</li>
+<li>이렇게 두 번에 걸쳐 완벽하게 정제된 **&lsquo;황금 데이터셋(golden dataset)&rsquo;**으로 학습하니, 모델의 성능이 향상되는 것은 당연한 귀결입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>선순환 구조의 창출:</strong> 이 프레임워크는 일회성 개선이 아닌 <strong>&lsquo;지속적인 성능 강화의 선순환&rsquo;</strong> 구조를 만들어냅니다.</p>
+<ul>
+<li>(시작) 능동적 감지로 깨끗한 입력을 받는다 → (결과 1) 더 나은 계획이 생성된다 → (결과 2) 자동화된 정제를 위한 고품질 데이터가 쌓인다 → (결과 3) 미세조정된 모델의 성능이 더욱 향상된다 → (피드백) 향상된 모델은 다시 더 깨끗한 입력을 선호하고 더 나은 계획을 만든다.</li>
+<li>이러한 긍정적 피드백 루프가 모델을 점진적으로 더 강건하고 신뢰할 수 있게 만듭니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>문제 해결의 패러다임 전환:</strong> FMDP는 실용적인 관점에서 매우 영리한 접근입니다. 사람이 수천 개의 다양한 시나리오에 맞는 &lsquo;정답 계획&rsquo;을 주관적으로 만드는 고된 작업 대신, 객관적이고 명확한 <strong>&lsquo;안전 규칙(Formal Specifications)&rsquo; 몇 개를 정의하는 작업</strong>으로 문제의 패러다임을 전환했습니다. 규칙을 정의하는 것도 어렵지만, 주관적인 데이터를 무한정 만드는 것보다는 훨씬 확장 가능하고 명확한 작업입니다. 이것이 바로 사람의 개입을 최소화하면서도 신뢰도 높은 자동화 시스템을 구축할 수 있었던 핵심 비결이라고 생각합니다.</p>
+</li>
+</ol>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>이 논문이 제시한 한계들을 극복하기 위한 후속 연구들은 크게 <strong>5가지 방향</strong>으로 진행될 수 있습니다. 각 연구 흐름은 논문의 특정 한계를 해결하고, 로봇 시스템의 지능과 신뢰성을 한 차원 더 높이는 것을 목표로 합니다.</p>
+<hr>
+<h3 id="1-규칙의-동적-학습-및-자동-생성-연구"><strong>1. 규칙의 동적 학습 및 자동 생성 연구</strong></h3>
+<ul>
+<li>
+<p><strong>해결하려는 한계:</strong> 정형 명세의 완전성 문제. [cite_start]논문의 FMDP 방법론은 사람이 사전에 완벽한 안전 규칙을 정의해야 한다는 점에 의존합니다. [cite: 115, 116]</p>
+</li>
+<li>
+<p><strong>연구 방향:</strong></p>
+<ul>
+<li><strong>대화형 명세 정제(Interactive Specification Refinement):</strong> 사람이 모든 규칙을 처음부터 만드는 대신, AI가 생성한 계획을 보고 전문가가 &ldquo;이건 위험해&quot;라고 피드백을 주는 방식입니다. 그러면 AI는 이 피드백을 바탕으로 &ldquo;어떤 규칙이 부족했는지&quot;를 추론하고, 전문가와 함께 새로운 정형 규칙을 생성하거나 기존 규칙을 수정합니다. 이는 규칙을 점진적으로 발전시키는 효율적인 방법입니다.</li>
+<li><strong>데이터 기반 규칙 자동 채굴(Automated Rule Mining):</strong> 수많은 전문가의 운전 데이터나 시뮬레이션 로그를 분석하여, 그 안에 암묵적으로 내재된 안전 규칙이나 행동 패턴을 AI가 스스로 학습하여 정형 명세(Temporal Logic)로 추출해내는 연구입니다. 이는 사람이 미처 생각하지 못한 미묘한 규칙까지 발견할 수 있는 가능성을 엽니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-강건한-자연어-이해-및-구조화된-계획-생성-연구"><strong>2. 강건한 자연어 이해 및 구조화된 계획 생성 연구</strong></h3>
+<ul>
+<li>
+<p><strong>해결하려는 한계:</strong> 자연어 계획의 해석 모호성. 자연어로 된 계획을 컴퓨터가 이해하는 정형 구조(크립키 구조)로 변환할 때 오류가 발생할 수 있습니다.</p>
+</li>
+<li>
+<p><strong>연구 방향:</strong></p>
+<ul>
+<li><strong>구조화된 언어 생성(Structured Language Generation):</strong> 파운데이션 모델이 처음부터 자유로운 자연어가 아닌, 기계가 해석하기 쉬운 약속된 형태(예: 간소화된 프로그래밍 언어, JSON 형식)로 계획을 생성하도록 미세조정하는 연구입니다. 이는 자연어 파싱(parsing) 과정에서 발생하는 오류를 원천적으로 줄여 검증의 신뢰도를 높입니다.</li>
+<li><strong>확률론적 계획 검증(Probabilistic Plan Verification):</strong> 하나의 계획 텍스트에서 단 하나의 정형 구조를 생성하는 대신, 여러 해석의 가능성을 고려하여 확률적으로 분포된 여러 개의 정형 구조를 생성합니다. 그 후, &ldquo;이 계획이 규칙을 만족할 확률이 98%다&quot;와 같이 확률적으로 검증 결과를 도출하여, 해석의 모호성에 더 강건하게 대응하는 연구입니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-실행-및-물리-세계의-불확실성-통합-연구"><strong>3. 실행 및 물리 세계의 불확실성 통합 연구</strong></h3>
+<ul>
+<li>
+<p><strong>해결하려는 한계:</strong> 다루지 않은 다른 종류의 불확실성. [cite_start]이 논문은 인식과 의사결정에 집중했지만, 로봇이 실제로 움직일 때 발생하는 물리적 오류(예: 바퀴 미끄러짐)는 고려하지 않았습니다. [cite: 234]</p>
+</li>
+<li>
+<p><strong>연구 방향:</strong></p>
+<ul>
+<li><strong>실행 불확실성(Execution Uncertainty) 모델링:</strong> 로봇 공학의 전통적인 제어 이론을 파운데이션 모델의 계획 능력과 통합하는 연구입니다. 계획을 생성할 때, &ldquo;우회전하라&quot;는 단일 명령이 아닌, 바퀴가 미끄러질 가능성까지 고려하여 &ldquo;바퀴 속도를 모니터링하며 천천히 우회전하라&quot;와 같은 더 정교한 정책(Policy)을 생성합니다. 최종 신뢰도 점수는 &lsquo;인식+의사결정+실행&rsquo; 불확실성을 모두 종합하여 계산됩니다.</li>
+<li><strong>예측적 세계 모델(Predictive World Model) 도입:</strong> 현재 상태만 보는 것을 넘어, &ldquo;5초 후에 저 보행자는 횡단보도 중간에 있을 것이고, 그 예측에 대한 불확실성은 15%다&quot;와 같이 미래를 예측하고 그 예측의 불확실성까지 정량화하는 연구입니다. 이를 통해 훨씬 더 선제적이고 안전한 계획 수립이 가능해집니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-실시간-적응형-불확실성-보정-연구"><strong>4. 실시간 적응형 불확실성 보정 연구</strong></h3>
+<ul>
+<li>
+<p><strong>해결하려는 한계:</strong> 보정 데이터의 분포 의존성. 낮에 학습한 모델이 밤이나 낯선 환경에서는 불확실성 측정이 부정확해질 수 있습니다.</p>
+</li>
+<li>
+<p><strong>연구 방향:</strong></p>
+<ul>
+<li><strong>온라인/연속적 보정(Online/Continual Calibration):</strong> 로봇이 새로운 환경에서 임무를 수행하면서 얻는 새로운 데이터를 바탕으로, 불확실성 측정의 기준이 되는 &lsquo;불일치 점수 분포&rsquo;를 실시간으로 업데이트하는 연구입니다. 만약 모델의 예측이 자신의 불확실성 점수가 말해주는 것보다 더 자주 틀린다면, 시스템은 스스로를 &ldquo;의심&quot;하며 보정 기준을 더 보수적으로 자동 조정합니다.</li>
+<li><strong>도메인 적응형 등각 예측(Domain-Adaptive Conformal Prediction):</strong> 한 도메인(예: 맑은 날 시뮬레이션)에서 얻은 불확실성 보정 정보를, 완전히 다른 도메인(예: 비 오는 날 실제 도로)에 효과적으로 &ldquo;이전&quot;하는 기술을 연구합니다. 이는 매번 새로운 환경을 만날 때마다 방대한 보정용 데이터를 다시 수집할 필요가 없게 만들어 시스템의 실용성을 크게 높입니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="5-검증-과정의-계산-효율성-최적화-연구"><strong>5. 검증 과정의 계산 효율성 최적화 연구</strong></h3>
+<ul>
+<li>
+<p><strong>해결하려는 한계:</strong> 정형 검증의 계산 복잡성. [cite_start]규칙이 많아지면 모델 체킹이 느려져 실시간 반응이 어려울 수 있습니다. [cite: 116]</p>
+</li>
+<li>
+<p><strong>연구 방향:</strong></p>
+<ul>
+<li><strong>추상화 및 합성 검증(Abstraction and Compositional Verification):</strong> 복잡한 전체 시스템을 한 번에 검증하는 대신, 시스템을 &lsquo;주행&rsquo;, &lsquo;신호 인식&rsquo;, &lsquo;장애물 회피&rsquo; 등 작은 모듈로 나눕니다. 각 모듈을 개별적으로 검증한 후, 이들의 조합이 안전한지를 확인하는 방식입니다. 이는 전체를 한 번에 검증하는 것보다 훨씬 빠르고 효율적입니다.</li>
+<li><strong>근사 모델 체킹(Approximate Model Checking):</strong> 100% 수학적 보장을 약간 포기하는 대신, 계산 속도를 수십 배 이상 높이는 &lsquo;근사&rsquo; 검증 알고리즘을 개발하는 연구입니다. 로보틱스 분야에서는 약간의 오차를 감수하더라도 빠른 반응이 더 중요할 수 있으므로, 실용적인 절충안이 될 수 있습니다.</li>
+</ul>
+</li>
+</ul>
+<h1 id="q--기존의-단일-불확실성-측정-방식과-비교했을-때-인식-불확실성과-의사결정-불확실성을-분리하여-측정하는-것이-로봇의-신뢰성-향상에-구체적으로-어떤-이점을-제공하며-이는-어떤-새로운-해결책을-가능하게-했는가">Q : 기존의 단일 불확실성 측정 방식과 비교했을 때, &lsquo;인식 불확실성&rsquo;과 &lsquo;의사결정 불확실성&rsquo;을 분리하여 측정하는 것이 로봇의 신뢰성 향상에 구체적으로 어떤 이점을 제공하며, 이는 어떤 새로운 해결책을 가능하게 했는가?</h1>
+<p>[cite_start]&lsquo;인식 불확실성&rsquo;과 &lsquo;의사결정 불확실성&rsquo;을 분리하여 측정하는 것은, 로봇의 문제를 막연하게 파악하는 &lsquo;블랙박스&rsquo; 방식에서 벗어나, 실패의 근본 원인을 정확히 진단하고 맞춤형 해결책을 제시할 수 있게 하여 신뢰성을 향상시킵니다[cite: 12, 16, 36].</p>
+<hr>
+<h2 id="구체적인-이점-specific-advantages">구체적인 이점 (Specific Advantages)</h2>
+<h3 id="1-명확한-원인-진단-"><strong>1. 명확한 원인 진단 🩺</strong></h3>
+<p>[cite_start]기존의 단일 불확실성 측정 방식은 모델이 왜 확신하지 못하는지에 대한 통찰을 주지 못했습니다[cite: 36]. [cite_start]계획 실패가 부정확한 시각적 인식 때문인지, 아니면 계획 능력 자체의 한계 때문인지 불분명했습니다[cite: 12].</p>
+<p>불확실성을 분리함으로써, 시스템은 <strong>실패의 근본 원인을 정확히 지목</strong>할 수 있습니다. [cite_start]예를 들어, 로봇이 장애물을 잘못 인식하는 &lsquo;인식 문제&rsquo;와 장애물을 피하는 계획을 제대로 세우지 못하는 &lsquo;의사결정 문제&rsquo;를 명확히 구분할 수 있습니다[cite: 15, 19, 21].</p>
+<h3 id="2-효율적인-문제-해결-"><strong>2. 효율적인 문제 해결 🎯</strong></h3>
+<p>[cite_start]원인을 정확히 알게 되면, 그에 맞는 **목표 지향적이고 효율적인 해결책(개입)**을 적용할 수 있습니다[cite: 13, 16]. [cite_start]&lsquo;인식&rsquo;이 문제일 경우 감각 입력을 개선하는 데 집중하고, &lsquo;의사결정&rsquo;이 문제일 경우 계획 능력을 향상시키는 데 집중하여 자원을 낭비하지 않고 모델의 신뢰도를 높일 수 있습니다[cite: 15].</p>
+<hr>
+<h2 id="가능해진-새로운-해결책-enabled-new-solutions">가능해진 새로운 해결책 (Enabled New Solutions)</h2>
+<p>이러한 이점을 바탕으로, 논문은 다음과 같은 두 가지의 구체적이고 새로운 해결책을 구현했습니다.</p>
+<h3 id="1-능동적-감지-active-sensing"><strong>1. 능동적 감지 (Active Sensing)</strong></h3>
+<p>[cite_start]이는 <strong>높은 &lsquo;인식 불확실성&rsquo;에 대한 직접적인 해결책</strong>입니다[cite: 6, 29]. [cite_start]시스템이 현재 시각 정보의 불확실성이 높다고 판단하면 (예: 그림자 때문에 객체가 불분명할 때), 계획 생성을 진행하지 않고 <strong>카메라를 움직이거나 잠시 후 다시 관찰하여 더 확실한 시각적 입력을 확보</strong>하도록 합니다[cite: 126, 131]. [cite_start]이는 부정확한 인식이 후속 계획 단계로 전파되는 것을 막아줍니다[cite: 29].</p>
+<h3 id="2-자동화된-정제-automated-refinement"><strong>2. 자동화된 정제 (Automated Refinement)</strong></h3>
+<p>[cite_start]이는 <strong>낮은 &lsquo;의사결정 불확실성&rsquo;을 해결하기 위한 방법</strong>입니다[cite: 6, 30]. [cite_start]이 해결책은 <strong>인식 불확실성이 낮고, 생성된 계획이 임무 명세를 잘 만족하여 의사결정 신뢰도가 높은 데이터만을 자동으로 선별</strong>합니다[cite: 124]. [cite_start]그 후, 이 &lsquo;고품질&rsquo; 데이터만을 사용하여 모델을 미세조정(fine-tuning)함으로써, 사람의 개입 없이도 모델의 계획 생성 능력을 향상시킵니다[cite: 30, 124].</p>
+<p>[cite_start]결론적으로, 불확실성의 분리는 문제의 원인 진단과 맞춤형 해결을 가능하게 하여, 궁극적으로 더 강건하고 신뢰할 수 있으며 적응력 높은 자율 시스템을 만드는 핵심적인 역할을 합니다[cite: 8, 33].</p>
+<h1 id="q--정형-기법-기반-예측fmdp은-사람의-정답-데이터-없이-어떻게-의사결정-불확실성을-정량화하는가-이-과정에서-정형-명세안전-규칙의-역할은-무엇이며-이-규칙의-품질이-전체-시스템의-신뢰도에-미치는-영향은-무엇인가">Q : &lsquo;정형 기법 기반 예측(FMDP)&lsquo;은 사람의 정답 데이터 없이 어떻게 &lsquo;의사결정 불확실성&rsquo;을 정량화하는가? 이 과정에서 &lsquo;정형 명세(안전 규칙)&lsquo;의 역할은 무엇이며, 이 규칙의 품질이 전체 시스템의 신뢰도에 미치는 영향은 무엇인가?</h1>
+<p>&lsquo;정형 기법 기반 예측(FMDP)&lsquo;은 사람이 만든 &lsquo;정답&rsquo; 데이터 대신, <strong>컴퓨터가 검증할 수 있는 &lsquo;안전 규칙&rsquo;을 정답의 기준으로 삼아</strong> 의사결정 불확실성을 자동으로 정량화합니다.</p>
+<hr>
+<h3 id="정량화-방법-quantification-method"><strong>정량화 방법 (Quantification Method)</strong></h3>
+<p>FMDP는 다음 3단계 과정을 통해 사람의 개입 없이 의사결정의 신뢰도를 측정합니다.</p>
+<ol>
+<li>[cite_start]<strong>계획의 정형적 변환:</strong> 모델이 생성한 자연어 계획(예: &ldquo;보행자를 기다린 후 우회전한다&rdquo;)을 컴퓨터가 이해할 수 있는 수학적 모델인 <strong>크립키 구조(Kripke Structure)로 변환</strong>합니다[cite: 91, 93].</li>
+<li>[cite_start]<strong>자동화된 검증 (모델 체킹):</strong> 변환된 계획 모델이 사전에 정의된 <strong>&lsquo;정형 명세(안전 규칙)&lsquo;를 모두 만족하는지 &lsquo;모델 체커&rsquo;라는 자동화된 도구로 검증</strong>합니다[cite: 98, 99]. 이 검증 결과(통과/실패)가 바로 사람의 &lsquo;정답/오답&rsquo; 레이블을 대체하는 역할을 합니다.</li>
+<li>[cite_start]<strong>신뢰도 보정:</strong> 검증을 &lsquo;통과&rsquo;한 계획들의 신뢰도 점수만을 모아 통계적인 분포를 만듭니다[cite: 101, 104]. [cite_start]새로운 계획이 생성되면, 그 계획의 신뢰도 점수가 이 &lsquo;성공 사례 분포&rsquo;에서 어느 정도의 신뢰도를 갖는지 계산하여 최종 &lsquo;의사결정 불확실성 점수&rsquo;를 도출합니다[cite: 108].</li>
+</ol>
+<hr>
+<h3 id="정형-명세안전-규칙의-역할"><strong>정형 명세(안전 규칙)의 역할</strong></h3>
+<p>이 과정에서 &lsquo;정형 명세(안전 규칙)&lsquo;는 **&lsquo;심판&rsquo; 또는 &lsquo;절대적인 평가 기준&rsquo;**의 역할을 합니다.</p>
+<p>[cite_start]이 규칙들은 &ldquo;항상 빨간불일 때는 정지해야 한다&rdquo; 또는 &ldquo;보행자가 있으면 반드시 기다려야 한다&quot;와 같이, 해당 임무에서 <strong>반드시 지켜져야 할 행동의 제약 조건을 수학적인 언어(시간 논리)로 명시</strong>한 것입니다[cite: 45]. [cite_start]모델 체커는 오직 이 규칙들을 기준으로 생성된 계획이 &lsquo;안전한지(타당한지)&lsquo;를 기계적으로 판단합니다[cite: 46, 99]. 즉, 정형 명세는 <strong>시스템이 따라야 할 &lsquo;정답&rsquo; 그 자체를 정의</strong>합니다.</p>
+<hr>
+<h3 id="규칙-품질의-영향"><strong>규칙 품질의 영향</strong></h3>
+<p><strong>규칙의 품질은 전체 시스템의 신뢰도와 직결됩니다.</strong> 규칙이 시스템의 두뇌라면, 그 품질은 시스템의 판단력 수준을 결정합니다.</p>
+<ul>
+<li>
+<p><strong>규칙이 불완전하거나 허술할 경우:</strong> 만약 &ldquo;교차로에서 좌회전 시 반대편 직진 차량을 확인해야 한다&quot;는 중요한 규칙이 빠져 있다면, 시스템은 위험한 계획을 &lsquo;안전하다&rsquo;고 잘못 판단하게 됩니다. 이런 데이터로 모델을 학습시키면, 시스템은 <strong>위험한 행동을 하도록 강화 학습되어 신뢰도가 치명적으로 저하</strong>됩니다.</p>
+</li>
+<li>
+<p><strong>규칙이 지나치게 엄격하거나 잘못된 경우:</strong> 만약 &ldquo;항상 시속 10km 미만으로만 주행해야 한다&quot;와 같이 비현실적인 규칙이 포함되어 있다면, 시스템은 대부분의 정상적인 계획을 &lsquo;위험하다&rsquo;고 판단하게 됩니다. 이 경우 모델은 <strong>과도하게 소극적이 되거나, 임무를 제대로 수행하지 못하는 등 비효율적인 시스템</strong>이 됩니다.</p>
+</li>
+</ul>
+<p>결론적으로, &lsquo;정형 명세(안전 규칙)&lsquo;는 FMDP의 근간을 이루는 핵심 요소입니다. 이 규칙들이 얼마나 현실의 안전 요구사항을 정확하고 완전하게 반영하는지에 따라 전체 시스템의 신뢰성과 안전성이 결정된다고 할 수 있습니다.</p>
+<h1 id="q--이-프레임워크를-실제-자율주행차나-로봇에-적용할-때-사전에-정의되지-않은-예측-불가능한-상황이나-물리적-실행-오류와-같은-한계에-어떻게-대처할-수-있으며-이를-극복하기-위한-다음-연구-단계는-무엇인가">Q : 이 프레임워크를 실제 자율주행차나 로봇에 적용할 때, 사전에 정의되지 않은 예측 불가능한 상황이나 물리적 실행 오류와 같은 한계에 어떻게 대처할 수 있으며, 이를 극복하기 위한 다음 연구 단계는 무엇인가?</h1>
+<p>[cite_start]이 논문의 프레임워크는 현재 상태에서 예측 불가능한 상황이나 물리적 실행 오류에 대해 **안전하게 실패(Fail-Safe)**하는 방식으로 부분적으로 대처할 수 있지만, 근본적인 해결을 위해서는 저자들이 결론에서 언급했듯이 추가적인 연구가 필요합니다. [cite: 234]</p>
+<hr>
+<h3 id="현재-프레임워크의-대처-방안-및-한계"><strong>현재 프레임워크의 대처 방안 및 한계</strong></h3>
+<h4 id="1-예측-불가능한-상황-unforeseen-scenarios"><strong>1. 예측 불가능한 상황 (Unforeseen Scenarios)</strong></h4>
+<ul>
+<li><strong>대처 방안:</strong> 만약 모델이 한 번도 본 적 없는 객체나 상황(예: 도로에 떨어진 화물, 갑작스러운 동물 출현)을 마주치면, <strong>&lsquo;인식 불확실성&rsquo; 점수가 급격히 높아질 가능성</strong>이 큽니다. 또한, 이 상황에 대한 마땅한 계획이 없으므로 <strong>&lsquo;의사결정 불확실성&rsquo;도 높게 측정</strong>될 것입니다. 이 경우, 프레임워크는 다음과 같이 작동하여 위험을 회피합니다.
+<ul>
+<li>[cite_start]<strong>능동적 감지(Active Sensing) 발동:</strong> 높은 인식 불확실성으로 인해 시스템은 즉각적인 행동을 멈추고, 상황을 더 잘 이해하기 위해 재관찰을 시도합니다. [cite: 6]</li>
+<li>[cite_start]<strong>계획 실행 거부:</strong> 설령 계획이 생성되더라도, 높은 의사결정 불확실성 때문에 실행 임계값을 넘지 못해 최종적으로 계획이 거부됩니다. [cite: 121]</li>
+</ul>
+</li>
+<li><strong>한계:</strong> 이는 위험한 행동을 막는 <strong>소극적인 안전장치</strong>일 뿐, 예측 불가능한 상황을 <strong>능동적으로 해결하는 새로운 계획을 생성하지는 못합니다.</strong> 시스템은 단지 &ldquo;잘 모르겠다&quot;고 판단하고 멈추는 수준에 머무릅니다.</li>
+</ul>
+<h4 id="2-물리적-실행-오류-physical-execution-errors"><strong>2. 물리적 실행 오류 (Physical Execution Errors)</strong></h4>
+<ul>
+<li>[cite_start]<strong>한계:</strong> 이 논문의 프레임워크는 <strong>인식과 계획 수립 단계에 집중</strong>하고 있으며, 생성된 계획이 물리적으로 완벽하게 실행된다고 가정합니다. [cite: 2] 따라서 바퀴가 미끄러지거나 로봇 팔이 물체를 놓치는 등의 물리적 실행 오류를 직접적으로 감지하거나 대처하는 메커니즘은 <strong>포함되어 있지 않습니다.</strong></li>
+</ul>
+<hr>
+<h3 id="한계-극복을-위한-다음-연구-단계"><strong>한계 극복을 위한 다음 연구 단계</strong></h3>
+<p>이러한 한계를 극복하기 위해, 논문의 결론에서 제시된 방향을 포함하여 다음과 같은 후속 연구가 필요합니다.</p>
+<h4 id="1-실행-불확실성execution-uncertainty의-통합"><strong>1. 실행 불확실성(Execution Uncertainty)의 통합</strong></h4>
+<ul>
+<li>물리적 세계의 불확실성을 모델링에 포함시키는 연구입니다. 로봇의 제어기 성능, 모터의 정밀도, 외부 환경(노면 상태 등)에 따른 실행 오차 확률을 계산하고, 이를 &lsquo;인식 불확실성&rsquo;, &lsquo;의사결정 불확실성&rsquo;과 함께 최종 신뢰도 점수에 통합하는 것입니다. 이를 통해 로봇은 자신의 물리적 한계를 인지하고 더 안전한 계획(예: &ldquo;미끄러운 길이니 천천히 돌아라&rdquo;)을 생성할 수 있습니다.</li>
+</ul>
+<h4 id="2-동적이고-상호작용적인-규칙-학습-dynamic-rule-learning"><strong>2. 동적이고 상호작용적인 규칙 학습 (Dynamic Rule Learning)</strong></h4>
+<ul>
+<li>정적인 규칙에 의존하는 한계를 극복하기 위한 연구입니다. 예측하지 못한 상황에서 시스템이 실패했을 때, 사람이 &ldquo;이 상황에서는 이렇게 행동했어야 해&quot;라고 피드백을 주면, AI가 이 피드백으로부터 새로운 안전 규칙을 학습하여 자신의 &lsquo;정형 명세&rsquo;를 동적으로 업데이트하는 방식입니다. 이는 시스템이 경험을 통해 계속해서 똑똑해지게 만듭니다.</li>
+</ul>
+<h4 id="3-연속적인-온라인-학습-및-환경-적응"><strong>3. 연속적인 온라인 학습 및 환경 적응</strong></h4>
+<ul>
+<li>새로운 환경이나 상황에 실시간으로 적응하는 능력을 기르는 연구입니다. 로봇이 운행하면서 얻는 데이터를 바탕으로 불확실성 모델 자체를 계속해서 업데이트(재보정)하는 것입니다. 이를 통해 처음에는 &lsquo;예측 불가능&rsquo;했던 상황도 데이터가 쌓이면서 점차 &lsquo;예측 가능한&rsquo; 범주로 들어오게 되고, 시스템의 대처 능력이 점진적으로 향상됩니다.</li>
+</ul>
+<p>[cite_start]이러한 후속 연구들은 현재 프레임워크를 확장하여, 인식과 계획뿐만 아니라 <strong>실행과 적응</strong>의 영역까지 신뢰도를 높임으로써, 더 강건하고 지능적인 자율 시스템을 구현하는 데 필수적입니다. [cite: 234]</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/Know-Where-Youre-Uncertain-When-Planning-with-Multimodal-Foundation-Models-A-Formal-Framework/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/Know-Where-Youre-Uncertain-When-Planning-with-Multimodal-Foundation-Models-A-Formal-Framework/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/ReaL-Efficient-RLHF-Training-of-Large-Language-Models-with-Parameter-Reallocation/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                ReaL: Efficient RLHF Training of Large Language Models with Parameter Reallocation
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2025-06-10">
+                06月10日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/A-Bring-Your-Own-Model-Approach-for-ML-Driven-Storage-Placement-in-Warehouse-Scale-Computers/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                A Bring-Your-Own-Model Approach for ML-Driven Storage Placement in Warehouse-Scale Computers
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2025-06-10">
+                06月10日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문의-강점과-독창적인-지점">논문의 강점과 독창적인 지점</a></li>
+        <li><a href="#핵심-알고리즘-과정-예시">핵심 알고리즘 과정 예시</a></li>
+        <li><a href="#논문의-한계점">논문의 한계점</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#논문의-핵심-알고리즘-상세-설명-예시-기반">논문의 핵심 알고리즘 상세 설명 (예시 기반)</a>
+      <ul>
+        <li><a href="#예시-시나리오"><strong>예시 시나리오</strong></a></li>
+        <li><a href="#핵심-알고리즘-단계별-과정"><strong>핵심 알고리즘 단계별 과정</strong></a>
+          <ul>
+            <li><a href="#1단계-인식-불확실성perception-uncertainty-측정"><strong>1단계: 인식 불확실성(Perception Uncertainty) 측정</strong></a></li>
+            <li><a href="#2단계-행동-계획-생성"><strong>2단계: 행동 계획 생성</strong></a></li>
+            <li><a href="#3단계-의사결정-불확실성decision-uncertainty-측정---fmdp"><strong>3단계: 의사결정 불확실성(Decision Uncertainty) 측정 - FMDP</strong></a></li>
+            <li><a href="#4단계-최종-실행-결정"><strong>4단계: 최종 실행 결정</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#알고리즘-요약"><strong>알고리즘 요약</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문에서-제시된-상세한-결과-"><strong>논문에서 제시된 상세한 결과</strong> 📊</a></li>
+        <li><a href="#다른-방법론과-비교되는-특출난-점-"><strong>다른 방법론과 비교되는 특출난 점</strong> ✨</a></li>
+        <li><a href="#결과-도출-원인에-대한-논문의-분석-"><strong>결과 도출 원인에 대한 논문의 분석</strong> 📝</a></li>
+        <li><a href="#결과-도출-원인에-대한-나의-생각-ai의-분석-"><strong>결과 도출 원인에 대한 나의 생각 (AI의 분석)</strong> 🤖</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-규칙의-동적-학습-및-자동-생성-연구"><strong>1. 규칙의 동적 학습 및 자동 생성 연구</strong></a></li>
+        <li><a href="#2-강건한-자연어-이해-및-구조화된-계획-생성-연구"><strong>2. 강건한 자연어 이해 및 구조화된 계획 생성 연구</strong></a></li>
+        <li><a href="#3-실행-및-물리-세계의-불확실성-통합-연구"><strong>3. 실행 및 물리 세계의 불확실성 통합 연구</strong></a></li>
+        <li><a href="#4-실시간-적응형-불확실성-보정-연구"><strong>4. 실시간 적응형 불확실성 보정 연구</strong></a></li>
+        <li><a href="#5-검증-과정의-계산-효율성-최적화-연구"><strong>5. 검증 과정의 계산 효율성 최적화 연구</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#구체적인-이점-specific-advantages">구체적인 이점 (Specific Advantages)</a>
+      <ul>
+        <li><a href="#1-명확한-원인-진단-"><strong>1. 명확한 원인 진단 🩺</strong></a></li>
+        <li><a href="#2-효율적인-문제-해결-"><strong>2. 효율적인 문제 해결 🎯</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#가능해진-새로운-해결책-enabled-new-solutions">가능해진 새로운 해결책 (Enabled New Solutions)</a>
+      <ul>
+        <li><a href="#1-능동적-감지-active-sensing"><strong>1. 능동적 감지 (Active Sensing)</strong></a></li>
+        <li><a href="#2-자동화된-정제-automated-refinement"><strong>2. 자동화된 정제 (Automated Refinement)</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#정량화-방법-quantification-method"><strong>정량화 방법 (Quantification Method)</strong></a></li>
+        <li><a href="#정형-명세안전-규칙의-역할"><strong>정형 명세(안전 규칙)의 역할</strong></a></li>
+        <li><a href="#규칙-품질의-영향"><strong>규칙 품질의 영향</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#현재-프레임워크의-대처-방안-및-한계"><strong>현재 프레임워크의 대처 방안 및 한계</strong></a>
+          <ul>
+            <li><a href="#1-예측-불가능한-상황-unforeseen-scenarios"><strong>1. 예측 불가능한 상황 (Unforeseen Scenarios)</strong></a></li>
+            <li><a href="#2-물리적-실행-오류-physical-execution-errors"><strong>2. 물리적 실행 오류 (Physical Execution Errors)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#한계-극복을-위한-다음-연구-단계"><strong>한계 극복을 위한 다음 연구 단계</strong></a>
+          <ul>
+            <li><a href="#1-실행-불확실성execution-uncertainty의-통합"><strong>1. 실행 불확실성(Execution Uncertainty)의 통합</strong></a></li>
+            <li><a href="#2-동적이고-상호작용적인-규칙-학습-dynamic-rule-learning"><strong>2. 동적이고 상호작용적인 규칙 학습 (Dynamic Rule Learning)</strong></a></li>
+            <li><a href="#3-연속적인-온라인-학습-및-환경-적응"><strong>3. 연속적인 온라인 학습 및 환경 적응</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

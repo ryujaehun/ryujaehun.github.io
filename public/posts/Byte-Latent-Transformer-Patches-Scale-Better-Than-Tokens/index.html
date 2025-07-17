@@ -1,0 +1,2496 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Byte Latent Transformer: Patches Scale Better Than Tokens | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 요약
+이 논문은 **Byte Latent Transformer (BLT)**..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/Byte-Latent-Transformer-Patches-Scale-Better-Than-Tokens/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/Byte-Latent-Transformer-Patches-Scale-Better-Than-Tokens/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="Byte Latent Transformer: Patches Scale Better Than Tokens">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 요약">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-12-19T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-12-19T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="Byte Latent Transformer: Patches Scale Better Than Tokens">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 요약">
+
+
+  <meta itemprop="name" content="Byte Latent Transformer: Patches Scale Better Than Tokens">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 요약">
+  <meta itemprop="datePublished" content="2024-12-19T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-12-19T00:00:00+00:00">
+  <meta itemprop="wordCount" content="12432">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">Byte Latent Transformer: Patches Scale Better Than Tokens</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    Byte Latent Transformer: Patches Scale Better Than Tokens
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-12-19">
+          2024년 12월 19일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >25 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>12432 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2412.09871v1">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<p>요약</p>
+<p>이 논문은 **Byte Latent Transformer (BLT)**라는 새로운 아키텍처를 제안하며, 기존의 고정된 토큰화 기반 대규모 언어 모델(LLM)과 비교하여 효율성과 견고성을 크게 개선했습니다. BLT는 바이트 단위로 데이터를 패치화하여 동적이고 학습 가능한 방법으로 처리 능력을 효율적으로 할당합니다. BLT는 고정된 어휘 기반 토큰화를 사용하지 않고도 대규모에서 토큰화 모델과 유사한 성능을 달성하며, 특히 50%까지 추론 FLOP를 절감할 수 있는 특징을 보입니다.</p>
+<p>강점 및 독창성
+1.	고정 어휘 토큰화의 대안:
+•	기존 토큰화는 어휘와 입력 노이즈에 민감하지만, BLT는 바이트 수준에서 동적으로 패치를 생성하여 다양한 데이터 도메인과 입력 노이즈에 강건합니다.
+2.	효율성:
+•	BLT는 패치 크기를 동적으로 조정해 계산 비용을 효율적으로 할당합니다.
+•	예: 높은 엔트로피를 가지는 데이터(복잡한 데이터)에 더 많은 계산 자원을 할당함.
+3.	스케일링 트렌드:
+•	BLT는 LLaMA3와 같은 최신 토큰화 모델을 성능 면에서 초과하며, 패치 크기를 증가시키면서 추론 비용을 줄이는 새로운 스케일링 방향을 제시합니다.
+4.	추론 및 학습 효율성:
+•	BLT는 동일한 추론 비용으로 더 나은 성능을 달성하며, 입력 데이터를 동적으로 처리하여 고효율적인 FLOP 사용을 보장합니다.
+5.	확장성:
+•	BLT는 모델 크기와 패치 크기를 동시에 확장할 수 있어, 고정된 추론 비용 내에서 효율성을 더욱 높일 수 있습니다.</p>
+<p>핵심 알고리즘: BLT의 동작 과정</p>
+<p>BLT는 입력 데이터를 바이트 단위로 처리하며 다음의 주요 단계로 구성됩니다:
+1.	엔트로피 기반 패치 생성:
+•	바이트 데이터의 엔트로피 값을 계산하여 패치 경계를 설정.
+•	예: “Daenerys Targaryen is in Game of Thrones”라는 문장에서 엔트로피 값에 따라 패치가 나뉘어짐.
+2.	로컬 인코더(Local Encoder):
+•	각 바이트를 표현 벡터로 변환하고 패치 수준의 표현으로 압축.
+•	예: “Game of Thrones” → [패치 벡터].
+3.	글로벌 Latent Transformer:
+•	패치 수준의 데이터를 기반으로 글로벌 문맥을 학습.
+•	예: “Who is the main character in Game of Thrones?“의 문맥 이해.
+4.	로컬 디코더(Local Decoder):
+•	글로벌 표현을 다시 바이트 시퀀스로 디코딩.
+•	예: [패치 벡터] → “Daenerys Targaryen”.</p>
+<p>한계점
+1.	스케일링 법칙의 최적화 부족:
+•	LLaMA3에 기반한 스케일링 법칙을 따르지만, BLT에 특화된 최적화가 부족함.
+2.	기존 인프라의 제한:
+•	현재의 구현이 토큰화 기반 모델만큼 효율적이지 않을 수 있음.
+3.	추가적인 데이터 필요성:
+•	엔트로피 모델과 패치 경계 학습을 위한 별도의 데이터와 자원이 필요.</p>
+<p>비교 요약</p>
+<p>모델	FLOP 효율성	입력 노이즈 견고성	스케일링 가능성	성능(정확도)
+LLaMA3	중간	낮음	제한적	높음
+BLT-Space	높음	중간	중간	중간
+BLT-Entropy	매우 높음	높음	매우 높음	매우 높음</p>
+<p>BLT는 토큰화 의존도를 제거하며 새로운 스케일링 패러다임을 제시한 독창적인 접근 방식으로 평가할 수 있습니다.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>논문의 핵심 알고리즘은 **Byte Latent Transformer (BLT)**의 엔트로피 기반 패치 생성, 로컬 및 글로벌 처리 구조, 그리고 효율적인 디코딩 방식을 기반으로 입력 데이터를 처리합니다. 이를 예시를 통해 단계별로 자세히 설명하겠습니다.</p>
+<p>BLT의 주요 알고리즘 과정</p>
+<ol>
+<li>엔트로피 기반 패치 생성 (Entropy-Based Patching)</li>
+</ol>
+<p>설명:</p>
+<p>BLT는 입력 데이터를 바이트 단위로 처리하며, 바이트 간의 **엔트로피(불확실성)**를 기준으로 데이터를 동적으로 패치로 분할합니다.</p>
+<p>과정:
+1.	입력 데이터:
+•	예제: &ldquo;The quick brown fox jumps over the lazy dog.&rdquo;
+•	각 문자(바이트)는 독립적으로 처리됩니다.
+2.	엔트로피 계산:
+•	작은 바이트 수준 언어 모델을 사용하여 각 바이트의 다음 바이트에 대한 엔트로피를 계산합니다.
+•	예:</p>
+<p>&ldquo;The&rdquo; → 엔트로피 낮음 (예측이 쉬움)
+&ldquo;quick&rdquo; → 엔트로피 중간
+&ldquo;brown&rdquo; → 엔트로피 높음</p>
+<pre><code>3.	패치 경계 설정:
+•	높은 엔트로피를 관찰한 위치에서 새로운 패치를 생성합니다.
+•	예:
+</code></pre>
+<p>&ldquo;The&rdquo; → 패치 1
+&ldquo;quick brown&rdquo; → 패치 2
+&ldquo;fox jumps over&rdquo; → 패치 3
+&ldquo;the lazy dog.&rdquo; → 패치 4</p>
+<ol start="2">
+<li>로컬 인코더 (Local Encoder)</li>
+</ol>
+<p>설명:</p>
+<p>로컬 인코더는 각 패치 내부의 바이트 데이터를 패치 벡터로 압축합니다.</p>
+<p>과정:
+1.	바이트 임베딩:
+•	각 바이트를 고차원 벡터로 변환합니다.
+•	예:
+•	&ldquo;T&rdquo; → [0.2, 0.8, -0.1]
+•	&ldquo;h&rdquo; → [0.5, -0.6, 0.3]
+•	&ldquo;e&rdquo; → [0.9, 0.4, -0.2]
+2.	패치 단위 처리:
+•	크로스 어텐션을 사용하여 바이트 벡터를 패치 벡터로 통합.
+•	예: &ldquo;The&rdquo; → [1.0, -0.2, 0.5] (패치 벡터)
+3.	결과:
+•	&ldquo;quick brown&rdquo; → [-0.4, 0.6, 1.2]
+•	&ldquo;fox jumps over&rdquo; → [0.3, -0.7, 1.5]</p>
+<ol start="3">
+<li>글로벌 Latent Transformer</li>
+</ol>
+<p>설명:</p>
+<p>글로벌 변환기는 패치 간의 글로벌 문맥을 학습하여, 문맥을 반영한 글로벌 패치 벡터를 생성합니다.</p>
+<p>과정:
+1.	패치 간 문맥 학습:
+•	각 패치 벡터 간의 관계를 학습합니다.
+•	예:</p>
+<p>입력 패치: <code>[1.0, -0.2, 0.5]</code>, <code>[-0.4, 0.6, 1.2]</code>
+출력: <code>[1.1, -0.1, 0.7]</code>, <code>[-0.3, 0.7, 1.3]</code></p>
+<pre><code>2.	복잡한 문장 처리:
+•	높은 복잡도를 가진 패치(예: “fox jumps”)에 더 많은 연산을 할당.
+3.	결과:
+•	문맥이 반영된 글로벌 패치 벡터가 생성됩니다.
+</code></pre>
+<ol start="4">
+<li>로컬 디코더 (Local Decoder)</li>
+</ol>
+<p>설명:</p>
+<p>글로벌 패치 벡터를 다시 바이트 수준 데이터로 디코딩하여 최종 출력을 생성합니다.</p>
+<p>과정:
+1.	글로벌 패치 디코딩:
+•	[1.1, -0.1, 0.7] → &ldquo;The&rdquo;
+•	[-0.3, 0.7, 1.3] → &ldquo;quick brown&rdquo;
+2.	전체 데이터 재구성:
+•	모든 디코딩된 바이트를 연결하여 최종 출력을 생성.
+•	최종 결과: &ldquo;The quick brown fox jumps over the lazy dog.&rdquo;</p>
+<p>BLT 알고리즘 요약</p>
+<p>단계	입력 데이터	출력 데이터	주요 연산</p>
+<ol>
+<li>패치 생성	&ldquo;The quick brown&hellip;&rdquo;	[패치1, 패치2, &hellip;]	엔트로피 계산, 동적 패치 분할</li>
+<li>로컬 인코더	[패치1, 패치2, &hellip;]	[패치 벡터1, 패치 벡터2]	크로스 어텐션, 바이트 임베딩</li>
+<li>글로벌 변환기	[패치 벡터1, &hellip;]	[글로벌 벡터1, &hellip;]	문맥 학습</li>
+<li>로컬 디코더	[글로벌 벡터1, &hellip;]	&ldquo;The quick brown&hellip;&rdquo;	패치 디코딩, 바이트 복원</li>
+</ol>
+<p>BLT 알고리즘의 장점
+1.	효율성:
+•	엔트로피 기반 패치 분할로 불필요한 계산을 줄이고, 중요한 데이터에 리소스를 집중.
+2.	유연성:
+•	고정된 어휘와 무관하게 작동하므로, 다양한 언어와 데이터 타입에 적응 가능.
+3.	확장성:
+•	패치 크기와 모델 크기를 조정하여 고성능을 유지하면서 계산 비용 절감.
+4.	강건성:
+•	입력 노이즈에 강하며, 바이트 수준 정보를 다룰 수 있음.</p>
+<p>BLT는 데이터의 불확실성을 기반으로 효율적인 처리와 강건성을 결합한 새로운 방식의 언어 모델로, 기존 토큰화 모델의 한계를 극복할 수 있는 가능성을 보여줍니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<p>논문의 결과와 특출난 점 분석</p>
+<ol>
+<li>논문에서 제시한 주요 결과</li>
+</ol>
+<p>BLT는 기존의 토큰화 기반 모델(LLaMA 시리즈 등)과 비교하여 아래와 같은 결과를 달성합니다:
+1.	효율성 개선:
+•	BLT는 최대 50%의 FLOP 절감을 실현하면서도, 동등하거나 더 나은 성능을 보였습니다.
+•	특히, 패치 크기를 늘리면서 연산을 줄이고, 이를 모델 크기 증가로 활용해 성능을 극대화합니다.
+2.	고성능 스케일링:
+•	BLT는 8B 파라미터 모델에서 LLaMA-3와 유사한 성능을 보이며, 패치 크기를 8로 설정하면 LLaMA-2보다 더 나은 성능을 달성합니다.
+•	패치 크기가 클수록, 모델과 데이터 크기가 증가할수록 성능이 더 빠르게 향상되는 스케일링 특성을 가집니다.
+3.	노이즈 견고성:
+•	BLT는 입력 노이즈에 대한 강건성이 뛰어나며, 텍스트 왜곡(예: 대소문자 혼합, 문자의 무작위 반복 등)에 더 높은 정확도를 보여줍니다.
+•	예: HellaSwag의 노이즈 데이터셋에서 LLaMA-3보다 평균적으로 8% 더 높은 정확도를 기록.
+4.	소자원 언어 지원:
+•	FLORES-101 데이터셋에서 BLT는 낮은 리소스를 가진 언어에 대해 LLaMA-3보다 평균 BLEU 점수가 2점 이상 높았습니다.</p>
+<ol start="2">
+<li>특출난 점: 다른 방법론과 비교</li>
+</ol>
+<p>BLT는 기존 방법론과 아래와 같은 차별화를 보입니다:</p>
+<p>특징	LLaMA 시리즈 (BPE)	BLT
+토큰화 의존도	고정된 BPE 토큰화 사용	동적 패치 생성 (토큰화 불필요)
+연산 효율성	모든 토큰에 동일한 연산	엔트로피 기반으로 연산 배분
+입력 노이즈 견고성	낮음	높음
+소자원 언어 지원	제한적	우수
+스케일링 잠재력	제한적	패치 크기와 모델 크기 동시 확장 가능</p>
+<ol start="3">
+<li>주요 결과의 원인</li>
+</ol>
+<p>논문에서 BLT의 성과를 가능하게 한 원인과 논문의 주장은 다음과 같습니다:</p>
+<ol>
+<li>
+<p>엔트로피 기반 패치 생성
+•	주장: 입력 데이터의 엔트로피를 기준으로 동적으로 패치를 생성하여, 복잡한 영역에 더 많은 계산 자원을 할당합니다.
+•	효과:
+•	예측이 쉬운 데이터에는 적은 연산을 사용하여 효율성을 극대화.
+•	복잡한 데이터에 집중적으로 연산을 할당하여 성능 향상.
+•	내 생각: 이는 효율성을 크게 개선하는 핵심 메커니즘으로, 고정된 BPE 토큰화 방식이 가지는 한계를 극복합니다. 특히, 다양한 언어 및 데이터 도메인에 적응 가능하다는 점이 매우 강력합니다.</p>
+</li>
+<li>
+<p>로컬-글로벌 모델 구조
+•	주장: 로컬 인코더는 바이트 수준 데이터를 패치 벡터로 변환하고, 글로벌 변환기는 문맥 정보를 학습하여 패치 간 관계를 모델링합니다.
+•	효과:
+•	로컬에서 가벼운 연산으로 바이트를 통합하고, 글로벌 문맥 학습을 통해 긴 입력 데이터도 효과적으로 처리.
+•	내 생각: 이러한 계층적 설계는 긴 문맥 처리나 복잡한 관계 학습에 강점을 가지며, 특히 패치 크기를 동적으로 조정할 수 있어 확장성에 큰 기여를 합니다.</p>
+</li>
+<li>
+<p>패치 크기 조정 및 FLOP 절감
+•	주장: 패치 크기를 증가시키면 연산 횟수를 줄이면서도 성능을 유지하거나 향상시킬 수 있습니다.
+•	효과:
+•	FLOP 효율성을 크게 높이고, 절약된 연산을 모델 크기 증가에 재할당하여 성능 향상.
+•	예: 8바이트 패치 크기 모델이 LLaMA-2와 비슷한 FLOP를 사용하면서 더 높은 성능을 보임.
+•	내 생각: 이는 BLT의 스케일링 잠재력을 입증하는 핵심 요소로, 특히 대규모 데이터셋에서 강점을 발휘합니다.</p>
+</li>
+<li>
+<p>노이즈 견고성
+•	주장: BLT는 바이트 수준에서 직접 학습하므로, 토큰화 단계에서 발생하는 정보 손실을 방지합니다.
+•	효과:
+•	텍스트 왜곡이나 입력 노이즈에 강건한 모델링 가능.
+•	내 생각: 이 점은 실제 애플리케이션에서 매우 유용하며, 특히 다국어 처리 및 소자원 언어 지원에 있어 차별화된 강점입니다.</p>
+</li>
+</ol>
+<ol start="4">
+<li>내 생각과 종합 의견</li>
+</ol>
+<p>BLT의 성공은 동적 패치 생성, 로컬-글로벌 구조, 효율적인 FLOP 활용 등 다각적 혁신에서 비롯되었습니다. 특히, 아래와 같은 점이 핵심적이라고 봅니다:
+1.	효율성의 재발견:
+•	기존의 토큰화 기반 모델이 모든 데이터에 동일한 연산을 적용했던 반면, BLT는 엔트로피를 활용해 필요한 곳에만 연산을 집중시키는 혁신적인 방식을 도입했습니다.
+2.	토큰화의 한계를 극복:
+•	고정된 토큰화 방식에서 벗어나, 모든 데이터를 바이트 수준으로 처리함으로써 데이터 도메인 및 언어의 제약을 극복했습니다.
+3.	스케일링 가능성:
+•	패치 크기와 모델 크기를 동시에 확장할 수 있어, 대규모 모델에서도 효율적이며 성능 유지가 가능하다는 점이 BLT의 가장 큰 잠재력입니다.</p>
+<p>따라서 BLT는 기존 모델의 효율성과 견고성 문제를 해결하며, 미래 대규모 언어 모델의 새로운 패러다임을 제시한 중요한 연구라 할 수 있습니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<p>BLT의 입력 데이터와 추론 과정</p>
+<ol>
+<li>입력 데이터</li>
+</ol>
+<p>BLT(Byte Latent Transformer)는 모든 텍스트를 바이트 단위로 처리하며, 기존 토큰화 방식을 사용하지 않습니다.</p>
+<p>입력 데이터의 주요 특징
+1.	형식:
+•	모든 텍스트는 UTF-8 기반 바이트 시퀀스로 분할됩니다.
+•	예: &ldquo;The quick brown fox.&rdquo;</p>
+<p>[&lsquo;T&rsquo;, &lsquo;h&rsquo;, &rsquo;e&rsquo;, &rsquo; &lsquo;, &lsquo;q&rsquo;, &lsquo;u&rsquo;, &lsquo;i&rsquo;, &lsquo;c&rsquo;, &lsquo;k&rsquo;, &rsquo; &lsquo;, &lsquo;b&rsquo;, &lsquo;r&rsquo;, &lsquo;o&rsquo;, &lsquo;w&rsquo;, &rsquo;n&rsquo;, &rsquo; &lsquo;, &lsquo;f&rsquo;, &lsquo;o&rsquo;, &lsquo;x&rsquo;, &lsquo;.&rsquo;]</p>
+<pre><code>2.	동적 패치 생성:
+•	바이트 데이터는 엔트로피 기반 패치 생성기를 통해 동적으로 패치로 분할됩니다.
+•	예: &quot;The quick brown fox jumps over the lazy dog.&quot;
+•	엔트로피 계산 후 결과:
+</code></pre>
+<p>&ldquo;The&rdquo; → 낮은 엔트로피 → 패치 1
+&ldquo;quick brown&rdquo; → 중간 엔트로피 → 패치 2
+&ldquo;fox jumps over&rdquo; → 높은 엔트로피 → 패치 3
+&ldquo;the lazy dog.&rdquo; → 낮은 엔트로피 → 패치 4</p>
+<ol start="2">
+<li>추론 과정</li>
+</ol>
+<p>BLT의 추론은 다음 4단계를 거칩니다:</p>
+<ol>
+<li>동적 패치 생성
+•	바이트 시퀀스에서 엔트로피 모델이 각 바이트의 다음 바이트 예측 불확실성을 계산.
+•	예:
+•	&ldquo;The quick brown fox&rdquo;</li>
+</ol>
+<p>&ldquo;The&rdquo; → 엔트로피 낮음 → 하나의 패치
+&ldquo;quick&rdquo; → 엔트로피 중간 → 새로운 패치
+&ldquo;brown fox&rdquo; → 엔트로피 높음 → 또 다른 패치</p>
+<ol start="2">
+<li>로컬 인코더(Local Encoder)
+•	각 패치를 입력으로 받아 패치 벡터로 압축.
+•	주요 연산:
+•	각 바이트를 임베딩으로 변환.
+•	바이트 간 관계를 크로스 어텐션으로 학습해 패치 벡터를 생성.
+•	예:</li>
+</ol>
+<p>입력 패치: &ldquo;The&rdquo; → [0.8, -0.3, 0.5] (패치 벡터)
+입력 패치: &ldquo;quick brown&rdquo; → [-0.2, 0.7, 1.1]</p>
+<ol start="3">
+<li>글로벌 Transformer
+•	패치 벡터를 문맥적으로 학습하여 글로벌 문맥 벡터를 생성.
+•	주요 연산:
+•	패치 간 자기 어텐션(Self-Attention)을 통해 문맥 정보 학습.
+•	예:</li>
+</ol>
+<p>입력: [0.8, -0.3, 0.5], [-0.2, 0.7, 1.1]
+출력: [0.9, -0.2, 0.6], [-0.1, 0.8, 1.2]</p>
+<ol start="4">
+<li>로컬 디코더(Local Decoder)
+•	글로벌 문맥 벡터를 다시 바이트 수준으로 디코딩.
+•	주요 연산:
+•	크로스 어텐션을 통해 글로벌 문맥 벡터를 바이트로 복원.
+•	결과:</li>
+</ol>
+<p>[0.9, -0.2, 0.6] → &ldquo;The&rdquo;
+[-0.1, 0.8, 1.2] → &ldquo;quick brown&rdquo;
+최종 출력: &ldquo;The quick brown fox jumps over the lazy dog.&rdquo;</p>
+<ol start="3">
+<li>모델 아키텍처 구성</li>
+</ol>
+<p>BLT는 세 가지 주요 구성 요소로 설계되었습니다.</p>
+<ol>
+<li>
+<p>로컬 인코더(Local Encoder)
+•	역할: 바이트 데이터를 패치 벡터로 변환.
+•	구성:
+•	바이트 임베딩 레이어.
+•	해시 기반 n-그램 임베딩 추가.
+•	크로스 어텐션 모듈.</p>
+</li>
+<li>
+<p>글로벌 Transformer
+•	역할: 패치 간 문맥을 학습.
+•	구성:
+•	Latent Transformer 아키텍처.
+•	패치 수준 자기 어텐션(Self-Attention).
+•	문맥 기반 학습.</p>
+</li>
+<li>
+<p>로컬 디코더(Local Decoder)
+•	역할: 글로벌 문맥 벡터를 바이트로 복원.
+•	구성:
+•	패치 수준 크로스 어텐션.
+•	바이트 수준 출력 생성.</p>
+</li>
+</ol>
+<ol start="4">
+<li>
+<p>연산량(FLOP) 분석</p>
+</li>
+<li>
+<p>주요 연산 단계별 FLOP</p>
+</li>
+</ol>
+<p>단계	주요 연산	FLOP 계산식
+로컬 인코더	바이트 → 패치 변환	$4 \cdot L \cdot H \cdot P$
+글로벌 Transformer	패치 간 문맥 학습	$4 \cdot L_G \cdot H_G \cdot P$
+로컬 디코더	글로벌 → 바이트 복원	로컬 인코더와 유사</p>
+<ol start="2">
+<li>
+<p>패치 크기에 따른 FLOP 절감
+•	패치 크기가 클수록, 연산량이 감소:
+•	패치 크기 4 → FLOP 높음.
+•	패치 크기 8 → 50% FLOP 절감.</p>
+</li>
+<li>
+<p>메모리 요구량</p>
+</li>
+</ol>
+<p>메모리 사용량 계산식
+•	메모리 사용량: $C \cdot P \cdot H$
+•	$C$: 패치 수.
+•	$P$: 패치 크기.
+•	$H$: 히든 차원.</p>
+<p>패치 크기에 따른 메모리 사용량 변화
+•	패치 크기가 클수록, 패치 수가 감소해 메모리 효율 향상.</p>
+<p>결론</p>
+<p>BLT는 바이트 수준에서 동적으로 데이터를 처리하며, 연산 효율과 메모리 사용량을 최적화합니다. 주요 아키텍처와 FLOP 절감 전략은 패치 크기와 글로벌 모델 크기의 균형을 유지하며, 대규모 데이터에서도 효율적으로 학습 및 추론할 수 있는 강점을 제공합니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>BLT 논문의 한계와 이를 극복하기 위한 연구 흐름</p>
+<ol>
+<li>BLT 논문의 한계</li>
+</ol>
+<p>BLT는 바이트 수준 모델링에서 독창성과 효율성을 입증했지만, 다음과 같은 한계를 가지고 있습니다:</p>
+<ol>
+<li>
+<p>스케일링 법칙의 최적화 부족
+•	BLT는 기존 토큰화 기반 모델(LLaMA-3)의 스케일링 법칙에 의존해 모델을 설계하고 실험했지만, 이는 바이트 기반 모델에 최적화되지 않았습니다.
+•	문제점: BLT 전용 스케일링 법칙이 없어 최적의 데이터-모델 크기 비율을 찾지 못함.</p>
+</li>
+<li>
+<p>패치 경계 학습의 고정적 설계
+•	현재의 패치 경계는 사전 학습된 엔트로피 모델에 의존해 동적으로 생성됩니다.
+•	문제점: 패치 생성이 데이터 도메인이나 문맥에 따라 최적화되지 못하며, 학습 과정에서 업데이트되지 않음.</p>
+</li>
+<li>
+<p>효율성 구현의 한계
+•	BLT는 FLOP 절감과 효율성을 목표로 했지만, 현재의 구현이 토큰화 기반 모델에 비해 메모리 및 계산 자원 요구량에서 열등할 수 있음.
+•	문제점: 엔코더-디코더 설계 및 크로스 어텐션 단계에서 메모리 사용량이 증가.</p>
+</li>
+<li>
+<p>데이터 노이즈 및 특수 입력 처리
+•	BLT는 입력 노이즈에 강건하지만, 특정 구조적 데이터나 비정형 텍스트에 대해 최적화되지 않았습니다.
+•	문제점: 데이터의 복잡성에 따라 패치 생성 및 디코딩 성능이 저하될 가능성.</p>
+</li>
+<li>
+<p>대규모 학습 데이터 필요성
+•	바이트 수준 학습은 정교한 패턴을 학습하기 위해 더 많은 데이터가 필요합니다.
+•	문제점: 대규모 데이터와 연산 자원 확보가 어려운 경우 성능 저하.</p>
+</li>
+</ol>
+<ol start="2">
+<li>한계를 극복하기 위한 연구 흐름</li>
+</ol>
+<ol>
+<li>
+<p>BLT 전용 스케일링 법칙 연구
+•	목표: BLT 모델 구조와 데이터에 최적화된 새로운 스케일링 법칙을 개발.
+•	연구 흐름:
+•	데이터-모델 크기 비율 최적화:
+•	BPE 기반 모델에서 도출된 스케일링 법칙을 바이트 기반 모델에 맞게 재해석.
+•	예: BLT의 FLOP 효율성을 극대화하는 패치 크기와 모델 크기 관계 분석.
+•	학습 데이터의 정보 밀도 기반 스케일링:
+•	바이트 시퀀스의 정보 밀도를 측정하고, 이를 기반으로 학습 데이터와 모델 크기를 조정.
+•	예시 연구:
+•	새로운 학습-모델 크기 비율을 제안한 Chinchilla 연구(2022)의 적용.</p>
+</li>
+<li>
+<p>엔드투엔드 패치 경계 학습
+•	목표: 엔트로피 기반 패치 경계를 학습 과정에서 동적으로 최적화.
+•	연구 흐름:
+•	패치 경계 예측기 학습:
+•	패치 경계를 학습 가능한 네트워크로 설계(예: Boundary-Predictor).
+•	엔트로피 기반 경계 설정과 학습 가능한 경계 설정을 결합.
+•	문맥에 따른 동적 패치 조정:
+•	현재 패치 경계가 문맥과 데이터의 구조적 특성을 반영할 수 있도록 학습.
+•	예: 코드 데이터와 자연어 데이터에서 다른 패치 경계를 생성.
+•	예시 연구:
+•	동적 패치 기법을 제안한 Nawrot et al.(2023).</p>
+</li>
+<li>
+<p>크로스 어텐션과 메모리 효율 개선
+•	목표: 크로스 어텐션 모듈의 효율성을 높이고, 메모리 사용량을 줄임.
+•	연구 흐름:
+•	Sparse Attention 적용:
+•	패치 간 상호작용에서 중요하지 않은 부분을 제거하는 Sparse Attention 활용.
+•	예: Longformer의 Sparse Mechanism.
+•	메모리 공유 구조 개발:
+•	동일한 로컬 및 글로벌 Transformer의 파라미터를 공유하여 메모리 절약.
+•	패치 크기 기반 메모리 할당 최적화.
+•	예시 연구:
+•	FlashAttention을 사용한 메모리 최적화 연구(2022).</p>
+</li>
+<li>
+<p>노이즈 및 비정형 데이터 처리 강화
+•	목표: 비정형 데이터와 입력 노이즈에 대해 더욱 강건한 모델 설계.
+•	연구 흐름:
+•	다양한 노이즈 유형 학습:
+•	문장 왜곡, 특수 문자, 언어 혼합 데이터 등 다양한 입력 노이즈를 포함한 데이터셋 활용.
+•	비정형 데이터 학습 기법 개발:
+•	이미지 또는 표 형태 데이터와 텍스트 데이터를 결합하여 처리할 수 있는 멀티모달 확장.
+•	예시 연구:
+•	ByT5 모델의 노이즈 강건성 실험 적용(2022).</p>
+</li>
+<li>
+<p>학습 데이터 효율성 증대
+•	목표: 제한된 데이터로도 BLT가 성능을 극대화할 수 있는 기법 개발.
+•	연구 흐름:
+•	데이터 증강 기술 적용:
+•	바이트 수준에서 가능한 데이터 증강 기법 개발(예: 랜덤 바이트 삽입/삭제).
+•	지식 증류(Knowledge Distillation):
+•	대규모 모델(LLaMA-3 등)에서 BLT로 지식을 전이하여 효율적으로 학습.
+•	예시 연구:
+•	대규모 모델 전이를 활용한 LLaMA-3 기반 초기화 실험.</p>
+</li>
+</ol>
+<ol start="3">
+<li>미래 연구 방향 요약</li>
+</ol>
+<p>한계	극복 방안	연구 흐름
+스케일링 최적화	BLT 전용 스케일링 법칙 정의	정보 밀도 기반 데이터-모델 크기 비율 최적화
+패치 경계 제한	엔드투엔드 패치 학습	학습 가능한 Boundary-Predictor 설계
+메모리 효율성 부족	Sparse Attention 및 파라미터 공유	FlashAttention 및 Longformer 메커니즘 활용
+노이즈 처리 제한	비정형 데이터 학습 강화	특수 문자 및 노이즈 데이터셋 활용
+대규모 데이터 의존	데이터 증강 및 지식 증류	바이트 수준 데이터 증강 및 대규모 모델 전이</p>
+<p>결론</p>
+<p>BLT의 한계를 극복하기 위한 연구는 크게 스케일링 최적화, 동적 학습 설계, 효율성 강화, 그리고 데이터 활용 효율성의 네 가지 축으로 나눌 수 있습니다. 특히, BLT가 바이트 수준에서 작동한다는 점을 활용해 기존 토큰화 기반 모델과 차별화된 연구 방향을 통해 성능과 효율성을 동시에 높일 수 있는 가능성이 있습니다.</p>
+<h1 id="q--blt의-엔트로피-기반-패치-생성-방식이-데이터-도메인-간예-자연어-코드-비정형-데이터에서-어떻게-다르게-작동하며-이러한-차이를-극복하기-위한-방법은-무엇인가">Q : BLT의 엔트로피 기반 패치 생성 방식이 데이터 도메인 간(예: 자연어, 코드, 비정형 데이터)에서 어떻게 다르게 작동하며, 이러한 차이를 극복하기 위한 방법은 무엇인가?</h1>
+<p>BLT의 엔트로피 기반 패치 생성 방식과 데이터 도메인 간 차이점</p>
+<ol>
+<li>엔트로피 기반 패치 생성 방식</li>
+</ol>
+<p>BLT는 입력 데이터의 바이트 시퀀스를 처리하며, 다음 바이트를 예측하는 **작은 언어 모델(Entropy Model)**로 각 바이트의 엔트로피(정보 불확실성)를 계산합니다. 이 엔트로피 값에 따라 패치 경계를 설정합니다:
+•	엔트로피 낮음: 데이터가 예측 가능 → 긴 패치 생성.
+•	엔트로피 높음: 데이터가 복잡하거나 불확실 → 짧은 패치 생성.</p>
+<ol start="2">
+<li>
+<p>데이터 도메인에 따른 차이점</p>
+<ol>
+<li>자연어(Natural Language)
+•	특징: 문법 규칙, 어휘 패턴, 문장 구조가 비교적 규칙적.
+•	패치 생성 결과:
+•	일반적으로 엔트로피가 낮은 영역이 많아 긴 패치를 생성.
+•	예: &ldquo;The quick brown fox&rdquo; → 하나의 패치.</li>
+<li>코드(Code)
+•	특징: 구문 구조가 매우 엄격하며, 특수 기호와 예약어가 혼재.
+•	패치 생성 결과:
+•	예약어나 연산자와 같은 특수 기호에서 엔트로피가 높아 짧은 패치를 생성.
+•	예: &ldquo;if (x &gt; 5) {&rdquo; → [&ldquo;if&rdquo;, &ldquo;(x&rdquo;, &ldquo;&gt;&rdquo;, &ldquo;5)&rdquo;, &ldquo;{&quot;]와 같은 패치로 나뉨.</li>
+<li>비정형 데이터(Unstructured Data)
+•	특징: 텍스트가 아닌 데이터(예: 바이너리 파일, 로그 데이터)로 고도로 비규칙적.
+•	패치 생성 결과:
+•	엔트로피가 데이터 전반에서 높아 짧은 패치가 많이 생성되며, 처리 비용이 증가.
+•	예: 바이너리 데이터 &ldquo;\x01\x02\xFF&rdquo; → 매우 짧은 패치 생성.</li>
+</ol>
+</li>
+<li>
+<p>도메인 간 차이로 인한 문제점</p>
+<ol>
+<li>패치 길이의 비효율적 변화:
+•	비정형 데이터나 코드 도메인에서는 불필요하게 짧은 패치가 많아져, 연산량(FLOP)과 메모리 사용량이 증가.</li>
+<li>문맥 정보의 단절:
+•	짧은 패치는 문맥 정보를 분리해 글로벌 Transformer가 학습할 수 있는 문맥 크기를 제한.</li>
+<li>패치 경계 설정의 도메인 편향:
+•	특정 도메인에서 엔트로피 모델이 최적화되지 않아 비효율적인 경계 설정이 발생.</li>
+</ol>
+</li>
+<li>
+<p>이를 극복하기 위한 방법</p>
+<ol>
+<li>도메인별 패치 전략 적용
+•	방법:
+•	자연어, 코드, 비정형 데이터에 적합한 엔트로피 모델을 별도로 학습.
+•	데이터 유형에 따라 다른 패치 생성 알고리즘을 사용.
+•	예:
+•	자연어: 현재 엔트로피 기반 모델 사용.
+•	코드: 예약어 인식 모델 추가로 패치 생성 보완.
+•	비정형 데이터: 고정 크기 패치와 엔트로피 기반 경계의 혼합 전략 사용.</li>
+<li>패치 크기의 하이브리드 조정
+•	방법:
+•	패치 크기를 엔트로피 값뿐 아니라, 도메인 특성과 문맥 길이를 기반으로 조정.
+•	예: 코드에서 if (조건) 같은 구문은 하나의 패치로 묶음.</li>
+<li>엔드투엔드 패치 학습
+•	방법:
+•	학습 가능한 Boundary Predictor를 사용해 엔트로피 모델 대신 데이터별 최적 경계를 학습.
+•	학습 과정에서 도메인과 문맥 특성을 반영.</li>
+<li>멀티 도메인 학습으로 일반화 강화
+•	방법:
+•	다양한 도메인(자연어, 코드, 비정형 데이터)을 포함한 데이터셋으로 엔트로피 모델을 학습해 일반화 성능 향상.</li>
+<li>데이터 전처리 및 증강
+•	방법:
+•	비정형 데이터나 코드 데이터에 대해 사전 전처리로 구조를 추가해 엔트로피 모델의 정확성을 높임.
+•	예: 바이너리 데이터 → ASCII 변환.</li>
+</ol>
+</li>
+<li>
+<p>예상 효과
+•	연산량 감소: 도메인에 맞는 패치 생성으로 불필요한 연산 감소.
+•	문맥 보존: 짧은 패치로 인한 문맥 단절 문제 완화.
+•	도메인 일반화: 멀티 도메인 학습을 통해 새로운 데이터 도메인에서도 성능 유지.
+•	효율성 극대화: 데이터의 다양성에 따라 효율적으로 패치 크기를 동적 조정.</p>
+</li>
+</ol>
+<p>결론</p>
+<p>BLT의 엔트로피 기반 패치 생성 방식은 자연어, 코드, 비정형 데이터 간에서 각기 다른 동작을 보이며, 이를 극복하기 위해 도메인 특화 패치 전략, 하이브리드 조정, 엔드투엔드 학습 등이 필요합니다. 이를 통해 도메인별 성능 차이를 최소화하고, 다양한 데이터에서 효율성을 유지하는 모델을 설계할 수 있습니다.</p>
+<h1 id="q--글로벌-latent-transformer와-로컬-인코더디코더-간의-크로스-어텐션-설계가-기존-토큰화-기반-모델과-비교해-연산-및-메모리-효율성에서-어떤-구체적인-이점을-제공하는가">Q : 글로벌 Latent Transformer와 로컬 인코더/디코더 간의 크로스 어텐션 설계가 기존 토큰화 기반 모델과 비교해 연산 및 메모리 효율성에서 어떤 구체적인 이점을 제공하는가?</h1>
+<p>글로벌 Latent Transformer와 로컬 인코더/디코더의 크로스 어텐션 설계가 제공하는 구체적인 이점</p>
+<p>BLT(Byte Latent Transformer)의 글로벌 Transformer와 로컬 인코더/디코더 구조는 크로스 어텐션을 활용해 바이트 수준 데이터를 효율적으로 처리합니다. 이는 기존 토큰화 기반 모델과 비교해 연산(FLOP) 및 메모리 사용량에서 다음과 같은 이점을 제공합니다.</p>
+<ol>
+<li>
+<p>기존 토큰화 기반 모델의 문제점</p>
+<ol>
+<li>고정된 토큰화와 연산 비용 증가:
+•	모든 입력 데이터는 고정된 어휘 집합(token vocabulary)으로 변환되며, 각 토큰에 대해 동일한 연산이 적용됩니다.
+•	입력 데이터의 엔트로피(정보 밀도)에 관계없이 비효율적인 연산 할당이 이루어집니다.</li>
+<li>문맥 처리 한계:
+•	긴 시퀀스에서는 모든 토큰이 동일한 처리 단계를 거치기 때문에, 중요한 문맥 정보와 그렇지 않은 정보 간 연산 비용이 균등하게 분배됩니다.
+•	메모리 사용량이 시퀀스 길이에 따라 선형적으로 증가.</li>
+</ol>
+</li>
+<li>
+<p>BLT의 글로벌-로컬 크로스 어텐션 설계</p>
+</li>
+</ol>
+<p>BLT는 바이트 수준 입력을 처리하며, 글로벌 Latent Transformer와 로컬 인코더/디코더 간 크로스 어텐션 구조를 통해 효율성을 극대화합니다.</p>
+<ol>
+<li>
+<p>설계 구조
+•	로컬 인코더(Local Encoder):
+•	바이트 데이터를 패치로 묶고, 각 패치 내 바이트를 패치 벡터로 변환.
+•	글로벌 Latent Transformer:
+•	패치 벡터 간 문맥 관계를 학습.
+•	로컬 디코더(Local Decoder):
+•	글로벌 패치 벡터를 바이트 수준으로 복원.</p>
+</li>
+<li>
+<p>크로스 어텐션의 역할
+•	로컬 인코더와 글로벌 Transformer 간:
+•	로컬 인코더가 생성한 패치 벡터를 글로벌 Transformer가 입력으로 받아 문맥 정보를 학습.
+•	글로벌 Transformer와 로컬 디코더 간:
+•	글로벌 Transformer가 학습한 문맥 벡터를 로컬 디코더가 바이트로 디코딩.</p>
+</li>
+</ol>
+<ol start="3">
+<li>구체적인 연산 및 메모리 효율성에서의 이점</li>
+</ol>
+<ol>
+<li>
+<p>연산 효율성
+•	기존 모델의 문제:
+•	토큰화 기반 모델은 모든 토큰에 동일한 연산을 수행.
+•	엔트로피가 낮은 단순한 데이터에도 높은 계산 비용 발생.
+•	BLT의 해결책:
+•	엔트로피 기반 패치 생성으로 불필요한 연산 감소:
+•	예측이 쉬운 낮은 엔트로피 데이터는 긴 패치로 묶어, 글로벌 Transformer의 연산 횟수 감소.
+•	로컬 인코더를 통한 사전 처리:
+•	크로스 어텐션을 통해 각 패치 내부에서 연산을 분산 처리하여 글로벌 Transformer의 부담 완화.
+•	패치 크기와 관계없이 고정된 길이의 벡터만 글로벌 Transformer로 전달.</p>
+</li>
+<li>
+<p>메모리 효율성
+•	기존 모델의 문제:
+•	시퀀스 길이에 비례해 메모리 사용량이 증가.
+•	긴 문맥을 처리할 때 토큰 단위로 메모리가 증가하며, 메모리 상한에 도달하기 쉬움.
+•	BLT의 해결책:
+•	패치 기반 처리:
+•	긴 시퀀스를 짧은 패치로 묶어 글로벌 Transformer가 처리해야 할 입력 크기 감소.
+•	패치 크기가 증가하면 글로벌 Transformer의 입력 개수가 줄어들어 메모리 사용량 감소.
+•	로컬 인코더-디코더 분리:
+•	크로스 어텐션으로 글로벌 Transformer가 전체 데이터를 직접 처리하지 않아도 되므로, 메모리 상한 초과 방지.</p>
+</li>
+<li>
+<p>FLOP 감소
+•	기존 모델: 시퀀스 길이에 선형적으로 비례해 FLOP가 증가.
+•	BLT:
+•	패치 크기를 키우거나, 엔트로피가 낮은 데이터에서는 긴 패치 생성.
+•	FLOP 계산:
+•	기존 모델: $O(n^2)$ (시퀀스 길이 $n$에 비례)
+•	BLT: $O(m^2)$ (패치 개수 $m \ll n$)</p>
+</li>
+</ol>
+<ol start="4">
+<li>BLT의 효율성 요약 (사례 비교)</li>
+</ol>
+<p>항목	토큰화 기반 모델	BLT
+연산량(FLOP)	입력 시퀀스 길이에 비례	패치 개수에 비례 (FLOP 감소)
+메모리 요구량	긴 시퀀스 처리 시 증가	패치 처리로 메모리 사용량 감소
+문맥 정보 학습 효율성	고정된 문맥 크기로 제한	크로스 어텐션으로 문맥 효율적 학습
+복잡한 데이터 처리	동일 연산 비용 분배	엔트로피에 따른 연산 집중화</p>
+<ol start="5">
+<li>결론</li>
+</ol>
+<p>BLT의 글로벌-로컬 크로스 어텐션 설계는 기존 토큰화 기반 모델에 비해 연산 효율성과 메모리 사용량 면에서 큰 개선을 제공합니다.
+•	연산 효율성: 엔트로피 기반 패치 생성과 크로스 어텐션으로 불필요한 연산 제거.
+•	메모리 효율성: 패치 기반 처리로 글로벌 Transformer의 부담 감소.
+•	확장성: 긴 문맥 처리나 대규모 데이터에서도 효율적이며, 대규모 모델 스케일링에 적합.</p>
+<p>이러한 구조는 BLT가 기존 토큰화 기반 모델보다 더 유연하고 효율적인 대규모 언어 모델 설계를 가능하게 합니다.</p>
+<h1 id="q--blt가-llama-3와-같은-토큰화-기반-모델과-비교해-대규모-데이터수십억-바이트-이상에서-스케일링-효율성을-유지할-수-있는-구체적인-조건패치-크기-flop-모델-크기-등은-무엇인가">Q : BLT가 LLaMA-3와 같은 토큰화 기반 모델과 비교해 대규모 데이터(수십억 바이트 이상)에서 스케일링 효율성을 유지할 수 있는 구체적인 조건(패치 크기, FLOP, 모델 크기 등)은 무엇인가?</h1>
+<p>BLT가 LLaMA-3와 같은 토큰화 기반 모델과 비교하여 대규모 데이터(수십억 바이트 이상)에서 스케일링 효율성을 유지하는 데 필요한 구체적인 조건은 다음과 같습니다.</p>
+<ol>
+<li>BLT의 스케일링 효율성의 핵심 요소</li>
+</ol>
+<p>BLT의 설계는 패치 크기, FLOP, 모델 크기를 중심으로 대규모 데이터에서의 효율성을 유지하도록 설계되었습니다. 스케일링 효율성을 위해 고려해야 할 주요 조건은 다음과 같습니다:</p>
+<p>(1) 패치 크기
+•	정의: 바이트 시퀀스를 묶어 처리하는 단위 크기.
+•	효과:
+•	패치 크기가 클수록 글로벌 Transformer의 입력 크기가 줄어 FLOP와 메모리 사용량이 감소.
+•	하지만, 너무 큰 패치는 문맥 정보를 희석시켜 성능 저하 가능.
+•	조건:
+•	최적 패치 크기는 엔트로피에 따라 동적으로 조정되어야 함.
+•	예: 평균 6~8 바이트 크기가 FLOP와 성능 사이의 최적 지점을 형성.
+•	패치 크기 8 → FLOP 50% 절감, LLaMA-3 성능과 유사 또는 초과.</p>
+<p>(2) FLOP (연산량)
+•	정의: 모델의 연산 요구량.
+•	효과:
+•	BLT는 엔트로피 기반 패치 생성과 크로스 어텐션으로 FLOP를 효율적으로 분배.
+•	FLOP 감소는 패치 크기를 키우거나 엔트로피가 낮은 데이터에서 긴 패치를 생성해 달성.
+•	조건:
+•	FLOP는 $O(m^2)$로 패치 수($m$)에 비례.
+•	$m \ll n$ (n은 입력 바이트 길이).
+•	예:
+•	LLaMA-3: 시퀀스 길이에 따라 FLOP 선형 증가.
+•	BLT: 패치 크기를 8로 설정하면 FLOP가 50% 감소.</p>
+<p>(3) 모델 크기
+•	정의: 모델의 파라미터 수.
+•	효과:
+•	BLT는 글로벌 Transformer의 파라미터를 주요 연산 자원으로 사용.
+•	로컬 인코더/디코더는 경량 설계로 FLOP와 메모리 효율성을 향상.
+•	조건:
+•	글로벌 Transformer와 패치 크기 간 균형을 유지해야 함.
+•	글로벌 Transformer 크기를 늘리면 문맥 정보 학습 강화.
+•	로컬 인코더/디코더는 1<del>3개의 레이어로 경량 유지.
+•	스케일링:
+•	400M</del>8B 파라미터까지 확장 가능.
+•	8B 모델에서 LLaMA-3와 동일한 성능을 FLOP 절감으로 달성.</p>
+<ol start="2">
+<li>대규모 데이터에서 BLT의 효율성을 유지하는 조건</li>
+</ol>
+<p>(1) 스케일링 법칙</p>
+<p>BLT의 효율성은 모델 크기-데이터 크기 비율에 크게 의존합니다.
+•	조건:
+•	모델 크기와 학습 데이터 크기의 최적 비율은 BPE 기반 스케일링 법칙을 차용.
+•	대규모 데이터에서 FLOP 절감을 위해 패치 크기를 증가시켜야 함.</p>
+<p>(2) FLOP 효율성을 극대화하는 패치 크기
+•	LLaMA-3와 비교:
+•	LLaMA-3는 평균 토큰 크기가 3.7<del>4.4 바이트.
+•	BLT는 패치 크기 6</del>8 바이트에서 동일한 FLOP로 더 많은 문맥 정보를 처리 가능.
+•	예:
+•	패치 크기 8 → LLaMA-3 대비 FLOP 50% 절감.
+•	패치 크기 6 → FLOP 절감 효과는 감소하지만 초기 학습에 유리.</p>
+<p>(3) 엔트로피 기반 패치 생성의 적응성
+•	대규모 데이터는 도메인별 엔트로피 분포가 다양.
+•	BLT는 엔트로피 모델을 도메인에 맞게 학습해 패치 생성을 동적으로 최적화.
+•	조건:
+•	엔트로피 모델이 낮은 복잡도 영역에서 긴 패치를 생성해 연산량을 줄여야 함.
+•	높은 복잡도 영역(코드, 비정형 데이터 등)에서는 짧은 패치를 생성해 문맥 손실 방지.</p>
+<p>(4) 학습 데이터의 다변화
+•	조건:
+•	대규모 데이터셋의 정보 밀도를 고려해 최적의 학습 단계를 설정.
+•	예: 데이터가 고밀도일 경우 패치 크기를 작게 유지해 정보 손실 방지.
+•	코드, 자연어, 비정형 데이터 등 다양한 도메인을 포함하여 엔트로피 모델의 일반화를 도모.</p>
+<p>(5) 글로벌 Transformer의 확장성
+•	글로벌 Transformer는 모델의 스케일링에서 핵심적인 역할.
+•	조건:
+•	패치 크기가 커지면 글로벌 Transformer의 레이어 수를 늘려 문맥 정보 학습 능력을 보완.
+•	예: 패치 크기 6 → 24 레이어, 패치 크기 8 → 32 레이어.</p>
+<ol start="3">
+<li>구체적인 사례 비교</li>
+</ol>
+<p>항목	LLaMA-3 (BPE 기반)	BLT (바이트 기반)
+평균 토큰/패치 크기	3.7<del>4.4 바이트	6</del>8 바이트
+FLOP 증가율	시퀀스 길이에 비례	패치 수에 비례 (FLOP 감소)
+글로벌 Transformer 크기	고정	패치 크기에 따라 동적 확장
+데이터 처리 효율성	고정 어휘 기반 처리	엔트로피 기반 동적 처리
+대규모 데이터 처리	효율성 제한적	FLOP와 메모리 효율 극대화</p>
+<ol start="4">
+<li>결론</li>
+</ol>
+<p>BLT가 LLaMA-3와 같은 토큰화 기반 모델에 비해 대규모 데이터에서 스케일링 효율성을 유지하려면 다음 조건이 필요합니다:
+1.	패치 크기 최적화: 평균 6~8 바이트 크기로 설정해 FLOP 절감과 문맥 보존 간 균형 유지.
+2.	FLOP 효율 극대화: 엔트로피 기반 패치 생성으로 연산량을 줄이고, 글로벌 Transformer의 연산 집중.
+3.	모델 크기 확장: 패치 크기 증가에 따라 글로벌 Transformer의 레이어 수를 동적으로 조정.
+4.	엔트로피 모델 개선: 도메인별 데이터를 반영해 다양한 데이터에서 패치 생성의 적응성을 높임.</p>
+<p>이 조건을 통해 BLT는 대규모 데이터에서도 LLaMA-3와 같은 성능을 유지하면서 연산량과 메모리 사용량을 크게 줄일 수 있습니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/Byte-Latent-Transformer-Patches-Scale-Better-Than-Tokens/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/Byte-Latent-Transformer-Patches-Scale-Better-Than-Tokens/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Efficient-Memory-Management-for-Large-Language-Model-Serving-with-PagedAttention/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                Efficient Memory Management for Large Language Model Serving with PagedAttention
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-12-19">
+                12月19日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Star-Attention-Efficient-LLM-Inference-over-Long-Sequences/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Star Attention: Efficient LLM Inference over Long Sequences
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-12-20">
+                12月20日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents"></nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

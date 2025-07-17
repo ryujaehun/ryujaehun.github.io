@@ -1,0 +1,2654 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>FastComposer Tuning-Free Multi-Subject Image Generation with Localized Attention | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 : https://arxiv.org/abs/2305.10431
+아래글은 Scholar GPT와 대화를 나눈 내용입니다.
+Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점 논문 요약 및 주요 내용 분석 논문 제목: &ldquo;FastComposer:..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/FastComposer-Tuning-Free-Multi-Subject-Image-Generation-with-Localized-Attention/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/FastComposer-Tuning-Free-Multi-Subject-Image-Generation-with-Localized-Attention/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="FastComposer Tuning-Free Multi-Subject Image Generation with Localized Attention">
+  <meta property="og:description" content="논문 : https://arxiv.org/abs/2305.10431
+아래글은 Scholar GPT와 대화를 나눈 내용입니다.
+Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점 논문 요약 및 주요 내용 분석 논문 제목: “FastComposer: Tuning-Free Multi-Subject Image Generation with Localized Attention”
+저자: Guangxuan Xiao, Tianwei Yin, William T. Freeman, Frédo Durand, Song Han (MIT)">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-11-13T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-11-13T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="FastComposer Tuning-Free Multi-Subject Image Generation with Localized Attention">
+  <meta name="twitter:description" content="논문 : https://arxiv.org/abs/2305.10431
+아래글은 Scholar GPT와 대화를 나눈 내용입니다.
+Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점 논문 요약 및 주요 내용 분석 논문 제목: “FastComposer: Tuning-Free Multi-Subject Image Generation with Localized Attention”
+저자: Guangxuan Xiao, Tianwei Yin, William T. Freeman, Frédo Durand, Song Han (MIT)">
+
+
+  <meta itemprop="name" content="FastComposer Tuning-Free Multi-Subject Image Generation with Localized Attention">
+  <meta itemprop="description" content="논문 : https://arxiv.org/abs/2305.10431
+아래글은 Scholar GPT와 대화를 나눈 내용입니다.
+Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점 논문 요약 및 주요 내용 분석 논문 제목: “FastComposer: Tuning-Free Multi-Subject Image Generation with Localized Attention”
+저자: Guangxuan Xiao, Tianwei Yin, William T. Freeman, Frédo Durand, Song Han (MIT)">
+  <meta itemprop="datePublished" content="2024-11-13T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-11-13T00:00:00+00:00">
+  <meta itemprop="wordCount" content="12062">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">FastComposer Tuning-Free Multi-Subject Image Generation with Localized Attention</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    FastComposer Tuning-Free Multi-Subject Image Generation with Localized Attention
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-11-13">
+          2024년 11월 13일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >25 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>12062 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p>논문 : <a href="https://arxiv.org/abs/2305.10431">https://arxiv.org/abs/2305.10431</a></p>
+<p>아래글은 Scholar GPT와 대화를 나눈 내용입니다.</p>
+<h1 id="q--논문의-핵심-내용과-강점-알고리즘-설명-그리고-한계점">Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점</h1>
+<h3 id="논문-요약-및-주요-내용-분석">논문 요약 및 주요 내용 분석</h3>
+<p><strong>논문 제목</strong>: &ldquo;FastComposer: Tuning-Free Multi-Subject Image Generation with Localized Attention&rdquo;<br>
+<strong>저자</strong>: Guangxuan Xiao, Tianwei Yin, William T. Freeman, Frédo Durand, Song Han (MIT)</p>
+<p>이 논문은 <strong>다중 주제 이미지 생성</strong>에 중점을 두고 있으며, 특히 <strong>개인화된 이미지 생성에서 효율적인 방법</strong>을 제안합니다. 기존 방법들은 새로운 주제를 모델에 반영하기 위해 <strong>모델을 개별적으로 미세 조정(fine-tuning)</strong> 해야 하며, 이는 <strong>시간과 메모리 비용이 매우 크다</strong>는 문제가 있었습니다. 반면, <strong>FastComposer</strong>는 이러한 미세 조정 없이 <strong>다중 주제 이미지를 생성</strong>할 수 있는 새로운 접근 방식을 제안합니다.</p>
+<h3 id="주요-기여-및-독창성">주요 기여 및 독창성</h3>
+<ol>
+<li>
+<p><strong>튜닝 없는 다중 주제 이미지 생성</strong>:</p>
+<ul>
+<li>FastComposer는 이미지 인코더를 통해 추출한 **주제 임베딩(subject embeddings)**을 사용하여, 기존 텍스트 조건을 보강합니다. 이를 통해 모델 튜닝 없이도 주제별 개인화된 이미지를 생성할 수 있습니다.</li>
+<li>주제 임베딩을 통해 주제의 정체성을 유지하면서도 텍스트 지시에 따라 이미지의 내용을 자유롭게 편집할 수 있도록 합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>교차 주의 집중 지도(Cross-Attention Localization Supervision)</strong>:</p>
+<ul>
+<li>다중 주제 이미지 생성 시 발생하는 <strong>정체성 혼합(identity blending)</strong> 문제를 해결합니다. 이를 위해 학습 중 <strong>세그멘테이션 마스크를 활용한 주의 집중 지도</strong>를 도입하여, 각 주제가 올바르게 매핑되도록 합니다.</li>
+<li>이는 학습 시에만 필요하며, 추론 시에는 추가적인 세그멘테이션 과정이 필요하지 않습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>지연된 주제 조건(Delayed Subject Conditioning)</strong>:</p>
+<ul>
+<li>생성 과정 초기에 텍스트 기반의 조건만을 사용해 이미지의 레이아웃을 구성한 후, 이후 단계에서 주제 임베딩을 추가로 반영합니다. 이를 통해 <strong>정체성 보존과 편집 가능성 사이의 균형</strong>을 맞춥니다.</li>
+</ul>
+</li>
+</ol>
+<h3 id="핵심-알고리즘-설명-예시-입력을-통한-과정-분석">핵심 알고리즘 설명: 예시 입력을 통한 과정 분석</h3>
+<p>FastComposer는 다음과 같은 과정을 통해 이미지를 생성합니다.</p>
+<h4 id="예시-입력"><strong>예시 입력</strong>:</h4>
+<ul>
+<li>텍스트 프롬프트: &ldquo;A scientist and an artist discussing in a studio&rdquo;</li>
+<li>주제 이미지: 과학자와 예술가의 얼굴 사진 2장</li>
+</ul>
+<h4 id="단계별-과정"><strong>단계별 과정</strong>:</h4>
+<ol>
+<li>
+<p><strong>텍스트 및 이미지 인코딩</strong>:</p>
+<ul>
+<li>텍스트 프롬프트를 CLIP 텍스트 인코더를 사용해 **텍스트 임베딩(ψ(P))**으로 변환합니다.</li>
+<li>각 주제 이미지에서 **주제 임베딩(φ(S))**을 추출합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>주제 임베딩과 텍스트 임베딩 결합</strong>:</p>
+<ul>
+<li>프롬프트에서 &ldquo;scientist&quot;와 &ldquo;artist&quot;라는 단어에 주제 임베딩을 연결합니다. 이를 통해 텍스트 조건이 보강된 **최종 임베딩(c&rsquo;)**을 생성합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>교차 주의 집중 지도 학습</strong>:</p>
+<ul>
+<li>학습 중에는 주제별 <strong>세그멘테이션 마스크</strong>를 사용하여 교차 주의 집중 맵(A)이 올바르게 주제를 식별하도록 만듭니다. 이를 통해 <strong>정체성 혼합 문제</strong>를 방지합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>지연된 주제 조건 적용</strong>:</p>
+<ul>
+<li>초기 <strong>노이즈 제거 과정</strong>에서는 텍스트 프롬프트만 사용하여 이미지의 레이아웃을 생성합니다.</li>
+<li>이후 단계에서 <strong>주제 임베딩</strong>을 추가하여 주제의 디테일을 보강합니다. 이를 통해 이미지 내에서 과학자와 예술가의 외형을 정확하게 반영하면서도 텍스트 지시에 따라 다양한 컨텍스트를 생성할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>최종 이미지 생성</strong>:</p>
+<ul>
+<li>모든 단계가 완료된 후, VAE를 사용해 최종 이미지를 생성합니다. 이 과정은 <strong>미세 조정 없이</strong> 빠르게 수행되며, 메모리 사용량도 기존 방식에 비해 대폭 절감됩니다.</li>
+</ul>
+</li>
+</ol>
+<h3 id="논문의-강점">논문의 강점</h3>
+<ul>
+<li><strong>효율성</strong>: FastComposer는 미세 조정 없이 <strong>300배에서 2500배 빠른</strong> 성능을 보여줍니다.</li>
+<li><strong>다중 주제 이미지 생성</strong>에서 뛰어난 성능을 발휘하며, <strong>정체성 보존</strong>과 <strong>편집 가능성</strong>을 동시에 만족시킵니다.</li>
+<li><strong>추론 시 추가 저장 공간이 필요 없고</strong>, 저사양 장비에서도 실행 가능하여 <strong>확장성</strong>이 높습니다.</li>
+</ul>
+<h3 id="논문의-한계점">논문의 한계점</h3>
+<ol>
+<li>
+<p><strong>데이터셋의 한계</strong>:</p>
+<ul>
+<li>학습에 사용된 <strong>FFHQ</strong> 데이터셋은 주로 <strong>인물의 얼굴 사진</strong>에 국한되어 있어, <strong>다양한 주제</strong>를 포괄하지 못합니다. 이를 확장하기 위해 더 다양한 주제의 대규모 데이터셋이 필요합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>비인간 주제에 대한 한정된 적용성</strong>:</p>
+<ul>
+<li>현재 모델은 주로 <strong>인간 중심</strong>의 이미지 생성에 최적화되어 있어, <strong>동물 또는 비인간 주제</strong>에 대한 생성 능력이 제한적입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>기존 모델의 편향성 문제를 계승</strong>:</p>
+<ul>
+<li>FastComposer는 Stable Diffusion과 FFHQ 데이터셋을 기반으로 하기 때문에, 이들이 가지고 있는 <strong>편향성(bias)</strong> 문제를 그대로 계승할 수 있습니다.</li>
+</ul>
+</li>
+</ol>
+<h3 id="결론">결론</h3>
+<p>FastComposer는 개인화된 다중 주제 텍스트-이미지 생성의 새로운 가능성을 열어주었습니다. 특히, 미세 조정 없이도 높은 품질의 이미지를 빠르게 생성할 수 있어 다양한 실제 응용 분야에서 활용될 수 있을 것입니다. 다만, 더 다양한 데이터셋을 활용한 추가 연구를 통해 모델의 적용성을 넓히는 것이 향후 과제가 될 것입니다.</p>
+<h1 id="q--이-논문에서-사용하는-방법을-학습하기-위하여-어떤-데이터셋이-필요할까-그리고-어떻게-학습을-진행하면-될지-예시를-들어서-아주-자세하게-설명해줘">Q : 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될지 예시를 들어서 아주 자세하게 설명해줘</h1>
+<h3 id="논문에서-제안된-fastcomposer를-학습하기-위해-필요한-데이터셋과-학습-방법">논문에서 제안된 <strong>FastComposer</strong>를 학습하기 위해 필요한 데이터셋과 학습 방법</h3>
+<p><strong>FastComposer</strong>는 다중 주제 이미지 생성을 위해 특정한 <strong>텍스트-이미지 페어</strong> 데이터셋과 <strong>세그멘테이션 마스크</strong>를 사용합니다. 이 모델이 제대로 작동하기 위해서는 다양한 상황에서 여러 주제를 다룰 수 있는 <strong>주제-텍스트-이미지 페어</strong>가 필요합니다. 이 섹션에서는 <strong>필요한 데이터셋</strong>과 <strong>학습 프로세스</strong>를 예시를 통해 단계별로 자세히 설명하겠습니다.</p>
+<hr>
+<h3 id="1-필요한-데이터셋-구성">1. <strong>필요한 데이터셋 구성</strong></h3>
+<p>FastComposer를 학습하기 위해서는 다음과 같은 데이터셋이 필요합니다.</p>
+<h4 id="11-텍스트-이미지-페어-데이터셋"><strong>1.1 텍스트-이미지 페어 데이터셋</strong></h4>
+<ul>
+<li><strong>텍스트 설명</strong>과 <strong>이미지</strong>가 쌍으로 구성된 데이터셋이 필요합니다.
+<ul>
+<li>예시:
+<ul>
+<li>텍스트: &ldquo;A young woman reading a book in a park.&rdquo;</li>
+<li>이미지: 해당 텍스트 설명에 맞는 사진.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>FastComposer는 다양한 주제(인물, 배경, 동작 등)가 포함된 <strong>다양한 상황</strong>을 학습해야 하므로, <strong>다양한 주제와 스타일</strong>을 포함하는 이미지가 포함된 데이터셋이 필요합니다.</li>
+</ul>
+<h4 id="12-주제-세그멘테이션-마스크"><strong>1.2 주제 세그멘테이션 마스크</strong></h4>
+<ul>
+<li><strong>세그멘테이션 마스크</strong>는 이미지에서 특정 주제(예: 사람, 동물, 사물 등)의 위치를 식별하는 <strong>마스크 정보</strong>입니다.
+<ul>
+<li>예시:
+<ul>
+<li>텍스트: &ldquo;Two people playing basketball.&rdquo;</li>
+<li>이미지: 두 사람이 있는 사진.</li>
+<li>세그멘테이션 마스크: 첫 번째 사람, 두 번째 사람, 배경을 각각 구분하는 마스크.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>이 마스크는 **교차 주의 집중 지도(Cross-Attention Localization Supervision)**를 위해 사용됩니다. 이를 통해 모델이 다중 주제 생성 시 주제 간의 <strong>혼합(blending)</strong> 문제를 방지할 수 있습니다.</li>
+</ul>
+<h4 id="13-데이터셋-예시"><strong>1.3 데이터셋 예시</strong></h4>
+<ul>
+<li><strong>COCO dataset</strong>, <strong>FFHQ</strong>, <strong>CelebA</strong>와 같은 기존의 대규모 데이터셋을 사용할 수 있습니다.
+<ul>
+<li>COCO dataset: 다양한 객체와 행동을 포함한 텍스트-이미지 페어.</li>
+<li>FFHQ: 고해상도 얼굴 사진 데이터셋 (주로 인물 중심).</li>
+<li>CelebA: 다양한 표정과 액세서리가 포함된 인물 사진.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-데이터셋-준비-및-전처리-과정">2. <strong>데이터셋 준비 및 전처리 과정</strong></h3>
+<h4 id="21-데이터셋-전처리"><strong>2.1 데이터셋 전처리</strong></h4>
+<ol>
+<li>
+<p><strong>텍스트-이미지 쌍 생성</strong>:</p>
+<ul>
+<li>COCO 데이터셋과 같은 대규모 데이터셋을 사용해 **이미지 캡션 생성 모델(BLIP-2)**을 이용하여 텍스트 설명을 추가합니다.</li>
+<li>텍스트 설명에 포함된 **명사(nouns)**를 추출하여 <strong>주제</strong>를 정의합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>세그멘테이션 마스크 생성</strong>:</p>
+<ul>
+<li><strong>Mask2Former 모델</strong>을 사용해 각 이미지에 대한 <strong>세그멘테이션 마스크</strong>를 생성합니다.</li>
+<li>이미지에서 텍스트와 관련된 객체들을 분할하고, <strong>각 주제의 영역</strong>을 식별하는 마스크를 만듭니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>텍스트와 마스크의 연결</strong>:</p>
+<ul>
+<li><strong>spaCy</strong> 라이브러리를 사용해 텍스트에서 명사구를 추출한 후, 생성된 세그멘테이션 마스크와 연결합니다.</li>
+<li><strong>CLIP 모델</strong>을 활용해 텍스트와 이미지 간의 <strong>유사도 점수</strong>를 계산하고, <strong>Sentence-Transformer</strong>를 사용해 텍스트와 세그멘테이션 마스크를 연결합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="3-fastcomposer-학습-과정">3. <strong>FastComposer 학습 과정</strong></h3>
+<h4 id="31-모델-설정"><strong>3.1 모델 설정</strong></h4>
+<ul>
+<li><strong>Stable Diffusion</strong> 모델을 기본으로 하여, <strong>U-Net</strong>과 <strong>텍스트 인코더</strong>를 사용합니다.</li>
+<li>텍스트 인코더는 <strong>CLIP</strong> 모델을 사용하고, <strong>이미지 인코더</strong>는 CLIP의 <strong>vision 모델</strong>을 사용합니다.</li>
+</ul>
+<h4 id="32-학습-단계-예시를-통한-학습-과정"><strong>3.2 학습 단계</strong>: 예시를 통한 학습 과정</h4>
+<p><strong>목표</strong>: &ldquo;A young woman and a cat sitting on a sofa&quot;라는 텍스트 프롬프트와 해당 이미지 쌍을 학습하는 과정</p>
+<ol>
+<li>
+<p><strong>텍스트 및 이미지 임베딩 추출</strong>:</p>
+<ul>
+<li>텍스트 프롬프트 &ldquo;A young woman and a cat sitting on a sofa&quot;를 CLIP 텍스트 인코더를 사용해 **텍스트 임베딩(ψ(P))**으로 변환합니다.</li>
+<li>주제 이미지(여성과 고양이)를 CLIP 이미지 인코더를 통해 **주제 임베딩(φ(S))**으로 변환합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>텍스트 임베딩 보강</strong>:</p>
+<ul>
+<li>추출된 텍스트 임베딩과 주제 임베딩을 <strong>MLP 네트워크</strong>를 사용해 결합하여 **보강된 임베딩(c&rsquo;)**을 생성합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>교차 주의 집중 지도 학습</strong>:</p>
+<ul>
+<li>**교차 주의 맵(A)**를 생성하고, <strong>세그멘테이션 마스크</strong>를 활용하여 올바른 주제에 대한 주의 집중을 유도합니다.</li>
+<li>이를 통해 <strong>여성과 고양이의 정체성 혼합</strong>을 방지합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>지연된 주제 조건 적용</strong>:</p>
+<ul>
+<li>초기 단계에서는 <strong>텍스트 조건</strong>만을 사용하여 기본적인 레이아웃을 생성합니다.</li>
+<li>이후 단계에서 주제 임베딩을 추가하여 <strong>세부 사항을 보강</strong>합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>최적화 및 손실 함수</strong>:</p>
+<ul>
+<li>손실 함수는 **노이즈 예측 손실(L_noise)**와 **교차 주의 집중 손실(L_loc)**로 구성됩니다.</li>
+<li>최종 손실: ( L = L_{noise} + \lambda L_{loc} )
+<ul>
+<li>여기서 (\lambda)는 하이퍼파라미터로, 교차 주의 집중 손실의 가중치를 조절합니다.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="4-추론inference-과정">4. <strong>추론(Inference) 과정</strong></h3>
+<ul>
+<li>학습된 모델은 새로운 텍스트 프롬프트와 주제 이미지가 주어졌을 때 <strong>미세 조정 없이 빠르게</strong> 이미지를 생성할 수 있습니다.</li>
+<li>예시:
+<ul>
+<li>입력 텍스트: &ldquo;A young man and a dog playing in the garden&rdquo;</li>
+<li>주제 이미지: 남성 얼굴 사진, 개 사진.</li>
+<li>생성된 이미지: 남성과 개가 정원에서 노는 장면을 정확하게 반영하면서도 주제의 정체성을 유지.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="5-추가적인-고려-사항">5. <strong>추가적인 고려 사항</strong></h3>
+<ul>
+<li><strong>데이터 확장</strong>: FFHQ와 COCO 데이터셋 이외에도 <strong>다양한 주제</strong>(예: 동물, 자연 환경, 건축물 등)를 포함한 데이터셋을 추가하여 모델의 <strong>일반화 성능</strong>을 향상시킬 수 있습니다.</li>
+<li><strong>모델 편향 문제</strong>: 학습에 사용된 데이터셋의 <strong>편향성</strong>이 모델에 반영될 수 있으므로, 이를 보정하기 위해 <strong>다양한 출처의 데이터</strong>를 포함하는 것이 중요합니다.</li>
+</ul>
+<h3 id="요약">요약</h3>
+<p>FastComposer를 학습하기 위해서는 다양한 주제와 상황을 포함한 텍스트-이미지 페어 데이터셋과 세그멘테이션 마스크가 필요합니다. 이러한 데이터셋을 기반으로 모델을 학습하면 <strong>튜닝 없이도 다중 주제 이미지 생성이 가능</strong>하며, 생성된 이미지에서 주제 간의 혼합 문제를 해결할 수 있습니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h3 id="논문에서-제시한-결과-및-분석">논문에서 제시한 결과 및 분석</h3>
+<p><strong>FastComposer</strong> 논문은 다양한 실험 결과를 통해 제안된 방법론이 기존 접근 방식보다 효율적이고 뛰어난 성능을 발휘한다고 주장합니다. 이 섹션에서는 논문에서 제시한 <strong>실험 결과</strong>, <strong>다른 방법론에 비해 특출난 점</strong>, 그리고 <strong>왜 이러한 결과가 도출되었는지</strong>를 논문에서 제시한 이유와 제 생각을 결합하여 자세히 설명하겠습니다.</p>
+<hr>
+<h3 id="1-실험-결과-요약">1. <strong>실험 결과 요약</strong></h3>
+<p>논문에서 제시된 실험은 <strong>단일 주제</strong>와 <strong>다중 주제 이미지 생성</strong>을 대상으로 진행되었으며, 다양한 평가 지표를 통해 FastComposer의 성능을 분석했습니다.</p>
+<h4 id="11-단일-주제-이미지-생성-single-subject-image-generation"><strong>1.1 단일 주제 이미지 생성 (Single-Subject Image Generation)</strong></h4>
+<ul>
+<li>
+<p><strong>비교 대상</strong>: 기존의 최적화 기반 방법들 (DreamBooth, Textual Inversion, Custom Diffusion) 및 텍스트 기반 생성 모델 (Stable Diffusion).</p>
+</li>
+<li>
+<p><strong>평가 지표</strong>:</p>
+<ul>
+<li><strong>정체성 보존 (Identity Preservation)</strong>: 주어진 참조 이미지와 생성된 이미지의 유사도 측정 (FaceNet 활용).</li>
+<li><strong>프롬프트 일치도 (Prompt Consistency)</strong>: 텍스트 프롬프트와 생성된 이미지 간의 유사도 (CLIP 활용).</li>
+<li><strong>속도 및 메모리 효율성</strong>: 이미지 생성에 소요되는 시간 및 메모리 사용량 비교.</li>
+</ul>
+</li>
+<li>
+<p><strong>결과</strong>:</p>
+<ul>
+<li>FastComposer는 <strong>정체성 보존</strong>에서 51.41%의 높은 점수를 기록하며, 다른 방법론보다 월등히 우수한 성능을 보여줍니다.</li>
+<li><strong>300배~1200배 더 빠른 속도</strong>와 <strong>2.8배 낮은 메모리 사용량</strong>으로 기존 방식들보다 효율적입니다.</li>
+<li>텍스트-이미지 일치도에서도 기존 최적화 기반 방법들과 유사한 성능을 달성했습니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="12-다중-주제-이미지-생성-multi-subject-image-generation"><strong>1.2 다중 주제 이미지 생성 (Multi-Subject Image Generation)</strong></h4>
+<ul>
+<li>
+<p><strong>비교 대상</strong>: 동일한 방법론(DreamBooth, Custom Diffusion 등)과 비교.</p>
+</li>
+<li>
+<p><strong>평가 지표</strong>:</p>
+<ul>
+<li><strong>정체성 보존</strong>: 다중 주제의 경우, 생성된 이미지에서 각 주제(인물)가 참조 이미지와 얼마나 일치하는지 평가.</li>
+<li><strong>프롬프트 일치도</strong>: 다중 주제를 포함하는 텍스트 프롬프트와 생성된 이미지의 일치도를 평가.</li>
+<li><strong>속도 및 메모리 사용량</strong>.</li>
+</ul>
+</li>
+<li>
+<p><strong>결과</strong>:</p>
+<ul>
+<li>FastComposer는 **정체성 보존에서 43.11%**를 기록하며, 다중 주제 상황에서도 다른 방법들보다 <strong>최고 성능</strong>을 보여줍니다.</li>
+<li><strong>미세 조정 없이 빠른 속도</strong>로 다중 주제를 동시에 생성할 수 있으며, <strong>메모리 사용량이 적어 효율적</strong>입니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-다른-방법론에-비해-특출난-점">2. <strong>다른 방법론에 비해 특출난 점</strong></h3>
+<p>FastComposer가 기존 방법론들에 비해 두드러지는 이유는 다음과 같습니다.</p>
+<h4 id="21-튜닝-없는-빠른-성능"><strong>2.1 튜닝 없는 빠른 성능</strong></h4>
+<ul>
+<li>기존의 방법(DreamBooth, Textual Inversion 등)은 <strong>각 주제마다 모델을 미세 조정</strong>해야 했습니다. 이로 인해 새로운 주제나 다중 주제 생성을 위해서는 <strong>큰 시간과 메모리 비용</strong>이 요구되었습니다.</li>
+<li>반면, FastComposer는 <strong>미세 조정 없이</strong> 주제 임베딩을 통해 개인화된 이미지를 생성할 수 있습니다. 이는 <strong>단순한 피드포워드 패스만으로도</strong> 다중 주제 생성을 가능하게 해주어 <strong>300배~2500배 빠른 속도</strong>를 제공합니다.</li>
+</ul>
+<h4 id="22-다중-주제-생성에서의-정체성-보존"><strong>2.2 다중 주제 생성에서의 정체성 보존</strong></h4>
+<ul>
+<li>기존 방법들은 **다중 주제 생성 시 정체성이 혼합(identity blending)**되는 문제가 있었습니다. 예를 들어, 두 명의 인물이 포함된 이미지를 생성할 때 서로의 특징이 섞여버리는 현상이 발생합니다.</li>
+<li>FastComposer는 **교차 주의 집중 지도(Cross-Attention Localization Supervision)**를 도입하여, 각 주제가 독립적으로 올바르게 표현되도록 유도합니다. 이를 통해 다중 주제 생성 시 <strong>정체성 보존</strong>이 개선되었습니다.</li>
+</ul>
+<h4 id="23-지연된-주제-조건delayed-subject-conditioning-적용"><strong>2.3 지연된 주제 조건(Delayed Subject Conditioning) 적용</strong></h4>
+<ul>
+<li>기존 방식에서는 주제 임베딩을 초기에 적용하여 이미지 생성을 진행했습니다. 이로 인해 <strong>텍스트 지시 사항을 반영하기 어려워지는 문제</strong>가 발생했습니다.</li>
+<li>FastComposer는 <strong>지연된 주제 조건 기법</strong>을 사용하여, 먼저 텍스트만을 기반으로 이미지 레이아웃을 생성한 후, 후반부에 주제 임베딩을 추가합니다. 이를 통해 <strong>텍스트 지시 사항을 정확히 반영</strong>하면서도 주제의 정체성을 유지할 수 있습니다.</li>
+</ul>
+<hr>
+<h3 id="3-논문에서-제시하는-이유와-나의-생각">3. <strong>논문에서 제시하는 이유와 나의 생각</strong></h3>
+<h4 id="논문에서-제시한-이유"><strong>논문에서 제시한 이유</strong></h4>
+<ul>
+<li><strong>교차 주의 집중 지도</strong>와 <strong>지연된 주제 조건 적용</strong>이 FastComposer의 핵심 기법으로, 다중 주제 생성에서 정체성 보존과 편집 가능성의 균형을 맞출 수 있었다고 주장합니다.</li>
+<li>기존의 최적화 기반 접근 방식은 주제마다 모델을 새로 튜닝해야 하므로, <strong>고비용과 낮은 확장성</strong>의 한계를 가지고 있었습니다. FastComposer는 이러한 문제를 해결함으로써 <strong>다양한 플랫폼에서의 실용성</strong>을 높였습니다.</li>
+</ul>
+<h4 id="나의-생각"><strong>나의 생각</strong></h4>
+<p>FastComposer의 접근 방식은 <strong>튜닝을 제거하면서도 성능을 유지</strong>한 점에서 매우 혁신적입니다. 특히, 다중 주제 생성 시 <strong>정체성 보존 문제를 해결</strong>한 것은 기존의 방법론들이 풀지 못한 중요한 문제를 해결한 것입니다.</p>
+<p>다만, 논문에서 언급된 한계점과 같이, <strong>현재 모델이 주로 인물 사진에 특화</strong>되어 있으며, <strong>다양한 주제와 시나리오</strong>를 학습하는 데는 한계가 있습니다. 이를 개선하기 위해 더 <strong>다양한 데이터셋</strong>을 추가하고, 인간이 아닌 주제(예: 동물, 사물 등)에 대한 학습을 확장할 필요가 있습니다. 또한, <strong>모델의 편향성 문제</strong>를 해결하기 위해 데이터셋의 다양성 확보도 중요한 과제입니다.</p>
+<p>FastComposer의 접근 방식은 추후 <strong>실시간 개인화 이미지 생성</strong>이나 <strong>에지 디바이스에서의 실행</strong> 등 다양한 응용 분야에서 <strong>확장 가능성</strong>이 크다고 생각됩니다. 다만, 학습 데이터의 다양성과 모델의 일반화 성능을 개선하는 추가 연구가 필요합니다.</p>
+<h1 id="q--이-논문에서-제시된-방법을-실제로-사용하려면-기존-방법에서-어떠한-구현이-추가적으로-필요하고-이러한-구현에-소모되는-공수에-대해서-계산해줄-수-있겠니">Q : 이 논문에서 제시된 방법을 실제로 사용하려면 기존 방법에서 어떠한 구현이 추가적으로 필요하고 이러한 구현에 소모되는 공수에 대해서 계산해줄 수 있겠니?</h1>
+<h3 id="fastcomposer-방법을-실제-프로젝트에-통합하기-위한-구현-요구-사항-분석">FastComposer 방법을 실제 프로젝트에 통합하기 위한 구현 요구 사항 분석</h3>
+<p>논문에서 제시된 <strong>FastComposer</strong>를 기존의 텍스트-이미지 생성 시스템에 적용하려면 <strong>여러 추가 구현 작업</strong>이 필요합니다. 특히, FastComposer는 <strong>교차 주의 집중 지도</strong>와 <strong>지연된 주제 조건 적용</strong>을 포함한 독창적인 기법들을 사용하므로, 이를 기존 시스템에 통합하기 위해 <strong>추가적인 코드 작성</strong>과 <strong>데이터 전처리</strong> 작업이 요구됩니다.</p>
+<p>다음 섹션에서는 <strong>구체적으로 필요한 구현 항목들</strong>과 <strong>추가적인 공수</strong>에 대해 설명합니다.</p>
+<hr>
+<h3 id="1-기존-시스템에서-fastcomposer-통합-시-필요한-추가-구현-사항">1. <strong>기존 시스템에서 FastComposer 통합 시 필요한 추가 구현 사항</strong></h3>
+<h4 id="11-데이터-준비-및-전처리"><strong>1.1 데이터 준비 및 전처리</strong></h4>
+<p>FastComposer는 <strong>주제 세그멘테이션 마스크</strong>를 사용하여 다중 주제 간의 정체성 혼합 문제를 해결합니다. 이를 위해 기존의 텍스트-이미지 생성 모델과는 <strong>추가적인 데이터 전처리 단계</strong>가 필요합니다.</p>
+<ul>
+<li><strong>세그멘테이션 마스크 생성</strong>:
+<ul>
+<li><strong>Mask2Former 모델</strong>과 같은 세그멘테이션 도구를 사용하여 <strong>각 이미지에 대한 객체 분할 마스크</strong>를 생성합니다.</li>
+<li><strong>텍스트 프롬프트와 주제 세그멘테이션 마스크를 연결</strong>하여, 주제별 임베딩과 텍스트 조건을 결합합니다.</li>
+</ul>
+</li>
+<li><strong>추가 작업량</strong>:
+<ul>
+<li>데이터 전처리 코드 작성: 약 <strong>20~30시간</strong>.</li>
+<li>Mask2Former를 활용한 세그멘테이션 모델 학습 및 마스크 생성: <strong>100~150시간</strong> (데이터셋 크기에 따라 달라질 수 있음).</li>
+<li>텍스트 프롬프트와 마스크 연결 알고리즘 구현 (spaCy 및 CLIP 활용): <strong>20~30시간</strong>.</li>
+</ul>
+</li>
+</ul>
+<h4 id="12-모델-수정-및-구현"><strong>1.2 모델 수정 및 구현</strong></h4>
+<p>FastComposer는 기존의 Stable Diffusion 모델을 기반으로 하지만, 몇 가지 핵심적인 수정 사항이 필요합니다.</p>
+<ol>
+<li>
+<p><strong>주제 임베딩 및 텍스트 임베딩 통합</strong>:</p>
+<ul>
+<li>기존 텍스트 인코더(CLIP)를 사용해 <strong>텍스트 임베딩</strong>을 추출하고, <strong>주제 임베딩</strong>을 이미지 인코더를 통해 추가로 생성합니다.</li>
+<li>텍스트 임베딩과 주제 임베딩을 <strong>MLP 네트워크</strong>로 결합하여 보강된 텍스트 표현을 만듭니다.</li>
+<li><strong>구현 시간</strong>: 약 <strong>40~50시간</strong>.</li>
+</ul>
+</li>
+<li>
+<p><strong>교차 주의 집중 지도</strong>:</p>
+<ul>
+<li><strong>교차 주의 맵을 생성</strong>하고, 세그멘테이션 마스크를 활용하여 주의 집중을 지도합니다.</li>
+<li>학습 시에만 이 과정이 필요하며, 추론 시에는 추가적인 비용이 들지 않도록 구현해야 합니다.</li>
+<li><strong>구현 시간</strong>: 약 <strong>30~40시간</strong>.</li>
+</ul>
+</li>
+<li>
+<p><strong>지연된 주제 조건 적용 (Delayed Subject Conditioning)</strong>:</p>
+<ul>
+<li>생성 과정에서 <strong>초기에는 텍스트만 사용</strong>하여 레이아웃을 구성한 후, <strong>후반부에 주제 임베딩</strong>을 적용하도록 모델을 수정합니다.</li>
+<li>노이즈 제거 과정에서 <strong>조건 적용 시점을 제어</strong>하기 위해 U-Net 모델의 파이프라인을 수정해야 합니다.</li>
+<li><strong>구현 시간</strong>: 약 <strong>30~40시간</strong>.</li>
+</ul>
+</li>
+</ol>
+<h4 id="13-학습-및-튜닝"><strong>1.3 학습 및 튜닝</strong></h4>
+<ul>
+<li>FastComposer를 기존 데이터셋에 맞추어 <strong>재학습</strong>해야 합니다.</li>
+<li><strong>하이퍼파라미터 튜닝</strong>을 통해 최적의 성능을 확보해야 합니다 (예: 지연된 주제 조건의 적용 비율인 (\alpha) 값 조정).</li>
+<li><strong>학습 시간</strong>:
+<ul>
+<li>모델 학습 (Stable Diffusion v1.5 기반): <strong>150~200 GPU 시간</strong>.</li>
+<li>하이퍼파라미터 튜닝: <strong>50~100시간</strong>.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-필요한-리소스-및-공수-요약">2. <strong>필요한 리소스 및 공수 요약</strong></h3>
+<table>
+  <thead>
+      <tr>
+          <th>작업 항목</th>
+          <th>소요 시간 (시간)</th>
+          <th>필요한 리소스</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>데이터 전처리 코드 작성</td>
+          <td>20~30</td>
+          <td>Python, spaCy, CLIP</td>
+      </tr>
+      <tr>
+          <td>세그멘테이션 마스크 생성 및 연결</td>
+          <td>100~150</td>
+          <td>Mask2Former, GPU 서버</td>
+      </tr>
+      <tr>
+          <td>텍스트 및 주제 임베딩 통합 구현</td>
+          <td>40~50</td>
+          <td>PyTorch, MLP 네트워크</td>
+      </tr>
+      <tr>
+          <td>교차 주의 집중 지도 구현</td>
+          <td>30~40</td>
+          <td>U-Net 수정, 세그멘테이션 지도</td>
+      </tr>
+      <tr>
+          <td>지연된 주제 조건 적용 구현</td>
+          <td>30~40</td>
+          <td>U-Net 모델 수정</td>
+      </tr>
+      <tr>
+          <td>모델 학습 및 튜닝</td>
+          <td>200~300 (GPU 시간)</td>
+          <td>고성능 GPU (A100 등)</td>
+      </tr>
+      <tr>
+          <td>하이퍼파라미터 튜닝 및 검증</td>
+          <td>50~100</td>
+          <td>GPU 서버, Python 스크립트</td>
+      </tr>
+      <tr>
+          <td><strong>총 소요 시간</strong></td>
+          <td>약 500~700시간</td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="3-추가적으로-고려해야-할-사항">3. <strong>추가적으로 고려해야 할 사항</strong></h3>
+<h4 id="31-하드웨어-요구-사항"><strong>3.1 하드웨어 요구 사항</strong></h4>
+<ul>
+<li>FastComposer의 학습 및 튜닝을 위해 <strong>고성능 GPU</strong> (예: NVIDIA A100, V100 등)가 필요합니다.</li>
+<li>세그멘테이션 마스크 생성을 위한 <strong>대규모 연산 작업</strong>이 포함되므로 <strong>GPU 서버</strong>가 필수적입니다.</li>
+</ul>
+<h4 id="32-잠재적-문제"><strong>3.2 잠재적 문제</strong></h4>
+<ul>
+<li><strong>데이터셋 확장 문제</strong>: FastComposer는 현재 인물 중심의 데이터셋(FFHQ, CelebA 등)에 최적화되어 있습니다. 다양한 주제(예: 동물, 자연, 사물)에 대해 모델을 확장하려면 추가적인 데이터 수집 및 전처리가 필요합니다.</li>
+<li><strong>편향성 문제</strong>: 학습 데이터의 편향성이 모델에 반영될 수 있기 때문에, 더 다양한 데이터셋을 사용하는 것이 중요합니다.</li>
+</ul>
+<hr>
+<h3 id="4-결론">4. <strong>결론</strong></h3>
+<p>FastComposer를 실제 시스템에 통합하려면 기존 Stable Diffusion 기반 모델에 <strong>데이터 전처리 및 모델 수정</strong>을 추가로 구현해야 합니다. 특히, <strong>세그멘테이션 마스크 생성</strong>, <strong>교차 주의 집중 지도</strong>, <strong>지연된 주제 조건 적용</strong>을 위한 코드 작성 및 학습이 필요합니다. 예상 공수는 <strong>500~700시간</strong>이 소요되며, 추가적으로 고성능 하드웨어(GPU 서버)와 데이터셋 준비가 필요합니다.</p>
+<p>이러한 추가 구현은 초기에는 시간과 자원이 많이 필요하지만, 한 번 구축되면 <strong>튜닝 없는 개인화된 이미지 생성</strong>이 가능해지므로 <strong>장기적으로는 운영 비용 절감</strong>과 <strong>효율성</strong>에서 큰 이점을 얻을 수 있습니다.</p>
+<h1 id="q--이-논문의-입력-데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델-아키텍처에-대해서도-설명해줘">Q : 이 논문의 입력 데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델 아키텍처에 대해서도 설명해줘</h1>
+<h3 id="fastcomposer-논문의-입력-데이터-추론-과정-모델-아키텍처-분석">FastComposer 논문의 입력 데이터, 추론 과정, 모델 아키텍처 분석</h3>
+<p>이 섹션에서는 <strong>FastComposer</strong>의 입력 데이터가 어떻게 구성되고, <strong>추론 과정</strong>이 어떻게 이루어지는지에 대해 예시를 통해 상세히 설명합니다. 또한, <strong>모델 아키텍처</strong>에 대해 자세히 분석하여 FastComposer가 기존 모델들과 어떤 점에서 차별화되는지 설명하겠습니다.</p>
+<hr>
+<h3 id="1-입력-데이터-구성">1. <strong>입력 데이터 구성</strong></h3>
+<p>FastComposer는 <strong>텍스트 프롬프트</strong>와 <strong>참조 이미지들</strong>을 사용하여 다중 주제 이미지를 생성합니다. 이 모델의 입력 데이터는 다음과 같은 요소들로 구성됩니다.</p>
+<h4 id="11-입력-데이터-예시"><strong>1.1 입력 데이터 예시</strong></h4>
+<ul>
+<li><strong>텍스트 프롬프트</strong>:
+<ul>
+<li>예시: &ldquo;A scientist and an artist discussing in a library&rdquo;</li>
+</ul>
+</li>
+<li><strong>주제 이미지들</strong>:
+<ul>
+<li><strong>주제 1</strong> (과학자): 과학자의 얼굴 사진 1장.</li>
+<li><strong>주제 2</strong> (예술가): 예술가의 얼굴 사진 1장.</li>
+</ul>
+</li>
+<li><strong>주제 인덱스 정보</strong>:
+<ul>
+<li>텍스트에서 &ldquo;scientist&quot;와 &ldquo;artist&quot;라는 단어가 주제 이미지와 각각 매핑됩니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="12-전처리-단계"><strong>1.2 전처리 단계</strong></h4>
+<ul>
+<li><strong>텍스트 임베딩 생성</strong>: 입력 텍스트는 <strong>CLIP 텍스트 인코더</strong>를 통해 벡터 형태의 텍스트 임베딩으로 변환됩니다.</li>
+<li><strong>주제 임베딩 생성</strong>: 주제 이미지들은 <strong>CLIP 이미지 인코더</strong>를 사용하여 임베딩 벡터로 변환됩니다.</li>
+<li><strong>세그멘테이션 마스크 생성</strong> (학습 시에만 필요):
+<ul>
+<li>주제 이미지에서 객체를 분할하는 <strong>세그멘테이션 마스크</strong>를 생성하여, 각 주제의 영역을 명확히 구분합니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-추론inference-과정-설명">2. <strong>추론(Inference) 과정 설명</strong></h3>
+<p>FastComposer의 추론 과정은 <strong>다단계</strong>로 이루어집니다. 이 과정에서 지연된 주제 조건 적용 및 교차 주의 집중 지도가 중요한 역할을 합니다.</p>
+<h4 id="21-단계별-추론-과정-예시를-통한-설명"><strong>2.1 단계별 추론 과정: 예시를 통한 설명</strong></h4>
+<p><strong>목표</strong>: 텍스트 프롬프트 &ldquo;A scientist and an artist discussing in a library&quot;와 주제 이미지들(과학자, 예술가)을 사용하여 이미지를 생성합니다.</p>
+<ol>
+<li>
+<p><strong>텍스트 및 이미지 임베딩 추출</strong>:</p>
+<ul>
+<li>텍스트 &ldquo;A scientist and an artist discussing in a library&quot;를 <strong>CLIP 텍스트 인코더</strong>를 사용해 **텍스트 임베딩 ((ψ(P)))**으로 변환합니다.</li>
+<li>주제 이미지(과학자, 예술가)를 <strong>CLIP 이미지 인코더</strong>를 통해 **주제 임베딩 ((φ(S)))**으로 변환합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>주제 임베딩과 텍스트 임베딩 통합</strong>:</p>
+<ul>
+<li>텍스트 프롬프트에서 &ldquo;scientist&quot;와 &ldquo;artist&quot;라는 단어에 주제 임베딩을 연결합니다.</li>
+<li><strong>MLP 네트워크</strong>를 사용해 텍스트 임베딩과 주제 임베딩을 결합하여 **보강된 임베딩 ((c&rsquo;))**을 생성합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>이미지 생성 과정</strong>:</p>
+<ul>
+<li>Stable Diffusion 기반의 <strong>U-Net 모델</strong>에서, 생성 과정 초반에는 <strong>텍스트 조건만</strong>을 사용하여 이미지의 전체 레이아웃을 형성합니다.</li>
+<li><strong>Delayed Subject Conditioning (지연된 주제 조건)</strong>:
+<ul>
+<li>초반 60%의 노이즈 제거 단계에서는 텍스트 임베딩만을 사용하여 기본적인 이미지 구조를 생성합니다.</li>
+<li>이후 40% 단계에서 주제 임베딩을 추가하여 과학자와 예술가의 외형을 더욱 디테일하게 반영합니다.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>교차 주의 집중 지도 적용</strong>:</p>
+<ul>
+<li>다중 주제 생성 시, <strong>교차 주의 맵</strong>을 사용하여 주제별로 올바르게 집중하도록 지도합니다.</li>
+<li>이를 통해 &ldquo;scientist&quot;와 &ldquo;artist&quot;가 독립된 정체성을 유지하도록 합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>최종 이미지 생성</strong>:</p>
+<ul>
+<li>모든 단계가 완료된 후, VAE를 사용해 <strong>최종 고해상도 이미지</strong>를 생성합니다.</li>
+<li>결과적으로, 과학자와 예술가가 도서관에서 토론하는 장면이 텍스트와 주제 이미지에 기반하여 생성됩니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="3-모델-아키텍처-분석">3. <strong>모델 아키텍처 분석</strong></h3>
+<p>FastComposer는 기존 <strong>Stable Diffusion</strong> 모델을 기반으로 확장한 아키텍처를 가지고 있으며, <strong>텍스트 및 주제 임베딩</strong>을 통합하여 개인화된 다중 주제 이미지를 생성합니다.</p>
+<h4 id="31-아키텍처-개요"><strong>3.1 아키텍처 개요</strong></h4>
+<ul>
+<li><strong>Stable Diffusion</strong>:
+<ul>
+<li>기본적으로 **VAE, U-Net, 텍스트 인코더 (CLIP)**로 구성됩니다.</li>
+<li><strong>U-Net</strong>은 노이즈 제거를 담당하며, <strong>교차 주의 메커니즘</strong>을 통해 텍스트 조건을 반영합니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="32-fastcomposer의-확장된-아키텍처"><strong>3.2 FastComposer의 확장된 아키텍처</strong></h4>
+<p>FastComposer는 <strong>Stable Diffusion</strong>을 확장하여 다음과 같은 추가 모듈을 포함합니다.</p>
+<ol>
+<li>
+<p><strong>텍스트 및 주제 임베딩 통합 모듈</strong>:</p>
+<ul>
+<li><strong>CLIP 텍스트 인코더</strong>와 <strong>CLIP 이미지 인코더</strong>를 사용하여 각각 텍스트 임베딩과 주제 임베딩을 생성합니다.</li>
+<li>주제 임베딩을 <strong>텍스트 임베딩에 결합</strong>하여 보강된 텍스트 조건을 생성합니다.</li>
+<li>이 통합된 임베딩은 <strong>MLP 네트워크</strong>를 통해 최적화된 형태로 변환됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>교차 주의 집중 지도 (Cross-Attention Localization Supervision)</strong>:</p>
+<ul>
+<li><strong>교차 주의 맵</strong>을 통해 텍스트 프롬프트 내의 각 단어가 이미지의 특정 영역에 집중하도록 유도합니다.</li>
+<li>다중 주제 생성 시, 세그멘테이션 마스크를 사용하여 각 주제의 영역을 명확히 구분합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>지연된 주제 조건 적용 (Delayed Subject Conditioning)</strong>:</p>
+<ul>
+<li>생성 과정 초기에는 <strong>텍스트 기반 조건만</strong>을 사용하여 이미지를 생성합니다.</li>
+<li>이후 단계에서 주제 임베딩을 반영하여 <strong>주제의 디테일을 보강</strong>합니다.</li>
+</ul>
+</li>
+</ol>
+<h4 id="33-모델-구조의-세부-사항"><strong>3.3 모델 구조의 세부 사항</strong></h4>
+<ul>
+<li>
+<p><strong>U-Net 구조</strong>:</p>
+<ul>
+<li>FastComposer의 U-Net은 <strong>텍스트 및 주제 임베딩</strong>을 교차 주의 메커니즘을 통해 반영합니다.</li>
+<li>지연된 주제 조건 기법을 활용하여, 노이즈 제거 과정 중 특정 시점에서만 주제 임베딩을 적용합니다.</li>
+<li>교차 주의 메커니즘은 <strong>Query, Key, Value 매트릭스</strong>를 사용하여 텍스트와 이미지 간의 정보를 효율적으로 결합합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>손실 함수 (Loss Function)</strong>:</p>
+<ul>
+<li><strong>L_noise</strong>: 노이즈 예측 손실.</li>
+<li><strong>L_loc</strong>: 교차 주의 집중 지도 손실.</li>
+<li>최종 손실: ( L = L_{noise} + \lambda L_{loc} ) (여기서 (\lambda)는 하이퍼파라미터).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-결론-1">4. <strong>결론</strong></h3>
+<p>FastComposer는 <strong>텍스트와 주제 임베딩</strong>을 통합하고, <strong>교차 주의 집중 지도</strong>와 <strong>지연된 주제 조건 적용</strong>을 통해 다중 주제 이미지 생성에서 <strong>정체성 보존</strong>과 <strong>편집 가능성</strong>을 극대화합니다.</p>
+<ul>
+<li><strong>효율성</strong>: 기존 미세 조정 방식보다 훨씬 빠르고 메모리 효율적입니다.</li>
+<li><strong>유연성</strong>: 미세 조정 없이 새로운 주제를 추가할 수 있으며, 다양한 상황에서 활용 가능성이 높습니다.</li>
+</ul>
+<p>이 아키텍처는 향후 <strong>실시간 개인화 콘텐츠 생성</strong>이나 <strong>에지 디바이스에서의 텍스트-이미지 생성</strong>에 매우 유용하게 활용될 수 있습니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<h3 id="fastcomposer-논문의-한계와-이를-극복하기-위한-연구-흐름">FastComposer 논문의 한계와 이를 극복하기 위한 연구 흐름</h3>
+<p><strong>FastComposer</strong> 논문은 기존의 텍스트-이미지 생성 방식에서 <strong>개인화된 다중 주제 이미지 생성</strong>을 빠르고 효율적으로 수행할 수 있도록 한 혁신적인 접근법입니다. 하지만 논문에서도 언급된 몇 가지 <strong>한계점</strong>이 존재하며, 이를 개선하기 위한 <strong>미래 연구 흐름</strong>이 필요합니다. 이 섹션에서는 <strong>현재 논문의 한계</strong>를 분석하고, 이를 극복하기 위해 현재 진행 중이거나 앞으로 주목받을 수 있는 <strong>연구 방향</strong>을 제시합니다.</p>
+<hr>
+<h3 id="1-논문의-한계점-분석">1. <strong>논문의 한계점 분석</strong></h3>
+<h4 id="11-데이터셋의-제한성"><strong>1.1 데이터셋의 제한성</strong></h4>
+<ul>
+<li><strong>FastComposer</strong>는 <strong>FFHQ (Flickr-Faces-HQ)</strong> 데이터셋을 기반으로 주로 <strong>인물 사진</strong>에 대해 학습되었습니다.</li>
+<li>이 데이터셋은 주로 <strong>인물의 얼굴</strong>에만 초점을 맞추고 있어, **다양한 주제 (예: 동물, 사물, 자연 배경 등)**를 포함한 이미지 생성에는 제한적입니다.</li>
+<li>다중 주제를 포함한 복잡한 장면 생성 시, FFHQ와 같은 단일 도메인 데이터셋만으로는 <strong>일반화 성능</strong>이 떨어질 수 있습니다.</li>
+</ul>
+<h4 id="12-비인간-주제에-대한-한정된-적용성"><strong>1.2 비인간 주제에 대한 한정된 적용성</strong></h4>
+<ul>
+<li>현재 모델은 주로 <strong>인물 중심의 주제</strong>에 대해 최적화되어 있습니다. 따라서 동물, 건물, 자연환경 등 <strong>비인간 주제</strong>에 대한 이미지 생성에서 성능이 저하될 수 있습니다.</li>
+<li>다양한 유형의 객체나 복잡한 장면에 대해서는 <strong>세부 묘사와 정체성 보존</strong>이 어려울 수 있습니다.</li>
+</ul>
+<h4 id="13-모델의-편향성-문제"><strong>1.3 모델의 편향성 문제</strong></h4>
+<ul>
+<li>FastComposer는 <strong>Stable Diffusion</strong> 및 <strong>FFHQ 데이터셋</strong>을 기반으로 학습되었기 때문에, 이들이 가지고 있는 **편향(bias)**을 계승할 수 있습니다.</li>
+<li>특정 인종, 성별, 나이 등에 대한 편향된 결과를 생성할 가능성이 있습니다.</li>
+</ul>
+<h4 id="14-지연된-주제-조건-기법의-한계"><strong>1.4 지연된 주제 조건 기법의 한계</strong></h4>
+<ul>
+<li><strong>지연된 주제 조건(Delayed Subject Conditioning)</strong> 기법은 텍스트 지시와 주제 정체성 간의 균형을 맞추기 위해 도입되었지만, <strong>복잡한 장면</strong>에서는 여전히 <strong>정확한 텍스트 반영이 어려울 수</strong> 있습니다.</li>
+<li>예를 들어, 여러 주제가 서로 상호작용하는 장면에서 텍스트와 주제 간의 일관성을 유지하는 것이 도전적일 수 있습니다.</li>
+</ul>
+<hr>
+<h3 id="2-이-한계를-극복하기-위한-연구-흐름">2. <strong>이 한계를 극복하기 위한 연구 흐름</strong></h3>
+<h4 id="21-더-다양한-데이터셋을-활용한-일반화-성능-개선"><strong>2.1 더 다양한 데이터셋을 활용한 일반화 성능 개선</strong></h4>
+<ul>
+<li><strong>다양한 도메인</strong>을 포함하는 <strong>대규모 멀티모달 데이터셋</strong>을 활용하여 모델을 학습하면, 모델의 <strong>일반화 성능</strong>을 높일 수 있습니다.
+<ul>
+<li>예시:
+<ul>
+<li><strong>LAION-5B</strong>: 다양한 주제와 스타일을 포함한 대규모 텍스트-이미지 페어 데이터셋.</li>
+<li><strong>COCO 데이터셋</strong>: 복잡한 장면과 다양한 객체를 포함하는 이미지 데이터셋.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>이러한 데이터셋을 사용하여 모델을 재학습하거나, <strong>데이터 증강(data augmentation)</strong> 기법을 통해 다양한 주제에 대한 표현력을 높일 수 있습니다.</li>
+</ul>
+<h4 id="22-비인간-주제를-위한-추가-연구"><strong>2.2 비인간 주제를 위한 추가 연구</strong></h4>
+<ul>
+<li><strong>자연, 동물, 사물</strong> 등의 비인간 주제를 생성할 수 있는 능력을 개선하기 위해, <strong>도메인 전이 학습(domain adaptation)</strong> 기법을 활용할 수 있습니다.</li>
+<li><strong>Fine-tuning</strong> 없이도 다양한 주제에 대응할 수 있는 **범용 모델(general-purpose model)**로 확장할 수 있도록, <strong>Zero-shot learning</strong> 및 <strong>few-shot learning</strong> 기법을 도입할 수 있습니다.</li>
+</ul>
+<h4 id="23-편향성-문제를-해결하기-위한-접근법"><strong>2.3 편향성 문제를 해결하기 위한 접근법</strong></h4>
+<ul>
+<li><strong>공정한 데이터 수집</strong>과 <strong>데이터 정제</strong>를 통해, 다양한 인종, 성별, 연령에 걸쳐 <strong>균형 잡힌 데이터셋</strong>을 구축하는 것이 중요합니다.</li>
+<li><strong>Debiasing 기법</strong>을 활용하여 모델이 특정 속성에 대해 편향되지 않도록 학습할 수 있습니다.
+<ul>
+<li>예시:
+<ul>
+<li><strong>Adversarial training</strong>: 모델이 특정 속성에 대해 편향되지 않도록 학습하는 방법.</li>
+<li><strong>Fairness regularization</strong>: 학습 중에 편향을 완화하기 위해 손실 함수에 제약을 추가하는 방식.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="24-교차-주의-집중-지도와-지연된-주제-조건-개선"><strong>2.4 교차 주의 집중 지도와 지연된 주제 조건 개선</strong></h4>
+<ul>
+<li><strong>Cross-attention localization</strong>을 더욱 정교하게 개선하여, 다중 주제 생성 시 <strong>정체성 혼합 문제를 완화</strong>할 수 있습니다.
+<ul>
+<li><strong>Transformer 구조 개선</strong>: 기존의 교차 주의 메커니즘을 더 고도화하거나, <strong>Dynamic Attention Routing</strong> 기법을 도입하여 주제 간의 혼합을 줄일 수 있습니다.</li>
+</ul>
+</li>
+<li>**지연된 주제 조건 적용(Delayed Subject Conditioning)**을 개선하기 위해, 텍스트와 주제 간의 <strong>상호작용을 더 잘 반영하는 모델 구조</strong>를 도입할 수 있습니다.
+<ul>
+<li>예시: <strong>Hierarchical Diffusion 모델</strong>을 도입하여, 생성 과정에서 텍스트와 주제 간의 상호작용을 점진적으로 조정할 수 있습니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-최신-연구-흐름-예시">3. <strong>최신 연구 흐름 예시</strong></h3>
+<h4 id="31-tuning-free-모델-개선"><strong>3.1 Tuning-Free 모델 개선</strong></h4>
+<ul>
+<li>FastComposer와 유사하게 <strong>튜닝 없이</strong> 빠르게 주제 적응이 가능한 모델을 개발하기 위해, <strong>Latent Diffusion Model</strong> 기반의 연구가 진행되고 있습니다.
+<ul>
+<li>예시: <strong>InstantBooth</strong>와 <strong>ELITE 모델</strong>은 입력 이미지의 특징을 텍스트 임베딩에 통합하는 방식으로 빠르게 개인화된 이미지를 생성합니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="32-multi-modal-learning-연구"><strong>3.2 Multi-Modal Learning 연구</strong></h4>
+<ul>
+<li>텍스트뿐만 아니라, <strong>오디오, 비디오 등 다양한 입력 형태</strong>를 동시에 활용하는 <strong>멀티모달 학습</strong>이 활발히 연구되고 있습니다.
+<ul>
+<li>예시: **MUSE (Masked Generative Transformers)**는 텍스트, 이미지, 오디오를 조합하여 더 복잡한 시나리오에서 다중 주제 생성을 가능하게 합니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-결론-및-제언">4. <strong>결론 및 제언</strong></h3>
+<p>FastComposer의 한계를 극복하기 위해서는 <strong>다양한 데이터셋의 활용</strong>, <strong>비인간 주제에 대한 연구</strong>, <strong>모델의 편향성 제거</strong>, 그리고 <strong>교차 주의 및 조건 적용 기법 개선</strong>이 필요합니다. 이러한 연구 방향을 통해 FastComposer는 더욱 <strong>일반화된 텍스트-이미지 생성 모델</strong>로 발전할 수 있으며, 다양한 실세계 응용 분야에서 <strong>더 폭넓은 활용 가능성</strong>을 확보할 수 있을 것입니다.</p>
+<p>앞으로의 연구는 <strong>효율성과 확장성</strong>을 동시에 고려하여, <strong>실시간 생성</strong>이나 <strong>에지 디바이스에서의 텍스트-이미지 생성</strong>으로도 적용할 수 있는 방향으로 나아갈 것입니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/FastComposer-Tuning-Free-Multi-Subject-Image-Generation-with-Localized-Attention/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/FastComposer-Tuning-Free-Multi-Subject-Image-Generation-with-Localized-Attention/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/VILA-On-Pre-training-for-Visual-Language-Models/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                VILA On Pre-training for Visual Language Models
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-11-13">
+                11月13日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/DistriFusion-Distributed-Parallel-Inference-for-High-Resolution-Diffusion-Models/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                DistriFusion Distributed Parallel Inference for High-Resolution Diffusion Models
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-11-13">
+                11月13日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문-요약-및-주요-내용-분석">논문 요약 및 주요 내용 분석</a></li>
+        <li><a href="#주요-기여-및-독창성">주요 기여 및 독창성</a></li>
+        <li><a href="#핵심-알고리즘-설명-예시-입력을-통한-과정-분석">핵심 알고리즘 설명: 예시 입력을 통한 과정 분석</a>
+          <ul>
+            <li><a href="#예시-입력"><strong>예시 입력</strong>:</a></li>
+            <li><a href="#단계별-과정"><strong>단계별 과정</strong>:</a></li>
+          </ul>
+        </li>
+        <li><a href="#논문의-강점">논문의 강점</a></li>
+        <li><a href="#논문의-한계점">논문의 한계점</a></li>
+        <li><a href="#결론">결론</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문에서-제안된-fastcomposer를-학습하기-위해-필요한-데이터셋과-학습-방법">논문에서 제안된 <strong>FastComposer</strong>를 학습하기 위해 필요한 데이터셋과 학습 방법</a></li>
+        <li><a href="#1-필요한-데이터셋-구성">1. <strong>필요한 데이터셋 구성</strong></a>
+          <ul>
+            <li><a href="#11-텍스트-이미지-페어-데이터셋"><strong>1.1 텍스트-이미지 페어 데이터셋</strong></a></li>
+            <li><a href="#12-주제-세그멘테이션-마스크"><strong>1.2 주제 세그멘테이션 마스크</strong></a></li>
+            <li><a href="#13-데이터셋-예시"><strong>1.3 데이터셋 예시</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-데이터셋-준비-및-전처리-과정">2. <strong>데이터셋 준비 및 전처리 과정</strong></a>
+          <ul>
+            <li><a href="#21-데이터셋-전처리"><strong>2.1 데이터셋 전처리</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-fastcomposer-학습-과정">3. <strong>FastComposer 학습 과정</strong></a>
+          <ul>
+            <li><a href="#31-모델-설정"><strong>3.1 모델 설정</strong></a></li>
+            <li><a href="#32-학습-단계-예시를-통한-학습-과정"><strong>3.2 학습 단계</strong>: 예시를 통한 학습 과정</a></li>
+          </ul>
+        </li>
+        <li><a href="#4-추론inference-과정">4. <strong>추론(Inference) 과정</strong></a></li>
+        <li><a href="#5-추가적인-고려-사항">5. <strong>추가적인 고려 사항</strong></a></li>
+        <li><a href="#요약">요약</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문에서-제시한-결과-및-분석">논문에서 제시한 결과 및 분석</a></li>
+        <li><a href="#1-실험-결과-요약">1. <strong>실험 결과 요약</strong></a>
+          <ul>
+            <li><a href="#11-단일-주제-이미지-생성-single-subject-image-generation"><strong>1.1 단일 주제 이미지 생성 (Single-Subject Image Generation)</strong></a></li>
+            <li><a href="#12-다중-주제-이미지-생성-multi-subject-image-generation"><strong>1.2 다중 주제 이미지 생성 (Multi-Subject Image Generation)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-다른-방법론에-비해-특출난-점">2. <strong>다른 방법론에 비해 특출난 점</strong></a>
+          <ul>
+            <li><a href="#21-튜닝-없는-빠른-성능"><strong>2.1 튜닝 없는 빠른 성능</strong></a></li>
+            <li><a href="#22-다중-주제-생성에서의-정체성-보존"><strong>2.2 다중 주제 생성에서의 정체성 보존</strong></a></li>
+            <li><a href="#23-지연된-주제-조건delayed-subject-conditioning-적용"><strong>2.3 지연된 주제 조건(Delayed Subject Conditioning) 적용</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-논문에서-제시하는-이유와-나의-생각">3. <strong>논문에서 제시하는 이유와 나의 생각</strong></a>
+          <ul>
+            <li><a href="#논문에서-제시한-이유"><strong>논문에서 제시한 이유</strong></a></li>
+            <li><a href="#나의-생각"><strong>나의 생각</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#fastcomposer-방법을-실제-프로젝트에-통합하기-위한-구현-요구-사항-분석">FastComposer 방법을 실제 프로젝트에 통합하기 위한 구현 요구 사항 분석</a></li>
+        <li><a href="#1-기존-시스템에서-fastcomposer-통합-시-필요한-추가-구현-사항">1. <strong>기존 시스템에서 FastComposer 통합 시 필요한 추가 구현 사항</strong></a>
+          <ul>
+            <li><a href="#11-데이터-준비-및-전처리"><strong>1.1 데이터 준비 및 전처리</strong></a></li>
+            <li><a href="#12-모델-수정-및-구현"><strong>1.2 모델 수정 및 구현</strong></a></li>
+            <li><a href="#13-학습-및-튜닝"><strong>1.3 학습 및 튜닝</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-필요한-리소스-및-공수-요약">2. <strong>필요한 리소스 및 공수 요약</strong></a></li>
+        <li><a href="#3-추가적으로-고려해야-할-사항">3. <strong>추가적으로 고려해야 할 사항</strong></a>
+          <ul>
+            <li><a href="#31-하드웨어-요구-사항"><strong>3.1 하드웨어 요구 사항</strong></a></li>
+            <li><a href="#32-잠재적-문제"><strong>3.2 잠재적 문제</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-결론">4. <strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#fastcomposer-논문의-입력-데이터-추론-과정-모델-아키텍처-분석">FastComposer 논문의 입력 데이터, 추론 과정, 모델 아키텍처 분석</a></li>
+        <li><a href="#1-입력-데이터-구성">1. <strong>입력 데이터 구성</strong></a>
+          <ul>
+            <li><a href="#11-입력-데이터-예시"><strong>1.1 입력 데이터 예시</strong></a></li>
+            <li><a href="#12-전처리-단계"><strong>1.2 전처리 단계</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-추론inference-과정-설명">2. <strong>추론(Inference) 과정 설명</strong></a>
+          <ul>
+            <li><a href="#21-단계별-추론-과정-예시를-통한-설명"><strong>2.1 단계별 추론 과정: 예시를 통한 설명</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-모델-아키텍처-분석">3. <strong>모델 아키텍처 분석</strong></a>
+          <ul>
+            <li><a href="#31-아키텍처-개요"><strong>3.1 아키텍처 개요</strong></a></li>
+            <li><a href="#32-fastcomposer의-확장된-아키텍처"><strong>3.2 FastComposer의 확장된 아키텍처</strong></a></li>
+            <li><a href="#33-모델-구조의-세부-사항"><strong>3.3 모델 구조의 세부 사항</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-결론-1">4. <strong>결론</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#fastcomposer-논문의-한계와-이를-극복하기-위한-연구-흐름">FastComposer 논문의 한계와 이를 극복하기 위한 연구 흐름</a></li>
+        <li><a href="#1-논문의-한계점-분석">1. <strong>논문의 한계점 분석</strong></a>
+          <ul>
+            <li><a href="#11-데이터셋의-제한성"><strong>1.1 데이터셋의 제한성</strong></a></li>
+            <li><a href="#12-비인간-주제에-대한-한정된-적용성"><strong>1.2 비인간 주제에 대한 한정된 적용성</strong></a></li>
+            <li><a href="#13-모델의-편향성-문제"><strong>1.3 모델의 편향성 문제</strong></a></li>
+            <li><a href="#14-지연된-주제-조건-기법의-한계"><strong>1.4 지연된 주제 조건 기법의 한계</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-이-한계를-극복하기-위한-연구-흐름">2. <strong>이 한계를 극복하기 위한 연구 흐름</strong></a>
+          <ul>
+            <li><a href="#21-더-다양한-데이터셋을-활용한-일반화-성능-개선"><strong>2.1 더 다양한 데이터셋을 활용한 일반화 성능 개선</strong></a></li>
+            <li><a href="#22-비인간-주제를-위한-추가-연구"><strong>2.2 비인간 주제를 위한 추가 연구</strong></a></li>
+            <li><a href="#23-편향성-문제를-해결하기-위한-접근법"><strong>2.3 편향성 문제를 해결하기 위한 접근법</strong></a></li>
+            <li><a href="#24-교차-주의-집중-지도와-지연된-주제-조건-개선"><strong>2.4 교차 주의 집중 지도와 지연된 주제 조건 개선</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-최신-연구-흐름-예시">3. <strong>최신 연구 흐름 예시</strong></a>
+          <ul>
+            <li><a href="#31-tuning-free-모델-개선"><strong>3.1 Tuning-Free 모델 개선</strong></a></li>
+            <li><a href="#32-multi-modal-learning-연구"><strong>3.2 Multi-Modal Learning 연구</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-결론-및-제언">4. <strong>결론 및 제언</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,3492 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>The CoT Collection Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 : https://arxiv.org/abs/2305.14045
+아래 글은 Scholar GPT와 대화를 나눈 내용입니다.
+Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점 논문 분석: The COT Collection: Improving..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/The-CoT-Collection-Improving-Zero-shot-and-Few-shot-Learning-of-Language-Models-via-Chain-of-Thought-Fine-Tuning/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/The-CoT-Collection-Improving-Zero-shot-and-Few-shot-Learning-of-Language-Models-via-Chain-of-Thought-Fine-Tuning/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="The CoT Collection Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning">
+  <meta property="og:description" content="논문 : https://arxiv.org/abs/2305.14045
+아래 글은 Scholar GPT와 대화를 나눈 내용입니다.
+Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점 논문 분석: The COT Collection: Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning 1. 논문의 강점 및 독창적인 지점 (1) 문제 정의 및 기여 이 논문은 **소형 언어 모델(100억 개 미만의 파라미터)**이 대규모 모델처럼 체인-오브-생각(Chain-of-Thought, CoT) 추론을 수행하지 못하는 문제를 해결하고자 합니다. 이를 위해, 저자들은 COT COLLECTION이라는 새로운 데이터셋을 구축하여 Flan-T5 모델을 CoT 방식으로 파인튜닝했습니다. 이 방법은 제로샷(zero-shot) 및 퓨샷(few-shot) 성능을 향상시켰습니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-11-14T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-11-14T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="The CoT Collection Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning">
+  <meta name="twitter:description" content="논문 : https://arxiv.org/abs/2305.14045
+아래 글은 Scholar GPT와 대화를 나눈 내용입니다.
+Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점 논문 분석: The COT Collection: Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning 1. 논문의 강점 및 독창적인 지점 (1) 문제 정의 및 기여 이 논문은 **소형 언어 모델(100억 개 미만의 파라미터)**이 대규모 모델처럼 체인-오브-생각(Chain-of-Thought, CoT) 추론을 수행하지 못하는 문제를 해결하고자 합니다. 이를 위해, 저자들은 COT COLLECTION이라는 새로운 데이터셋을 구축하여 Flan-T5 모델을 CoT 방식으로 파인튜닝했습니다. 이 방법은 제로샷(zero-shot) 및 퓨샷(few-shot) 성능을 향상시켰습니다.">
+
+
+  <meta itemprop="name" content="The CoT Collection Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning">
+  <meta itemprop="description" content="논문 : https://arxiv.org/abs/2305.14045
+아래 글은 Scholar GPT와 대화를 나눈 내용입니다.
+Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점 논문 분석: The COT Collection: Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning 1. 논문의 강점 및 독창적인 지점 (1) 문제 정의 및 기여 이 논문은 **소형 언어 모델(100억 개 미만의 파라미터)**이 대규모 모델처럼 체인-오브-생각(Chain-of-Thought, CoT) 추론을 수행하지 못하는 문제를 해결하고자 합니다. 이를 위해, 저자들은 COT COLLECTION이라는 새로운 데이터셋을 구축하여 Flan-T5 모델을 CoT 방식으로 파인튜닝했습니다. 이 방법은 제로샷(zero-shot) 및 퓨샷(few-shot) 성능을 향상시켰습니다.">
+  <meta itemprop="datePublished" content="2024-11-14T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-11-14T00:00:00+00:00">
+  <meta itemprop="wordCount" content="10587">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">The CoT Collection Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    The CoT Collection Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2024-11-14">
+          2024년 11월 14일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >22 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>10587 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p>논문 : <a href="https://arxiv.org/abs/2305.14045">https://arxiv.org/abs/2305.14045</a></p>
+<p>아래 글은 Scholar GPT와 대화를 나눈 내용입니다.</p>
+<h1 id="q--논문의-핵심-내용과-강점-알고리즘-설명-그리고-한계점">Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점</h1>
+<h3 id="논문-분석-the-cot-collection-improving-zero-shot-and-few-shot-learning-of-language-models-via-chain-of-thought-fine-tuning">논문 분석: <strong>The COT Collection: Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning</strong></h3>
+<hr>
+<h2 id="1-논문의-강점-및-독창적인-지점">1. <strong>논문의 강점 및 독창적인 지점</strong></h2>
+<h3 id="1-문제-정의-및-기여">(1) <strong>문제 정의 및 기여</strong></h3>
+<p>이 논문은 **소형 언어 모델(100억 개 미만의 파라미터)**이 대규모 모델처럼 체인-오브-생각(Chain-of-Thought, CoT) 추론을 수행하지 못하는 문제를 해결하고자 합니다. 이를 위해, 저자들은 <strong>COT COLLECTION</strong>이라는 새로운 데이터셋을 구축하여 <strong>Flan-T5 모델</strong>을 CoT 방식으로 파인튜닝했습니다. 이 방법은 <strong>제로샷(zero-shot)</strong> 및 <strong>퓨샷(few-shot)</strong> 성능을 향상시켰습니다.</p>
+<h3 id="2-주요-기여">(2) <strong>주요 기여</strong></h3>
+<ul>
+<li><strong>COT COLLECTION</strong> 데이터셋: 기존 FLAN Collection을 확장하여 1.84백만 개의 **이유 설명(rationales)**을 포함한 1,060개의 다양한 과제를 추가했습니다.</li>
+<li>**CoT 파인튜닝 모델(CoT-T5)**을 도입하여 <strong>3B 및 11B 파라미터 모델</strong>에서 성능 개선을 확인했습니다.</li>
+<li><strong>BBH(Big-Bench-Hard) 벤치마크</strong>에서 제로샷 성능이 3B 모델에서 +4.34%, 11B 모델에서 +2.60% 향상되었습니다.</li>
+<li>퓨샷 학습에서도 성능이 개선되었으며, 특히 ChatGPT를 능가하는 결과를 얻었습니다.</li>
+</ul>
+<hr>
+<h2 id="2-핵심-알고리즘-설명-및-예시">2. <strong>핵심 알고리즘 설명 및 예시</strong></h2>
+<h3 id="1-chain-of-thought-fine-tuning-cot-파인튜닝">(1) <strong>Chain-of-Thought Fine-tuning (CoT 파인튜닝)</strong></h3>
+<p>CoT 파인튜닝은 입력 데이터에 대한 **이유 설명(rationale)**을 모델이 생성하도록 유도하여 최종 예측의 정확도를 높이는 방식입니다. 이 접근법은 **&ldquo;Let&rsquo;s think step by step&rdquo;**와 같은 프롬프트를 사용하여 모델이 단계별로 논리를 전개하도록 합니다.</p>
+<h3 id="2-예시-입력-및-출력"><strong>(2) 예시 입력 및 출력</strong></h3>
+<ul>
+<li>
+<p><strong>입력</strong>:</p>
+<ul>
+<li>Instruction: &ldquo;Given the context, determine what Lee should do next.&rdquo;</li>
+<li>Instance: &ldquo;Skylar had stopped breathing but Lee is holding onto hope.&rdquo;</li>
+<li>Expected Output: &ldquo;Beg the doctors to try again.&rdquo;</li>
+</ul>
+</li>
+<li>
+<p><strong>CoT Reasoning</strong>:</p>
+<ol>
+<li>모델은 &ldquo;Skylar가 숨을 멈췄고 Lee가 여전히 희망을 가지고 있다&quot;라는 상황을 이해합니다.</li>
+<li>상황을 분석하여 Lee가 취할 수 있는 최선의 행동을 단계적으로 추론합니다.</li>
+<li>&ldquo;의사들에게 다시 시도해 달라고 요청하는 것&quot;이 최적의 행동임을 도출합니다.</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 id="3-논문의-한계점">3. <strong>논문의 한계점</strong></h2>
+<h3 id="1-데이터-의존성"><strong>(1) 데이터 의존성</strong></h3>
+<ul>
+<li>CoT 파인튜닝은 <strong>대규모의 이유 설명 데이터</strong>에 크게 의존합니다. 따라서 충분한 양질의 데이터를 확보하지 못하면 성능이 저하될 수 있습니다.</li>
+<li>특히, 이 논문에서 사용된 <strong>COT COLLECTION</strong>은 Codex 모델을 사용하여 생성된 이유 설명을 포함하고 있어, 데이터 품질이 Codex의 성능에 의존합니다.</li>
+</ul>
+<h3 id="2-컴퓨팅-자원-요구량"><strong>(2) 컴퓨팅 자원 요구량</strong></h3>
+<ul>
+<li>CoT 파인튜닝은 소형 모델에서도 성능을 개선하지만, 여전히 <strong>파인튜닝 과정에서 많은 컴퓨팅 자원</strong>이 필요합니다. 특히 다중 언어 지원을 위해 데이터 번역 및 추가 파인튜닝이 필요한 경우, 추가적인 비용이 발생합니다.</li>
+</ul>
+<h3 id="3-일반화-성능"><strong>(3) 일반화 성능</strong></h3>
+<ul>
+<li>CoT 방법론은 특정 도메인이나 특정 유형의 문제에는 매우 효과적이지만, 모든 문제 유형에서 일관된 성능을 보장하지는 않습니다. 예를 들어, <strong>산술 추론 문제</strong>와 같은 영역에서는 여전히 성능이 낮을 수 있습니다.</li>
+</ul>
+<hr>
+<h2 id="4-결론-및-향후-연구-방향">4. <strong>결론 및 향후 연구 방향</strong></h2>
+<ul>
+<li>이 논문은 CoT 방식을 통해 소형 언어 모델의 추론 능력을 대폭 향상시켰다는 점에서 큰 의미를 지닙니다.</li>
+<li>향후 연구에서는 <strong>CoT 데이터 생성의 자동화</strong>를 통해 더 다양한 데이터셋에 적용하고, <strong>컴퓨팅 자원 최적화</strong>를 통한 비용 절감 방법이 필요합니다.</li>
+</ul>
+<h1 id="q--이-논문에서-사용하는-방법을-학습하기-위하여-어떤-데이터셋이-필요할까-그리고-어떻게-학습을-진행하면-될지-예시를-들어서-아주-자세하게-설명해줘">Q : 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될지 예시를 들어서 아주 자세하게 설명해줘</h1>
+<h3 id="clip-논문에서-사용하는-방법을-학습하기-위한-데이터셋-및-학습-방법에-대한-설명">CLIP 논문에서 사용하는 방법을 학습하기 위한 데이터셋 및 학습 방법에 대한 설명</h3>
+<p>이 논문에서 다루고 있는 <strong>The COT Collection</strong>은 언어 모델이 <strong>제로샷(zero-shot)</strong> 및 <strong>퓨샷(few-shot)</strong> 학습에서 더 나은 성능을 발휘할 수 있도록 <strong>Chain-of-Thought (CoT)</strong> 방식으로 학습하는 방법을 제안합니다. 이를 위해 <strong>COT COLLECTION</strong>이라는 데이터셋을 새로 구축하여 모델을 파인튜닝했습니다. 이 방법을 재현하거나 응용하려면, 다음과 같은 데이터셋과 학습 과정이 필요합니다.</p>
+<hr>
+<h2 id="1-필요한-데이터셋-구성-요소">1. <strong>필요한 데이터셋 구성 요소</strong></h2>
+<h3 id="1-데이터셋의-종류"><strong>(1) 데이터셋의 종류</strong></h3>
+<p>이 논문에서 제시된 CoT 파인튜닝을 위해서는 **이유 설명(rationale)**과 함께 <strong>입력/출력 쌍</strong>이 포함된 데이터셋이 필요합니다. CoT 방식은 모델이 문제를 단계별로 해결하도록 돕기 때문에, 다음과 같은 형태의 데이터셋이 필요합니다:</p>
+<ul>
+<li><strong>입력 텍스트 (Instruction &amp; Context)</strong>: 문제에 대한 설명과 맥락.</li>
+<li><strong>이유 설명 (Rationale)</strong>: 문제를 해결하기 위한 단계별 논리적 추론 과정.</li>
+<li><strong>출력 정답 (Answer)</strong>: 최종 답변.</li>
+</ul>
+<h3 id="2-데이터셋-예시"><strong>(2) 데이터셋 예시</strong></h3>
+<p>다음은 COT COLLECTION에서 사용될 수 있는 예시입니다.</p>
+<h4 id="예시-1-산술-추론-문제"><strong>예시 1: 산술 추론 문제</strong></h4>
+<ul>
+<li><strong>입력</strong>: &ldquo;John은 5개의 사과를 가지고 있고, Sarah는 John의 사과의 두 배를 가지고 있습니다. 두 사람의 사과 총합은 얼마입니까?&rdquo;</li>
+<li><strong>이유 설명 (Rationale)</strong>:
+<ol>
+<li>&ldquo;John은 5개의 사과를 가지고 있습니다.&rdquo;</li>
+<li>&ldquo;Sarah는 John의 사과의 두 배를 가지고 있습니다. 따라서 Sarah는 10개의 사과를 가지고 있습니다.&rdquo;</li>
+<li>&ldquo;두 사람의 총 사과 수는 5 + 10 = 15개입니다.&rdquo;</li>
+</ol>
+</li>
+<li><strong>출력 (Answer)</strong>: &ldquo;15&rdquo;</li>
+</ul>
+<h4 id="예시-2-논리-추론-문제"><strong>예시 2: 논리 추론 문제</strong></h4>
+<ul>
+<li><strong>입력</strong>: &ldquo;만약 모든 새들이 날 수 있고, 펭귄은 새라면, 펭귄도 날 수 있습니까?&rdquo;</li>
+<li><strong>이유 설명 (Rationale)</strong>:
+<ol>
+<li>&ldquo;모든 새들이 날 수 있다고 가정하지만, 펭귄은 예외입니다.&rdquo;</li>
+<li>&ldquo;펭귄은 날 수 없는 새입니다.&rdquo;</li>
+</ol>
+</li>
+<li><strong>출력 (Answer)</strong>: &ldquo;아니오&rdquo;</li>
+</ul>
+<h3 id="3-데이터셋-출처-및-구축-방법"><strong>(3) 데이터셋 출처 및 구축 방법</strong></h3>
+<ul>
+<li><strong>기존의 공개된 데이터셋 활용</strong>: 논문에서는 FLAN Collection, SuperNatural Instructions 등에서 데이터를 활용했습니다.</li>
+<li><strong>새로운 데이터셋 생성</strong>: Codex와 같은 대규모 언어 모델을 사용해 자동으로 이유 설명을 생성할 수 있습니다. 이를 통해 기존 데이터셋에 이유 설명을 추가하여 CoT 데이터셋을 확장할 수 있습니다.</li>
+</ul>
+<hr>
+<h2 id="2-학습-과정">2. <strong>학습 과정</strong></h2>
+<h3 id="1-데이터-전처리"><strong>(1) 데이터 전처리</strong></h3>
+<ul>
+<li><strong>텍스트 정제 및 토큰화</strong>: 입력 텍스트와 이유 설명을 **토큰화(tokenization)**하고, 언어 모델이 이해할 수 있는 형식으로 변환합니다.</li>
+<li><strong>입력 형식 구성</strong>:
+<ul>
+<li>모델 입력은 <strong>&quot;[문제 설명] + [추론 단계] + [정답]&rdquo;</strong> 형태로 구성됩니다.</li>
+<li>&ldquo;Let&rsquo;s think step by step&quot;과 같은 트리거 문구를 추가하여 CoT 방식으로 모델이 논리적 추론을 하도록 유도합니다.</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-cot-파인튜닝-chain-of-thought-fine-tuning"><strong>(2) CoT 파인튜닝 (Chain-of-Thought Fine-tuning)</strong></h3>
+<ul>
+<li>
+<p><strong>파인튜닝 과정</strong>:</p>
+<ol>
+<li><strong>모델 선택</strong>: Flan-T5와 같은 사전 학습된 언어 모델을 사용합니다.</li>
+<li><strong>CoT 파인튜닝</strong>: COT COLLECTION 데이터셋을 사용하여 모델을 훈련합니다.</li>
+<li><strong>손실 함수</strong>: 출력 텍스트(이유 설명 + 정답)와 실제 답변 간의 차이를 최소화하도록 <strong>크로스 엔트로피 손실</strong>을 사용합니다.</li>
+</ol>
+</li>
+<li>
+<p><strong>구체적인 학습 단계</strong>:</p>
+<ul>
+<li><strong>입력 예시</strong>:
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-0"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-0"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-0">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">Input: &#34;Skylar had stopped breathing but Lee is holding onto hope. What should Lee do next?&#34;
+</span></span><span class="line"><span class="ln">2</span><span class="cl">Prompt: &#34;Let&#39;s think step by step.&#34;
+</span></span><span class="line"><span class="ln">3</span><span class="cl">Model Output (Rationale): &#34;Skylar is not breathing, so Lee should take immediate action. The best option is to beg the doctors to try again.&#34;
+</span></span><span class="line"><span class="ln">4</span><span class="cl">Answer: &#34;Beg the doctors to try again.&#34;</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-0';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+</li>
+<li>모델은 입력된 문제에 대해 단계별로 논리를 전개하고, 최종 답변을 생성합니다.</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-하이퍼파라미터-및-모델-최적화"><strong>(3) 하이퍼파라미터 및 모델 최적화</strong></h3>
+<ul>
+<li><strong>배치 크기</strong>: 32-64 범위에서 조절.</li>
+<li><strong>학습률</strong>: 1e-5 ~ 5e-5 사이에서 조정.</li>
+<li><strong>에폭(Epoch)</strong>: 데이터 크기에 따라 3-5회 반복.</li>
+<li><strong>Mixed Precision Training</strong>: 메모리 효율성을 위해 FP16 모드를 사용.</li>
+</ul>
+<h3 id="4-학습-후-평가"><strong>(4) 학습 후 평가</strong></h3>
+<ul>
+<li><strong>평가 데이터셋</strong>: BIG-Bench-Hard (BBH) 벤치마크를 사용하여 모델의 제로샷 및 퓨샷 성능을 평가합니다.</li>
+<li><strong>평가지표</strong>: 정확도(accuracy)와 완전 일치(Exact Match, EM) 기준으로 성능을 평가합니다.</li>
+</ul>
+<hr>
+<h2 id="3-구현-예시-코드-python-pytorch-기반">3. <strong>구현 예시 코드 (Python, PyTorch 기반)</strong></h2>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PYTHON
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-1"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-1"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-1">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">T5ForConditionalGeneration</span><span class="p">,</span> <span class="n">T5Tokenizer</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="c1"># 모델과 토크나이저 로드</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="n">model_name</span> <span class="o">=</span> <span class="s2">&#34;google/flan-t5-base&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="n">model</span> <span class="o">=</span> <span class="n">T5ForConditionalGeneration</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">T5Tokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1"># 입력 데이터 예시</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="n">input_text</span> <span class="o">=</span> <span class="s2">&#34;Skylar had stopped breathing but Lee is holding onto hope. What should Lee do next?&#34;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="n">prompt</span> <span class="o">=</span> <span class="s2">&#34;Let&#39;s think step by step.&#34;</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="c1"># 입력 텍스트 준비</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">input_text</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&#34;pt&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">input_ids</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1"># 모델 추론</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">num_beams</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="n">generated_text</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">skip_special_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Generated Response: </span><span class="si">{</span><span class="n">generated_text</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span></span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-1';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<hr>
+<h2 id="4-결론-및-요약">4. <strong>결론 및 요약</strong></h2>
+<ul>
+<li><strong>필요 데이터셋</strong>: COT COLLECTION과 같이 이유 설명이 포함된 대규모 데이터셋.</li>
+<li><strong>학습 과정</strong>: CoT 방식으로 모델을 파인튜닝하여 제로샷 및 퓨샷 학습 성능을 극대화.</li>
+<li><strong>장점</strong>: 소형 언어 모델에서도 대형 모델에 가까운 추론 능력을 구현할 수 있음.</li>
+<li><strong>한계</strong>: 대규모 데이터 및 컴퓨팅 자원 필요.</li>
+</ul>
+<p>이 방법을 통해 소형 언어 모델의 추론 능력을 크게 개선할 수 있으며, 특히 제한된 리소스 환경에서도 고성능을 달성할 수 있습니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<h3 id="분석-the-cot-collection-improving-zero-shot-and-few-shot-learning-of-language-models-via-chain-of-thought-fine-tuning">분석: <strong>The COT Collection: Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning</strong></h3>
+<hr>
+<h2 id="1-논문에서-제시한-결과-및-비교-분석">1. <strong>논문에서 제시한 결과 및 비교 분석</strong></h2>
+<h3 id="1-주요-실험-결과-요약"><strong>(1) 주요 실험 결과 요약</strong></h3>
+<ul>
+<li><strong>제로샷(Zero-shot) 학습 성능</strong>:
+<ul>
+<li>CoT 파인튜닝을 통해 학습된 **CoT-T5 모델(3B, 11B)**는 BBH(Big-Bench Hard) 벤치마크에서 <strong>Flan-T5 모델</strong> 대비 각각 <strong>+4.34%</strong> 및 **+2.60%**의 성능 향상을 달성했습니다.</li>
+<li>CoT-T5 모델은 대형 모델인 **GPT-3(175B)**보다도 여러 과제에서 더 나은 성능을 보였습니다.</li>
+</ul>
+</li>
+<li><strong>퓨샷(Few-shot) 학습 성능</strong>:
+<ul>
+<li>CoT-T5 모델은 <strong>ChatGPT</strong> 및 <strong>Claude</strong>와 같은 대규모 언어 모델을 능가하여 퓨샷 학습 설정에서 최대 <strong>+13.98%</strong> 성능 향상을 기록했습니다.</li>
+<li>특히, <strong>법률 및 의료 도메인</strong>에서 CoT-T5 모델이 기존 Flan-T5 모델보다 퓨샷 성능이 <strong>+2.24% (3B 모델)</strong> 및 <strong>+2.37% (11B 모델)</strong> 향상되었습니다.</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-기존-방법론과-비교하여-특출난-점"><strong>(2) 기존 방법론과 비교하여 특출난 점</strong></h3>
+<ul>
+<li>기존의 <strong>Flan Collection</strong>은 제한된 CoT 데이터를 포함하고 있어, 소형 모델에서는 체계적인 논리적 추론이 어려웠습니다. 그러나 <strong>COT COLLECTION</strong>은 1.84백만 개의 이유 설명을 추가하여 모델의 <strong>논리적 추론 능력</strong>을 대폭 개선했습니다.</li>
+<li><strong>CoT 파인튜닝</strong>을 적용한 CoT-T5 모델은 **사전 학습된 대형 언어 모델(GPT-3, Claude)**과의 비교에서 훨씬 더 작은 파라미터를 가지고도 유사하거나 더 나은 성능을 달성했습니다.</li>
+</ul>
+<hr>
+<h2 id="2-논문에서-제기하는-방법이-성능-향상을-도출한-이유">2. <strong>논문에서 제기하는 방법이 성능 향상을 도출한 이유</strong></h2>
+<h3 id="1-대규모-cot-데이터셋의-중요성-cot-collection"><strong>(1) 대규모 CoT 데이터셋의 중요성 (COT COLLECTION)</strong></h3>
+<ul>
+<li>기존에는 <strong>9개의 CoT 작업만을 포함한 제한된 데이터셋</strong>이 사용되었습니다. 그러나 이 논문에서는 **1,060개의 다양한 작업을 포함한 1.84백만 개의 이유 설명(rationale)**을 포함한 <strong>COT COLLECTION</strong>을 구축했습니다.</li>
+<li>이러한 데이터셋 확장은 모델이 더 다양한 상황에서 체인-오브-생각(Chain-of-Thought) 방식으로 문제를 해결할 수 있도록 도왔습니다.</li>
+</ul>
+<h3 id="2-cot-파인튜닝을-통한-모델-최적화"><strong>(2) CoT 파인튜닝을 통한 모델 최적화</strong></h3>
+<ul>
+<li>CoT-T5 모델은 **&ldquo;Let&rsquo;s think step by step&rdquo;**과 같은 트리거 프롬프트를 사용하여 단계별 추론을 수행하도록 유도합니다. 이를 통해 모델은 더 깊이 있는 논리적 추론을 할 수 있게 되었습니다.</li>
+<li>CoT 파인튜닝은 기존의 사전 학습된 모델에 비해 <strong>추론 능력을 향상시키고 제로샷 성능을 높이는 데 기여</strong>했습니다.</li>
+</ul>
+<h3 id="3-다국어-지원을-통한-일반화-성능-향상"><strong>(3) 다국어 지원을 통한 일반화 성능 향상</strong></h3>
+<ul>
+<li><strong>80,000개의 다국어(CoT Collection을 프랑스어, 일본어, 한국어, 러시아어, 중국어로 번역) 데이터셋</strong>을 추가하여, 모델이 <strong>다국어 환경에서도 강력한 성능</strong>을 발휘할 수 있도록 했습니다.</li>
+<li>이를 통해 CoT 방식의 학습이 <strong>언어에 독립적인 일반화 성능</strong>을 갖도록 도왔습니다.</li>
+</ul>
+<hr>
+<h2 id="3-논문의-한계점-및-개선-가능성">3. <strong>논문의 한계점 및 개선 가능성</strong></h2>
+<h3 id="1-데이터-품질-문제"><strong>(1) 데이터 품질 문제</strong></h3>
+<ul>
+<li><strong>Codex</strong>를 사용해 자동으로 생성된 이유 설명이 데이터셋에 포함되어 있습니다. 이로 인해, 생성된 설명이 항상 고품질은 아닐 수 있습니다. 특히, 일부 논리적으로 복잡한 문제에 대해서는 <strong>부정확한 이유 설명</strong>이 포함될 수 있습니다.</li>
+<li>이를 해결하기 위해 <strong>데이터 필터링</strong> 및 <strong>검증 과정</strong>이 추가적으로 필요합니다.</li>
+</ul>
+<h3 id="2-컴퓨팅-자원-소모"><strong>(2) 컴퓨팅 자원 소모</strong></h3>
+<ul>
+<li>CoT 파인튜닝은 소형 모델에서도 성능을 개선할 수 있지만, 여전히 <strong>대규모 데이터와 컴퓨팅 자원</strong>이 필요합니다. 특히, 다국어 지원을 위한 추가 번역 및 파인튜닝은 비용이 높습니다.</li>
+<li><strong>효율적인 모델 경량화</strong> 및 <strong>파라미터 효율적 파인튜닝(PEFT)</strong> 기법을 도입함으로써, 자원 소모를 줄이는 연구가 필요합니다.</li>
+</ul>
+<h3 id="3-특정-도메인에-대한-한계"><strong>(3) 특정 도메인에 대한 한계</strong></h3>
+<ul>
+<li>CoT 파인튜닝은 논리적 추론이 필요한 일반 과제에서는 우수한 성능을 발휘하지만, **특화된 도메인(예: 금융, 법률, 의료 등)**에서는 여전히 추가적인 데이터와 파인튜닝이 필요합니다.</li>
+<li>특화된 도메인에 대해 더 많은 <strong>도메인 특화 CoT 데이터셋</strong>을 구축함으로써 성능을 개선할 수 있을 것입니다.</li>
+</ul>
+<hr>
+<h2 id="4-내-생각-및-향후-연구-방향">4. <strong>내 생각 및 향후 연구 방향</strong></h2>
+<h3 id="1-대규모-언어-모델을-소형화하는-전략"><strong>(1) 대규모 언어 모델을 소형화하는 전략</strong></h3>
+<ul>
+<li>이 논문은 대형 모델에만 국한되었던 <strong>CoT 추론 방식을 소형 모델에서도 구현 가능</strong>하게 만든 점에서 큰 의미가 있습니다. 특히, <strong>컴퓨팅 자원이 제한된 연구 기관</strong>에서도 활용할 수 있는 모델을 제안한 점이 주목할 만합니다.</li>
+<li>향후 연구에서는 **파라미터 효율적 파인튜닝 기법(예: LoRA, Adapters)**을 더 적극적으로 활용하여 소형 모델의 성능을 극대화할 수 있을 것입니다.</li>
+</ul>
+<h3 id="2-자동화된-cot-데이터-생성-기법-개발"><strong>(2) 자동화된 CoT 데이터 생성 기법 개발</strong></h3>
+<ul>
+<li>데이터 수집의 어려움을 해결하기 위해, <strong>자동화된 CoT 데이터 생성 기법</strong>을 개발하는 것이 필요합니다. 예를 들어, Codex와 같은 대형 언어 모델을 활용하여 더욱 정교한 이유 설명을 생성하고, 이를 검증할 수 있는 자동 평가 시스템을 구축하는 방향이 유망합니다.</li>
+</ul>
+<h3 id="3-다양한-도메인-및-다국어-지원-강화"><strong>(3) 다양한 도메인 및 다국어 지원 강화</strong></h3>
+<ul>
+<li>현재의 CoT 파인튜닝 방식은 여러 언어에서 강력한 성능을 보이지만, 더 다양한 언어와 도메인에 대한 지원이 필요합니다. 특히, 비영어권 언어에서의 성능을 개선하기 위해, <strong>다국어 데이터셋의 품질을 높이고 추가적인 번역 작업을 자동화</strong>하는 연구가 요구됩니다.</li>
+</ul>
+<p>결론적으로, 이 논문은 소형 언어 모델의 추론 능력을 대폭 향상시킴으로써 <strong>언어 모델의 접근성을 넓히는 중요한 기여를 했습니다</strong>. 앞으로 CoT 방식의 활용 가능성은 더 커질 것이며, 이를 최적화하기 위한 다양한 연구들이 활발하게 이루어질 것으로 기대됩니다.</p>
+<h1 id="q--이-논문에서-제시된-방법을-실제로-사용하려면-기존-방법에서-어떠한-구현이-추가적으로-필요하고-이러한-구현에-소모되는-공수-및-연산에-필요한-컴퓨팅-자원의-크기에-대해서-계산해줄-수-있겠니">Q : 이 논문에서 제시된 방법을 실제로 사용하려면 기존 방법에서 어떠한 구현이 추가적으로 필요하고 이러한 구현에 소모되는 공수 및 연산에 필요한 컴퓨팅 자원의 크기에 대해서 계산해줄 수 있겠니?</h1>
+<h3 id="분석-the-cot-collection-논문에서-제시된-방법을-실제로-구현하기-위해-필요한-추가-작업-및-자원-요구-분석">분석: The COT Collection 논문에서 제시된 방법을 실제로 구현하기 위해 필요한 추가 작업 및 자원 요구 분석</h3>
+<p>이 논문에서 제시한 <strong>COT COLLECTION을 활용한 CoT(Chain-of-Thought) 파인튜닝</strong> 방식은 기존의 언어 모델 학습 방식과 비교하여 여러 추가적인 구현이 필요합니다. 이를 실제 환경에 적용하기 위해 필요한 <strong>추가 구현, 컴퓨팅 자원 요구사항</strong>, 그리고 <strong>공수</strong>에 대해 분석하겠습니다.</p>
+<hr>
+<h2 id="1-기존-접근-방식-대비-추가적으로-필요한-구현-사항">1. <strong>기존 접근 방식 대비 추가적으로 필요한 구현 사항</strong></h2>
+<h3 id="1-cot-데이터셋-구축-및-전처리"><strong>(1) CoT 데이터셋 구축 및 전처리</strong></h3>
+<ul>
+<li>**새로운 CoT 데이터셋(COT COLLECTION)**을 구축하거나, 기존 데이터셋을 확장하는 작업이 필요합니다.
+<ul>
+<li>이 논문에서는 기존의 Flan Collection을 확장하여 **1.84백만 개의 이유 설명(rationale)**을 추가했습니다.</li>
+</ul>
+</li>
+<li><strong>자동화된 이유 설명 생성</strong>: Codex와 같은 대규모 언어 모델을 사용해 이유 설명을 생성하는 과정이 필요합니다.</li>
+<li><strong>데이터 필터링</strong>: 자동 생성된 이유 설명의 품질을 보장하기 위해, <strong>필터링 알고리즘</strong>을 적용하여 불필요한 노이즈를 제거해야 합니다.</li>
+</ul>
+<h3 id="2-cot-파인튜닝-파이프라인-구현"><strong>(2) CoT 파인튜닝 파이프라인 구현</strong></h3>
+<ul>
+<li>기존의 모델(Fine-tuned Flan-T5 등)을 <strong>COT COLLECTION</strong> 데이터로 추가 파인튜닝하는 과정이 필요합니다.</li>
+<li><strong>프롬프트 템플릿 생성 및 조정</strong>:
+<ul>
+<li>&ldquo;Let&rsquo;s think step by step&quot;과 같은 체인-오브-생각(CoT) 트리거 프롬프트를 설정해야 합니다.</li>
+<li>다양한 문제 유형에 대해 적절한 프롬프트를 생성하는 템플릿 설계가 필요합니다.</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-다국어-지원"><strong>(3) 다국어 지원</strong></h3>
+<ul>
+<li>다국어 데이터셋을 구축하기 위해 <strong>번역 및 추가 데이터 생성</strong>이 필요합니다.</li>
+<li>논문에서는 프랑스어, 일본어, 한국어, 러시아어, 중국어로 80,000개의 사례를 번역하여 모델을 다국어로 파인튜닝했습니다.</li>
+</ul>
+<h3 id="4-모델-학습-환경-설정"><strong>(4) 모델 학습 환경 설정</strong></h3>
+<ul>
+<li>CoT 파인튜닝을 위한 학습 파이프라인을 구성하기 위해 <strong>분산 학습 환경</strong>이 필요합니다.</li>
+<li><strong>Mixed Precision Training(FP16)</strong>, <strong>Gradient Checkpointing</strong> 등의 기술을 적용하여 메모리 사용을 최적화하고 학습 속도를 향상시켜야 합니다.</li>
+</ul>
+<hr>
+<h2 id="2-필요한-컴퓨팅-자원-분석">2. <strong>필요한 컴퓨팅 자원 분석</strong></h2>
+<h3 id="1-모델-학습을-위한-자원-요구-사항"><strong>(1) 모델 학습을 위한 자원 요구 사항</strong></h3>
+<ul>
+<li>**Flan-T5 (3B, 11B 모델)**을 COT COLLECTION 데이터로 파인튜닝하는 데 필요한 자원:
+<ul>
+<li><strong>GPU</strong>: A100 또는 V100과 같은 고성능 GPU 필요.</li>
+<li><strong>배치 크기</strong>: 최대 128-256 정도로 설정하여 효율적인 학습 수행.</li>
+<li><strong>에폭</strong>: CoT 데이터셋의 크기와 모델의 파라미터 수에 따라 3-5 에폭.</li>
+</ul>
+</li>
+</ul>
+<h4 id="연산량flops-분석"><strong>연산량(FLOPs) 분석</strong></h4>
+<ul>
+<li><strong>Flan-T5 3B 모델</strong>:
+<ul>
+<li>약 <strong>10억 개의 파라미터</strong>를 가진 모델로, 1회 추론에 약 30-50 GFLOPs 필요.</li>
+</ul>
+</li>
+<li><strong>Flan-T5 11B 모델</strong>:
+<ul>
+<li>약 <strong>110억 개의 파라미터</strong>를 가진 모델로, 1회 추론에 약 300-500 GFLOPs 필요.</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-학습-시간-및-자원-소모-추정"><strong>(2) 학습 시간 및 자원 소모 추정</strong></h3>
+<ul>
+<li><strong>COT COLLECTION</strong> 데이터셋을 사용한 CoT 파인튜닝:
+<ul>
+<li>A100 GPU 기준으로 <strong>32개 노드</strong>에서 학습 시 약 <strong>5-7일</strong>이 소요될 것으로 추정.</li>
+<li><strong>V100 GPU</strong>를 사용할 경우 학습 시간은 약 2배로 증가할 수 있습니다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="컴퓨팅-자원-비용-예측"><strong>컴퓨팅 자원 비용 예측</strong></h4>
+<ul>
+<li><strong>A100 GPU</strong> (시간당 약 $3.06, AWS 기준) 사용 시:
+<ul>
+<li>32개 GPU × 24시간 × 7일 = 5,376 GPU 시간.</li>
+<li>5,376 × $3.06 = 약 <strong>$16,464 (약 2천만 원)</strong> 비용 발생.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="3-추가적인-개발-및-연구-공수">3. <strong>추가적인 개발 및 연구 공수</strong></h2>
+<h3 id="1-데이터-구축-및-전처리-작업"><strong>(1) 데이터 구축 및 전처리 작업</strong></h3>
+<ul>
+<li><strong>데이터 크롤링 및 자동화된 이유 생성</strong>: 2-4주 소요.
+<ul>
+<li>Codex 또는 다른 대규모 언어 모델을 활용하여 이유 설명 자동 생성.</li>
+<li>생성된 데이터의 품질 검토 및 필터링 작업.</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-모델-학습-및-최적화"><strong>(2) 모델 학습 및 최적화</strong></h3>
+<ul>
+<li><strong>모델 파인튜닝</strong>: 3-5주 소요.
+<ul>
+<li>Flan-T5 모델에 대한 CoT 파인튜닝 진행.</li>
+<li>하이퍼파라미터 튜닝 및 성능 평가.</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-다국어-데이터셋-구축"><strong>(3) 다국어 데이터셋 구축</strong></h3>
+<ul>
+<li><strong>번역 및 다국어 지원</strong>: 2-3주 소요.
+<ul>
+<li>다국어 데이터셋 생성 및 추가 파인튜닝.</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-인적-자원-요구"><strong>(4) 인적 자원 요구</strong></h3>
+<ul>
+<li><strong>팀 구성 예시</strong>:
+<ul>
+<li>데이터 엔지니어 2명</li>
+<li>머신러닝 엔지니어 2-3명</li>
+<li>인프라 엔지니어 1명 (분산 시스템 설정 및 클라우드 환경 관리)</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="4-결론-및-요약-1">4. <strong>결론 및 요약</strong></h2>
+<ul>
+<li><strong>필수 작업</strong>: CoT 파인튜닝을 위한 데이터셋 구축, CoT 프롬프트 최적화, 분산 학습 환경 설정 등이 필요합니다.</li>
+<li><strong>컴퓨팅 자원 요구</strong>: A100 또는 V100 GPU를 사용하여 수천 시간의 학습이 필요하며, 이에 따라 상당한 비용이 발생합니다.</li>
+<li><strong>개발 공수</strong>: 데이터 수집 및 전처리, 모델 파인튜닝, 다국어 지원을 위한 작업이 포함되어 약 <strong>2-3개월</strong>의 개발 기간이 필요합니다.</li>
+</ul>
+<p>이러한 과정은 <strong>소형 모델</strong>이 대형 언어 모델 수준의 추론 능력을 갖추도록 하는 데 중점을 두며, <strong>자원 최적화</strong>와 <strong>효율적인 데이터 활용</strong>을 통해 성능을 개선할 수 있습니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<h3 id="분석-the-cot-collection-논문의-입력-데이터와-추론-과정-및-모델-아키텍처-분석">분석: The COT Collection 논문의 입력 데이터와 추론 과정 및 모델 아키텍처 분석</h3>
+<hr>
+<h2 id="1-입력-데이터-및-추론-과정">1. <strong>입력 데이터 및 추론 과정</strong></h2>
+<h3 id="1-입력-데이터-구성"><strong>(1) 입력 데이터 구성</strong></h3>
+<p>이 논문에서 사용하는 입력 데이터는 <strong>Chain-of-Thought (CoT) 방식</strong>을 적용한 <strong>COT COLLECTION</strong> 데이터셋입니다. 이 데이터셋은 <strong>문제(instruction)</strong>, <strong>맥락(context)</strong>, <strong>이유 설명(rationale)</strong>, 그리고 **정답(answer)**의 4가지 요소로 구성되어 있습니다.</p>
+<h3 id="2-입력-데이터-예시"><strong>(2) 입력 데이터 예시</strong></h3>
+<p>다음은 COT COLLECTION 데이터셋에서 사용할 수 있는 입력 데이터의 예시입니다:</p>
+<h4 id="예시-1-산술-추론-문제-1"><strong>예시 1: 산술 추론 문제</strong></h4>
+<ul>
+<li><strong>Instruction</strong>: &ldquo;John이 5개의 사과를 가지고 있고, Sarah는 John의 사과의 두 배를 가지고 있습니다. 두 사람의 사과 총합은 얼마입니까?&rdquo;</li>
+<li><strong>Context</strong>: 주어진 정보에서 사과의 수를 계산하세요.</li>
+<li><strong>Chain of Thought</strong>:
+<ol>
+<li>John은 5개의 사과를 가지고 있습니다.</li>
+<li>Sarah는 John의 사과의 두 배를 가지고 있습니다. 따라서 Sarah는 10개의 사과를 가지고 있습니다.</li>
+<li>두 사람의 사과 총합은 5 + 10 = 15개입니다.</li>
+</ol>
+</li>
+<li><strong>Answer</strong>: &ldquo;15&rdquo;</li>
+</ul>
+<h4 id="예시-2-논리-추론-문제-1"><strong>예시 2: 논리 추론 문제</strong></h4>
+<ul>
+<li><strong>Instruction</strong>: &ldquo;모든 새들은 날 수 있고, 펭귄은 새입니다. 펭귄도 날 수 있습니까?&rdquo;</li>
+<li><strong>Context</strong>: 이 상황에서 펭귄이 날 수 있는지 논리적으로 설명하세요.</li>
+<li><strong>Chain of Thought</strong>:
+<ol>
+<li>모든 새들이 날 수 있다고 가정하지만, 펭귄은 예외입니다.</li>
+<li>펭귄은 날 수 없는 새입니다.</li>
+</ol>
+</li>
+<li><strong>Answer</strong>: &ldquo;아니오&rdquo;</li>
+</ul>
+<hr>
+<h3 id="3-추론-과정inference-process"><strong>(3) 추론 과정(Inference Process)</strong></h3>
+<ul>
+<li>입력 데이터를 받은 모델은 문제와 맥락을 바탕으로 <strong>Chain-of-Thought</strong> 방식을 활용하여 단계별로 논리를 전개합니다.</li>
+<li>추론 과정에서 **&ldquo;Let&rsquo;s think step by step&rdquo;**와 같은 프롬프트를 사용하여 모델이 논리적 이유 설명을 생성한 후 최종 답변을 도출하도록 유도합니다.</li>
+</ul>
+<h4 id="추론-예시-python-코드"><strong>추론 예시 (Python 코드)</strong></h4>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PYTHON
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-2"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-2"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-2">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">T5Tokenizer</span><span class="p">,</span> <span class="n">T5ForConditionalGeneration</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1"># 모델과 토크나이저 로드</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="n">model_name</span> <span class="o">=</span> <span class="s2">&#34;google/flan-t5-base&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="n">model</span> <span class="o">=</span> <span class="n">T5ForConditionalGeneration</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">T5Tokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1"># 입력 데이터 준비</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="n">input_text</span> <span class="o">=</span> <span class="s2">&#34;John has 5 apples, Sarah has twice as many. How many apples do they have in total? Let&#39;s think step by step.&#34;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">input_text</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s1">&#39;pt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">input_ids</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="c1"># 추론</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">num_beams</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="n">generated_text</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">skip_special_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Generated Response: </span><span class="si">{</span><span class="n">generated_text</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span></span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-2';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<hr>
+<h2 id="2-모델-아키텍처-구성">2. <strong>모델 아키텍처 구성</strong></h2>
+<h3 id="1-모델-구조-개요"><strong>(1) 모델 구조 개요</strong></h3>
+<ul>
+<li>이 논문에서는 <strong>Flan-T5 (3B 및 11B)</strong> 모델을 사용하여 <strong>Chain-of-Thought (CoT) 방식</strong>으로 파인튜닝합니다.</li>
+<li><strong>Flan-T5 모델</strong>은 <strong>Transformer 아키텍처</strong>를 기반으로 하며, 텍스트 입력을 처리하여 논리적 이유 설명을 생성하고, 최종 답변을 도출합니다.</li>
+</ul>
+<h3 id="2-모델-구성-요소"><strong>(2) 모델 구성 요소</strong></h3>
+<ul>
+<li><strong>입력 인코더(Encoder)</strong>: 입력 텍스트를 토큰화한 후 임베딩 벡터로 변환합니다.</li>
+<li><strong>디코더(Decoder)</strong>: 입력된 텍스트와 이유 설명을 바탕으로 최종 답변을 생성합니다.</li>
+<li><strong>체인-오브-생각(Chain-of-Thought)</strong>: 입력 텍스트를 처리할 때 논리적 단계를 단계별로 생성하여 추론을 도와줍니다.</li>
+</ul>
+<h3 id="3-연산량-분석-flops"><strong>(3) 연산량 분석 (FLOPs)</strong></h3>
+<ul>
+<li><strong>Flan-T5 3B 모델</strong>:
+<ul>
+<li>약 30억 개의 파라미터를 보유하고 있으며, 한 번의 추론에 <strong>약 30-50 GFLOPs</strong>가 필요합니다.</li>
+</ul>
+</li>
+<li><strong>Flan-T5 11B 모델</strong>:
+<ul>
+<li>약 110억 개의 파라미터를 보유하며, 한 번의 추론에 <strong>약 300-500 GFLOPs</strong>가 필요합니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="3-모델-학습-및-컴퓨팅-자원-요구량">3. <strong>모델 학습 및 컴퓨팅 자원 요구량</strong></h2>
+<h3 id="1-메모리-요구량"><strong>(1) 메모리 요구량</strong></h3>
+<ul>
+<li><strong>Flan-T5 3B 모델</strong>: 약 24GB의 GPU 메모리 요구.</li>
+<li><strong>Flan-T5 11B 모델</strong>: 약 48-80GB의 GPU 메모리 요구.</li>
+</ul>
+<h3 id="2-컴퓨팅-자원-및-비용-분석"><strong>(2) 컴퓨팅 자원 및 비용 분석</strong></h3>
+<ul>
+<li><strong>A100 GPU</strong>를 기준으로, 모델을 학습하기 위해 <strong>32개 GPU를 7일간 사용</strong>할 경우:
+<ul>
+<li>시간당 약 $3.06 (AWS 기준)</li>
+<li>32개 GPU × 24시간 × 7일 = 5,376 GPU 시간</li>
+<li>총 비용 = 5,376 × $3.06 ≈ $16,464 (약 2천만 원)</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-학습-설정"><strong>(3) 학습 설정</strong></h3>
+<ul>
+<li><strong>배치 크기</strong>: 64-128 범위로 조정</li>
+<li><strong>학습률</strong>: 1e-5 ~ 5e-5</li>
+<li><strong>에폭(Epoch)</strong>: 데이터셋 크기에 따라 3-5회 반복</li>
+</ul>
+<hr>
+<h2 id="4-결론-및-요약-2">4. <strong>결론 및 요약</strong></h2>
+<ul>
+<li><strong>입력 데이터</strong>: Chain-of-Thought 방식으로 구성된 데이터셋을 사용하여 단계별 추론을 통해 최종 답변을 생성합니다.</li>
+<li><strong>모델 아키텍처</strong>: Flan-T5 모델을 기반으로 CoT 파인튜닝을 통해 소형 모델에서도 논리적 추론 능력을 향상시킵니다.</li>
+<li><strong>컴퓨팅 자원</strong>: 대규모 데이터 및 모델 파라미터 수에 따라 GPU 메모리와 연산량이 증가하며, 이를 최적화하기 위해 <strong>Mixed Precision Training</strong>과 같은 기술을 활용합니다.</li>
+</ul>
+<p>이 방식은 특히 제한된 리소스를 가지고 있는 연구 기관이나 기업에서도 효율적으로 사용할 수 있도록 설계되었습니다. 앞으로 CoT 방식을 다양한 도메인에 적용하여 성능을 개선할 가능성이 큽니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<h3 id="the-cot-collection-논문의-한계를-극복하기-위한-연구-방향-및-접근-방식">The COT Collection 논문의 한계를 극복하기 위한 연구 방향 및 접근 방식</h3>
+<p><strong>The COT Collection</strong> 논문은 Chain-of-Thought (CoT) 방식을 사용하여 소형 언어 모델이 제로샷 및 퓨샷 학습에서 더 나은 성능을 발휘하도록 하는 방법을 제시했습니다. 이 접근 방식은 주로 Flan-T5 모델을 기반으로 CoT 파인튜닝을 적용하여 성능을 개선했지만, 여전히 몇 가지 한계가 존재합니다. 이러한 한계를 극복하기 위해 현재 진행되고 있는 연구 흐름과 향후 연구 방향을 다음과 같이 정리했습니다.</p>
+<hr>
+<h2 id="1-현재-논문의-한계-분석">1. <strong>현재 논문의 한계 분석</strong></h2>
+<h3 id="1-데이터-품질과-의존성"><strong>(1) 데이터 품질과 의존성</strong></h3>
+<ul>
+<li><strong>Codex</strong>를 사용하여 자동으로 생성된 이유 설명(rationale)이 데이터셋에 포함되기 때문에, 생성된 설명이 항상 고품질은 아닐 수 있습니다. 특히 복잡한 문제에 대해 논리적으로 부정확한 이유 설명이 포함될 가능성이 있습니다.</li>
+<li>이유 설명을 자동 생성하는 과정에서 <strong>노이즈가 포함된 데이터</strong>가 학습에 부정적인 영향을 미칠 수 있습니다.</li>
+</ul>
+<h3 id="2-컴퓨팅-자원-소모-1"><strong>(2) 컴퓨팅 자원 소모</strong></h3>
+<ul>
+<li>CoT 파인튜닝은 소형 모델에서도 성능을 개선할 수 있지만, <strong>대규모 데이터와 컴퓨팅 자원</strong>이 필요합니다. 특히, 다국어 지원을 위해 추가적인 데이터 번역 및 파인튜닝이 필요할 경우, 비용이 급격히 증가합니다.</li>
+</ul>
+<h3 id="3-특정-도메인에-대한-성능-한계"><strong>(3) 특정 도메인에 대한 성능 한계</strong></h3>
+<ul>
+<li>CoT 파인튜닝은 논리적 추론이 필요한 일반 과제에서는 우수한 성능을 보이지만, **특화된 도메인(예: 의료, 법률, 금융 등)**에서는 여전히 추가적인 데이터와 파인튜닝이 필요합니다.</li>
+<li>도메인 특화된 문제에서는 기존 모델이 제공하는 CoT 접근 방식만으로는 충분한 성능을 발휘하지 못할 수 있습니다.</li>
+</ul>
+<hr>
+<h2 id="2-한계를-극복하기-위한-최신-연구-흐름">2. <strong>한계를 극복하기 위한 최신 연구 흐름</strong></h2>
+<h3 id="1-데이터-품질-개선을-위한-접근"><strong>(1) 데이터 품질 개선을 위한 접근</strong></h3>
+<h4 id="11-자동화된-이유-설명-생성의-품질-개선">1.1 <strong>자동화된 이유 설명 생성의 품질 개선</strong></h4>
+<ul>
+<li>Codex와 같은 모델 대신 <strong>GPT-4</strong>와 같은 최신 대형 언어 모델을 활용하여 더 높은 품질의 이유 설명을 생성하고, 이를 기반으로 데이터셋을 확장하는 연구가 진행되고 있습니다.</li>
+<li><strong>자기지도 학습(Self-Supervised Learning)</strong> 방식을 사용하여 데이터 품질을 높이기 위한 자동 검증 알고리즘이 도입되고 있습니다.</li>
+</ul>
+<h4 id="12-데이터-필터링-알고리즘-개선">1.2 <strong>데이터 필터링 알고리즘 개선</strong></h4>
+<ul>
+<li><strong>노이즈 필터링 기법</strong>을 개선하여, 자동 생성된 이유 설명의 품질을 높이기 위한 연구가 진행 중입니다.</li>
+<li>예를 들어, **강화 학습(Reward Modeling)**을 사용하여 모델이 생성한 이유 설명의 논리적 일관성을 평가하고, 부정확한 설명을 필터링하는 방식이 제안되고 있습니다.</li>
+</ul>
+<hr>
+<h3 id="2-컴퓨팅-자원-최적화"><strong>(2) 컴퓨팅 자원 최적화</strong></h3>
+<h4 id="21-파라미터-효율적-파인튜닝peft-기법-도입">2.1 <strong>파라미터 효율적 파인튜닝(PEFT) 기법 도입</strong></h4>
+<ul>
+<li>LoRA(Low-Rank Adaptation), Adapters, Prefix Tuning과 같은 <strong>경량화된 파인튜닝 기법</strong>을 도입하여 대규모 모델의 파인튜닝 비용을 줄이는 연구가 활발히 이루어지고 있습니다.</li>
+<li>이러한 접근 방식은 <strong>전체 모델을 재학습하지 않고도</strong> 일부 파라미터만 조정하여 성능을 개선할 수 있습니다.</li>
+</ul>
+<h4 id="22-분산-학습-및-mixed-precision-training">2.2 <strong>분산 학습 및 Mixed Precision Training</strong></h4>
+<ul>
+<li><strong>Mixed Precision Training(FP16)</strong>, <strong>Gradient Checkpointing</strong> 등을 활용하여 GPU 메모리 사용량을 줄이고 학습 속도를 높이기 위한 연구가 진행 중입니다.</li>
+<li><strong>DeepSpeed</strong> 및 <strong>Horovod</strong>와 같은 분산 학습 프레임워크를 활용하여 대규모 모델을 더 빠르게 학습할 수 있는 방법이 제안되고 있습니다.</li>
+</ul>
+<hr>
+<h3 id="3-도메인-특화-모델-개발"><strong>(3) 도메인 특화 모델 개발</strong></h3>
+<h4 id="31-도메인-어댑터adapters-활용">3.1 <strong>도메인 어댑터(Adapters) 활용</strong></h4>
+<ul>
+<li>특정 도메인에 최적화된 **어댑터(adapters)**를 사용하여 도메인 특화된 CoT 모델을 구축하는 방식이 주목받고 있습니다.</li>
+<li>예를 들어, 의료 및 법률 도메인에 대해 사전 학습된 어댑터를 추가하여, 기존 모델에 도메인 특화 지식을 주입할 수 있습니다.</li>
+</ul>
+<h4 id="32-하이브리드-학습-접근-방식">3.2 <strong>하이브리드 학습 접근 방식</strong></h4>
+<ul>
+<li>일반 CoT 학습과 도메인 특화된 지도 학습을 결합하여 모델이 <strong>특정 도메인에 더 잘 일반화</strong>할 수 있도록 하는 연구가 진행 중입니다.</li>
+<li>예를 들어, 의료 도메인에서는 PubMed 및 MedNLI와 같은 특화된 데이터셋을 사용하여 추가 파인튜닝을 수행할 수 있습니다.</li>
+</ul>
+<hr>
+<h3 id="4-다국어-지원-강화-및-일반화-성능-향상"><strong>(4) 다국어 지원 강화 및 일반화 성능 향상</strong></h3>
+<h4 id="41-다국어-cot-데이터셋-구축">4.1 <strong>다국어 CoT 데이터셋 구축</strong></h4>
+<ul>
+<li>논문에서는 5개의 언어(프랑스어, 일본어, 한국어, 러시아어, 중국어)로 번역된 CoT 데이터셋을 사용했습니다. 향후 연구에서는 더 많은 언어를 포함하여 <strong>다국어 지원을 확장</strong>하는 방향으로 발전할 수 있습니다.</li>
+<li><strong>자동 번역 시스템</strong>을 활용하여 더 많은 다국어 데이터를 확보하고, 이를 통해 다양한 언어에서 CoT 성능을 개선하는 연구가 필요합니다.</li>
+</ul>
+<h4 id="42-cross-lingual-transfer-learning">4.2 <strong>Cross-lingual Transfer Learning</strong></h4>
+<ul>
+<li>다국어 데이터셋을 활용하여 **언어 간 전이 학습(Cross-lingual Transfer Learning)**을 적용하는 방법이 제안되고 있습니다.</li>
+<li>이 접근 방식은 한 언어에서 학습한 CoT 지식을 다른 언어로 전이하여, 새로운 언어에서도 제로샷 및 퓨샷 학습 성능을 개선할 수 있습니다.</li>
+</ul>
+<hr>
+<h2 id="3-향후-연구-방향-제안">3. <strong>향후 연구 방향 제안</strong></h2>
+<h3 id="1-자동화된-cot-데이터-생성-기법-개발"><strong>(1) 자동화된 CoT 데이터 생성 기법 개발</strong></h3>
+<ul>
+<li>현재 CoT 데이터셋 구축에 많은 시간이 소요되므로, <strong>자동화된 데이터 생성 및 검증 시스템</strong>을 구축하여 더 빠르고 효율적으로 CoT 데이터를 확보하는 것이 필요합니다.</li>
+<li>강화 학습 및 자기지도 학습을 활용하여 모델이 <strong>고품질의 이유 설명을 자동 생성</strong>하도록 하는 연구가 유망합니다.</li>
+</ul>
+<h3 id="2-효율적인-학습-인프라-구축"><strong>(2) 효율적인 학습 인프라 구축</strong></h3>
+<ul>
+<li>컴퓨팅 자원 소모를 줄이기 위해 <strong>경량화 모델</strong>을 개발하고, <strong>모델 압축 및 최적화</strong> 기법을 도입하는 연구가 중요합니다.</li>
+<li>파라미터 효율적 파인튜닝과 같은 방법을 통해 <strong>저비용으로 고성능을 달성</strong>하는 방향으로 발전할 수 있습니다.</li>
+</ul>
+<h3 id="3-다양한-도메인-적용-가능성-확대"><strong>(3) 다양한 도메인 적용 가능성 확대</strong></h3>
+<ul>
+<li>CoT 방식의 적용 범위를 확장하여 <strong>자율 주행, 금융 분석, 의료 진단</strong> 등 다양한 실세계 문제에 활용할 수 있도록 하는 연구가 필요합니다.</li>
+<li>이를 위해, 특정 도메인에 최적화된 CoT 데이터셋을 추가적으로 구축하고, 도메인 특화 모델을 개발하는 방향으로 나아가야 합니다.</li>
+</ul>
+<hr>
+<p>결론적으로, <strong>The COT Collection 논문</strong>에서 제안된 CoT 파인튜닝 방식은 기존 언어 모델의 한계를 극복하는 중요한 기여를 했습니다. 그러나 컴퓨팅 자원 소모, 데이터 품질, 도메인 특화 성능 등의 한계를 극복하기 위해서는 <strong>효율적인 파인튜닝 기법, 자동화된 데이터 생성, 그리고 다국어 및 도메인 특화된 접근 방식</strong>이 필요합니다. 이를 통해 CoT 방식의 활용 가능성을 더욱 확장할 수 있을 것입니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/The-CoT-Collection-Improving-Zero-shot-and-Few-shot-Learning-of-Language-Models-via-Chain-of-Thought-Fine-Tuning/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/The-CoT-Collection-Improving-Zero-shot-and-Few-shot-Learning-of-Language-Models-via-Chain-of-Thought-Fine-Tuning/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Abseil-Tip-122-%ED%85%8C%EC%8A%A4%ED%8A%B8-%ED%94%BD%EC%8A%A4%EC%B2%98-%EB%AA%85%ED%99%95%EC%84%B1-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%9D%90%EB%A6%84/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                Abseil Tip 122 테스트 픽스처, 명확성, 그리고 데이터 흐름
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2024-11-13">
+                11月13日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Learning-Transferable-Visual-Models-From-Natural-Language-Supervision/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Learning Transferable Visual Models From Natural Language Supervision
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2024-11-14">
+                11月14日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#논문-분석-the-cot-collection-improving-zero-shot-and-few-shot-learning-of-language-models-via-chain-of-thought-fine-tuning">논문 분석: <strong>The COT Collection: Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#1-논문의-강점-및-독창적인-지점">1. <strong>논문의 강점 및 독창적인 지점</strong></a>
+      <ul>
+        <li><a href="#1-문제-정의-및-기여">(1) <strong>문제 정의 및 기여</strong></a></li>
+        <li><a href="#2-주요-기여">(2) <strong>주요 기여</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#2-핵심-알고리즘-설명-및-예시">2. <strong>핵심 알고리즘 설명 및 예시</strong></a>
+      <ul>
+        <li><a href="#1-chain-of-thought-fine-tuning-cot-파인튜닝">(1) <strong>Chain-of-Thought Fine-tuning (CoT 파인튜닝)</strong></a></li>
+        <li><a href="#2-예시-입력-및-출력"><strong>(2) 예시 입력 및 출력</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#3-논문의-한계점">3. <strong>논문의 한계점</strong></a>
+      <ul>
+        <li><a href="#1-데이터-의존성"><strong>(1) 데이터 의존성</strong></a></li>
+        <li><a href="#2-컴퓨팅-자원-요구량"><strong>(2) 컴퓨팅 자원 요구량</strong></a></li>
+        <li><a href="#3-일반화-성능"><strong>(3) 일반화 성능</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#4-결론-및-향후-연구-방향">4. <strong>결론 및 향후 연구 방향</strong></a></li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#clip-논문에서-사용하는-방법을-학습하기-위한-데이터셋-및-학습-방법에-대한-설명">CLIP 논문에서 사용하는 방법을 학습하기 위한 데이터셋 및 학습 방법에 대한 설명</a></li>
+      </ul>
+    </li>
+    <li><a href="#1-필요한-데이터셋-구성-요소">1. <strong>필요한 데이터셋 구성 요소</strong></a>
+      <ul>
+        <li><a href="#1-데이터셋의-종류"><strong>(1) 데이터셋의 종류</strong></a></li>
+        <li><a href="#2-데이터셋-예시"><strong>(2) 데이터셋 예시</strong></a>
+          <ul>
+            <li><a href="#예시-1-산술-추론-문제"><strong>예시 1: 산술 추론 문제</strong></a></li>
+            <li><a href="#예시-2-논리-추론-문제"><strong>예시 2: 논리 추론 문제</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-데이터셋-출처-및-구축-방법"><strong>(3) 데이터셋 출처 및 구축 방법</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#2-학습-과정">2. <strong>학습 과정</strong></a>
+      <ul>
+        <li><a href="#1-데이터-전처리"><strong>(1) 데이터 전처리</strong></a></li>
+        <li><a href="#2-cot-파인튜닝-chain-of-thought-fine-tuning"><strong>(2) CoT 파인튜닝 (Chain-of-Thought Fine-tuning)</strong></a></li>
+        <li><a href="#3-하이퍼파라미터-및-모델-최적화"><strong>(3) 하이퍼파라미터 및 모델 최적화</strong></a></li>
+        <li><a href="#4-학습-후-평가"><strong>(4) 학습 후 평가</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#3-구현-예시-코드-python-pytorch-기반">3. <strong>구현 예시 코드 (Python, PyTorch 기반)</strong></a></li>
+    <li><a href="#4-결론-및-요약">4. <strong>결론 및 요약</strong></a></li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#분석-the-cot-collection-improving-zero-shot-and-few-shot-learning-of-language-models-via-chain-of-thought-fine-tuning">분석: <strong>The COT Collection: Improving Zero-shot and Few-shot Learning of Language Models via Chain-of-Thought Fine-Tuning</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#1-논문에서-제시한-결과-및-비교-분석">1. <strong>논문에서 제시한 결과 및 비교 분석</strong></a>
+      <ul>
+        <li><a href="#1-주요-실험-결과-요약"><strong>(1) 주요 실험 결과 요약</strong></a></li>
+        <li><a href="#2-기존-방법론과-비교하여-특출난-점"><strong>(2) 기존 방법론과 비교하여 특출난 점</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#2-논문에서-제기하는-방법이-성능-향상을-도출한-이유">2. <strong>논문에서 제기하는 방법이 성능 향상을 도출한 이유</strong></a>
+      <ul>
+        <li><a href="#1-대규모-cot-데이터셋의-중요성-cot-collection"><strong>(1) 대규모 CoT 데이터셋의 중요성 (COT COLLECTION)</strong></a></li>
+        <li><a href="#2-cot-파인튜닝을-통한-모델-최적화"><strong>(2) CoT 파인튜닝을 통한 모델 최적화</strong></a></li>
+        <li><a href="#3-다국어-지원을-통한-일반화-성능-향상"><strong>(3) 다국어 지원을 통한 일반화 성능 향상</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#3-논문의-한계점-및-개선-가능성">3. <strong>논문의 한계점 및 개선 가능성</strong></a>
+      <ul>
+        <li><a href="#1-데이터-품질-문제"><strong>(1) 데이터 품질 문제</strong></a></li>
+        <li><a href="#2-컴퓨팅-자원-소모"><strong>(2) 컴퓨팅 자원 소모</strong></a></li>
+        <li><a href="#3-특정-도메인에-대한-한계"><strong>(3) 특정 도메인에 대한 한계</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#4-내-생각-및-향후-연구-방향">4. <strong>내 생각 및 향후 연구 방향</strong></a>
+      <ul>
+        <li><a href="#1-대규모-언어-모델을-소형화하는-전략"><strong>(1) 대규모 언어 모델을 소형화하는 전략</strong></a></li>
+        <li><a href="#2-자동화된-cot-데이터-생성-기법-개발"><strong>(2) 자동화된 CoT 데이터 생성 기법 개발</strong></a></li>
+        <li><a href="#3-다양한-도메인-및-다국어-지원-강화"><strong>(3) 다양한 도메인 및 다국어 지원 강화</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#분석-the-cot-collection-논문에서-제시된-방법을-실제로-구현하기-위해-필요한-추가-작업-및-자원-요구-분석">분석: The COT Collection 논문에서 제시된 방법을 실제로 구현하기 위해 필요한 추가 작업 및 자원 요구 분석</a></li>
+      </ul>
+    </li>
+    <li><a href="#1-기존-접근-방식-대비-추가적으로-필요한-구현-사항">1. <strong>기존 접근 방식 대비 추가적으로 필요한 구현 사항</strong></a>
+      <ul>
+        <li><a href="#1-cot-데이터셋-구축-및-전처리"><strong>(1) CoT 데이터셋 구축 및 전처리</strong></a></li>
+        <li><a href="#2-cot-파인튜닝-파이프라인-구현"><strong>(2) CoT 파인튜닝 파이프라인 구현</strong></a></li>
+        <li><a href="#3-다국어-지원"><strong>(3) 다국어 지원</strong></a></li>
+        <li><a href="#4-모델-학습-환경-설정"><strong>(4) 모델 학습 환경 설정</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#2-필요한-컴퓨팅-자원-분석">2. <strong>필요한 컴퓨팅 자원 분석</strong></a>
+      <ul>
+        <li><a href="#1-모델-학습을-위한-자원-요구-사항"><strong>(1) 모델 학습을 위한 자원 요구 사항</strong></a>
+          <ul>
+            <li><a href="#연산량flops-분석"><strong>연산량(FLOPs) 분석</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-학습-시간-및-자원-소모-추정"><strong>(2) 학습 시간 및 자원 소모 추정</strong></a>
+          <ul>
+            <li><a href="#컴퓨팅-자원-비용-예측"><strong>컴퓨팅 자원 비용 예측</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#3-추가적인-개발-및-연구-공수">3. <strong>추가적인 개발 및 연구 공수</strong></a>
+      <ul>
+        <li><a href="#1-데이터-구축-및-전처리-작업"><strong>(1) 데이터 구축 및 전처리 작업</strong></a></li>
+        <li><a href="#2-모델-학습-및-최적화"><strong>(2) 모델 학습 및 최적화</strong></a></li>
+        <li><a href="#3-다국어-데이터셋-구축"><strong>(3) 다국어 데이터셋 구축</strong></a></li>
+        <li><a href="#4-인적-자원-요구"><strong>(4) 인적 자원 요구</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#4-결론-및-요약-1">4. <strong>결론 및 요약</strong></a></li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#분석-the-cot-collection-논문의-입력-데이터와-추론-과정-및-모델-아키텍처-분석">분석: The COT Collection 논문의 입력 데이터와 추론 과정 및 모델 아키텍처 분석</a></li>
+      </ul>
+    </li>
+    <li><a href="#1-입력-데이터-및-추론-과정">1. <strong>입력 데이터 및 추론 과정</strong></a>
+      <ul>
+        <li><a href="#1-입력-데이터-구성"><strong>(1) 입력 데이터 구성</strong></a></li>
+        <li><a href="#2-입력-데이터-예시"><strong>(2) 입력 데이터 예시</strong></a>
+          <ul>
+            <li><a href="#예시-1-산술-추론-문제-1"><strong>예시 1: 산술 추론 문제</strong></a></li>
+            <li><a href="#예시-2-논리-추론-문제-1"><strong>예시 2: 논리 추론 문제</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-추론-과정inference-process"><strong>(3) 추론 과정(Inference Process)</strong></a>
+          <ul>
+            <li><a href="#추론-예시-python-코드"><strong>추론 예시 (Python 코드)</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#2-모델-아키텍처-구성">2. <strong>모델 아키텍처 구성</strong></a>
+      <ul>
+        <li><a href="#1-모델-구조-개요"><strong>(1) 모델 구조 개요</strong></a></li>
+        <li><a href="#2-모델-구성-요소"><strong>(2) 모델 구성 요소</strong></a></li>
+        <li><a href="#3-연산량-분석-flops"><strong>(3) 연산량 분석 (FLOPs)</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#3-모델-학습-및-컴퓨팅-자원-요구량">3. <strong>모델 학습 및 컴퓨팅 자원 요구량</strong></a>
+      <ul>
+        <li><a href="#1-메모리-요구량"><strong>(1) 메모리 요구량</strong></a></li>
+        <li><a href="#2-컴퓨팅-자원-및-비용-분석"><strong>(2) 컴퓨팅 자원 및 비용 분석</strong></a></li>
+        <li><a href="#3-학습-설정"><strong>(3) 학습 설정</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#4-결론-및-요약-2">4. <strong>결론 및 요약</strong></a></li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#the-cot-collection-논문의-한계를-극복하기-위한-연구-방향-및-접근-방식">The COT Collection 논문의 한계를 극복하기 위한 연구 방향 및 접근 방식</a></li>
+      </ul>
+    </li>
+    <li><a href="#1-현재-논문의-한계-분석">1. <strong>현재 논문의 한계 분석</strong></a>
+      <ul>
+        <li><a href="#1-데이터-품질과-의존성"><strong>(1) 데이터 품질과 의존성</strong></a></li>
+        <li><a href="#2-컴퓨팅-자원-소모-1"><strong>(2) 컴퓨팅 자원 소모</strong></a></li>
+        <li><a href="#3-특정-도메인에-대한-성능-한계"><strong>(3) 특정 도메인에 대한 성능 한계</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#2-한계를-극복하기-위한-최신-연구-흐름">2. <strong>한계를 극복하기 위한 최신 연구 흐름</strong></a>
+      <ul>
+        <li><a href="#1-데이터-품질-개선을-위한-접근"><strong>(1) 데이터 품질 개선을 위한 접근</strong></a>
+          <ul>
+            <li><a href="#11-자동화된-이유-설명-생성의-품질-개선">1.1 <strong>자동화된 이유 설명 생성의 품질 개선</strong></a></li>
+            <li><a href="#12-데이터-필터링-알고리즘-개선">1.2 <strong>데이터 필터링 알고리즘 개선</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#2-컴퓨팅-자원-최적화"><strong>(2) 컴퓨팅 자원 최적화</strong></a>
+          <ul>
+            <li><a href="#21-파라미터-효율적-파인튜닝peft-기법-도입">2.1 <strong>파라미터 효율적 파인튜닝(PEFT) 기법 도입</strong></a></li>
+            <li><a href="#22-분산-학습-및-mixed-precision-training">2.2 <strong>분산 학습 및 Mixed Precision Training</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#3-도메인-특화-모델-개발"><strong>(3) 도메인 특화 모델 개발</strong></a>
+          <ul>
+            <li><a href="#31-도메인-어댑터adapters-활용">3.1 <strong>도메인 어댑터(Adapters) 활용</strong></a></li>
+            <li><a href="#32-하이브리드-학습-접근-방식">3.2 <strong>하이브리드 학습 접근 방식</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#4-다국어-지원-강화-및-일반화-성능-향상"><strong>(4) 다국어 지원 강화 및 일반화 성능 향상</strong></a>
+          <ul>
+            <li><a href="#41-다국어-cot-데이터셋-구축">4.1 <strong>다국어 CoT 데이터셋 구축</strong></a></li>
+            <li><a href="#42-cross-lingual-transfer-learning">4.2 <strong>Cross-lingual Transfer Learning</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#3-향후-연구-방향-제안">3. <strong>향후 연구 방향 제안</strong></a>
+      <ul>
+        <li><a href="#1-자동화된-cot-데이터-생성-기법-개발"><strong>(1) 자동화된 CoT 데이터 생성 기법 개발</strong></a></li>
+        <li><a href="#2-효율적인-학습-인프라-구축"><strong>(2) 효율적인 학습 인프라 구축</strong></a></li>
+        <li><a href="#3-다양한-도메인-적용-가능성-확대"><strong>(3) 다양한 도메인 적용 가능성 확대</strong></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

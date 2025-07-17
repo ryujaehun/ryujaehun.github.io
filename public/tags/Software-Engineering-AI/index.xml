@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Software Engineering AI on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/Software-Engineering-AI/</link>
+    <description>Recent content in Software Engineering AI on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Mon, 30 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/Software-Engineering-AI/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>DeepSeek-Coder: When the Large Language Model Meets Programming -- The Rise of Code Intelligence</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-Coder-When-the-Large-Language-Model-Meets-Programming--The-Rise-of-Code-Intelligence/</link>
+      <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-Coder-When-the-Large-Language-Model-Meets-Programming--The-Rise-of-Code-Intelligence/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2401.14196v2&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;deepseek-coder-gpt-35-turbo를-추월한-최초의-오픈소스-코드-llm&#34;&gt;DeepSeek-Coder: GPT-3.5 Turbo를 추월한 최초의 오픈소스 코드 LLM&lt;/h1&gt;&#xA;&lt;p&gt;AI 실무자가 꿈꿔 온 **“상용 수준을 넘어서는 공개 코드 모델”**이 마침내 등장했다. DeepSeek-Coder는 &lt;em&gt;레포지터리 전역 의존성 학습, 16 K 토큰 장문맥, FIM 중심 사전학습&lt;/em&gt;이라는 세 가지 설계 축으로 GPT-3.5 Turbo를 넘어서는 성능을 달성한다.&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&#xA;  &lt;blockquote&#xA;    class=&#34;border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1&#34;&gt;&#xA;    &lt;div class=&#34;prose prose-sm max-w-none&#34;&gt;&#xA;      &lt;p&gt;&lt;strong&gt;레포지터리-단위 데이터 + 16 K RoPE + FIM 50 % 학습&lt;/strong&gt; 만으로, 33 B 오픈모델이 HumanEval 79 %로 GPT-3.5 Turbo를 추월했다.&lt;/p&gt;&#xA;    &lt;/div&gt;&#xA;  &lt;/blockquote&gt;</description>
+    </item>
+  </channel>
+</rss>

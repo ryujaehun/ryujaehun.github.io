@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LLM on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/llm/</link>
+    <description>Recent content in LLM on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Mon, 07 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/llm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Code I/O: Condensing Reasoning Patterns via Code Input-Output Prediction</title>
+      <link>http://192.168.1.11:1314/posts/Code-I/O-Condensing-Reasoning-Patterns-via-Code-Input-Output-Prediction/</link>
+      <pubDate>Mon, 07 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Code-I/O-Condensing-Reasoning-Patterns-via-Code-Input-Output-Prediction/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2502.07316v4&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;code-io-코드-입출력--자연어-cot로-범용-추론까지데이터-설계만으로-7b-30b-llm을-평균-2-점-끌어올리다&#34;&gt;CODE I/O: 코드 입·출력 + 자연어 CoT로 범용 추론까지 — 데이터 설계만으로 7B-30B LLM을 평균 +2 점 끌어올리다&lt;/h1&gt;&#xA;&lt;h2 id=&#34;tldr&#34;&gt;TL;DR&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;“코드 함수 → 입력·출력 예측 + 체계적 Chain-of-Thought(CoT)”라는 단일 데이터 파이프라인만으로, 3.5 M 샘플이 14 M 규모 SOTA 데이터보다 더 크고 균형 잡힌 이득(+2.9 점)을 만든다.&lt;/strong&gt;&#xA;검증 가능·저비용·다양성 세 마리 토끼를 잡은 &lt;strong&gt;CODE I/O&lt;/strong&gt;는 “데이터 품질 &amp;gt; 데이터 양”이라는 사실을 실험적으로 증명한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DeepSeek LLM: Scaling Open-Source Language Models with Longtermism</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-LLM-Scaling-Open-Source-Language-Models-with-Longtermism/</link>
+      <pubDate>Sun, 29 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-LLM-Scaling-Open-Source-Language-Models-with-Longtermism/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2401.02954v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;FLOPs / token로 재정의한 &lt;em&gt;DeepSeek Scaling Law&lt;/em&gt; 하나로 모델·데이터·하이퍼파라미터를 자동 결정하여, 2 T token만으로 67 B 파라미터 모델이 LLaMA-2 70 B를 코드·수학·대화·다국어에서 추월했다.&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;hr&gt;</description>
+    </item>
+    <item>
+      <title>KVzip: Query-Agnostic KV Cache Compression with Context Reconstruction</title>
+      <link>http://192.168.1.11:1314/posts/KVzip-Query-Agnostic-KV-Cache-Compression-with-Context-Reconstruction/</link>
+      <pubDate>Thu, 26 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/KVzip-Query-Agnostic-KV-Cache-Compression-with-Context-Reconstruction/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2505.23416v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;tldr&#34;&gt;⚡️TL;DR&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;KVzip&lt;/strong&gt;는 LLM의 KV 캐시를 &lt;em&gt;한 번&lt;/em&gt; 압축해도 이후 모든 질의 · 세션에서 재사용할 수 있도록 설계된 &lt;strong&gt;query-agnostic 캐시 컴프레서&lt;/strong&gt;다.&#xA;그 결과 &lt;strong&gt;정확도 손실 ≤ 3 pp&lt;/strong&gt;를 유지하면서 **레이턴시 2 × ↓, 메모리 60–394 × ↓**를 동시에 달성한다.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

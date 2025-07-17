@@ -1,0 +1,3977 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 📌 논문 제목: NEO: Saving GPU Memory Crisis..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/NEO-Saving-GPU-Memory-Crisis-with-CPU-Offloading-for-Online-LLM-Inference/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/NEO-Saving-GPU-Memory-Crisis-with-CPU-Offloading-for-Online-LLM-Inference/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 📌 논문 제목: NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference 📌 저자: Xuanlin Jiang, Yang Zhou, Shiyi Cao, Ion Stoica, Minlan Yu 1. 결론 요약 (강점 &amp; 독창적인 지점) NEO는 GPU 메모리의 제한으로 인해 발생하는 LLM 추론의 병목을 해결하기 위해 비대칭 GPU-CPU 파이프라이닝과 부하 인식 스케줄링을 적용한 새로운 시스템입니다. 주요 강점은 다음과 같습니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-03-31T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-03-31T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 📌 논문 제목: NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference 📌 저자: Xuanlin Jiang, Yang Zhou, Shiyi Cao, Ion Stoica, Minlan Yu 1. 결론 요약 (강점 &amp; 독창적인 지점) NEO는 GPU 메모리의 제한으로 인해 발생하는 LLM 추론의 병목을 해결하기 위해 비대칭 GPU-CPU 파이프라이닝과 부하 인식 스케줄링을 적용한 새로운 시스템입니다. 주요 강점은 다음과 같습니다.">
+
+
+  <meta itemprop="name" content="NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 📌 논문 제목: NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference 📌 저자: Xuanlin Jiang, Yang Zhou, Shiyi Cao, Ion Stoica, Minlan Yu 1. 결론 요약 (강점 &amp; 독창적인 지점) NEO는 GPU 메모리의 제한으로 인해 발생하는 LLM 추론의 병목을 해결하기 위해 비대칭 GPU-CPU 파이프라이닝과 부하 인식 스케줄링을 적용한 새로운 시스템입니다. 주요 강점은 다음과 같습니다.">
+  <meta itemprop="datePublished" content="2025-03-31T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-03-31T00:00:00+00:00">
+  <meta itemprop="wordCount" content="12374">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt,MLSYS2025">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2025-03-31">
+          2025년 03월 31일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >25 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>12374 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+                <a
+                  href="/categories/MLSYS2025/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  MLSYS2025
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2411.01142">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h3 id="-논문-제목-neo-saving-gpu-memory-crisis-with-cpu-offloading-for-online-llm-inference">📌 <strong>논문 제목:</strong> NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference</h3>
+<h3 id="-저자-xuanlin-jiang-yang-zhou-shiyi-cao-ion-stoica-minlan-yu">📌 <strong>저자:</strong> Xuanlin Jiang, Yang Zhou, Shiyi Cao, Ion Stoica, Minlan Yu</h3>
+<hr>
+<h2 id="1-결론-요약-강점--독창적인-지점"><strong>1. 결론 요약 (강점 &amp; 독창적인 지점)</strong></h2>
+<p>NEO는 GPU 메모리의 제한으로 인해 발생하는 LLM 추론의 병목을 해결하기 위해 <strong>비대칭 GPU-CPU 파이프라이닝과 부하 인식 스케줄링을 적용한 새로운 시스템</strong>입니다. 주요 강점은 다음과 같습니다.</p>
+<ol>
+<li>
+<p><strong>GPU 메모리 사용량 최적화:</strong></p>
+<ul>
+<li>GPU에서 모델 가중치 및 일부 KV 캐시만 유지하며, 나머지 캐시는 CPU로 오프로드하여 메모리 병목을 해결합니다.</li>
+<li>GPU와 CPU 사이의 데이터 흐름을 최적화하여 병렬 연산을 극대화합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>비대칭 파이프라이닝 (Asymmetric Pipelining):</strong></p>
+<ul>
+<li>하나의 배치를 두 개로 나누어 GPU와 CPU에서 동시에 작업을 수행하도록 합니다.</li>
+<li>GPU의 메모리 리소스를 최대한 활용하면서도 CPU의 연산 능력을 적절히 배치합니다.</li>
+<li>기존 대칭 파이프라이닝보다 효율적으로 CPU와 GPU를 사용합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>부하 인식 스케줄링 (Load-Aware Scheduling):</strong></p>
+<ul>
+<li>GPU 및 CPU의 사용률을 실시간으로 모니터링하여 최적의 오프로드 정책을 동적으로 결정합니다.</li>
+<li>작업이 GPU 또는 CPU에서 최적으로 수행되도록 배치를 형성합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>성능 향상:</strong></p>
+<ul>
+<li>H100 GPU에서 최대 <strong>14%</strong>, A10G GPU에서 <strong>26%</strong>, T4 GPU에서 <strong>7.5배</strong>의 추론 처리량 증가를 보여줍니다.</li>
+<li>보다 강력한 CPU를 사용할 경우 A10G GPU에서 **79.3%**의 성능 개선을 달성합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="2-핵심-알고리즘-설명-예시-포함"><strong>2. 핵심 알고리즘 설명 (예시 포함)</strong></h2>
+<h3 id="-neo의-핵심-아이디어는-gpu-메모리-제약을-피하기-위해-cpu로-일부-작업을-오프로드하는-것입니다">💡 <strong>NEO의 핵심 아이디어는 GPU 메모리 제약을 피하기 위해 CPU로 일부 작업을 오프로드하는 것입니다.</strong></h3>
+<h3 id="neo의-구성-요소"><strong>NEO의 구성 요소</strong></h3>
+<ul>
+<li><strong>Prefilling:</strong> 입력 텍스트를 기반으로 초기 KV 캐시를 생성합니다.</li>
+<li><strong>Decoding:</strong> 입력을 기반으로 새로운 토큰을 예측하며, 생성된 KV 캐시를 사용합니다.</li>
+<li><strong>Scheduler:</strong> 작업 요청을 GPU와 CPU로 분배하는 기능을 합니다.</li>
+</ul>
+<h3 id="알고리즘-과정"><strong>알고리즘 과정</strong></h3>
+<ol>
+<li>
+<p><strong>입력 및 초기화:</strong></p>
+<ul>
+<li>예시 입력: &ldquo;The quick brown fox jumps over the lazy dog.&rdquo;</li>
+<li>모델은 이 입력을 토큰화하고 임베딩을 생성합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Prefilling Stage (GPU):</strong></p>
+<ul>
+<li>입력 토큰을 통해 초기 KV 캐시를 GPU에서 생성합니다.</li>
+<li>이 때, 모델의 파라미터는 모두 GPU 메모리에 저장되어 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Decoding Stage (GPU + CPU):</strong></p>
+<ul>
+<li>비대칭 파이프라이닝을 적용하여 일부 요청은 GPU에서, 일부는 CPU로 오프로드하여 처리합니다.</li>
+<li>예를 들어, 입력 길이가 긴 요청은 GPU에서, 짧은 요청은 CPU에서 처리하도록 분배합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>Load-Aware Scheduling:</strong></p>
+<ul>
+<li>GPU와 CPU의 사용률을 실시간으로 평가하여 최적의 작업 분배를 결정합니다.</li>
+<li>만약 GPU가 과부하 상태라면 더 많은 요청을 CPU로 오프로드합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>결과 생성:</strong></p>
+<ul>
+<li>예를 들어, &ldquo;dog&quot;라는 단어 다음에 모델이 &ldquo;is sleeping&quot;을 예측했다고 가정합니다.</li>
+<li>GPU와 CPU에서 계산된 결과는 결합하여 최종 출력을 생성합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="3-논문의-한계점"><strong>3. 논문의 한계점</strong></h2>
+<ol>
+<li>
+<p><strong>GPU와 CPU 간 통신 병목 (PCIe Bandwidth 문제):</strong></p>
+<ul>
+<li>GPU와 CPU 간의 데이터 전송이 빈번하게 발생하면 PCIe 대역폭이 병목으로 작용할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>스케줄링 복잡도 증가:</strong></p>
+<ul>
+<li>부하 인식 스케줄링은 실시간으로 GPU와 CPU 사용률을 모니터링하고 최적의 배치를 찾아야 하므로 추가적인 계산 비용이 발생합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>특정 환경에서 성능 저하:</strong></p>
+<ul>
+<li>입력 길이가 짧거나 GPU 메모리가 충분히 클 경우, CPU로의 오프로드가 오히려 성능 저하를 유발할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>다중 GPU 환경에서의 최적화 미흡:</strong></p>
+<ul>
+<li>논문에서는 주로 단일 GPU 또는 2-GPU 환경에서의 실험이 이루어졌으며, 4-GPU 이상의 대규모 시스템에 대한 검증이 부족합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="4-결론-및-제안"><strong>4. 결론 및 제안</strong></h2>
+<p>NEO는 GPU 메모리 제약을 극복하기 위해 CPU 오프로드를 효율적으로 활용하는 시스템으로, 다양한 실험에서 높은 처리량을 입증하였습니다. 그러나 다중 GPU 환경에서의 최적화와 PCIe 대역폭 문제를 해결하는 추가적인 연구가 필요합니다.</p>
+<h3 id="제안">제안</h3>
+<ul>
+<li><strong>다중 GPU 환경 최적화:</strong> Tensor 병렬 처리 및 모델 샤딩 기법을 개선하여 다중 GPU 환경에서도 높은 성능을 유지할 수 있도록 개선이 필요합니다.</li>
+<li><strong>PCIe 병목 해결:</strong> CPU와 GPU 간 데이터 전송을 줄이기 위한 새로운 오프로드 방안을 연구해야 합니다.</li>
+</ul>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>논문의 핵심 알고리즘을 예시 입력을 바탕으로 아주 구체적이고 단계적으로 설명하고 정리하겠습니다.</p>
+<hr>
+<h2 id="-핵심-알고리즘-neo의-비대칭-gpu-cpu-파이프라이닝-및-부하-인식-스케줄링">📌 핵심 알고리즘: <strong>NEO의 비대칭 GPU-CPU 파이프라이닝 및 부하 인식 스케줄링</strong></h2>
+<p>NEO는 GPU 메모리 부족으로 인한 추론 성능 저하 문제를 해결하기 위해, 일부 연산(Decoding Attention)과 메모리(KV Cache)를 GPU에서 CPU로 오프로드하여 GPU의 메모리 효율을 높이고 추론 성능을 증가시키는 방법을 제안합니다.</p>
+<hr>
+<h2 id="-알고리즘-전체-과정-예시를-통해-단계별로-설명">📝 알고리즘 전체 과정 (예시를 통해 단계별로 설명)</h2>
+<p>예시 입력 텍스트:</p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-0"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-0"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-0">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">&#34;OpenAI develops powerful AI models.&#34;</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-0';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<p>이 입력이 들어왔을 때 LLM 추론이 어떻게 진행되는지 **기존 방식(vLLM)**과 <strong>NEO 방식</strong>으로 나누어 자세히 비교하며 설명합니다.</p>
+<h3 id="-예시-환경">✅ 예시 환경</h3>
+<ul>
+<li>GPU: NVIDIA A10G (GPU 메모리 제한: 24GB)</li>
+<li>CPU: Intel Xeon (64GB 메모리)</li>
+</ul>
+<hr>
+<h2 id="-1단계-prefilling-stage-초기-입력-처리">📍 1단계: Prefilling Stage (초기 입력 처리)</h2>
+<h3 id="-기존-방식-vllm">▪️ 기존 방식 (vLLM)</h3>
+<ul>
+<li>입력 토큰(예: [&ldquo;OpenAI&rdquo;, &ldquo;develops&rdquo;, &ldquo;powerful&rdquo;, &ldquo;AI&rdquo;, &ldquo;models&rdquo;, &ldquo;.&rdquo;])을 GPU에서 Transformer 층을 거쳐 임베딩 생성 및 초기 KV 캐시 생성</li>
+<li>생성된 KV 캐시는 <strong>모두 GPU 메모리에 저장</strong></li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><strong>문제점:</strong><br>
+입력이 많아지면 GPU 메모리 부족으로 batch size가 제한되고 GPU 연산 자원이 낭비됨.</p>
+    </div>
+  </blockquote>
+
+<h3 id="-neo-방식">🟢 NEO 방식</h3>
+<ul>
+<li>입력 토큰은 동일하게 GPU에서 처리하여 임베딩 및 초기 KV 캐시 생성.</li>
+<li>그러나 생성된 KV 캐시를 GPU 메모리가 허용하는 만큼만 GPU에 유지하고, 나머지는 즉시 <strong>CPU 메모리로 오프로드(전송)</strong> 합니다.</li>
+<li>이때 GPU와 CPU 간 KV 캐시 전송은 계층(layer) 단위로 즉시 수행되며, 연산과 전송이 겹치게 됩니다.</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><strong>NEO 이점:</strong><br>
+GPU 메모리 부족 문제 해결 (GPU와 CPU 메모리 동시 활용)</p>
+    </div>
+  </blockquote>
+
+<hr>
+<h2 id="-2단계-decoding-stage-출력-토큰-생성">📍 2단계: Decoding Stage (출력 토큰 생성)</h2>
+<p>입력 문장 다음에 올 가능성이 높은 단어들을 생성하는 과정 (예: &ldquo;They&rdquo;, &ldquo;are&rdquo;, &ldquo;widely&rdquo;, &ldquo;used&rdquo;, &hellip;)</p>
+<h3 id="-기존-방식-vllm-1">▪️ 기존 방식 (vLLM)</h3>
+<ul>
+<li>GPU에서 입력된 KV 캐시를 기반으로 attention을 계산하고 다음 토큰 생성 (예: &ldquo;They&rdquo;).</li>
+<li>모든 계산(KV cache 및 attention 계산)은 GPU에서만 수행.</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><strong>문제점:</strong><br>
+GPU 메모리 제한으로 인해 batch 크기를 크게 늘리지 못하고 GPU 연산 자원을 충분히 활용 못 함.</p>
+    </div>
+  </blockquote>
+
+<h3 id="-neo-방식-1">🟢 NEO 방식</h3>
+<p>NEO는 비대칭 GPU-CPU 파이프라이닝을 적용하여 두 개의 서브 배치를 형성합니다:</p>
+<ul>
+<li>
+<p><strong>Batch 0 (GPU 중심 배치)</strong>:</p>
+<ul>
+<li>Prefilling 단계의 요청들 (입력처리) + 일부 GPU에 적합한 Decoding 요청들을 GPU에서 처리.</li>
+<li>주로 GPU 메모리와 연산 자원을 활용하여 빠르게 진행되는 batch.</li>
+</ul>
+</li>
+<li>
+<p><strong>Batch 1 (CPU 중심 배치)</strong>:</p>
+<ul>
+<li>Decoding 단계 중 attention 계산이 무거운 요청들(길이가 길거나 KV 캐시가 큰 요청)을 CPU로 오프로드하여 처리.</li>
+<li>이 요청들의 attention 연산과 KV 캐시 접근을 CPU 메모리에서 수행.</li>
+</ul>
+</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><strong>이점:</strong><br>
+GPU는 GPU에 적합한 작업을 빠르게 처리하고, CPU는 attention 중심의 memory-bound 작업을 병렬로 처리함으로써 효율성 극대화.</p>
+    </div>
+  </blockquote>
+
+<hr>
+<h2 id="-3단계-load-aware-scheduling-gpu-cpu-동적-부하-분배">📍 3단계: Load-Aware Scheduling (GPU-CPU 동적 부하 분배)</h2>
+<p>NEO는 매 iteration마다 다음 원칙으로 GPU와 CPU의 요청 분배를 결정합니다:</p>
+<ul>
+<li><strong>Greedy 방식</strong>으로 GPU-only 방식과 GPU-CPU 파이프라이닝 방식의 예상 성능을 비교하여 높은 성능을 낼 방식을 선택.</li>
+<li>GPU와 CPU의 연산 시간 균형 유지 (<strong>Balancing</strong>)</li>
+<li>GPU의 빈 시간(idle)을 최소화하고 CPU의 연산을 GPU 연산 뒤에 숨겨서 동시 작업 수행 (<strong>Hiding CPU</strong>)</li>
+<li>GPU 사용을 극대화하여 가능한 많은 요청을 GPU로 처리 (<strong>Maximizing GPU</strong>)</li>
+</ul>
+<p>이 원칙을 기반으로 batch 형성 절차는 다음과 같습니다:</p>
+<table>
+  <thead>
+      <tr>
+          <th>순서</th>
+          <th>처리 단계</th>
+          <th>설명</th>
+          <th>작업 위치</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>①</td>
+          <td>GPU decoding</td>
+          <td>GPU에 최적화된 요청을 우선 GPU 배치</td>
+          <td>GPU</td>
+      </tr>
+      <tr>
+          <td>②</td>
+          <td>Prefilling</td>
+          <td>새 입력 요청 처리, KV cache는 GPU에 저장하거나 CPU로 전송</td>
+          <td>GPU→CPU</td>
+      </tr>
+      <tr>
+          <td>③</td>
+          <td>CPU decoding</td>
+          <td>GPU 처리에 방해되지 않는 요청을 CPU 배치</td>
+          <td>CPU</td>
+      </tr>
+      <tr>
+          <td>④</td>
+          <td>Prefilling 조정</td>
+          <td>CPU 작업 시간을 초과하지 않도록 Prefilling 요청 최적화</td>
+          <td>GPU</td>
+      </tr>
+      <tr>
+          <td>⑤</td>
+          <td>방식 결정</td>
+          <td>GPU-only와 GPU-CPU 병렬 처리 중 최선의 방식을 선택</td>
+          <td>GPU-CPU</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-4단계-결과-취합-및-출력">📍 4단계: 결과 취합 및 출력</h2>
+<ul>
+<li>GPU와 CPU에서 병렬로 계산된 attention 결과는 최종적으로 GPU로 전달되어 통합됩니다.</li>
+<li>최종 임베딩이 완성되면 다음 토큰(예: &ldquo;They&rdquo;)의 확률을 계산하여 사용자에게 제공됩니다.</li>
+</ul>
+<hr>
+<h2 id="--알고리즘-효과-논문-실험-결과-기반">📌 📈 알고리즘 효과 (논문 실험 결과 기반)</h2>
+<table>
+  <thead>
+      <tr>
+          <th>GPU 장비</th>
+          <th>모델 크기</th>
+          <th>vLLM 대비 NEO 성능 향상</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>T4</td>
+          <td>7B</td>
+          <td>최대 <strong>7.5배</strong> 증가</td>
+      </tr>
+      <tr>
+          <td>A10G</td>
+          <td>8B</td>
+          <td>최대 <strong>26%</strong> 증가</td>
+      </tr>
+      <tr>
+          <td>H100</td>
+          <td>70B</td>
+          <td>최대 <strong>14%</strong> 증가</td>
+      </tr>
+  </tbody>
+</table>
+<p>※ CPU 메모리 대역폭이 클수록 성능 증가폭 커짐 (최대 79.3%)</p>
+<hr>
+<h2 id="-알고리즘-전체-요약-정리">🔍 알고리즘 전체 요약 (정리)</h2>
+<p>NEO의 핵심은 GPU 메모리 부족 문제를 해결하기 위해 CPU로 attention 연산과 KV 캐시 일부를 효율적으로 오프로드하는 것입니다. 비대칭 파이프라이닝과 부하 인식 스케줄링을 적용하여 GPU와 CPU 자원을 동적으로 최적화하고, 결과적으로 GPU-only 시스템 대비 현저한 성능 개선을 이루었습니다.</p>
+<ul>
+<li><strong>기존 방식:</strong> 모든 연산과 KV 캐시가 GPU에 위치.</li>
+<li><strong>NEO 방식:</strong>
+<ul>
+<li>GPU에서 적합한 작업 수행 (Prefilling, Linear 계산)</li>
+<li>CPU에서 적합한 작업 수행 (Memory-bound Attention)</li>
+<li>GPU와 CPU 연산이 서로 겹쳐서 병렬화</li>
+</ul>
+</li>
+</ul>
+<p>결과적으로 GPU 메모리 제한을 극복하고 GPU와 CPU의 강점을 모두 활용하여 LLM 추론 성능을 개선한 독창적인 시스템입니다.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<p>논문의 실험 결과를 상세히 분석하여, <strong>다른 방법론과 비교하여 특출난 점</strong>과 그 이유를 논문에서 제시한 근거와 함께 분석하고, 저의 견해를 덧붙여 정리하겠습니다.</p>
+<hr>
+<h2 id="-1-실험결과-요약-정량적-수치">🔑 1. 실험결과 요약 (정량적 수치)</h2>
+<p>논문은 세 가지 GPU 환경(T4, A10G, H100)과 세 가지 LLM 모델(7B, 8B, 70B)에 대해 <strong>NEO</strong>, <strong>vLLM (GPU-only)</strong>, 그리고 기존의 CPU 오프로드 방식인 <strong>FastDecode</strong>를 비교합니다.</p>
+<table>
+  <thead>
+      <tr>
+          <th>GPU 환경</th>
+          <th>모델 크기</th>
+          <th>Throughput (NEO vs. GPU-only(vLLM))</th>
+          <th>Latency</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>T4</td>
+          <td>7B</td>
+          <td>최대 <strong>7.5배(750%) 증가</strong></td>
+          <td>유지</td>
+      </tr>
+      <tr>
+          <td>A10G</td>
+          <td>8B</td>
+          <td>최대 <strong>26% 증가</strong></td>
+          <td>유지</td>
+      </tr>
+      <tr>
+          <td>H100</td>
+          <td>70B</td>
+          <td>최대 <strong>14% 증가</strong></td>
+          <td>유지</td>
+      </tr>
+  </tbody>
+</table>
+<p>추가적으로, CPU 성능을 높일 경우 A10G GPU 환경에서 최대 <strong>79.3%의 성능향상</strong>이 관찰되었습니다.</p>
+<hr>
+<h2 id="-2-기존-방법론-대비-특출난-점">🔍 2. 기존 방법론 대비 특출난 점</h2>
+<p>논문에서 비교한 주요 기존 방법론은 다음과 같습니다.</p>
+<ul>
+<li><strong>vLLM (GPU-only)</strong>: GPU만 사용하는 방식으로, 메모리 제한으로 인해 높은 batch 크기를 확보하지 못하는 한계가 있습니다.</li>
+<li><strong>FastDecode</strong>: KV cache와 attention을 모두 CPU에 완전히 오프로드하는 방식으로, CPU가 병목 지점이 되어 성능이 떨어지는 문제점이 있습니다.</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>비교 기준</th>
+          <th>NEO (본 논문)</th>
+          <th>vLLM (GPU-only)</th>
+          <th>FastDecode (Full Offload)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>GPU 메모리 효율성</td>
+          <td>⭕ 높음</td>
+          <td>❌ 낮음 (제한적 batch size)</td>
+          <td>⭕ 높음</td>
+      </tr>
+      <tr>
+          <td>CPU-GPU 병렬화</td>
+          <td>⭕ 매우 효율적</td>
+          <td>❌ 없음</td>
+          <td>△ 제한적 병렬화</td>
+      </tr>
+      <tr>
+          <td>Latency 유지</td>
+          <td>⭕ 유지</td>
+          <td>⭕ 유지</td>
+          <td>❌ 증가</td>
+      </tr>
+      <tr>
+          <td>CPU 자원 활용</td>
+          <td>⭕ 최적화</td>
+          <td>❌ 활용하지 않음</td>
+          <td>△ 병목이 되어 비효율적</td>
+      </tr>
+      <tr>
+          <td>Throughput 성능</td>
+          <td>⭕ 가장 높음</td>
+          <td>❌ 낮음</td>
+          <td>△ 일부 환경에서만 높음</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li><strong>특출난 지점</strong>:
+<ul>
+<li>NEO는 GPU의 제한된 메모리 리소스를 효율적으로 확장하면서 CPU 자원을 최대한 활용하여 GPU-only 방식과 Full-offload 방식의 단점을 모두 보완했습니다.</li>
+<li>특히 GPU-only 방식(vLLM)에 비해 최대 **750%**라는 극적인 성능 향상을 보여주며, FastDecode의 CPU 병목 문제를 효과적으로 회피하였습니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="-3-논문에서-밝힌-성능-향상의-주요-원인-논문의-주장">🚀 3. 논문에서 밝힌 성능 향상의 주요 원인 (논문의 주장)</h2>
+<p>논문은 NEO가 뛰어난 성능을 낼 수 있었던 주요 이유로 다음 두 가지 핵심 기술을 제시합니다.</p>
+<h3 id="-asymmetric-pipelining-비대칭-파이프라이닝">① <strong>Asymmetric Pipelining (비대칭 파이프라이닝)</strong></h3>
+<ul>
+<li>GPU 연산(Linear operation, Prefilling)에 최적화된 요청을 GPU에서,<br>
+attention 연산이 많은 요청은 CPU에서 처리하여 병렬화합니다.</li>
+<li><strong>효과:</strong> GPU 메모리의 효율적 사용과 동시에 CPU 연산 능력까지 최대화합니다.</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><em>논문의 근거</em>:<br>
+&ldquo;기존 대칭(symmetric) 파이프라이닝은 GPU와 CPU가 동일한 작업량을 처리하도록 강제하므로, CPU가 병목이 되는 문제가 발생합니다.<br>
+NEO의 비대칭(asymmetric) 파이프라이닝은 서로 다른 작업 성격을 GPU와 CPU에 적절히 배치하여 idle 시간을 최소화하고 성능을 극대화합니다.&rdquo;</p>
+    </div>
+  </blockquote>
+
+<h3 id="-load-aware-scheduling-부하-인식-스케줄링">② <strong>Load-Aware Scheduling (부하 인식 스케줄링)</strong></h3>
+<ul>
+<li>매 iteration마다 실시간으로 GPU와 CPU의 부하를 고려해 요청을 동적으로 분배합니다.</li>
+<li><strong>효과:</strong> GPU와 CPU 어느 한 쪽도 병목이 되지 않도록 균형 유지가 가능해집니다.</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><em>논문의 근거</em>:<br>
+&ldquo;기존 방식은 정적인(static) 정책을 사용하여 요청의 입/출력 길이 변화를 실시간으로 대응하기 어렵습니다.<br>
+NEO의 동적 부하 인식 스케줄링은 실시간 환경에서 가장 효율적인 요청 배치를 결정해 성능을 향상시킵니다.&rdquo;</p>
+    </div>
+  </blockquote>
+
+<hr>
+<h2 id="-4-나의-분석-및-견해">🎯 4. 나의 분석 및 견해</h2>
+<p>논문의 접근 방법은 GPU 메모리의 제약을 해결하기 위한 상당히 현실적이고 효과적인 접근입니다. 특히, 다음과 같은 측면에서 독창성과 실효성을 높게 평가합니다.</p>
+<ul>
+<li>
+<p><strong>현실적인 GPU 메모리 문제에 대한 해결</strong><br>
+GPU 기술은 빠르게 발전하여 연산 성능은 급속히 증가했으나, 메모리 용량은 제한적인 발전 속도를 보였습니다.<br>
+NEO는 이러한 메모리 부족 문제에 대해 CPU 오프로드를 아주 실용적인 해법으로 제시했습니다.</p>
+</li>
+<li>
+<p><strong>CPU 자원을 최대한 활용하는 관점</strong><br>
+대부분 서버 환경에서는 GPU와 함께 강력한 CPU가 배치됩니다.<br>
+이를 활용하지 않고 GPU만을 사용하는 기존 방식과 달리, CPU를 적극 활용하여 자원의 낭비 없이 최대한 성능을 끌어낸 점이 독창적입니다.</p>
+</li>
+<li>
+<p><strong>CPU를 과도하게 사용하지 않는 절제된 설계</strong><br>
+FastDecode는 모든 attention 작업을 CPU로 넘기면서 CPU 병목 문제가 심각했습니다.<br>
+반면 NEO는 부분적인 오프로드로 CPU의 부담을 최소화하여, 현실적인 병목 문제를 회피하는 지혜로운 설계를 보였습니다.</p>
+</li>
+</ul>
+<p><strong>다만, 한 가지 우려되는 부분은:</strong></p>
+<ul>
+<li>GPU-CPU 간 빈번한 데이터 전송으로 인한 PCIe bandwidth 병목 가능성이 있습니다.</li>
+<li>이는 더 높은 성능의 PCIe 또는 CXL 인터페이스를 사용할 경우 해소될 가능성이 있지만, 보다 구체적인 실험 검증이 필요합니다.</li>
+</ul>
+<hr>
+<h2 id="-최종-결론-및-제안">📌 최종 결론 및 제안</h2>
+<p>이 논문은 GPU 메모리 문제를 해결하는 효과적이며 실용적인 접근법으로서 매우 유의미한 결과를 도출했습니다. 이는 GPU-CPU의 자원을 효과적으로 활용하는 전략 덕분이며, 다른 방법론이 가지는 한계를 극복한 독창적인 기법입니다.</p>
+<p>향후 연구에서는:</p>
+<ul>
+<li>PCIe 대역폭 제한을 어떻게 극복할 수 있을지에 대한 추가 실험과 분석이 필요합니다.</li>
+<li>더 많은 GPU (4~8 GPU 이상)를 사용하는 대규모 환경에서의 성능을 검증하는 것이 필요합니다.</li>
+</ul>
+<p>이러한 추가 연구가 이루어진다면, NEO 방식은 대규모 LLM 추론 시스템의 성능과 효율성을 크게 개선할 것으로 예상됩니다.</p>
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<p>이 논문에서 제시된 NEO 시스템의 <strong>입력 데이터 처리 과정, 추론 과정, 모델 아키텍처, 연산 및 메모리/컴퓨팅 요구량</strong>을 예시를 들어 매우 구체적으로 설명하겠습니다.</p>
+<hr>
+<h2 id="-1-입력-데이터와-추론-과정-예시-detailed-example">📌 1. 입력 데이터와 추론 과정 예시 (Detailed Example)</h2>
+<p>다음과 같은 입력 문장을 예시로 들겠습니다.</p>
+<p><strong>입력 문장:</strong></p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-1"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-1"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-1">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">&#34;GPT models can generate high-quality text.&#34;</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-1';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<p>이 입력을 기반으로 NEO 시스템에서 추론이 진행되는 구체적이고 상세한 과정은 다음과 같습니다.</p>
+<hr>
+<h2 id="-2-neo-시스템의-단계별-추론-과정-상세-설명">🔍 2. NEO 시스템의 단계별 추론 과정 상세 설명</h2>
+<p>NEO에서의 LLM 추론은 크게 <strong>Prefilling</strong>과 <strong>Decoding</strong> 두 단계로 나누어 진행됩니다.</p>
+<h3 id="-단계-1-prefilling-단계">✅ <strong>단계 1: Prefilling 단계</strong></h3>
+<p>이 단계에서는 입력된 문장 전체를 모델이 처리하여 최초의 KV 캐시를 생성합니다.</p>
+<ul>
+<li>
+<p><strong>입력 토큰화(Tokenization)</strong><br>
+입력 문장이 모델이 이해할 수 있는 토큰 형태로 변환됩니다.</p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-2"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-2"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-2">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">[&#34;GPT&#34;, &#34;models&#34;, &#34;can&#34;, &#34;generate&#34;, &#34;high&#34;, &#34;-&#34;, &#34;quality&#34;, &#34;text&#34;, &#34;.&#34;]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-2';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+</li>
+<li>
+<p><strong>임베딩(Embedding)</strong><br>
+각 토큰은 임베딩 레이어를 통과하여 벡터 형태로 바뀝니다.</p>
+<ul>
+<li>입력 차원 예시: <code>[토큰수 × 임베딩 크기]</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Transformer Layer 연산</strong><br>
+Transformer는 주로 Attention 연산과 Feed Forward Network (FFN) 연산으로 이루어집니다.</p>
+<ul>
+<li>
+<p><strong>Self-Attention 연산</strong>: 입력 벡터끼리 연관성을 계산하여 context-aware한 벡터를 생성합니다.</p>
+<ul>
+<li>Attention(Q,K,V) = softmax(QKᵀ/√d_k)V</li>
+<li>계산 복잡도: 입력 길이 ( n )에 대해 ( O(n^2) )</li>
+</ul>
+</li>
+<li>
+<p><strong>KV Cache 생성</strong><br>
+Attention 연산의 중간 결과로 <strong>Key, Value</strong> 벡터를 생성하여 GPU 및 CPU 메모리에 저장합니다.<br>
+(예: &ldquo;GPT models can generate&quot;와 같은 이전 토큰의 정보가 KV cache에 저장)</p>
+</li>
+<li>
+<p><strong>FFN 연산</strong><br>
+Attention 출력을 받아 FFN 층을 통과하며, 모델의 표현 능력을 증가시키는 추가 변환을 수행합니다.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>이 과정 후 GPU에서 생성된 KV cache 중 일부는 CPU 메모리로 오프로드 됩니다.</p>
+<hr>
+<h3 id="-단계-2-decoding-단계">✅ <strong>단계 2: Decoding 단계</strong></h3>
+<p>Decoding 단계에서는 다음에 올 토큰을 하나씩 생성하는 과정입니다.</p>
+<p>예시: 입력 문장 이후 생성할 다음 단어 <code>&quot;They&quot;</code>의 생성을 예측</p>
+<ul>
+<li>
+<p><strong>Attention 연산 (Decoding Attention)</strong><br>
+새로운 입력 토큰 <code>&quot;They&quot;</code>에 대한 attention 연산은, 기존 KV cache와의 attention을 계산합니다.</p>
+<ul>
+<li>계산 복잡도: KV cache의 길이((m))에 대해 ( O(m) ) (선형 복잡도)</li>
+<li>메모리 접근 중심 연산(memory bandwidth-bound 연산)</li>
+</ul>
+</li>
+<li>
+<p><strong>NEO의 GPU-CPU 오프로드 전략</strong></p>
+<ul>
+<li>GPU에 KV cache가 있는 경우: GPU에서 처리</li>
+<li>CPU에 오프로드된 KV cache는 CPU 메모리에서 처리</li>
+</ul>
+</li>
+<li>
+<p><strong>비대칭 파이프라이닝 (NEO의 독창성)</strong></p>
+<ul>
+<li>GPU가 Prefilling과 Decoding 일부 연산(FFN, Linear)을 병렬 수행</li>
+<li>CPU가 Attention 연산만 병렬로 수행</li>
+</ul>
+</li>
+</ul>
+<p>이렇게 GPU와 CPU에서 병렬로 계산된 결과가 다시 결합되어 다음 단어의 확률 분포를 계산하고, 가장 확률이 높은 단어를 출력합니다.</p>
+<hr>
+<h2 id="-3-모델-아키텍처-구성-transformer-구조">🛠️ 3. 모델 아키텍처 구성 (Transformer 구조)</h2>
+<p>NEO가 사용하는 Transformer 기반 모델 아키텍처는 다음과 같은 층(layer)들로 구성됩니다.</p>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        PLAINTEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-3"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-3"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-3">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">[Input] → [Embedding Layer] → [Transformer Layer (Attention + FFN)] x N → [Linear Layer] → [Output Token Probabilities]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-3';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<p>각 Transformer 층은 다음과 같은 연산 구조를 가지고 있습니다.</p>
+<ul>
+<li>Multi-Head Attention
+<ul>
+<li>Query(Q), Key(K), Value(V) 벡터 계산 및 Attention 연산</li>
+</ul>
+</li>
+<li>Feed Forward Network (FFN)
+<ul>
+<li>두 개의 fully-connected 층으로 구성되며 중간에 활성화 함수(ReLU 또는 GELU)가 적용</li>
+</ul>
+</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p>모델 예시: LLaMa-3 8B 모델</p>
+    </div>
+  </blockquote>
+
+<ul>
+<li>모델 파라미터: 80억 개</li>
+<li>층(layer) 수: 32개</li>
+<li>임베딩 차원: 4096 차원</li>
+<li>헤드(head)의 수: 32개 (Attention 연산의 병렬성 제공)</li>
+</ul>
+<hr>
+<h2 id="-4-연산-요구량-computational-complexity">💻 4. 연산 요구량 (Computational Complexity)</h2>
+<p>Transformer 기반 모델의 연산은 크게 다음 두 가지로 구성됩니다.</p>
+<table>
+  <thead>
+      <tr>
+          <th>연산 종류</th>
+          <th>연산 설명</th>
+          <th>계산 복잡도</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Attention 연산</td>
+          <td>입력 시퀀스 길이 n, 벡터 차원 d일 때</td>
+          <td>(O(n^2 \cdot d)) (Prefilling), (O(n \cdot d)) (Decoding)</td>
+      </tr>
+      <tr>
+          <td>FFN 연산</td>
+          <td>입력 길이 n, 벡터 차원 d일 때</td>
+          <td>(O(n \cdot d^2))</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>Attention은 짧은 문장에서도 큰 메모리 bandwidth를 요구합니다.</li>
+<li>FFN은 GPU 연산 능력을 많이 필요로 하는 compute-bound 연산입니다.</li>
+</ul>
+<hr>
+<h2 id="-5-메모리-요구량-memory-requirements">💾 5. 메모리 요구량 (Memory Requirements)</h2>
+<p>메모리는 크게 <strong>모델 가중치, Activations, KV Cache</strong> 로 나눠집니다.</p>
+<table>
+  <thead>
+      <tr>
+          <th>메모리 종류</th>
+          <th>설명</th>
+          <th>메모리 요구량 예시 (LLaMa-3 8B 기준)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>모델 가중치</td>
+          <td>모델 파라미터 저장</td>
+          <td>약 16 GB (FP16)</td>
+      </tr>
+      <tr>
+          <td>Activations</td>
+          <td>추론 시 임시 저장</td>
+          <td>수백 MB ~ GB (Batch에 따라 달라짐)</td>
+      </tr>
+      <tr>
+          <td>KV Cache</td>
+          <td>이전 토큰의 정보를 저장</td>
+          <td>입력 길이와 출력 길이에 비례 (수 GB~수십 GB 이상 가능)</td>
+      </tr>
+  </tbody>
+</table>
+<p>NEO는 이 중 KV cache 일부를 CPU 메모리로 오프로드하여 GPU 메모리 부담을 줄입니다.</p>
+<hr>
+<h2 id="-6-neo가-연산메모리-효율을-높이는-방법">⚙️ 6. NEO가 연산/메모리 효율을 높이는 방법</h2>
+<p>NEO의 성능향상 원인은 다음과 같습니다.</p>
+<ul>
+<li>GPU 메모리 부족 → CPU 메모리 활용 (오프로드)</li>
+<li>Attention 연산의 메모리 bandwidth-bound 특성 → CPU에서 효율적 처리</li>
+<li>FFN 연산의 compute-bound 특성 → GPU에서 효율적 처리</li>
+<li>GPU와 CPU의 연산을 비대칭적으로 병렬화 → idle 시간을 최소화해 성능 극대화</li>
+</ul>
+<p>이러한 전략 덕분에, 동일 하드웨어 환경에서도 GPU-only 방식 대비 <strong>최대 7.5배</strong>라는 놀라운 성능향상을 보일 수 있게 됩니다.</p>
+<hr>
+<h2 id="-결론-및-나의-의견">🚩 결론 및 나의 의견</h2>
+<p>NEO는 Transformer 기반 모델의 특징을 잘 분석하여 GPU의 메모리 한계를 효과적으로 해결하고 GPU와 CPU의 자원을 최적으로 활용한 시스템입니다.</p>
+<p>이러한 구조적 이해와 효율적인 자원 배치는 앞으로도 다양한 대규모 AI 시스템 개발에 중요한 설계방식으로 활용될 수 있다고 생각합니다.</p>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>본 논문(N E O)은 GPU 메모리의 제한으로 인한 성능 저하 문제를 <strong>CPU 오프로드 및 비대칭 파이프라이닝 기법</strong>으로 효과적으로 해결했습니다. 하지만 논문이 밝힌 몇 가지 한계점이 있습니다. 이를 해결하기 위해 최근의 연구흐름에서 어떠한 접근법과 연구 방향들이 있는지 정리하고 제시하겠습니다.</p>
+<hr>
+<h2 id="-1-논문에서-밝힌-한계점-요약">📌 1. 논문에서 밝힌 한계점 요약</h2>
+<p>논문에서 직접적으로 제시하거나 간접적으로 언급한 NEO의 한계점은 다음과 같습니다:</p>
+<ol>
+<li>
+<p><strong>GPU-CPU 간 통신 병목(PCIe bandwidth 문제)</strong></p>
+<ul>
+<li>GPU와 CPU 사이 KV 캐시 데이터의 빈번한 전송으로 인해 PCIe 인터페이스가 병목이 될 가능성 존재</li>
+<li>대역폭 제한으로 인해 실제 운영 환경에서 성능 저하 우려가 있음</li>
+</ul>
+</li>
+<li>
+<p><strong>동적 스케줄링의 복잡도 증가 문제</strong></p>
+<ul>
+<li>GPU와 CPU 자원 사용률 실시간 모니터링 및 부하 균형 유지를 위한 복잡한 스케줄링 계산 비용 발생</li>
+</ul>
+</li>
+<li>
+<p><strong>다중 GPU 환경에서의 미흡한 최적화</strong></p>
+<ul>
+<li>본 연구에서는 주로 단일 또는 2-GPU 환경 실험 수행</li>
+<li>수십에서 수백 GPU가 사용되는 대규모 환경에서는 성능 검증 부족</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="-2-한계-극복을-위한-최근-연구-흐름-및-접근-방법">📍 2. 한계 극복을 위한 최근 연구 흐름 및 접근 방법</h2>
+<h3 id="-1-gpu-cpu-간-병목-해결을-위한-접근-방법들">🚩 (1) GPU-CPU 간 병목 해결을 위한 접근 방법들</h3>
+<h4 id="--차세대-고속-인터페이스-기술-활용">✅ <strong>① 차세대 고속 인터페이스 기술 활용</strong></h4>
+<ul>
+<li><strong>PCIe 5.0, 6.0, CXL(Compute Express Link)</strong>
+<ul>
+<li>최근 PCIe 4.0 (64GB/s)에서 PCIe 5.0 (128GB/s), 6.0 (256GB/s)로 빠르게 진화 중</li>
+<li>특히 <strong>CXL 기술</strong>은 GPU-CPU 간 공유 메모리를 효율적으로 지원, 성능 극대화 가능성 있음</li>
+</ul>
+</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><strong>관련 최신 연구 흐름</strong></p>
+<ul>
+<li><code>DistServe</code>(2024), <code>FastServe</code>(2023): 데이터 흐름 최적화와 인터페이스 기술을 접목해 GPU-CPU 전송 효율 향상</li>
+<li><code>InstInfer</code>(2024): 저장장치(SSD)에 일부 연산을 offloading하여 PCIe 병목 회피 시도</li>
+</ul>
+    </div>
+  </blockquote>
+
+<h4 id="--압축-및-경량화-기술-kv-cache-압축-압축-연산">✅ <strong>② 압축 및 경량화 기술 (KV cache 압축, 압축 연산)</strong></h4>
+<ul>
+<li><strong>KV cache 압축(KV-cache compression)</strong> 및 <strong>양자화(Quantization)</strong>
+<ul>
+<li>KV cache 압축 기술로 데이터 크기를 줄여 GPU-CPU 간 데이터 전송량 감소</li>
+<li>낮은 비트 정밀도(8-bit, 4-bit) 연산을 활용한 KV cache 연산 효율화 연구 진행 중</li>
+</ul>
+</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><strong>관련 최신 연구 흐름</strong></p>
+<ul>
+<li><code>Atom</code>(2024), <code>GPTQ</code>(2023): 8-bit 이하 양자화 및 sparse 압축을 활용한 KV-cache 압축</li>
+<li><code>AWQ</code>(2024): Activation-aware quantization으로 데이터 전송량 절감 및 bandwidth 요구량 감소</li>
+</ul>
+    </div>
+  </blockquote>
+
+<hr>
+<h3 id="-2-동적-스케줄링-복잡도-해결을-위한-연구-방향">🚩 (2) 동적 스케줄링 복잡도 해결을 위한 연구 방향</h3>
+<h4 id="--강화학습-기반-최적화된-동적-스케줄링">✅ <strong>① 강화학습 기반 최적화된 동적 스케줄링</strong></h4>
+<ul>
+<li>복잡한 환경을 동적 최적화하는 문제에 강화학습(RL)을 활용</li>
+<li>GPU 및 CPU 사용률을 예측하고, 상황에 맞는 스케줄링 정책을 학습하여 실시간 오버헤드를 최소화</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><strong>관련 최신 연구 흐름</strong></p>
+<ul>
+<li><code>ORCA</code>(2022), <code>Sarathi-Serve</code>(2024): RL 기반 또는 휴리스틱 방법을 이용하여 스케줄링 최적화 시도</li>
+<li>RL-based Scheduling (최근 Google Research 등에서 활발히 연구 중)</li>
+</ul>
+    </div>
+  </blockquote>
+
+<h4 id="--휴리스틱--메타러닝을-통한-스케줄링-간소화">✅ <strong>② 휴리스틱 &amp; 메타러닝을 통한 스케줄링 간소화</strong></h4>
+<ul>
+<li>복잡한 스케줄링 연산을 단순화된 휴리스틱(Heuristic) 및 메타러닝(Meta-learning) 기반의 간단한 모델로 구현하여 실시간 스케줄링 오버헤드 최소화</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><strong>관련 최신 연구 흐름</strong></p>
+<ul>
+<li><code>FlexGen</code>(2023), <code>HeteGen</code>(2024): 휴리스틱 방식의 효율적인 스케줄링 연구</li>
+<li>Lightweight meta-schedulers (스케줄링 오버헤드를 최소화하는 방법으로 최근 활발히 연구됨)</li>
+</ul>
+    </div>
+  </blockquote>
+
+<hr>
+<h3 id="-3-다중-gpu-환경-최적화-연구-흐름">🚩 (3) 다중 GPU 환경 최적화 연구 흐름</h3>
+<h4 id="--텐서-병렬화tensor-parallelism-및-모델-샤딩sharding">✅ <strong>① 텐서 병렬화(Tensor Parallelism) 및 모델 샤딩(Sharding)</strong></h4>
+<ul>
+<li>모델 및 데이터를 GPU간 나누어 배치하여 GPU 메모리 효율화 및 연산 병렬화</li>
+<li>병렬 GPU 환경에서 효율적인 데이터 분배 및 계산 로드 밸런싱이 중요 연구 주제</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><strong>관련 최신 연구 흐름</strong></p>
+<ul>
+<li><code>Megatron-LM</code> (NVIDIA, 2022~), <code>Alpa</code> (2023): 대규모 텐서 병렬화 및 효율적인 GPU 분산처리 연구</li>
+<li><code>DistServe</code>(2024), <code>DeepSpeed</code>(Microsoft, 2023): 데이터 및 모델 병렬화를 통한 효율적 메모리 및 연산 처리</li>
+</ul>
+    </div>
+  </blockquote>
+
+<h4 id="--하이브리드-병렬화-기법-hybrid-parallelism">✅ <strong>② 하이브리드 병렬화 기법 (Hybrid Parallelism)</strong></h4>
+<ul>
+<li>텐서 병렬화 + 데이터 병렬화 + 파이프라인 병렬화를 결합한 하이브리드 병렬화 기법</li>
+<li>대규모 환경에서 연산, 데이터, 메모리를 최적화하여 GPU 자원 사용 극대화</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p><strong>관련 최신 연구 흐름</strong></p>
+<ul>
+<li><code>Colossal-AI</code>(2024), <code>DeepSpeed-ZeRO</code>(2023~2024): 하이브리드 병렬화를 통해 수백 GPU 환경 최적화 시도</li>
+<li>LLaMA, GPT 시리즈 모델들을 수백대 GPU에서 처리하는 실험을 활발히 진행 중</li>
+</ul>
+    </div>
+  </blockquote>
+
+<hr>
+<h2 id="-결론-및-연구-방향-정리-한계-극복-방법-요약">📗 결론 및 연구 방향 정리 (한계 극복 방법 요약)</h2>
+<table>
+  <thead>
+      <tr>
+          <th>한계점</th>
+          <th>해결 접근법</th>
+          <th>최신 연구 사례</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>GPU-CPU 전송 병목</td>
+          <td>차세대 인터페이스, 압축 및 경량화</td>
+          <td>CXL, Atom(2024), AWQ(2024), InstInfer(2024)</td>
+      </tr>
+      <tr>
+          <td>동적 스케줄링 복잡성</td>
+          <td>강화학습, 메타러닝, 휴리스틱 기법</td>
+          <td>ORCA(2022), FlexGen(2023), Sarathi-Serve(2024)</td>
+      </tr>
+      <tr>
+          <td>다중 GPU 환경 최적화</td>
+          <td>텐서 병렬화, 하이브리드 병렬화 기법</td>
+          <td>Megatron-LM(2022~), DistServe(2024), Colossal-AI(2024)</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-나의-의견-및-전망">📝 나의 의견 및 전망</h2>
+<p>향후 NEO와 같은 CPU 오프로드 방식은 더 효율적인 하드웨어(CXL 등)와 병렬화 기술 발전에 힘입어 성능이 크게 개선될 가능성이 높습니다.<br>
+특히 GPU와 CPU 자원을 동적으로 관리하는 강화학습 기반의 효율적 스케줄링 연구가 급속히 발전할 것으로 예상되며, 이는 대규모 LLM 추론 시스템의 성능을 극대화하는 핵심이 될 것입니다.</p>
+<p>따라서 향후 연구는 이러한 최신 기술 및 방법들을 통합적으로 활용하여, NEO의 실용성과 효율성을 더욱 확장하는 방향으로 발전할 것입니다.</p>
+<p>추가적인 질문 있으시면 언제든지 편하게 물어보세요! 😊</p>
+<h1 id="q--neo-시스템이-gpu-only-시스템vllm과-기존-cpu-오프로드-시스템fastdecode에-비해-성능이-더-뛰어난-근본적인-이유는-무엇이며-이-차이를-만드는-핵심-메커니즘은-구체적으로-어떻게-동작하는가">Q : NEO 시스템이 GPU-only 시스템(vLLM)과 기존 CPU 오프로드 시스템(FastDecode)에 비해 성능이 더 뛰어난 근본적인 이유는 무엇이며, 이 차이를 만드는 핵심 메커니즘은 구체적으로 어떻게 동작하는가?</h1>
+<p>NEO 시스템이 GPU-only 시스템(vLLM) 및 기존 CPU 오프로드 시스템(FastDecode)에 비해 성능이 뛰어난 근본적인 이유는 GPU와 CPU의 자원을 동시에 균형 있게 최적화하여 활용하는 &ldquo;비대칭 파이프라이닝(Asymmetric Pipelining)&ldquo;과 실시간으로 자원 배분을 결정하는 &ldquo;부하 인식 스케줄링(Load-Aware Scheduling)&ldquo;에 있습니다.</p>
+<p>구체적으로 살펴보면 다음과 같습니다.</p>
+<p>첫째, 기존 GPU-only 시스템(vLLM)은 GPU 메모리의 제약으로 인해 큰 batch 크기를 확보하지 못하여 GPU 연산 능력을 충분히 활용하지 못합니다. 반면, NEO는 일부 attention 연산과 KV cache를 CPU 메모리로 오프로드하여 GPU 메모리 여유를 확보하고 batch 크기를 키울 수 있어 GPU의 계산 성능을 극대화합니다.</p>
+<p>둘째, 기존 CPU 오프로드 시스템(FastDecode)은 모든 decoding attention 연산을 무조건 CPU로 넘기기 때문에 CPU가 병목 지점이 되어 전체 성능이 저하됩니다. NEO는 이와 달리 attention 연산의 일부만 선택적으로 CPU에 오프로드하여 CPU 과부하를 피하고, GPU와 CPU를 동시에 효율적으로 가동할 수 있도록 병렬화합니다.</p>
+<p>핵심적으로 NEO의 &ldquo;비대칭 파이프라이닝&quot;은 GPU와 CPU가 각각 가장 잘 처리할 수 있는 작업을 나누어 동시에 병렬로 수행하게 하는 방식입니다. GPU는 주로 prefilling 단계나 계산 중심(linear, FFN 등)의 작업을 담당하고, CPU는 메모리 접근 중심의 attention 작업을 담당합니다. 두 작업이 중첩되어 수행되므로 GPU와 CPU는 거의 쉬는 시간 없이 계속 연산할 수 있게 됩니다.</p>
+<p>추가적으로 &ldquo;부하 인식 스케줄링&quot;은 GPU와 CPU의 현재 작업 부하를 실시간으로 파악하고, 이를 기반으로 batch를 형성하여 자원을 가장 효율적으로 사용할 수 있게 합니다. 이를 통해 GPU-only 방식이나 기존 CPU 오프로드 방식 대비 높은 처리량(throughput)과 낮은 지연(latency)을 동시에 달성할 수 있게 됩니다.</p>
+<p>결과적으로, NEO가 제안한 이러한 두 가지 메커니즘의 조합이 GPU-only 시스템 및 기존 CPU 오프로드 시스템의 단점을 극복하고 현저히 뛰어난 성능을 달성한 근본적 이유입니다.</p>
+<h1 id="q--neo에서-사용한-비대칭-파이프라이닝과-부하-인식-스케줄링이-실시간으로-어떻게-동작하며-이-과정에서-발생할-수-있는-병목-현상이나-오버헤드를-최소화하기-위해-논문에서-제시한-구체적인-전략은-무엇인가">Q : NEO에서 사용한 비대칭 파이프라이닝과 부하 인식 스케줄링이 실시간으로 어떻게 동작하며, 이 과정에서 발생할 수 있는 병목 현상이나 오버헤드를 최소화하기 위해 논문에서 제시한 구체적인 전략은 무엇인가?</h1>
+<p>NEO에서 사용한 **비대칭 파이프라이닝(Asymmetric Pipelining)**과 **부하 인식 스케줄링(Load-Aware Scheduling)**은 실시간으로 다음과 같이 동작합니다.</p>
+<p>먼저 비대칭 파이프라이닝은 추론 요청이 들어왔을 때, 이를 두 개의 서로 비대칭적인 하위 배치로 나누어 GPU와 CPU에 동시 처리하도록 합니다. 하나의 배치(batch-0)는 GPU가 강점인 Prefilling 단계와 선형(Linear, FFN 등) 연산을 위주로 수행하고, 다른 배치(batch-1)는 CPU가 강점인 attention 연산을 주로 수행합니다. 이렇게 두 배치가 각자의 작업을 병렬로 수행하며, GPU와 CPU가 동시에 일을 함으로써 연산 자원의 idle 시간을 최소화합니다.</p>
+<p>부하 인식 스케줄링은 GPU와 CPU의 작업 상황과 부하(load)를 실시간으로 모니터링하면서 최적의 작업 분배를 결정합니다. 매 iteration마다 다음의 원칙을 적용하여 배치를 형성합니다.</p>
+<ul>
+<li>Greedy 원칙: GPU-only 방식과 GPU-CPU 혼합 방식을 실시간으로 비교하여 가장 성능이 좋은 방식을 선택합니다.</li>
+<li>Balancing 원칙: GPU와 CPU의 연산 시간을 최대한 비슷하게 맞추어 어느 한 쪽이 병목(bottleneck)이 되지 않게 합니다.</li>
+<li>Hiding CPU 원칙: CPU 연산을 GPU 연산의 뒤에 숨겨서, CPU 연산 중 GPU가 idle 상태가 되는 현상을 최소화합니다.</li>
+<li>Maximizing GPU 원칙: 가능한 한 많은 요청을 GPU에서 처리하여 GPU의 연산 능력을 최대한 활용합니다.</li>
+</ul>
+<p>이러한 과정을 수행하는 동안 발생할 수 있는 병목이나 오버헤드를 최소화하기 위해 논문이 제시한 구체적인 전략은 다음과 같습니다.</p>
+<p>첫째, <strong>부분 오프로드(Partial Offloading)</strong> 전략을 사용하여 CPU의 부하를 과도하게 만들지 않고 적정한 수준만 CPU로 옮기며, GPU 메모리 사용률을 최적의 상태로 유지합니다.</p>
+<p>둘째, 배치를 형성할 때 <strong>계층 단위(layer-wise)의 KV cache 오프로드 전략</strong>을 적용하여 GPU-CPU 간의 데이터 전송을 연산과 겹치도록(overlap) 합니다. 이를 통해 데이터 전송으로 인한 idle 시간을 최소화합니다.</p>
+<p>셋째, 실시간 모니터링을 통해 결정하는 **동적 스케줄링(dynamic scheduling)**을 구현하여 GPU-CPU 간 균형을 맞추고, 상황 변화(입출력 길이의 변화 등)에 빠르게 대응하여 병목 발생을 방지합니다.</p>
+<p>마지막으로, GPU 연산 커널(kernel) 호출 횟수를 최소화하는 구조(예: GPU 커널을 반복 호출하는 대신 한 번의 긴 호출로 처리하는 구조)를 통해 GPU kernel launch로 인한 오버헤드를 줄입니다.</p>
+<p>종합적으로 NEO는 비대칭적 GPU-CPU 병렬화와 실시간 동적 스케줄링을 활용하여 연산 및 메모리 오버헤드를 최소화하고 GPU 및 CPU 자원을 최대한 효율적으로 활용하는 구조를 갖추고 있습니다.</p>
+<h1 id="q--neo의-성능-향상이-입력-및-출력-길이-gpucpu-성능-등-다양한-요소들에-따라-어떻게-달라지는지-실험-결과를-통해-설명하고-실제-환경에-적용할-때-고려해야-할-중요한-요소와-한계점은-무엇인가">Q : NEO의 성능 향상이 입력 및 출력 길이, GPU/CPU 성능 등 다양한 요소들에 따라 어떻게 달라지는지 실험 결과를 통해 설명하고, 실제 환경에 적용할 때 고려해야 할 중요한 요소와 한계점은 무엇인가?</h1>
+<p>NEO의 성능 향상은 입력과 출력 길이, GPU 및 CPU의 성능이라는 요소들에 따라 다음과 같이 달라진다고 논문은 설명하고 있습니다.</p>
+<p>먼저 입력 및 출력 길이에 따른 성능 변화는 다음과 같습니다.</p>
+<p>입력 길이가 길거나 출력 길이가 길어질수록 KV 캐시의 크기가 증가하며, GPU-only 시스템은 메모리 부족으로 인해 처리 가능한 배치 크기가 급격히 줄어듭니다. 반면, NEO는 CPU 메모리로 KV 캐시 일부를 오프로드하므로, 특히 입력과 출력 길이가 중간에서 긴 경우(batch 크기가 중요한 상황)에 성능이 크게 개선됩니다.</p>
+<p>구체적인 실험 결과로, T4 GPU 환경에서 입력 길이가 100에서 500, 출력 길이가 50에서 200 정도일 때, GPU-only 대비 NEO의 성능은 최대 7.5배까지 상승합니다. 한편, 입력과 출력 길이가 매우 짧은 경우 GPU 메모리 병목 문제가 거의 없어 NEO의 성능 향상폭은 상대적으로 줄어들거나 오히려 오프로드 과정의 오버헤드로 인해 약간 떨어질 수도 있습니다.</p>
+<p>GPU 및 CPU 성능의 영향은 다음과 같습니다.</p>
+<p>CPU 성능(특히 메모리 bandwidth)이 증가하면 CPU가 더 많은 KV 캐시와 Attention 연산을 처리할 수 있게 되어 GPU 부담을 덜어줍니다. 논문의 실험 결과로 AWS EC2 환경에서 CPU의 메모리 대역폭을 증가시킬 경우 A10G GPU에서 최대 79.3%까지 추가적인 성능 향상이 가능했습니다. 반면, CPU 성능이 낮은 환경에서는 CPU가 쉽게 병목 지점이 되어 성능 향상폭이 줄어듭니다.</p>
+<p>GPU 성능의 경우, H100처럼 최신 고성능 GPU를 사용할 경우 성능 향상폭은 다소 작아지지만(약 14%), T4나 A10G처럼 중간~하위 성능 GPU를 사용할 경우 GPU 메모리 한계가 명확해지므로 성능 향상폭이 더 큽니다(26% ~ 7.5배 증가).</p>
+<p>이러한 실험적 결과를 바탕으로 실제 환경에 NEO를 적용할 때 고려해야 할 중요한 요소와 한계점은 다음과 같습니다.</p>
+<p>중요한 고려 요소는:</p>
+<ol>
+<li>GPU 메모리 용량과 성능: GPU 메모리 부족 현상이 뚜렷한 환경일수록 NEO의 성능 이득이 커집니다.</li>
+<li>CPU 메모리 bandwidth: CPU 메모리 대역폭이 충분히 확보된 환경이어야 CPU 오프로드 효과가 커지고, 병목이 발생하지 않습니다.</li>
+<li>입력과 출력 길이의 분포: 요청되는 추론 작업의 입력과 출력 길이가 길수록 NEO의 효과가 크며, 반대로 매우 짧은 요청이 많으면 GPU-only 방식이 더 효율적일 수 있습니다.</li>
+<li>GPU-CPU 간 인터페이스(PCIe 또는 CXL)의 성능: 인터페이스 성능이 충분히 높아야 오프로드 과정에서 병목이 발생하지 않습니다.</li>
+</ol>
+<p>한계점은:</p>
+<ol>
+<li>PCIe 인터페이스 병목: 빈번한 GPU-CPU 간 데이터 전송으로 인해 PCIe bandwidth가 병목이 될 가능성이 있습니다.</li>
+<li>스케줄링 복잡성 증가: 부하 인식 스케줄링의 실시간 연산이 복잡하여, 관리 비용과 오버헤드가 증가할 수 있습니다.</li>
+<li>짧은 요청이 주를 이루는 환경에서는 오프로드 과정 자체가 오버헤드가 될 수 있어 오히려 성능을 떨어뜨릴 수 있습니다.</li>
+<li>다중 GPU 환경 최적화 미흡: 현재 논문에서 검증된 것은 단일 GPU나 소수 GPU 환경으로, 많은 수의 GPU를 사용하는 환경에서의 성능 검증은 아직 미흡합니다.</li>
+</ol>
+<p>따라서 실제 환경에서는 위와 같은 요소들을 사전에 철저히 평가하고, GPU-CPU 환경 설정, 하드웨어 스펙 선정, 요청 길이 특성을 고려하여 NEO의 최적 적용 여부를 판단해야 합니다.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/NEO-Saving-GPU-Memory-Crisis-with-CPU-Offloading-for-Online-LLM-Inference/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/NEO-Saving-GPU-Memory-Crisis-with-CPU-Offloading-for-Online-LLM-Inference/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/PipeFill-Using-GPUs-During-Bubbles-in-Pipeline-parallel-LLM-Training/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                PipeFill: Using GPUs During Bubbles in Pipeline-parallel LLM Training
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2025-03-25">
+                03月25日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Context-Parallelism-for-Scalable-Million-Token-Inference/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                Context Parallelism for Scalable Million-Token Inference
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2025-03-31">
+                03月31日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#-논문-제목-neo-saving-gpu-memory-crisis-with-cpu-offloading-for-online-llm-inference">📌 <strong>논문 제목:</strong> NEO: Saving GPU Memory Crisis with CPU Offloading for Online LLM Inference</a></li>
+        <li><a href="#-저자-xuanlin-jiang-yang-zhou-shiyi-cao-ion-stoica-minlan-yu">📌 <strong>저자:</strong> Xuanlin Jiang, Yang Zhou, Shiyi Cao, Ion Stoica, Minlan Yu</a></li>
+      </ul>
+    </li>
+    <li><a href="#1-결론-요약-강점--독창적인-지점"><strong>1. 결론 요약 (강점 &amp; 독창적인 지점)</strong></a></li>
+    <li><a href="#2-핵심-알고리즘-설명-예시-포함"><strong>2. 핵심 알고리즘 설명 (예시 포함)</strong></a>
+      <ul>
+        <li><a href="#-neo의-핵심-아이디어는-gpu-메모리-제약을-피하기-위해-cpu로-일부-작업을-오프로드하는-것입니다">💡 <strong>NEO의 핵심 아이디어는 GPU 메모리 제약을 피하기 위해 CPU로 일부 작업을 오프로드하는 것입니다.</strong></a></li>
+        <li><a href="#neo의-구성-요소"><strong>NEO의 구성 요소</strong></a></li>
+        <li><a href="#알고리즘-과정"><strong>알고리즘 과정</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#3-논문의-한계점"><strong>3. 논문의 한계점</strong></a></li>
+    <li><a href="#4-결론-및-제안"><strong>4. 결론 및 제안</strong></a>
+      <ul>
+        <li><a href="#제안">제안</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#-핵심-알고리즘-neo의-비대칭-gpu-cpu-파이프라이닝-및-부하-인식-스케줄링">📌 핵심 알고리즘: <strong>NEO의 비대칭 GPU-CPU 파이프라이닝 및 부하 인식 스케줄링</strong></a></li>
+    <li><a href="#-알고리즘-전체-과정-예시를-통해-단계별로-설명">📝 알고리즘 전체 과정 (예시를 통해 단계별로 설명)</a>
+      <ul>
+        <li><a href="#-예시-환경">✅ 예시 환경</a></li>
+      </ul>
+    </li>
+    <li><a href="#-1단계-prefilling-stage-초기-입력-처리">📍 1단계: Prefilling Stage (초기 입력 처리)</a>
+      <ul>
+        <li><a href="#-기존-방식-vllm">▪️ 기존 방식 (vLLM)</a></li>
+        <li><a href="#-neo-방식">🟢 NEO 방식</a></li>
+      </ul>
+    </li>
+    <li><a href="#-2단계-decoding-stage-출력-토큰-생성">📍 2단계: Decoding Stage (출력 토큰 생성)</a>
+      <ul>
+        <li><a href="#-기존-방식-vllm-1">▪️ 기존 방식 (vLLM)</a></li>
+        <li><a href="#-neo-방식-1">🟢 NEO 방식</a></li>
+      </ul>
+    </li>
+    <li><a href="#-3단계-load-aware-scheduling-gpu-cpu-동적-부하-분배">📍 3단계: Load-Aware Scheduling (GPU-CPU 동적 부하 분배)</a></li>
+    <li><a href="#-4단계-결과-취합-및-출력">📍 4단계: 결과 취합 및 출력</a></li>
+    <li><a href="#--알고리즘-효과-논문-실험-결과-기반">📌 📈 알고리즘 효과 (논문 실험 결과 기반)</a></li>
+    <li><a href="#-알고리즘-전체-요약-정리">🔍 알고리즘 전체 요약 (정리)</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-1-실험결과-요약-정량적-수치">🔑 1. 실험결과 요약 (정량적 수치)</a></li>
+    <li><a href="#-2-기존-방법론-대비-특출난-점">🔍 2. 기존 방법론 대비 특출난 점</a></li>
+    <li><a href="#-3-논문에서-밝힌-성능-향상의-주요-원인-논문의-주장">🚀 3. 논문에서 밝힌 성능 향상의 주요 원인 (논문의 주장)</a>
+      <ul>
+        <li><a href="#-asymmetric-pipelining-비대칭-파이프라이닝">① <strong>Asymmetric Pipelining (비대칭 파이프라이닝)</strong></a></li>
+        <li><a href="#-load-aware-scheduling-부하-인식-스케줄링">② <strong>Load-Aware Scheduling (부하 인식 스케줄링)</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-4-나의-분석-및-견해">🎯 4. 나의 분석 및 견해</a></li>
+    <li><a href="#-최종-결론-및-제안">📌 최종 결론 및 제안</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-1-입력-데이터와-추론-과정-예시-detailed-example">📌 1. 입력 데이터와 추론 과정 예시 (Detailed Example)</a></li>
+    <li><a href="#-2-neo-시스템의-단계별-추론-과정-상세-설명">🔍 2. NEO 시스템의 단계별 추론 과정 상세 설명</a>
+      <ul>
+        <li><a href="#-단계-1-prefilling-단계">✅ <strong>단계 1: Prefilling 단계</strong></a></li>
+        <li><a href="#-단계-2-decoding-단계">✅ <strong>단계 2: Decoding 단계</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#-3-모델-아키텍처-구성-transformer-구조">🛠️ 3. 모델 아키텍처 구성 (Transformer 구조)</a></li>
+    <li><a href="#-4-연산-요구량-computational-complexity">💻 4. 연산 요구량 (Computational Complexity)</a></li>
+    <li><a href="#-5-메모리-요구량-memory-requirements">💾 5. 메모리 요구량 (Memory Requirements)</a></li>
+    <li><a href="#-6-neo가-연산메모리-효율을-높이는-방법">⚙️ 6. NEO가 연산/메모리 효율을 높이는 방법</a></li>
+    <li><a href="#-결론-및-나의-의견">🚩 결론 및 나의 의견</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-1-논문에서-밝힌-한계점-요약">📌 1. 논문에서 밝힌 한계점 요약</a></li>
+    <li><a href="#-2-한계-극복을-위한-최근-연구-흐름-및-접근-방법">📍 2. 한계 극복을 위한 최근 연구 흐름 및 접근 방법</a>
+      <ul>
+        <li><a href="#-1-gpu-cpu-간-병목-해결을-위한-접근-방법들">🚩 (1) GPU-CPU 간 병목 해결을 위한 접근 방법들</a>
+          <ul>
+            <li><a href="#--차세대-고속-인터페이스-기술-활용">✅ <strong>① 차세대 고속 인터페이스 기술 활용</strong></a></li>
+            <li><a href="#--압축-및-경량화-기술-kv-cache-압축-압축-연산">✅ <strong>② 압축 및 경량화 기술 (KV cache 압축, 압축 연산)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#-2-동적-스케줄링-복잡도-해결을-위한-연구-방향">🚩 (2) 동적 스케줄링 복잡도 해결을 위한 연구 방향</a>
+          <ul>
+            <li><a href="#--강화학습-기반-최적화된-동적-스케줄링">✅ <strong>① 강화학습 기반 최적화된 동적 스케줄링</strong></a></li>
+            <li><a href="#--휴리스틱--메타러닝을-통한-스케줄링-간소화">✅ <strong>② 휴리스틱 &amp; 메타러닝을 통한 스케줄링 간소화</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#-3-다중-gpu-환경-최적화-연구-흐름">🚩 (3) 다중 GPU 환경 최적화 연구 흐름</a>
+          <ul>
+            <li><a href="#--텐서-병렬화tensor-parallelism-및-모델-샤딩sharding">✅ <strong>① 텐서 병렬화(Tensor Parallelism) 및 모델 샤딩(Sharding)</strong></a></li>
+            <li><a href="#--하이브리드-병렬화-기법-hybrid-parallelism">✅ <strong>② 하이브리드 병렬화 기법 (Hybrid Parallelism)</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#-결론-및-연구-방향-정리-한계-극복-방법-요약">📗 결론 및 연구 방향 정리 (한계 극복 방법 요약)</a></li>
+    <li><a href="#-나의-의견-및-전망">📝 나의 의견 및 전망</a></li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

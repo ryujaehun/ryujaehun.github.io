@@ -1,0 +1,4269 @@
+<!doctype html>
+<html
+  lang="ko-kr"
+  data-theme="claude">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Duplex: A Device for Large Language Models with Mixture of Experts, Grouped Query Attention, and Continuous Batching | Jaehun&#39;s Blog</title>
+
+<meta name="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 📌 결론 요약 논문 *&ldquo;Duplex: A Device for..." />
+<meta name="keywords" content="개발, 컴파일러, 프로그래밍, 에세이" />
+<meta name="author" content="" />
+<meta name="language" content="ko-kr" />
+
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="http://192.168.1.11:1314/posts/Duplex-A-Device-for-Large-Language-Models-with-Mixture-of-Experts-Grouped-Query-Attention-and-Continuous-Batching/" />
+
+
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+
+
+<link rel="manifest" href="/site.webmanifest" />
+<meta property="og:url" content="http://192.168.1.11:1314/posts/Duplex-A-Device-for-Large-Language-Models-with-Mixture-of-Experts-Grouped-Query-Attention-and-Continuous-Batching/">
+  <meta property="og:site_name" content="Jaehun&#39;s Blog">
+  <meta property="og:title" content="Duplex: A Device for Large Language Models with Mixture of Experts, Grouped Query Attention, and Continuous Batching">
+  <meta property="og:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 📌 결론 요약 논문 *“Duplex: A Device for Large Language Models with Mixture of Experts, Grouped Query Attention, and Continuous Batching”*은 저연산량(Op/B)이 지배적인 MoE 및 GQA 기반 LLM 추론을 위한 하드웨어 아키텍처 Duplex를 제안하며, GPU 단독 대비 최대 2.67×의 추론 속도와 42.03%의 에너지 절감 효과를 보여줍니다. 핵심은 **xPU (GPU 수준 고성능 연산기)**와 **Logic-PIM (로직 다이에 탑재된 저 Op/B 특화 연산기)**를 동시에 활용하여 MoE와 Attention Layer를 공동 처리(co-processing)하는 방식입니다.">
+  <meta property="og:locale" content="ko_kr">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-04-13T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-04-13T00:00:00+00:00">
+    <meta property="og:image" content="http://192.168.1.11:1314/images/og-default.avif">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta name="twitter:title" content="Duplex: A Device for Large Language Models with Mixture of Experts, Grouped Query Attention, and Continuous Batching">
+  <meta name="twitter:description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 📌 결론 요약 논문 *“Duplex: A Device for Large Language Models with Mixture of Experts, Grouped Query Attention, and Continuous Batching”*은 저연산량(Op/B)이 지배적인 MoE 및 GQA 기반 LLM 추론을 위한 하드웨어 아키텍처 Duplex를 제안하며, GPU 단독 대비 최대 2.67×의 추론 속도와 42.03%의 에너지 절감 효과를 보여줍니다. 핵심은 **xPU (GPU 수준 고성능 연산기)**와 **Logic-PIM (로직 다이에 탑재된 저 Op/B 특화 연산기)**를 동시에 활용하여 MoE와 Attention Layer를 공동 처리(co-processing)하는 방식입니다.">
+
+
+  <meta itemprop="name" content="Duplex: A Device for Large Language Models with Mixture of Experts, Grouped Query Attention, and Continuous Batching">
+  <meta itemprop="description" content="논문 링크
+Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘 📌 결론 요약 논문 *“Duplex: A Device for Large Language Models with Mixture of Experts, Grouped Query Attention, and Continuous Batching”*은 저연산량(Op/B)이 지배적인 MoE 및 GQA 기반 LLM 추론을 위한 하드웨어 아키텍처 Duplex를 제안하며, GPU 단독 대비 최대 2.67×의 추론 속도와 42.03%의 에너지 절감 효과를 보여줍니다. 핵심은 **xPU (GPU 수준 고성능 연산기)**와 **Logic-PIM (로직 다이에 탑재된 저 Op/B 특화 연산기)**를 동시에 활용하여 MoE와 Attention Layer를 공동 처리(co-processing)하는 방식입니다.">
+  <meta itemprop="datePublished" content="2025-04-13T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-04-13T00:00:00+00:00">
+  <meta itemprop="wordCount" content="10647">
+  <meta itemprop="image" content="http://192.168.1.11:1314/images/og-default.avif">
+  <meta itemprop="keywords" content="Paper-Review,With-Gpt">
+
+
+
+
+
+
+
+<script>
+  window.HUGO_SEARCH_CONFIG = {
+    searchIndexURL: "\"/index.json\""
+  };
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+  window.HUGO_GALLERY_CONFIG = {
+    justified_gallery:  false ,
+    lightbox:  false ,
+    justified: "{}",
+    lightbox_options: "{}"
+  };
+</script>
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/compiled.css" />
+  
+
+
+
+
+
+  
+    <link rel="stylesheet" href="/css/chroma.css" />
+  
+
+
+
+
+
+
+
+
+
+
+
+
+      <script src="/js/main.js"></script>
+
+
+
+  <script src="/js/gumshoe.polyfills.min.js"></script>
+
+
+
+        <script src="/js/toc.js" defer></script>
+
+
+
+      <script src="/js/search.js" defer></script>
+
+
+
+      <script src="/js/dock.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+      
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const colorScheme = localStorage.getItem('colorScheme') || 'claude';
+
+        
+        document.documentElement.setAttribute('data-theme', colorScheme);
+
+        
+        function applyTheme() {
+          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        applyTheme();
+
+        
+        if (theme === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    
+    
+  <div
+    id="reading-progress-container"
+    class="reading-progress-container pointer-events-none fixed top-0 right-0 left-0 z-50 transition-opacity duration-300 ease-out"
+    data-height="3"
+    data-smooth-scroll="true"
+    data-hide-on-complete="false">
+    
+    <div class="reading-progress-bg w-full"></div>
+
+    
+    <div
+      id="reading-progress-bar"
+      class="from-primary to-primary/80 reading-progress-bar 
+        transition-all duration-150 ease-out
+       absolute top-0 left-0 w-0 bg-gradient-to-r"></div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const progressContainer = document.getElementById(
+        "reading-progress-container",
+      );
+      const progressBar = document.getElementById("reading-progress-bar");
+
+      if (!progressContainer || !progressBar) return;
+
+      
+      const config = {
+        smoothScroll: progressContainer.dataset.smoothScroll === "true",
+        hideOnComplete: progressContainer.dataset.hideOnComplete === "true",
+      };
+
+      let isVisible = true;
+      let gumshoeInstance = null;
+
+      
+      function calculateProgress() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = documentHeight - windowHeight;
+
+        if (scrollableHeight <= 0) return 0;
+
+        return Math.min(Math.max((scrollTop / scrollableHeight) * 100, 0), 100);
+      }
+
+      
+      function updateProgress() {
+        const progress = calculateProgress();
+        progressBar.style.width = progress + "%";
+
+        
+        if (config.hideOnComplete && progress >= 99.5) {
+          if (isVisible) {
+            progressContainer.style.opacity = "0";
+            isVisible = false;
+          }
+        } else if (!isVisible) {
+          progressContainer.style.opacity = "1";
+          isVisible = true;
+        }
+      }
+
+      
+      let ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      
+      function init() {
+        
+        window.addEventListener("scroll", requestTick, { passive: true });
+        window.addEventListener("resize", requestTick, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestTick();
+        });
+
+        
+        requestTick();
+
+        
+        window.addEventListener("beforeunload", () => {
+          window.removeEventListener("scroll", requestTick);
+          window.removeEventListener("resize", requestTick);
+        });
+      }
+
+      
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+    <header class="sticky top-0 z-50 mx-auto max-w-4xl px-4 py-6">
+  <div
+    class="border-border bg-card/80 flex items-center rounded-xl border px-6 py-4 shadow-sm backdrop-blur-sm">
+    
+    <div class="hidden w-full items-center md:flex">
+      
+      <div class="flex items-center">
+        
+          
+          <a
+            href="/"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold transition-transform duration-200 hover:scale-105"
+            aria-label="Jaehun&#39;s Blog">
+            J
+          </a>
+        
+      </div>
+
+      
+      <nav class="mx-8 flex flex-1 items-center justify-center">
+        <div class="flex items-center space-x-1">
+          
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/posts/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+              
+              <span
+                >
+                  게시글
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/categories/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+              
+              <span
+                >
+                  카테고리
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/tags/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+              
+              <span
+                >
+                  태그
+                </span
+              >
+            </a>
+          
+            
+            
+            
+              
+                
+              
+            
+            
+            <a
+              href="/archives/"
+              class="nav-link 
+                text-muted-foreground hover:text-primary hover:bg-primary/10
+               focus:ring-primary/20 relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+              
+              <span
+                >
+                  아카이브
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+
+    
+    <div class="flex w-full items-center justify-between md:hidden">
+      
+      
+<div class="relative">
+  <button
+    id="mobile-menu-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-200"
+    data-dropdown-type="mobile-menu"
+    aria-label="메뉴"
+    aria-expanded="false"
+    aria-haspopup="true">
+    
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="메뉴">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+</svg>
+  </button>
+
+  
+  <div
+    id="mobile-menu"
+    class="mobile-menu dropdown-menu border-border bg-popover/95 absolute top-12 left-0 z-[60] hidden w-80 max-w-[calc(100vw-2rem)] rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out md:hidden"
+    data-dropdown-type="mobile-menu"
+    role="menu"
+    aria-labelledby="mobile-menu-toggle">
+    <nav class="flex flex-col">
+      
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/posts/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.posts">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+          
+          <span
+            >
+              게시글
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/categories/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.categories">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+
+</svg>
+          
+          <span
+            >
+              카테고리
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/tags/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.tags">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+
+</svg>
+          
+          <span
+            >
+              태그
+            </span
+          >
+        </a>
+      
+        
+        
+        
+          
+            
+          
+        
+        
+        <a
+          href="/archives/"
+          class="nav-link 
+            text-muted-foreground hover:text-primary hover:bg-primary/10
+           focus:ring-primary/20 relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 ease-out hover:translate-x-1 focus:ring-2 focus:outline-none"
+          role="menuitem"
+          >
+          
+            
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="nav.archives">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+</svg>
+          
+          <span
+            >
+              아카이브
+            </span
+          >
+        </a>
+      
+    </nav>
+  </div>
+</div>
+
+
+      
+      <div class="flex items-center space-x-2">
+        
+        
+<div class="relative">
+  <button id="language-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="language"
+    aria-label="언어 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="언어 변경">
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 8l6 6m-7 0l6-6l2-3M2 5h12M7 2h1m14 20l-5-10l-5 10m2-4h6" />
+</svg></button>
+
+  
+  <div id="language-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="language"
+    role="menu"
+    aria-labelledby="language-toggle"><a href="/ko/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem" aria-current="true"><span class="font-medium">한국어</span></a><a href="/en/" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none" role="menuitem"><span class="font-medium">English</span></a></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="color-scheme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="color-scheme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+  <svg class="h-5 w-5 relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="테마 변경">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2V5z" />
+
+</svg></button>
+
+  
+  <div id="color-scheme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-44 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="color-scheme"><button data-color-scheme="claude" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Default</span></button><button data-color-scheme="default" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>White</span></button><button data-color-scheme="bumblebee" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Bumblebee</span></button><button data-color-scheme="emerald" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Emerald</span></button><button data-color-scheme="nord" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Nord</span></button><button data-color-scheme="sunset" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Sunset</span></button><button data-color-scheme="abyss" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Abyss</span></button><button data-color-scheme="dracula" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Dracula</span></button><button data-color-scheme="amethyst" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Amethyst</span></button><button data-color-scheme="slate" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Slate</span></button><button data-color-scheme="twitter" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none"><span>Twitter</span></button></div>
+</div>
+
+        
+        
+<div class="relative">
+  <button id="theme-toggle"
+    class="dropdown-toggle border-border bg-background text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 ease-out hover:scale-105 focus:ring-2 focus:outline-none active:scale-95"
+    data-dropdown-type="theme"
+    aria-label="테마 변경"
+    aria-expanded="false"
+    aria-haspopup="true">
+      
+      
+  <svg class="h-5 w-5 sun-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 moon-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg>
+      
+      
+  <svg class="h-5 w-5 system-icon hidden relative z-10"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg></button>
+
+  
+  <div id="theme-dropdown"
+    class="dropdown-menu border-border bg-popover/95 absolute top-12 right-0 z-[60] hidden w-40 rounded-lg border p-1 shadow-lg backdrop-blur-sm transition-all duration-200 ease-out"
+    data-dropdown-type="theme"><button data-theme="light" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이트">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+</svg><span>라이트</span></button><button data-theme="dark" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="다크">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+
+</svg><span>다크</span></button><button data-theme="system" class="text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center rounded-md px-4 py-2 text-sm transition-all duration-200 ease-out focus:outline-none">
+  <svg class="h-5 w-5 mr-3 h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="시스템">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg><span>시스템</span></button></div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      
+  
+  <nav
+  class="breadcrumb mb-4 md:mb-6 py-1"
+  aria-label="경로">
+  <ol class="text-muted-foreground flex items-center space-x-1 md:space-x-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+    
+    <li class="flex-shrink-0">
+      <a
+        href="/"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02]">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="홈">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+
+</svg>
+        <span class="max-w-[4rem] md:max-w-none truncate">홈</span>
+      </a>
+    </li>
+
+    
+    
+      <li class="flex items-center gap-1 md:gap-2 min-w-0">
+        <span class="text-muted-foreground/50 flex-shrink-0"
+          >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+        </span>
+
+        
+          
+          <div class="flex items-center gap-1 md:gap-2 min-w-0">
+            
+              
+              <a
+                href="/posts"
+                class="text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-0.5 md:gap-1 rounded-lg px-1 md:px-3 py-0.5 md:py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] flex-shrink-0">
+                
+                  
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+
+</svg>
+                  <span class="max-w-[3rem] md:max-w-none truncate">게시글</span>
+                
+              </a>
+              <span class="text-muted-foreground/50 flex-shrink-0"
+                >
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg></span
+              >
+            
+            
+            <span class="text-foreground flex items-center gap-0.5 md:gap-1 font-medium min-w-0">
+              
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+              <span class="max-w-[8rem] md:max-w-[16rem] lg:max-w-none truncate">Duplex: A Device for Large Language Models with Mixture of Experts, Grouped Query Attention, and Continuous Batching</span>
+            </span>
+          </div>
+        
+      </li>
+    
+
+  </ol>
+</nav>
+
+
+
+  
+
+
+  
+  <header class="mb-8">
+    
+
+
+<div class="post-meta">
+  
+  <h1 class="text-foreground mb-6 text-3xl leading-tight font-bold md:text-4xl">
+    Duplex: A Device for Large Language Models with Mixture of Experts, Grouped Query Attention, and Continuous Batching
+  </h1>
+
+  
+  
+
+
+  
+  <div class="bg-card border-border flex flex-col gap-4 rounded-xl border p-6">
+    
+    <div
+      class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+      
+      <div class="flex items-center gap-2">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="작성일"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+        <time datetime="2025-04-13">
+          2025년 04월 13일
+        </time>
+      </div>
+
+      
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="읽는 시간"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+          <span
+            >22 분</span
+          >
+        </div>
+      
+
+
+      
+      
+        <div class="flex items-center gap-2">
+          
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="단어 수"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+          <span>10647 단어</span>
+        </div>
+      
+
+    </div>
+
+    
+    
+      <div class="flex flex-wrap items-center gap-4">
+        
+        
+          <div class="flex items-center gap-2">
+            
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="카테고리"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+</svg>
+            <span class="text-muted-foreground mr-2 text-sm"
+              >카테고리:</span
+            >
+            <div class="flex flex-wrap gap-2">
+              
+                <a
+                  href="/categories/paper-review/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  paper-review
+                </a>
+              
+                <a
+                  href="/categories/with-gpt/"
+                  class="bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:shadow-md focus:ring-2 focus:outline-none">
+                  with-gpt
+                </a>
+              
+            </div>
+          </div>
+        
+
+
+        
+        
+
+      </div>
+    
+
+
+    
+    
+
+  </div>
+</div>
+
+  </header>
+
+  
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+    <p><a href="https://arxiv.org/abs/2409.01141v1">논문 링크</a></p>
+<h1 id="q--이-논문을-아주-자세하게-읽고-논문의-강점과-독창적인-지점을-설명해주고-핵심-알고리즘을-예시-입력을-들어서-전체적인-과정을-설명해줘-추가적으로-논문의-한계점에-대해서도-알려줘">Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘</h1>
+<h3 id="-결론-요약">📌 결론 요약</h3>
+<p>논문 *&ldquo;Duplex: A Device for Large Language Models with Mixture of Experts, Grouped Query Attention, and Continuous Batching&rdquo;*은 저연산량(Op/B)이 지배적인 MoE 및 GQA 기반 LLM 추론을 위한 하드웨어 아키텍처 <strong>Duplex</strong>를 제안하며, GPU 단독 대비 <strong>최대 2.67×의 추론 속도</strong>와 <strong>42.03%의 에너지 절감</strong> 효과를 보여줍니다. 핵심은 **xPU (GPU 수준 고성능 연산기)**와 **Logic-PIM (로직 다이에 탑재된 저 Op/B 특화 연산기)**를 <strong>동시에 활용</strong>하여 MoE와 Attention Layer를 공동 처리(co-processing)하는 방식입니다.</p>
+<hr>
+<h2 id="-논문의-강점-및-독창성">📘 논문의 강점 및 독창성</h2>
+<table>
+  <thead>
+      <tr>
+          <th>구분</th>
+          <th>설명</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>🎯 문제 정의</td>
+          <td>Continuous batching으로 인한 <strong>MoE/Attention Layer의 DRAM 접근량 증가</strong>와 <strong>낮은 Op/B로 인한 GPU 활용률 저하</strong></td>
+      </tr>
+      <tr>
+          <td>🧠 독창적 접근</td>
+          <td>기존 PIM이 Op/B &lt; 1 영역에 특화된 것과 달리, <strong>Op/B = 1~32 범위 최적화</strong>를 위한 <strong>Logic-PIM</strong> 제안</td>
+      </tr>
+      <tr>
+          <td>🔀 동시 처리 구조</td>
+          <td>Attention과 MoE layer를 Op/B 기반으로 <strong>xPU와 Logic-PIM에 동적 분배</strong>하여 활용도 극대화</td>
+      </tr>
+      <tr>
+          <td>🔄 Co-processing 방식</td>
+          <td>Expert 간 토큰 수 편차를 기반으로 <strong>expert-level parallelism</strong>, attention은 요청 단위로 병렬화</td>
+      </tr>
+      <tr>
+          <td>📊 성능 향상</td>
+          <td>H100 대비 평균 <strong>2.07× throughput 향상</strong>, <strong>28.19% 에너지 절감</strong>, <strong>TBT 지연 최대 58.3% 감소</strong></td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-핵심-알고리즘-및-구조-예시로-설명">⚙️ 핵심 알고리즘 및 구조 예시로 설명</h2>
+<h3 id="-예시-입력-조건">🔧 예시 입력 조건</h3>
+<ul>
+<li>모델: Mixtral-47B, MoE Layer의 expert 수 ( N_{ex} = 8 ), top-2 routing</li>
+<li>요청 수: 4개 (Req0~Req3), 각 요청의 토큰 수: 512</li>
+<li>Attention: GQA (deg_grp = 4)</li>
+<li>Stage: decoding-only</li>
+</ul>
+<hr>
+<h3 id="-expert-co-processing-과정">① Expert Co-processing 과정</h3>
+<table>
+  <thead>
+      <tr>
+          <th>단계</th>
+          <th>작업 설명</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>Gate-projection FC를 통해 각 토큰이 top-2 expert로 라우팅됨</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>각 expert가 처리할 토큰 수 집계됨: 예컨대 Expert 0이 80개, Expert 1이 30개 등</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>작업 분배: 토큰 수가 많은 Expert (예: 0, 2, 4)는 <strong>xPU</strong>, 적은 Expert (예: 1, 3, 5&hellip;)는 <strong>Logic-PIM</strong>에 할당</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>각 단위는 독립적으로 GEMM → 활성화 → down-projection 수행</td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td>down-projection의 partial sum은 <strong>xPU에서 all-reduce</strong> 수행 후 최종 MoE 출력 생성</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="-attention-co-processing-과정">② Attention Co-processing 과정</h3>
+<ul>
+<li><strong>Prefill vs Decoding</strong> 요청 분리:
+<ul>
+<li>Prefill Attention: 고 Op/B → <strong>xPU</strong></li>
+<li>Decoding Attention: 저 Op/B → <strong>Logic-PIM</strong></li>
+</ul>
+</li>
+<li>각 헤드는 별도 KV 공유 없이 독립 → <strong>request-level 병렬성</strong> + <strong>head-level 병렬성</strong> 활용</li>
+</ul>
+<hr>
+<h2 id="-실험-결과-요약-정량적-수치">📈 실험 결과 요약 (정량적 수치)</h2>
+<table>
+  <thead>
+      <tr>
+          <th>비교 대상</th>
+          <th>Throughput (tokens/s)</th>
+          <th>TBT 지연</th>
+          <th>에너지 소비</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>GPU (H100)</td>
+          <td>1.0 (baseline)</td>
+          <td>1.0x</td>
+          <td>1.0x</td>
+      </tr>
+      <tr>
+          <td>Duplex</td>
+          <td><strong>2.07×</strong></td>
+          <td><strong>↓58.3%</strong></td>
+          <td><strong>↓28.2%</strong></td>
+      </tr>
+      <tr>
+          <td>Duplex+PE+ET</td>
+          <td><strong>2.67×</strong></td>
+          <td>최대 <strong>↓60.2%</strong></td>
+          <td>최대 <strong>↓42.0%</strong></td>
+      </tr>
+      <tr>
+          <td>2×GPU</td>
+          <td>1.76×</td>
+          <td>유사</td>
+          <td>↑ 에너지 소비</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-한계점-및-고려사항">⚠️ 한계점 및 고려사항</h2>
+<table>
+  <thead>
+      <tr>
+          <th>구분</th>
+          <th>설명</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>🧠 Expert skew dependency</td>
+          <td>Co-processing 효과는 전문가 간 <strong>토큰 수 불균형</strong>이 있을 때 극대화됨. 균일 분포일 경우 효율 감소</td>
+      </tr>
+      <tr>
+          <td>🔁 KV cache 관리</td>
+          <td>긴 시퀀스 및 대형 배치 시 <strong>KV 캐시가 메모리 병목</strong>. PagedAttention 등의 캐시 이관 기법 필요</td>
+      </tr>
+      <tr>
+          <td>🔃 Prefill-Decode 분리 처리</td>
+          <td>Splitwise와 유사한 prefill/decoding 노드 분리 시 Throughput 하락 발생 (비효율적 weight 복제, 활용률 저하)</td>
+      </tr>
+      <tr>
+          <td>🔌 TSV 추가 및 PIM area overhead</td>
+          <td>TSV와 로직 연산기 추가로 <strong>HBM3 logic die의 14.71% 면적 증가</strong> 발생 (하지만 기존 Bank-PIM 대비 작음)</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-정리">✅ 정리</h2>
+<p>Duplex는 LLM의 연산량 불균형(Op/B 기반)에 최적화된 <strong>하드웨어-알고리즘 동시 설계 사례</strong>로, 특히 <strong>MoE+GQA+Continuous batching</strong> 조합에서 GPU 대비 확연한 성능 및 에너지 효율 개선을 달성합니다. 향후 이러한 hybrid device 설계가 GPU 대체 혹은 보완 구조로 점점 중요해질 가능성이 크며, Logic-PIM의 실리콘 구현이나 프레임워크 통합에 대한 후속 연구가 기대됩니다.</p>
+<hr>
+<p>필요하다면 주요 Figure나 Table의 시각화 정리, 각 하드웨어 구성 요소별 UML/구조도 등도 도와드릴 수 있어요. 추가 요청 주세요.</p>
+<h1 id="q--논문의-핵심알고리즘을-예시를-들어-아주-자세하게-설명해주고-정리해-줘">Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘</h1>
+<p>Duplex 논문의 핵심 알고리즘은 **“expert and attention co-processing”**입니다. 이는 LLM의 Mixture-of-Experts (MoE) 및 Grouped-Query Attention (GQA) 계층에서 <strong>xPU와 Logic-PIM을 동시에 사용하여 연산을 병렬 처리하는 방식</strong>입니다. 이 알고리즘을 단순히 Layer 분리 수준이 아니라 <strong>fine-grained 수준</strong>에서 co-processing하는 것이 논문의 핵심 기여입니다.</p>
+<hr>
+<h2 id="-개념-정리-co-processing이-필요한-이유">✅ 개념 정리: Co-processing이 필요한 이유</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Layer</th>
+          <th>특징</th>
+          <th>문제점 (GPU 기준)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>MoE Layer</td>
+          <td>Top-k Expert 선택 후 GEMM + activation</td>
+          <td>토큰이 각 Expert로 분산돼 Op/B가 낮음 (1~4 수준), 연산기 활용도 저조</td>
+      </tr>
+      <tr>
+          <td>Attention Layer (GQA)</td>
+          <td>Grouped Head들이 공유된 KV로 Attention</td>
+          <td>요청마다 다른 KV → GEMV 연산 + DRAM 액세스 증가</td>
+      </tr>
+  </tbody>
+</table>
+<p>이로 인해 기존 GPU는 연산량(Op/B)이 낮은 이 Layer들에서 <strong>11% 이하 활용률</strong>, <strong>낮은 throughput</strong>, <strong>높은 지연과 에너지 낭비</strong> 문제 발생.</p>
+<hr>
+<h2 id="-핵심-아이디어-expert--attention-co-processing">🧠 핵심 아이디어: Expert &amp; Attention Co-processing</h2>
+<h3 id="구조">구조</h3>
+<ul>
+<li><strong>xPU</strong>: GPU 수준 연산장치 (고 Op/B 전용)</li>
+<li><strong>Logic-PIM</strong>: DRAM logic die에 탑재된 연산기 (저 Op/B 전용)</li>
+</ul>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p>각 Layer의 연산량(Op/B)에 따라 적절한 연산기로 분배하여 <strong>병렬 수행 (co-processing)</strong></p>
+    </div>
+  </blockquote>
+
+<hr>
+<h2 id="-예시-기반-전체-프로세스-설명">📌 예시 기반 전체 프로세스 설명</h2>
+<h3 id="-입력-조건-mixtral-모델-기준">🧪 입력 조건 (Mixtral 모델 기준)</h3>
+<ul>
+<li>Batch size: 4개 요청 (Req0 ~ Req3)</li>
+<li>각 요청 토큰 수: 512</li>
+<li>MoE layer: 8 experts, top-2 선택</li>
+<li>Attention: GQA (deg_grp=4)</li>
+<li>Stage: Mixed (Req0~2는 decoding, Req3는 prefill)</li>
+</ul>
+<hr>
+<h3 id="-moe-co-processing---예시-기반-단계">① MoE Co-processing - 예시 기반 단계</h3>
+<ol>
+<li>
+<p><strong>Gate Projection 실행 (xPU)</strong></p>
+<ul>
+<li>각 토큰이 top-2 experts 선택됨</li>
+<li>예:
+<ul>
+<li>Req0: 토큰 512개 중 → Expert 0: 120개, Expert 1: 80개</li>
+<li>Req1: Expert 0: 90개, Expert 2: 100개 등</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Expert별 토큰 수 계산</strong><br>
+→ Expert별로 처리할 토큰 수 상이함 → <strong>불균형 발생</strong></p>
+</li>
+<li>
+<p><strong>작업 분배 (정책 기반)</strong></p>
+<ul>
+<li>xPU: 많은 토큰 할당된 expert (e.g., Expert 0, 2, 5)</li>
+<li>Logic-PIM: 적은 토큰 expert (e.g., Expert 1, 3, 6)</li>
+</ul>
+</li>
+<li>
+<p><strong>연산 수행</strong></p>
+<ul>
+<li>각 연산기에서:
+<ul>
+<li>Up-Projection (GEMM)</li>
+<li>Activation (e.g., SiLU)</li>
+<li>Down-Projection (GEMM)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>결과 합산 (xPU)</strong></p>
+<ul>
+<li>각 Logic-PIM과 xPU가 계산한 output을 all-reduce하여 최종 MoE output 생성</li>
+<li>이 단계는 xPU가 수행함</li>
+</ul>
+</li>
+</ol>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p>✅ 이 방식은 <strong>토큰 수 불균형</strong>을 활용해 <strong>각 연산기의 utilization을 높임</strong></p>
+    </div>
+  </blockquote>
+
+<hr>
+<h3 id="-attention-co-processing---예시-기반-단계">② Attention Co-processing - 예시 기반 단계</h3>
+<ol>
+<li>
+<p><strong>Request 분류</strong></p>
+<ul>
+<li>Req3 (Prefill): Q 512개 / KV 512개 → GEMM, Op/B 높음</li>
+<li>Req0~2 (Decoding): Q 1개씩 / KV 많음 → GEMV, Op/B 낮음</li>
+</ul>
+</li>
+<li>
+<p><strong>연산기 분배</strong></p>
+<ul>
+<li>Prefill attention: <strong>xPU</strong></li>
+<li>Decoding attention: <strong>Logic-PIM</strong></li>
+</ul>
+</li>
+<li>
+<p><strong>Attention 계산</strong></p>
+<ul>
+<li>GQA이므로 각 group head는 동일한 KV를 공유 → DRAM 접근량 절감</li>
+<li>각 request 간 독립 → Logic-PIM에서 <strong>Request-level 병렬</strong>, <strong>Head-level 병렬</strong> 수행</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="-알고리즘-흐름-요약-혼합-스테이지-기준">🔄 알고리즘 흐름 요약 (혼합 스테이지 기준)</h2>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        TEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-0"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-0"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-0">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="ln"> 1</span><span class="cl">[Input] → Embedding → LayerNorm
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">   ↓
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">[MHA/GQA] → Logic-PIM (decoding) + xPU (prefill)
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">   ↓
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">[MoE Layer]
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">   ├─ Expert 0, 2, 5 → xPU
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">   └─ Expert 1, 3, 6 → Logic-PIM
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">   ↓
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">[AllReduce (MoE output)] → xPU
+</span></span><span class="line"><span class="ln">10</span><span class="cl">   ↓
+</span></span><span class="line"><span class="ln">11</span><span class="cl">[Projection, Residual, LayerNorm] → xPU</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-0';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<hr>
+<h2 id="-속도-향상을-위한-추가-기술-lookup-table-기반-expert-분배">🔄 속도 향상을 위한 추가 기술: Lookup Table 기반 Expert 분배</h2>
+<ul>
+<li>사전에 각 expert에 대해 “n개 토큰 처리 시 xPU/Logic-PIM 소요 시간”을 측정하여 LUT 구축</li>
+<li>실시간 실행 시:
+<ul>
+<li>각 expert별 토큰 수 집계</li>
+<li>최소 실행 시간 조합을 탐색하여 분배</li>
+</ul>
+</li>
+<li>이 방식은 overhead가 negligible 수준</li>
+</ul>
+<hr>
+<h2 id="-정리-1">🧩 정리</h2>
+<table>
+  <thead>
+      <tr>
+          <th>구성요소</th>
+          <th>기여</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>🔄 Co-processing</td>
+          <td>연산기 활용률 향상, Op/B 기반 계층 분할</td>
+      </tr>
+      <tr>
+          <td>⚖️ Expert 분배</td>
+          <td>Load balancing 기반 GPU + Logic-PIM 동시 활용</td>
+      </tr>
+      <tr>
+          <td>🔁 Attention 병렬</td>
+          <td>Request &amp; Head 병렬화로 GQA 연산 최적화</td>
+      </tr>
+      <tr>
+          <td>🧠 LUT 기반 스케줄링</td>
+          <td>런타임 오버헤드 최소화하면서 최적화된 분배 결정</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<p>이 알고리즘은 앞으로 MoE 기반 LLM이 점점 커지면서 <strong>단일 GPU로는 감당하기 어려운 low Op/B 연산을 효율적으로 처리</strong>하기 위한 핵심 기술이 될 수 있습니다.</p>
+<p>필요하시면 LUT 구성 방식, 또는 expert 분배 알고리즘의 의사코드 수준으로도 풀어드릴 수 있어요.</p>
+<h1 id="q--이-논문에서-제시한-결과를-자세하게-보고-다른-방법론에-비하여-특출난-점과-논문에서-제기하는-어떠한-방법이-이러한-결과를-도출하게-되었는지-논문에서-제시하는-이유와-너의-생각을-알려줘">Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘</h1>
+<p>좋습니다. Duplex 논문은 Mixture-of-Experts (MoE), Grouped Query Attention (GQA), 그리고 Continuous Batching으로 구성된 최신 LLM 환경에서 GPU가 가진 <strong>낮은 연산 활용률과 메모리 병목 문제</strong>를 해결하고자 <strong>xPU + Logic-PIM 기반 이기종 연산 구조</strong>를 제안합니다. 이 구조로 기존 GPU 및 기타 PIM 기반 구조 대비 탁월한 성능/에너지 효율을 달성하였습니다.</p>
+<hr>
+<h2 id="-논문에서-제시한-주요-실험-결과">📊 논문에서 제시한 주요 실험 결과</h2>
+<table>
+  <thead>
+      <tr>
+          <th>비교 대상</th>
+          <th>Throughput 향상</th>
+          <th>TBT (p50) 감소</th>
+          <th>E2E Latency 감소</th>
+          <th>Energy 감소</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>GPU (H100)</strong></td>
+          <td>기준선 (1.0×)</td>
+          <td>기준선</td>
+          <td>기준선</td>
+          <td>기준선</td>
+      </tr>
+      <tr>
+          <td><strong>2× GPU (H100)</strong></td>
+          <td>1.76×</td>
+          <td>↓ 낮음</td>
+          <td>↓ 약간 감소</td>
+          <td>✖ 증가</td>
+      </tr>
+      <tr>
+          <td><strong>Duplex</strong></td>
+          <td><strong>2.07×</strong></td>
+          <td><strong>↓ 58.3%</strong></td>
+          <td><strong>↓ 60.2%</strong></td>
+          <td><strong>↓ 28.2%</strong></td>
+      </tr>
+      <tr>
+          <td><strong>Duplex+PE+ET</strong></td>
+          <td><strong>최대 2.67×</strong></td>
+          <td><strong>↓ 최대 58.3%</strong></td>
+          <td><strong>↓ 35~60%</strong></td>
+          <td><strong>↓ 42.03%</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>🔁 평가 모델: Mixtral, GLaM, Grok1, LLaMA3, OPT<br>
+⚙️ 테스트 조건: (Lin, Lout) ∈ [256–4096], Batch size ∈ [32–128]</p>
+<hr>
+<h2 id="-어떤-방식이-이런-성능-향상을-이끌었는가">🧩 어떤 방식이 이런 성능 향상을 이끌었는가?</h2>
+<h3 id="1--logic-pim-아키텍처-설계">1. 💡 Logic-PIM 아키텍처 설계</h3>
+<ul>
+<li>기존 PIM (e.g., Bank-PIM, BankGroup-PIM)은 DRAM 다이에 연산 유닛을 직접 집적하여 Op/B &lt; 1 수준에 특화</li>
+<li>논문은 “<strong>Op/B 1~32</strong>” 수준이 실제 MoE, GQA 연산에 해당됨을 관찰 → 기존 PIM <strong>비효율</strong></li>
+<li><strong>Logic-PIM은</strong> DRAM 아래 <strong>Logic die에 고성능 연산 유닛을 배치</strong>하고 TSV를 증설하여 고대역폭 연결</li>
+</ul>
+<p><strong>→ 결과:</strong><br>
+연산 밀도는 낮고 메모리 접근량이 많은 Layer (MoE, GQA)를 PIM이 <strong>효율적으로 분산 처리</strong></p>
+<hr>
+<h3 id="2--expert--attention-co-processing">2. 🔀 Expert / Attention Co-processing</h3>
+<ul>
+<li>기존 방식은 Layer 단위로 연산 분배함 (GPU ↔ PIM)</li>
+<li><strong>Duplex는 Fine-grained 연산 분배</strong>:
+<ul>
+<li>MoE: Expert별 토큰 수에 따라 <strong>GPU ↔ Logic-PIM에 분할 배정</strong></li>
+<li>Attention: Prefill은 GPU, Decoding은 Logic-PIM으로 분리</li>
+</ul>
+</li>
+</ul>
+<p><strong>→ 결과:</strong><br>
+✔️ 연산 리소스 활용률 증가<br>
+✔️ Co-processing을 통해 병렬 처리로 latency 감소<br>
+✔️ batching 효과 손실 없이 throughput 증가</p>
+<hr>
+<h3 id="3--연산량-opb에-따른-스케줄링-최적화">3. 📈 연산량 (Op/B)에 따른 스케줄링 최적화</h3>
+<ul>
+<li>각 layer의 Op/B를 동적으로 측정하여:
+<ul>
+<li><strong>Op/B ↑:</strong> GPU(xPU)</li>
+<li><strong>Op/B ↓:</strong> Logic-PIM</li>
+</ul>
+</li>
+</ul>
+<p>예시:</p>
+<ul>
+<li>GQA (deg_grp = 4<del>8): Op/B ≈ 4</del>8 → Logic-PIM이 적합</li>
+<li>MoE (top-k=2, Nex=64): Op/B ≈ 1~5 → Logic-PIM 대상</li>
+<li>FC Layer: Op/B ≫ 32 → GPU 대상</li>
+</ul>
+<hr>
+<h3 id="4--continuous-batching-구조-최적화">4. 🔄 Continuous Batching 구조 최적화</h3>
+<ul>
+<li>Continuous batching은 request를 stage 단위로 lock-step batching 처리</li>
+<li>Decoding-only stage가 <strong>전체의 80% 이상</strong><br>
+⇒ Op/B 낮음 ⇒ Logic-PIM을 활용한 빠른 처리 효과적</li>
+</ul>
+<hr>
+<h2 id="-저자의-주장-vs-나의-해석">🧠 저자의 주장 vs 나의 해석</h2>
+<table>
+  <thead>
+      <tr>
+          <th>항목</th>
+          <th>논문 설명</th>
+          <th>나의 해석</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>🎯 문제 정의</td>
+          <td>Continuous batching에서의 낮은 Op/B로 GPU 자원 미활용</td>
+          <td>타당함. 특히 decoding-only stage에서 대부분의 시간이 MoE/Attention에 소비됨</td>
+      </tr>
+      <tr>
+          <td>🚀 성능 향상 근거</td>
+          <td>Op/B 기반 device selection + co-processing</td>
+          <td>단순 Layer 이동이 아닌 <strong>intra-layer 분할</strong>이라는 점에서 큰 구조적 차별성 존재</td>
+      </tr>
+      <tr>
+          <td>⚙️ Logic-PIM 우수성</td>
+          <td>DRAM die 대신 logic die에 연산기 배치로 area 효율 및 Op/B 대응 범위 확장</td>
+          <td>TSV 밀도 증가를 효과적으로 활용했다는 점에서 실리콘 구현 관점에서도 설득력 있음</td>
+      </tr>
+      <tr>
+          <td>📉 경쟁 구조 대비</td>
+          <td>Bank-PIM은 Op/B 증가 시 성능 급감</td>
+          <td>실제 Mixtral 등 고 Op/B GQA 모델에서 Duplex가 압도적 우위 확보</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-다른-방법론과-차별점-요약">🔬 다른 방법론과 차별점 요약</h2>
+<table>
+  <thead>
+      <tr>
+          <th>항목</th>
+          <th>Duplex</th>
+          <th>기존 PIM (Bank-PIM 등)</th>
+          <th>GPU only</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Layer 처리 방식</td>
+          <td><strong>Intra-layer Co-processing</strong></td>
+          <td>Layer offloading</td>
+          <td>Full layer GPU 처리</td>
+      </tr>
+      <tr>
+          <td>Target Op/B</td>
+          <td>1–32</td>
+          <td>&lt;1</td>
+          <td>제한 없음, 그러나 저 Op/B 비효율</td>
+      </tr>
+      <tr>
+          <td>하드웨어 위치</td>
+          <td>Logic Die (HBM 내부)</td>
+          <td>DRAM Die</td>
+          <td>별도 SoC</td>
+      </tr>
+      <tr>
+          <td>Throughput</td>
+          <td><strong>2.67×</strong></td>
+          <td>~1.4–1.6×</td>
+          <td>baseline</td>
+      </tr>
+      <tr>
+          <td>Latency</td>
+          <td><strong>↓ 최대 60%</strong></td>
+          <td>↓ 일부 감소</td>
+          <td>높음</td>
+      </tr>
+      <tr>
+          <td>Energy</td>
+          <td><strong>↓ 28–42%</strong></td>
+          <td>중간</td>
+          <td>높음</td>
+      </tr>
+      <tr>
+          <td>Weight Duplication 문제</td>
+          <td>없음</td>
+          <td>있음</td>
+          <td>없음</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-결론-요약-1">✅ 결론 요약</h2>
+<p>Duplex의 뛰어난 성능은 단순히 하드웨어 추가 때문이 아니라,<br>
+🔹 <strong>Op/B-aware 연산 분배 전략</strong>,<br>
+🔹 <strong>intra-layer 수준의 fine-grained co-processing</strong>,<br>
+🔹 <strong>HBM logic die를 활용한 Logic-PIM 구조 설계</strong>,<br>
+🔹 그리고 <strong>continuous batching에 최적화된 실행 스케줄링</strong><br>
+이 유기적으로 작동한 결과입니다.</p>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p>**&ldquo;단순히 더 많은 연산 자원을 사용하는 것이 아니라, 더 똑똑하게 분산하고 배치하는 것&rdquo;**이 Duplex가 특출난 이유입니다.</p>
+    </div>
+  </blockquote>
+
+<h1 id="q--이-논문의-입력데이터와-추론-과정에-대해서-예시를-들어-아주-자세하게-설명해-주겠니-추가적으로-모델아키텍처의-구성-및-모델을-구성하는-연산과-메모리-요구량-컴퓨팅-요구량-대해서도-설명해줘">Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘</h1>
+<p>좋습니다. 이 논문에서 다루는 Duplex 구조는 **LLM 추론 (inference)**의 연산 병목을 해결하기 위한 하드웨어적 접근이며, 논문 전반에서 <strong>Mixtral, GLaM, Grok1</strong> 같은 <strong>MoE 기반 디코더-중심 LLM</strong> 구조를 대상으로 성능을 분석합니다. 아래는 예시 기반으로 <strong>입력 데이터와 추론 경로</strong>, 그리고 <strong>모델 아키텍처 구조 및 각 연산의 메모리·컴퓨팅 요구량</strong>을 상세하게 설명한 내용입니다.</p>
+<hr>
+<h2 id="1--예시-기반-입력-데이터와-추론-경로">1. 🧪 예시 기반 입력 데이터와 추론 경로</h2>
+<h3 id="-예시-설정">📌 예시 설정</h3>
+<table>
+  <thead>
+      <tr>
+          <th>항목</th>
+          <th>값</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Request 수</td>
+          <td>4개 (Req0 ~ Req3)</td>
+      </tr>
+      <tr>
+          <td>각 Request의 Input Length (L<sub>in</sub>)</td>
+          <td>512 tokens</td>
+      </tr>
+      <tr>
+          <td>Output Length (L<sub>out</sub>)</td>
+          <td>128 tokens</td>
+      </tr>
+      <tr>
+          <td>Model</td>
+          <td>Mixtral-47B</td>
+      </tr>
+      <tr>
+          <td>MoE 구성</td>
+          <td>8 experts, top-2 선택</td>
+      </tr>
+      <tr>
+          <td>Attention</td>
+          <td>Grouped Query Attention (deg<sub>grp</sub> = 4)</td>
+      </tr>
+      <tr>
+          <td>Stage</td>
+          <td>Mixed stage (Req0~2: decoding, Req3: prefill)</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="2--모델-아키텍처-구성-moe--gqa-기반-디코더">2. 🧠 모델 아키텍처 구성 (MoE + GQA 기반 디코더)</h2>
+<h3 id="-구조-요약">▼ 구조 요약</h3>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        TEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-1"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-1"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-1">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="ln">1</span><span class="cl">[Embedding]
+</span></span><span class="line"><span class="ln">2</span><span class="cl">   ↓
+</span></span><span class="line"><span class="ln">3</span><span class="cl">[Decoder Block × N]  ← 32~80 layers
+</span></span><span class="line"><span class="ln">4</span><span class="cl">   ├── LayerNorm
+</span></span><span class="line"><span class="ln">5</span><span class="cl">   ├── Grouped Query Attention (GQA)
+</span></span><span class="line"><span class="ln">6</span><span class="cl">   ├── Residual Add
+</span></span><span class="line"><span class="ln">7</span><span class="cl">   ├── MoE Layer (Gate + FFN experts × N_ex)
+</span></span><span class="line"><span class="ln">8</span><span class="cl">   └── Residual Add
+</span></span><span class="line"><span class="ln">9</span><span class="cl">[LM Head]</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-1';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<hr>
+<h2 id="3--추론-과정-상세-예시">3. 🔄 추론 과정 상세 예시</h2>
+<h3 id="-stage-1-prefill-req3">▶ Stage 1: Prefill (Req3)</h3>
+<ul>
+<li>
+<p>입력: 512개 토큰</p>
+</li>
+<li>
+<p>수행 내용:</p>
+<ol>
+<li>Token → Embedding vector (FP16, e.g., 4096-dim)</li>
+<li>Embedding → GQA → Key, Value → KV cache로 저장</li>
+<li>GQA 결과 + Residual → MoE → FFN 결과 합산</li>
+<li>최종 hidden → LM Head → 다음 token 생성 (첫 token)</li>
+</ol>
+</li>
+<li>
+<p>특이점:</p>
+<ul>
+<li>GQA: K/V는 512개의 context 토큰에서 만들어짐</li>
+<li>Q는 512개의 토큰 → GEMM 형태</li>
+<li><strong>Op/B: 높음 (~16)</strong> → xPU에서 처리</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="-stage-2-decoding-req02">▶ Stage 2: Decoding (Req0~2)</h3>
+<ul>
+<li>
+<p>입력: 이전 단계의 마지막 token (1개)</p>
+</li>
+<li>
+<p>수행 내용:</p>
+<ol>
+<li>1-token → Embedding → 1×4096 벡터</li>
+<li>Q만 새로 생성 + 이전 KV와 Attention 수행 (GQA)</li>
+<li>MoE Layer: 각 token → top-2 experts 선택 → FFN 통과</li>
+<li>LM Head에서 다음 token 생성</li>
+</ol>
+</li>
+<li>
+<p>특이점:</p>
+<ul>
+<li>Q: 1개 token → K/V는 기존 512개와 매칭 → <strong>GEMV 형태</strong></li>
+<li>MoE는 분기돼서 <strong>병렬 expert 처리</strong> (토큰마다 다른 expert)</li>
+<li><strong>Op/B: 낮음 (<del>1</del>4)</strong> → Logic-PIM에서 처리 효율적</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="4--각-연산별-요구-자원-분석">4. ⚙️ 각 연산별 요구 자원 분석</h2>
+<table>
+  <thead>
+      <tr>
+          <th>연산 종류</th>
+          <th>설명</th>
+          <th>메모리 요구량</th>
+          <th>연산량 (FLOPs)</th>
+          <th>Op/B (대략)</th>
+          <th>처리 위치</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Embedding</strong></td>
+          <td>Token → vector</td>
+          <td>L<sub>in</sub> × d<sub>model</sub></td>
+          <td>negligible</td>
+          <td>-</td>
+          <td>xPU</td>
+      </tr>
+      <tr>
+          <td><strong>QKV 생성</strong></td>
+          <td>Linear FC ×3</td>
+          <td>O(B×d²)</td>
+          <td>O(B×d²)</td>
+          <td>높음 (≥32)</td>
+          <td>xPU</td>
+      </tr>
+      <tr>
+          <td><strong>GQA Attention</strong></td>
+          <td>Q·K<sup>T</sup> → Softmax → V</td>
+          <td>GEMV (1×d · d×seq)</td>
+          <td>낮음</td>
+          <td>1~8</td>
+          <td>Logic-PIM</td>
+      </tr>
+      <tr>
+          <td><strong>MoE Gate</strong></td>
+          <td>FC + Top-k</td>
+          <td>d→N<sub>ex</sub>, k=2</td>
+          <td>낮음</td>
+          <td>~1</td>
+          <td>xPU</td>
+      </tr>
+      <tr>
+          <td><strong>MoE FFN (Expert)</strong></td>
+          <td>FC1 → Act → FC2</td>
+          <td>B×2×d<sub>int</sub>×d<sub>model</sub></td>
+          <td>높음 (조건부)</td>
+          <td>1~10</td>
+          <td>xPU/Logic-PIM 혼합</td>
+      </tr>
+      <tr>
+          <td><strong>AllReduce (MoE output)</strong></td>
+          <td>expert별 partial sum 결합</td>
+          <td>bandwidth ↑</td>
+          <td>낮음</td>
+          <td>-</td>
+          <td>xPU</td>
+      </tr>
+      <tr>
+          <td><strong>LM Head</strong></td>
+          <td>FC → vocab</td>
+          <td>O(d×V)</td>
+          <td>매우 높음</td>
+          <td>≥64</td>
+          <td>xPU</td>
+      </tr>
+  </tbody>
+</table>
+<p>※ d: hidden dim (예: 4096), d<sub>int</sub>: intermediate dim (예: 14336), V: vocab size (예: 50K)</p>
+<hr>
+<h2 id="5--memory-요구량-in-decoding-stage">5. 📦 Memory 요구량 (in decoding stage)</h2>
+<table>
+  <thead>
+      <tr>
+          <th>항목</th>
+          <th>요구량</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>KV Cache</td>
+          <td>2 × d × L<sub>in</sub> × batch size × FP16 = 2×4096×512×4×2B ≈ <strong>8MB</strong></td>
+      </tr>
+      <tr>
+          <td>MoE expert weight</td>
+          <td>각 expert FFN: (FC1 + FC2) ≈ 2 × d × d<sub>int</sub> × N<sub>ex</sub> = 약 2GB</td>
+      </tr>
+      <tr>
+          <td>GQA weight</td>
+          <td>W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub> 공유되므로 전체 FC 연산용 가중치: 수십 MB</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="6--computing-요구량-per-stage">6. ⚡ Computing 요구량 (per stage)</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Stage 유형</th>
+          <th>주요 연산</th>
+          <th>FLOPs (대략)</th>
+          <th>병목 Layer</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Prefill</td>
+          <td>GQA + MoE</td>
+          <td>1–2 TF</td>
+          <td>xPU에서 집중 처리</td>
+      </tr>
+      <tr>
+          <td>Decoding-only</td>
+          <td>GQA (GEMV) + MoE (GEMM)</td>
+          <td>수백 GF</td>
+          <td>Logic-PIM에 최적</td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>→ 연산량 자체는 prefill이 크지만, 전체 요청 수 대비 decoding-only stage가 80% 이상을 차지</strong><br>
+<strong>→ Op/B 낮은 decoding 단계에서 Logic-PIM이 매우 유효함</strong></p>
+<hr>
+<h2 id="-정리-2">✅ 정리</h2>
+<table>
+  <thead>
+      <tr>
+          <th>항목</th>
+          <th>Duplex의 설계/알고리즘에서 어떻게 대응하는가</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>다양한 Op/B 계층 존재</td>
+          <td>GQA (Op/B 4–8), MoE (Op/B 1–10), FC (Op/B ≫ 32)</td>
+      </tr>
+      <tr>
+          <td>→ 연산기 할당 전략</td>
+          <td>Op/B에 따라 Logic-PIM vs xPU에 동적 분배</td>
+      </tr>
+      <tr>
+          <td>긴 sequence → KV cache ↑</td>
+          <td>KV 캐시를 bank bundle 단위로 분산 + migration 지원</td>
+      </tr>
+      <tr>
+          <td>Token 단위 processing</td>
+          <td>토큰별로 서로 다른 expert에 분기 → <strong>Fine-grained expert routing</strong></td>
+      </tr>
+      <tr>
+          <td>Memory 대역폭 병목</td>
+          <td>DRAM die 대신 Logic die에 연산기 탑재 + TSV 확장으로 해결</td>
+      </tr>
+  </tbody>
+</table>
+<h1 id="q--이-논문의-한계를-극복하기-위한-방법으로-어떤-연구흐름이-있는지-정리해서-자세하게-설명해-줘">Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘</h1>
+<p>좋습니다. Duplex 논문은 <strong>Logic-PIM과 xPU의 연산 특성을 활용하여 LLM의 MoE+GQA 구조를 고속으로 추론</strong>하는 뛰어난 설계입니다. 그러나 여전히 몇 가지 <strong>설계적/시스템적 한계</strong>를 가지고 있으며, 이를 극복하기 위한 후속 연구 흐름을 정리해보면 다음과 같습니다.</p>
+<hr>
+<h2 id="-1-한계-요약-및-대응-연구-흐름">✅ 1. 한계 요약 및 대응 연구 흐름</h2>
+<table>
+  <thead>
+      <tr>
+          <th>한계점</th>
+          <th>상세 설명</th>
+          <th>대응 연구 흐름</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>🎯 A. Co-processing 결정의 정적 정책</td>
+          <td>Token 수 기반 expert 분배는 미리 측정된 LUT에 의존함. → <strong>동적 부하 변동</strong>이나 QoS에 민감하지 않음</td>
+          <td>🔹 Reinforcement Learning 기반 <strong>동적 expert scheduling</strong><br>🔹 QoS-aware routing (e.g., latency-bound co-processing)<br>🔹 System-level <strong>runtime profiler 연동</strong></td>
+      </tr>
+      <tr>
+          <td>🔄 B. Bank bundle 충돌 및 memory mapping overhead</td>
+          <td>Logic-PIM ↔ xPU 간 병렬 접근 시 DRAM bank 충돌 가능성 있음 → 메모리 매핑 전략이 복잡함</td>
+          <td>🔹 <strong>Bank-aware compiler pass</strong> 또는 Placement-aware runtime<br>🔹 DRAM row/bank-aware memory allocator</td>
+      </tr>
+      <tr>
+          <td>🔁 C. KV Cache migration/recomputation overhead</td>
+          <td>긴 문장이나 대규모 배치 시 KV Cache가 DRAM을 초과하여 성능 저하</td>
+          <td>🔹 <strong>PagedAttention</strong> 방식 채택 (유닉스 OSDI'23)<br>🔹 Layer-wise KV compression, recomputation trade-off 연구<br>🔹 CPU-GPU-Disk 계층화된 캐시 관리</td>
+      </tr>
+      <tr>
+          <td>⚙️ D. Static hardware resource partitioning</td>
+          <td>Logic-PIM과 xPU의 리소스를 <strong>정해진 연산 계층</strong>에만 사용 → under-utilization 가능</td>
+          <td>🔹 <strong>Elastic co-execution</strong> 구조 (범용 연산기를 동적 할당)<br>🔹 Resource Virtualization: on-demand PIM/XPU pooling</td>
+      </tr>
+      <tr>
+          <td>💾 E. Weight duplication 문제 (Splitwise와 유사)</td>
+          <td>Prefill/decoding 분리를 위한 Layer weight 복제 시 메모리 낭비 발생</td>
+          <td>🔹 <strong>Weight offloading/streaming</strong> 구조<br>🔹 Expert weight eviction/cache 교체 방식 연구<br>🔹 On-the-fly expert recomputation (e.g., Code-MoE 구조)</td>
+      </tr>
+      <tr>
+          <td>🧠 F. Expert 선택 불균형 (Expert Skew)</td>
+          <td>실제 추론에서는 특정 Expert에 많은 토큰이 몰리는 현상 발생</td>
+          <td>🔹 <strong>Load-balanced MoE router</strong> (e.g., Switch-Router [Fedus’21])<br>🔹 Routing-aware scheduling (traffic-aware 토큰 분배)<br>🔹 Entropy-regularized gating function</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-2-관련-후속-연구-흐름-상세">🔍 2. 관련 후속 연구 흐름 상세</h2>
+<h3 id="-a-reinforcement-learning-기반-co-processing-scheduler">🔸 A. Reinforcement Learning 기반 Co-processing Scheduler</h3>
+<ul>
+<li><strong>문제</strong>: 현재 Duplex는 LUT 기반으로 처리기를 정적 할당</li>
+<li><strong>대안</strong>: DeepRL을 활용해 각 stage의 Op/B, batch size, latency SLA 등을 state로 받아서 전문가, attention 연산의 분배 결정을 강화학습으로 학습</li>
+<li><strong>예시</strong>:
+<ul>
+<li>Action: expert 0~7 중 Logic-PIM에 할당할 subset</li>
+<li>Reward: TBT latency 감소량, throughput 증가량</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="-b-dram-aware-memory-allocation">🔸 B. DRAM-aware Memory Allocation</h3>
+<ul>
+<li>
+<p>Duplex는 <strong>Bank Bundle 분할</strong>을 통해 xPU와 Logic-PIM 병렬 접근을 보장하지만, bank-level conflict는 런타임 복잡도를 유발</p>
+</li>
+<li>
+<p><strong>대응 연구</strong>:</p>
+<ul>
+<li>DRAM-aware allocators: allocation 시 bank/index-aware placement</li>
+<li><strong>Compile-time placement</strong>: expert weight, KV cache 등을 bank bundle index 기준으로 mapping</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="-c-kv-캐시-압박-대응-pagedattention-등">🔸 C. KV 캐시 압박 대응 (PagedAttention 등)</h3>
+<ul>
+<li>
+<p>논문에서 언급한 방식:</p>
+<ul>
+<li>Cache가 넘치면 migration to CPU memory or recomputation</li>
+</ul>
+</li>
+<li>
+<p>대응 흐름:</p>
+<ol>
+<li><strong>PagedAttention (Yu et al., OSDI’23)</strong>:
+<ul>
+<li>캐시를 CPU에 페이징하고 필요시 GPU로 스와핑</li>
+<li>swap 비용을 latency SLA 기반으로 조절</li>
+</ul>
+</li>
+<li><strong>Sparse-KV Cache</strong>:
+<ul>
+<li>일부 Layer의 KV만 저장하고 나머지는 recompute</li>
+<li>LRU 기반 eviction 등 가능</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="-d-unified-reconfigurable-architecture-pim-xpu-fusion">🔸 D. Unified Reconfigurable Architecture (PIM-XPU Fusion)</h3>
+<ul>
+<li><strong>문제</strong>: xPU, Logic-PIM이 고정된 역할만 수행</li>
+<li><strong>대응</strong>:
+<ul>
+<li><strong>Elastic Processing Pool</strong> 형태로 하나의 연산기를 MoE or Attention or FC에 할당 가능</li>
+<li>예시: Tile-based processing unit (TPU/TPGRA 스타일), 동적으로 연산기 재구성</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="-e-weight-duplication-회피">🔸 E. Weight Duplication 회피</h3>
+<ul>
+<li>Splitwise 등 시스템은 prefill/decoding 분리 구조로 MoE weight 중복</li>
+<li><strong>대안 흐름</strong>:
+<ul>
+<li>Expert weight streaming (on-demand load)</li>
+<li>Expert compression: quantized format 저장 후 필요시 decompress</li>
+<li>Expert recomputation: decoder layer를 recompute하고 weight는 저장하지 않음 (activation-based replay)</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="-f-expert-skew-대응">🔸 F. Expert Skew 대응</h3>
+<ul>
+<li>
+<p>Switch Transformer (Fedus et al., 2021)에서 언급된 문제</p>
+<ul>
+<li>Gate가 특정 expert에 집중 → GPU load imbalance</li>
+</ul>
+</li>
+<li>
+<p>대응 기술:</p>
+<ul>
+<li><strong>Balanced Router</strong>: top-k 선택 시 diversity 보장 (e.g., entropy regularization)</li>
+<li><strong>Load-aware gating</strong>: 전문가의 current load를 반영하여 Gate Softmax 조정</li>
+<li><strong>Token Re-routing</strong>: 예측 단계에서 라우팅을 수정하여 Skew 완화</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="-정리-duplex의-확장을-위한-연구-흐름-지도">📌 정리: Duplex의 확장을 위한 연구 흐름 지도</h2>
+<div
+  class="code-block-container border-border bg-card my-6 overflow-hidden rounded-xl border shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+  
+  <div
+    class="code-block-header bg-muted/30 border-border flex items-center justify-between border-b px-4 py-3">
+    
+    <div class="flex items-center gap-2">
+      <div class="text-muted-foreground flex-shrink-0">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+</svg>
+      </div>
+      <span class="text-muted-foreground text-sm font-medium">
+        TEXT
+      </span>
+    </div>
+
+    
+    <div class="flex items-center gap-2">
+      <button
+          class="collapse-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+          data-code-id="code-2"
+          data-default-state="expanded"
+          data-collapsed="false"
+          data-auto-collapse-lines="30"
+          data-auto-collapse-height="400"
+          data-collapsed-height="120"
+          title="접기"
+          aria-label="접기">
+          <span class="collapse-icon">
+            
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+          </span>
+          <span class="collapse-text hidden sm:inline"
+            >접기</span
+          >
+        </button>
+      <button
+        class="copy-code-btn text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out focus:ring-2 focus:outline-none"
+        data-code-id="code-2"
+        title="복사"
+        aria-label="복사">
+        <span class="copy-icon">
+          
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+</svg>
+        </span>
+        <span class="copy-text hidden sm:inline"
+          >복사</span
+        >
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="code-block-content relative" id="code-2">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="ln"> 1</span><span class="cl"> ┌──────────────┐
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"> │ Duplex 구조  │
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"> └────┬─────────┘
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">      ▼
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">┌───────────────────────────────────────────────┐
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">│ 1. Co-processing Sched. → Reinforcement-based │
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">│ 2. Memory mapping        → DRAM-aware runtime │
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">│ 3. KV Cache 문제         → PagedAttention, SparseCache │
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">│ 4. Weight duplication     → Streaming, Recomputation │
+</span></span><span class="line"><span class="ln">10</span><span class="cl">│ 5. Expert skew            → Balanced Router / Load-Aware Gate │
+</span></span><span class="line"><span class="ln">11</span><span class="cl">│ 6. Elastic HW 활용        → Reconfigurable / Unified PIM │
+</span></span><span class="line"><span class="ln">12</span><span class="cl">└───────────────────────────────────────────────┘</span></span></code></pre></div>
+    
+    <div
+      class="collapse-overlay to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent opacity-0 transition-opacity duration-300">
+      <div
+        class="text-muted-foreground bg-card/80 border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30 absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-all duration-200">
+        클릭하여 더 보기
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function() {
+  const codeId = 'code-2';
+  const copyBtn = document.querySelector('.copy-code-btn[data-code-id="' + codeId + '"]');
+  const collapseBtn = document.querySelector('.collapse-code-btn[data-code-id="' + codeId + '"]');
+  const codeContainer = document.getElementById(codeId);
+
+  if (!codeContainer) return;
+
+  
+  if (copyBtn) {
+    const copyIcon = copyBtn.querySelector('.copy-icon');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    copyBtn.addEventListener('click', async function() {
+      try {
+        
+        let codeText = '';
+
+        
+        const codeTableCell = codeContainer.querySelector('.lntd:last-child code');
+        if (codeTableCell) {
+          codeText = codeTableCell.textContent || codeTableCell.innerText;
+        } else {
+          
+          const codeElement = codeContainer.querySelector('code');
+          if (codeElement) {
+            
+            const hasInlineLineNumbers = codeElement.querySelector('.ln');
+            if (hasInlineLineNumbers) {
+              
+              const codeLines = codeElement.querySelectorAll('.cl');
+              if (codeLines.length > 0) {
+                codeText = Array.from(codeLines)
+                  .map(line => {
+                    const text = line.textContent || line.innerText;
+                    
+                    return text.replace(/\n+$/, '');
+                  })
+                  .join('\n')
+                  .replace(/\n+$/, ''); 
+              } else {
+                
+                const allText = codeElement.textContent || codeElement.innerText;
+                codeText = allText.replace(/^\d+/gm, '').replace(/^\s+/gm, '');
+              }
+            } else {
+              
+              codeText = codeElement.textContent || codeElement.innerText;
+            }
+          } else {
+            
+            codeText = codeContainer.textContent || codeContainer.innerText;
+          }
+        }
+
+        
+        codeText = codeText.trim();
+
+        
+        await navigator.clipboard.writeText(codeText);
+
+        
+        copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M5 13l4 4L19 7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (copyText) {
+          copyText.textContent = '복사됨';
+        }
+        copyBtn.classList.add('text-green-600');
+
+        
+        setTimeout(() => {
+          copyIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\u0022 \/\u003e\n\u003c\/svg\u003e`;
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          copyBtn.classList.remove('text-green-600');
+        }, 2000);
+
+      } catch (err) {
+        console.error('复制失败:', err);
+
+        
+        const range = document.createRange();
+        const codeElement = codeContainer.querySelector('code') || codeContainer;
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        
+        if (copyText) {
+          copyText.textContent = '선택됨';
+        }
+
+        setTimeout(() => {
+          if (copyText) {
+            copyText.textContent = '복사';
+          }
+          selection.removeAllRanges();
+        }, 2000);
+      }
+    });
+  }
+
+  
+  if (collapseBtn) {
+    const collapseIcon = collapseBtn.querySelector('.collapse-icon');
+    const collapseText = collapseBtn.querySelector('.collapse-text');
+    const collapseOverlay = codeContainer.querySelector('.collapse-overlay');
+
+    
+    let codeElement = codeContainer.querySelector('pre.chroma');
+    if (!codeElement) {
+      codeElement = codeContainer.querySelector('pre');
+    }
+
+    const defaultState = collapseBtn.dataset.defaultState || 'expanded';
+    const isCollapsedAttr = collapseBtn.dataset.collapsed === 'true';
+    const autoCollapseLines = parseInt(collapseBtn.dataset.autoCollapseLines) || 30;
+    const autoCollapseHeight = parseInt(collapseBtn.dataset.autoCollapseHeight) || 400;
+    const collapsedHeight = parseInt(collapseBtn.dataset.collapsedHeight) || 120;
+
+    let isCollapsed = false;
+
+    
+    function initCollapse() {
+      
+      const shouldCollapse = isCollapsedAttr ||
+                           defaultState === 'collapsed' ||
+                           shouldAutoCollapse();
+
+      if (shouldCollapse) {
+        setCollapsed(true, false); 
+      }
+    }
+
+    function shouldAutoCollapse() {
+      
+      if (codeElement) {
+        const lines = codeElement.querySelectorAll('.line, .cl');
+        const height = codeElement.offsetHeight;
+        return lines.length > autoCollapseLines || height > autoCollapseHeight;
+      }
+
+      
+      const containerHeight = codeContainer.offsetHeight;
+      if (containerHeight > autoCollapseHeight) {
+        return true;
+      }
+
+      
+      const textContent = codeContainer.textContent || codeContainer.innerText || '';
+      const estimatedLines = textContent.split('\n').length;
+      return estimatedLines > autoCollapseLines;
+    }
+
+    function setCollapsed(collapsed, animate = true) {
+      if (!collapseOverlay) return;
+
+      isCollapsed = collapsed;
+
+      if (collapsed) {
+        
+        codeContainer.style.maxHeight = collapsedHeight + 'px';
+        codeContainer.style.overflow = 'hidden';
+        collapseOverlay.style.opacity = '1';
+        collapseOverlay.style.pointerEvents = 'auto';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 stroke-width=\u00222\u0022 d=\u0022M19 9l-7 7-7-7\u0022 \/\u003e\n\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '펼치기';
+        }
+        collapseBtn.title = '펼치기';
+
+      } else {
+        
+        codeContainer.style.maxHeight = '';
+        codeContainer.style.overflow = '';
+        collapseOverlay.style.opacity = '0';
+        collapseOverlay.style.pointerEvents = 'none';
+
+        
+        collapseIcon.innerHTML = `\n  \u003csvg class=\u0022h-3 w-3\u0022\n    fill=\u0022none\u0022\n    stroke=\u0022currentColor\u0022\n    viewBox=\u00220 0 24 24\u0022\u003e\u003cpath fill=\u0022currentColor\u0022 d=\u0022M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z\u0022\/\u003e\u003c\/svg\u003e`;
+        if (collapseText) {
+          collapseText.textContent = '접기';
+        }
+        collapseBtn.title = '접기';
+      }
+
+      
+      if (animate) {
+        codeContainer.style.transition = 'max-height 0.3s ease-out';
+        setTimeout(() => {
+          codeContainer.style.transition = '';
+        }, 300);
+      }
+    }
+
+    function toggleCollapse() {
+      setCollapsed(!isCollapsed, true);
+    }
+
+    
+    collapseBtn.addEventListener('click', toggleCollapse);
+
+    
+    if (collapseOverlay) {
+      collapseOverlay.addEventListener('click', () => {
+        if (isCollapsed) {
+          setCollapsed(false, true);
+        }
+      });
+    }
+
+    
+    initCollapse();
+  }
+})();
+</script>
+<hr>
+<h2 id="-마무리">✅ 마무리</h2>
+<p>Duplex는 우수한 하드웨어 구조와 알고리즘을 설계했지만, <strong>실시간 부하 변화</strong>, <strong>불균형 expert 트래픽</strong>, <strong>메모리 스케줄링 복잡성</strong>, <strong>캐시 압박</strong> 등은 여전히 미해결 과제로 남아 있습니다. 이에 대한 연구는 <strong>동적 실행환경 적응성</strong>과 <strong>스케일러블 모듈성</strong>이라는 두 축을 중심으로 발전하고 있으며, 앞으로의 LLM serving 시스템에서 필수 요소로 자리잡을 것입니다.</p>
+<p>물론입니다. Duplex 논문을 깊이 있게 이해하기 위해 다음 세 가지 질문을 중심으로 생각해보시면 매우 효과적입니다. 복사 붙여넣기 쉽게 포맷했습니다.</p>
+<hr>
+<h1 id="q--duplex는-왜-기존-pim-구조예-bank-pim-bankgroup-pim보다-logic-pim-구조를-선택했으며-이-구조가-실제로-moe와-gqa-연산에서-어떤-방식으로-opb-효율성과-연산-병렬성을-개선하는가">Q : Duplex는 왜 기존 PIM 구조(예: Bank-PIM, BankGroup-PIM)보다 Logic-PIM 구조를 선택했으며, 이 구조가 실제로 MoE와 GQA 연산에서 어떤 방식으로 Op/B 효율성과 연산 병렬성을 개선하는가?</h1>
+<p>좋은 질문입니다. 이 질문은 Duplex 논문의 <strong>설계 근거와 아키텍처 선택이 성능에 어떤 영향을 주었는지</strong>를 깊이 파악하는 핵심입니다. 아래에서 논문 내용과 함께 제 해석을 통합하여 정리하겠습니다.</p>
+<hr>
+<h2 id="-왜-기존-pimbank-pim-bankgroup-pim이-아닌-logic-pim인가">✅ 왜 기존 PIM(Bank-PIM, BankGroup-PIM)이 아닌 Logic-PIM인가?</h2>
+<h3 id="1-기존-pim-구조의-한계">1. 기존 PIM 구조의 한계</h3>
+<table>
+  <thead>
+      <tr>
+          <th>구조</th>
+          <th>연산기 위치</th>
+          <th>Op/B 타겟 범위</th>
+          <th>주요 한계</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Bank-PIM</strong></td>
+          <td>DRAM bank 내부</td>
+          <td><strong>&lt; 1</strong></td>
+          <td>연산기 수 제한, 고 Op/B 시 비효율, DRAM 공정 제약</td>
+      </tr>
+      <tr>
+          <td><strong>BankGroup-PIM</strong></td>
+          <td>DRAM bank group</td>
+          <td>&lt; 1</td>
+          <td>유사 문제 + DRAM 내 버퍼 크기 제한</td>
+      </tr>
+      <tr>
+          <td><strong>Logic-PIM</strong> (Duplex 제안)</td>
+          <td>HBM logic die</td>
+          <td><strong>1~32 (MoE, GQA에 적합)</strong></td>
+          <td>연산기 확장 용이, 고대역폭 TSV 활용 가능</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>DRAM die에 연산기를 내장하면 면적, 공정, 발열 측면에서 <strong>scaling이 매우 제한적</strong></li>
+<li>대부분의 LLM 연산(MoE FFN, GQA)은 Op/B가 1~32 범위에 위치 (논문 Fig. 4b Roofline 참고)</li>
+<li>Bank-PIM은 low Op/B 연산에서는 좋지만, MoE나 GQA처럼 연산 밀도가 조금만 올라가면 <strong>연산기 병목</strong> 발생</li>
+</ul>
+<hr>
+<h3 id="2-logic-pim-구조의-장점">2. Logic-PIM 구조의 장점</h3>
+<p><strong>(1) 연산 밀도 (Op/B)</strong></p>
+<ul>
+<li>Logic-PIM은 연산기를 DRAM logic die에 배치</li>
+<li>논문 기준 Logic-PIM은 GEMM 연산에서 Op/B가 8~32인 경우 가장 낮은 EDAP (energy-delay-area product)를 기록 (논문 Fig. 8)</li>
+</ul>
+<p><strong>(2) 연산 확장성</strong></p>
+<ul>
+<li>TSV (Through Silicon Via) 밀도를 증가시켜 logic die ↔ DRAM die 간 <strong>내부 대역폭을 4× 향상</strong></li>
+<li>이로 인해 DRAM bandwidth 병목 없이 연산기를 <strong>더 많이, 더 빠르게 사용 가능</strong></li>
+</ul>
+<p><strong>(3) 연산 병렬성 확보</strong></p>
+<ul>
+<li>DRAM bank bundle 단위로 병렬 read 수행</li>
+<li>각 Logic-PIM unit은 독립적으로 GEMM, softmax, activation 처리 가능</li>
+<li>→ <strong>MoE expert 간 병렬성</strong>, <strong>attention head/request 간 병렬성</strong>을 그대로 활용</li>
+</ul>
+<hr>
+<h2 id="-moe와-gqa-연산에서-logic-pim의-구체적-역할">⚙️ MoE와 GQA 연산에서 Logic-PIM의 구체적 역할</h2>
+<h3 id="1-moe-layer-top-k-ffn">1. MoE Layer (Top-k FFN)</h3>
+<ul>
+<li>각 토큰은 top-2 expert로 라우팅됨 → 각 expert의 처리 토큰 수는 상이</li>
+<li><strong>Logic-PIM은 적은 토큰을 할당받은 expert를 처리</strong>, xPU는 많은 토큰 expert를 처리 (expert co-processing)</li>
+<li>각 Logic-PIM에서:
+<ul>
+<li>Up-Projection (GEMM)</li>
+<li>Gated Activation</li>
+<li>Down-Projection (GEMM)</li>
+</ul>
+</li>
+<li>이후 xPU에서 all-reduce로 결과 병합</li>
+</ul>
+<p>→ <strong>token-level imbalance를 활용한 병렬 분산 실행</strong></p>
+<hr>
+<h3 id="2-gqa-layer-grouped-query-attention">2. GQA Layer (Grouped Query Attention)</h3>
+<ul>
+<li>GQA는 deg<sub>grp</sub>개의 head가 K/V를 공유</li>
+<li>decoding 단계의 attention 연산은 GEMV 형태 (낮은 Op/B)</li>
+<li>Logic-PIM은 request-level, head-level 병렬로 각 attention 연산을 수행</li>
+</ul>
+<p>→ <strong>GQA 연산의 메모리 접근량이 높고 연산량이 적은 특성을 잘 맞춤</strong></p>
+<hr>
+<h2 id="-성능-수치-요약-논문-결과">📊 성능 수치 요약 (논문 결과)</h2>
+<table>
+  <thead>
+      <tr>
+          <th>구조</th>
+          <th>Throughput</th>
+          <th>TBT latency</th>
+          <th>Energy</th>
+          <th>적합 Op/B</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>GPU</td>
+          <td>1.0×</td>
+          <td>기준선</td>
+          <td>기준선</td>
+          <td>전체 가능, 저 Op/B에서 비효율</td>
+      </tr>
+      <tr>
+          <td>Bank-PIM</td>
+          <td>~1.2–1.4×</td>
+          <td>약간 개선</td>
+          <td>일부 절감</td>
+          <td>Op/B &lt; 1</td>
+      </tr>
+      <tr>
+          <td><strong>Logic-PIM (Duplex)</strong></td>
+          <td><strong>최대 2.67×</strong></td>
+          <td><strong>↓ 58% 이상</strong></td>
+          <td><strong>↓ 42%</strong></td>
+          <td><strong>Op/B 1–32 (MoE, GQA)</strong></td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-결론-및-제-해석">🧠 결론 및 제 해석</h2>
+<p>Duplex는 기존 PIM 구조가 근본적으로 가지는 <strong>공정 제약</strong>, <strong>연산기 확장 한계</strong>, <strong>메모리 병목</strong> 문제를 피하기 위해 <strong>Logic-PIM</strong>을 채택했습니다. 이 구조는:</p>
+<ul>
+<li>MoE와 GQA처럼 <strong>낮지만 1 이상인 Op/B 연산</strong>에 가장 잘 맞고,</li>
+<li>병렬성과 bandwidth 모두를 고려한 <strong>연산기 설계 전략</strong>이라는 점에서 매우 현실적이며,</li>
+<li>향후 TSV 기반 logic-in-memory 설계의 <strong>상용화 가능성</strong>을 보여주는 모델로 평가할 수 있습니다.</li>
+</ul>
+<p>필요하시면 Logic-PIM의 DRAM 다이 구조나 연산 경로를 그림으로 도식화해서 설명드릴 수도 있어요.</p>
+<h1 id="q--expert와-attention-co-processing에서-각-연산을-xpu와-logic-pim에-어떻게-동적으로-분배하고-이-과정에서-연산량-불균형token-수-차이-gqa-구조-등을-어떻게-활용하여-성능을-높이는가">Q : Expert와 Attention Co-processing에서 각 연산을 xPU와 Logic-PIM에 어떻게 동적으로 분배하고, 이 과정에서 연산량 불균형(Token 수 차이, GQA 구조 등)을 어떻게 활용하여 성능을 높이는가?</h1>
+<p>이 질문은 Duplex의 <strong>핵심 설계 아이디어</strong>를 깊이 이해하는 데 매우 중요합니다. Duplex는 단순히 Layer를 처리 유닛에 정적으로 배정하는 것이 아니라, <strong>MoE와 Attention 연산을 Fine-grained 수준에서 xPU와 Logic-PIM에 동적으로 분배</strong>하여 연산 병렬성과 리소스 활용률을 극대화합니다.</p>
+<hr>
+<h2 id="-개념-요약-expert--attention-co-processing">✅ 개념 요약: Expert &amp; Attention Co-processing</h2>
+<table>
+  <thead>
+      <tr>
+          <th>구성 요소</th>
+          <th>병렬 처리 대상</th>
+          <th>분배 기준</th>
+          <th>담당 처리기</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>MoE Layer (Experts)</strong></td>
+          <td>Expert별 FFN</td>
+          <td>각 expert가 처리할 <strong>토큰 수</strong></td>
+          <td>xPU (토큰 많음), Logic-PIM (토큰 적음)</td>
+      </tr>
+      <tr>
+          <td><strong>Attention Layer (GQA)</strong></td>
+          <td>Request별 Attention</td>
+          <td><strong>요청 유형</strong> (prefill vs decoding)</td>
+          <td>xPU (prefill), Logic-PIM (decoding)</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="1--expert-co-processing-moe-layer-처리">1. 🧠 Expert Co-processing: MoE Layer 처리</h2>
+<h3 id="-왜-필요한가">💡 왜 필요한가?</h3>
+<ul>
+<li>MoE는 입력 토큰마다 **top-k experts (보통 2개)**를 선택</li>
+<li>실시간 request에서 각 expert가 처리하는 <strong>token 수가 비대칭적 (skewed)</strong><br>
+→ 어떤 expert는 100개, 어떤 expert는 10개 처리</li>
+<li>Logic-PIM은 낮은 Op/B에서 효율적이지만, 처리 능력이 제한적<br>
+→ <strong>큰 expert는 xPU, 작은 expert는 Logic-PIM</strong>에 분산</li>
+</ul>
+<h3 id="-분배-알고리즘">📦 분배 알고리즘</h3>
+<ol>
+<li>Gate-projection FC를 통해 각 토큰 → top-2 expert 라우팅</li>
+<li>각 expert가 맡은 token 수를 집계</li>
+<li>논문이 제안한 <strong>LUT 기반 연산 시간 추정표</strong>를 사용:
+<ul>
+<li>각 expert 처리 시간 (token 수 기준) in xPU vs Logic-PIM</li>
+</ul>
+</li>
+<li>목표: 전체 실행 시간이 최소가 되도록 expert를 할당</li>
+</ol>
+<h3 id="-성능-향상-요인">✨ 성능 향상 요인</h3>
+<ul>
+<li>모든 expert를 xPU에서 처리하면 <strong>load imbalance로 xPU under-utilization</strong></li>
+<li>모든 expert를 Logic-PIM에서 처리하면 <strong>연산 병목 발생</strong></li>
+<li>적절히 분배하면 <strong>MoE Layer 실행 시간 최대 1.36× 단축</strong>, throughput 최대 2.67× 상승</li>
+</ul>
+<hr>
+<h2 id="2--attention-co-processing-gqa-처리">2. 🔄 Attention Co-processing: GQA 처리</h2>
+<h3 id="-왜-필요한가-1">💡 왜 필요한가?</h3>
+<ul>
+<li>Attention layer는 <strong>prefill vs decoding</strong> 단계별로 Op/B 차이가 큼
+<ul>
+<li>Prefill: 전체 토큰 사용 → Op/B 높음 (GEMM)</li>
+<li>Decoding: 토큰 1개 vs KV 전체 → Op/B 낮음 (GEMV)</li>
+</ul>
+</li>
+</ul>
+<h3 id="-분배-정책">📦 분배 정책</h3>
+<table>
+  <thead>
+      <tr>
+          <th>요청 유형</th>
+          <th>연산 특성</th>
+          <th>처리기</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Prefill</strong></td>
+          <td>Q: 전체 입력 (512개), KV 공유</td>
+          <td><strong>xPU</strong></td>
+      </tr>
+      <tr>
+          <td><strong>Decoding</strong></td>
+          <td>Q: 1개 토큰, KV 공유</td>
+          <td><strong>Logic-PIM</strong></td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>Q/K/V 생성은 공통적으로 xPU에서 수행</li>
+<li>Logic-PIM은 request-level, head-level 병렬 처리로 Attention 연산</li>
+</ul>
+<h3 id="-성능-향상-요인-1">✨ 성능 향상 요인</h3>
+<ul>
+<li>Attention layer는 전체 추론에서 <strong>latency 병목 요소 중 하나</strong></li>
+<li>Decoding 단계에서 대부분의 시간 소비됨 → Logic-PIM을 통해 <strong>latency 58.3% 감소</strong></li>
+</ul>
+<hr>
+<h2 id="3--분배-시-고려되는-연산량-불균형의-활용">3. 🔀 분배 시 고려되는 &ldquo;연산량 불균형&quot;의 활용</h2>
+<h3 id="a-expert-skew">A. Expert skew</h3>
+<ul>
+<li>실제 상황: 특정 expert에 token이 몰림 (e.g., expert 0이 전체 token의 30% 차지)</li>
+<li><strong>→ 가장 토큰이 많은 expert들만 xPU에 할당</strong></li>
+<li>token 수 기준 정렬 → 상위 N개를 xPU에 할당하고 나머지는 Logic-PIM에서 처리</li>
+</ul>
+<h3 id="b-gqa-구조의-그룹화-특징">B. GQA 구조의 그룹화 특징</h3>
+<ul>
+<li>deg<sub>grp</sub> = 4~8로 구성되면 KV 공유 증가 → 연산 Op/B 증가</li>
+<li>Prefill의 GQA는 deg<sub>grp</sub> 단위 GEMM → xPU에 적합</li>
+<li>Decoding은 Q 1개 → GEMV → Logic-PIM이 오히려 적합</li>
+</ul>
+<hr>
+<h2 id="-실험-결과로-본-효과">🧪 실험 결과로 본 효과</h2>
+<table>
+  <thead>
+      <tr>
+          <th>구성</th>
+          <th>MoE 실행 시간</th>
+          <th>Attention 처리 시간</th>
+          <th>Overall Throughput</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>All xPU</td>
+          <td>높음 (underutilized)</td>
+          <td>비효율적</td>
+          <td>1.0× (baseline)</td>
+      </tr>
+      <tr>
+          <td>All Logic-PIM</td>
+          <td>병목 발생</td>
+          <td>일부 개선</td>
+          <td>↓</td>
+      </tr>
+      <tr>
+          <td><strong>Co-processing</strong></td>
+          <td>Load-balanced</td>
+          <td>Op/B별 최적 처리</td>
+          <td><strong>↑ 2.67×</strong></td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-결론-요약-2">✅ 결론 요약</h2>
+<p>Duplex는 단순한 계층 분할이 아닌, <strong>토큰 수 기반 Expert 분배 + 요청 유형 기반 Attention 분할</strong>이라는 <strong>fine-grained Co-processing 전략</strong>을 도입합니다. 이 전략은 다음을 실현합니다:</p>
+<ul>
+<li><strong>연산 리소스 활용률 극대화</strong></li>
+<li><strong>MoE 및 GQA에서 발생하는 불균형을 적극 활용</strong></li>
+<li><strong>낮은 latency와 높은 throughput을 동시에 달성</strong></li>
+</ul>
+<p>필요하시면 이 Co-processing 알고리즘을 의사코드나 그림으로 시각화해서 정리해드릴 수도 있어요.</p>
+<h1 id="q--duplex-아키텍처는-continuous-batching-기반-llm-추론에-최적화되어-있다고-주장하는데-구체적으로-어떤-시나리오나-실험-결과가-이러한-주장의-근거가-되며-반대로-어떤-조건에서-이-구조가-비효율적일-수-있는가">Q : Duplex 아키텍처는 continuous batching 기반 LLM 추론에 최적화되어 있다고 주장하는데, 구체적으로 어떤 시나리오나 실험 결과가 이러한 주장의 근거가 되며, 반대로 어떤 조건에서 이 구조가 비효율적일 수 있는가?</h1>
+<p>Duplex가 <strong>Continuous Batching 기반 LLM 추론에 최적화되어 있다</strong>는 주장은 논문 전체에서 반복적으로 강조되는 핵심입니다. 이를 뒷받침하는 구체적인 시나리오와 실험 결과를 정리하고, 반대로 Duplex가 <strong>비효율적일 수 있는 조건</strong>도 함께 분석해보겠습니다.</p>
+<hr>
+<h2 id="-duplex가-continuous-batching에-최적화된-이유">✅ Duplex가 Continuous Batching에 최적화된 이유</h2>
+<h3 id="-continuous-batching-이란">📌 Continuous Batching 이란?</h3>
+<ul>
+<li>LLM inference를 <strong>prefill (전체 입력) + 반복 decoding (토큰 생성)</strong> 단계로 분리</li>
+<li>기존처럼 request-level이 아닌 <strong>stage-level batching</strong> 적용</li>
+<li>새로운 request가 오면 <strong>mixed stage</strong>로 포함시켜 <strong>wait time 감소, throughput 극대화</strong></li>
+</ul>
+<hr>
+<h2 id="1--실험-결과-기반-정량적-근거">1. 📈 실험 결과 기반 정량적 근거</h2>
+<h3 id="a-stage-비중-분석-논문-fig-5a">A. Stage 비중 분석 (논문 Fig. 5a)</h3>
+<table>
+  <thead>
+      <tr>
+          <th>Stage 유형</th>
+          <th>전체 stage 중 비율</th>
+          <th>특징</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Decoding-only</strong></td>
+          <td><strong>약 80~90%</strong></td>
+          <td>Op/B 낮음, 주요 병목 발생</td>
+      </tr>
+      <tr>
+          <td>Mixed stage</td>
+          <td>10~20%</td>
+          <td>Prefill 포함, Op/B 다소 높음</td>
+      </tr>
+  </tbody>
+</table>
+<p>→ 대부분의 연산이 decoding-only stage에서 발생하며, 이 구간이 <strong>low Op/B 연산</strong> 위주로 구성됨<br>
+→ <strong>Logic-PIM 최적 적용 대상</strong></p>
+<hr>
+<h3 id="b-throughput--latency-성능-향상-논문-fig-11-12-13">B. Throughput &amp; Latency 성능 향상 (논문 Fig. 11, 12, 13)</h3>
+<table>
+  <thead>
+      <tr>
+          <th>비교 대상</th>
+          <th>Throughput (tokens/s)</th>
+          <th>TBT Latency 감소 (p50)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>GPU</td>
+          <td>기준선 (1.0×)</td>
+          <td>-</td>
+      </tr>
+      <tr>
+          <td>2× GPU</td>
+          <td>1.76×</td>
+          <td>일부 감소</td>
+      </tr>
+      <tr>
+          <td><strong>Duplex</strong></td>
+          <td><strong>2.07×</strong></td>
+          <td><strong>58.3% 감소</strong></td>
+      </tr>
+      <tr>
+          <td><strong>Duplex+PE+ET</strong></td>
+          <td><strong>최대 2.67×</strong></td>
+          <td>최대 <strong>60% 감소</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>→ continuous batching에서 dominant stage인 decoding-only를 <strong>Logic-PIM으로 빠르게 처리</strong>함으로써<br>
+→ <strong>전체 system-level latency와 throughput을 동시에 향상</strong>시킴</p>
+<hr>
+<h3 id="c-실시간-요청-시나리오-fig-13-qps-실험">C. 실시간 요청 시나리오 (Fig. 13, QPS 실험)</h3>
+<ul>
+<li>QPS (Queries per Second) 증가에 따른 latency 변화</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>QPS</th>
+          <th>GPU</th>
+          <th>2× GPU</th>
+          <th><strong>Duplex</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>4~9</td>
+          <td>처리 가능</td>
+          <td>가능</td>
+          <td>가능</td>
+      </tr>
+      <tr>
+          <td>10~14</td>
+          <td>처리 불가 (큐 대기 증가)</td>
+          <td>가능</td>
+          <td><strong>가능</strong> (14 QPS까지)</td>
+      </tr>
+      <tr>
+          <td>≥15</td>
+          <td>모든 구조에서 overload</td>
+          <td>overload</td>
+          <td>overload</td>
+      </tr>
+  </tbody>
+</table>
+<p>→ <strong>낮은 TBT 유지 + 높은 최대 처리량(QPS) 보장</strong><br>
+→ Duplex는 Continuous Batching 환경에서의 <strong>serving 안정성도 우수</strong></p>
+<hr>
+<h2 id="2--continuous-batching-구조와-duplex-설계의-alignment">2. 💡 Continuous Batching 구조와 Duplex 설계의 Alignment</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Duplex 설계 요소</th>
+          <th>Continuous Batching과의 정합성</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Logic-PIM의 low Op/B 최적화</strong></td>
+          <td>대부분 decoding-only stage 연산이 해당됨</td>
+      </tr>
+      <tr>
+          <td><strong>Co-processing (expert/token 단위)</strong></td>
+          <td>stage별 다양한 token 수에 맞춤형 분배 가능</td>
+      </tr>
+      <tr>
+          <td><strong>KV cache 분리 및 migration 구조</strong></td>
+          <td>decoding stage 캐시 증가 문제를 대응할 수 있도록 설계</td>
+      </tr>
+      <tr>
+          <td><strong>Bank-bundle 기반 DRAM 매핑</strong></td>
+          <td>decoding stage 집중 시 DRAM 충돌 회피</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="-duplex가-비효율적일-수-있는-조건">⚠️ Duplex가 비효율적일 수 있는 조건</h2>
+<h3 id="1-prefill-중심-요청-비중이-높을-때-eg-단발형-qa">1. Prefill 중심 요청 비중이 높을 때 (e.g., 단발형 Q&amp;A)</h3>
+<ul>
+<li>Continuous Batching의 이점이 크지 않음 → 대부분 <strong>mixed stage</strong></li>
+<li>Prefill 연산 (GQA, FC 등)은 high Op/B → <strong>GPU가 더 효율적</strong></li>
+</ul>
+<p>→ 이 경우 Duplex의 Logic-PIM 리소스가 <strong>놀거나 under-utilized</strong> 될 수 있음</p>
+<hr>
+<h3 id="2-expert-간-토큰-분포가-균등할-때">2. Expert 간 토큰 분포가 <strong>균등</strong>할 때</h3>
+<ul>
+<li>Co-processing은 expert 간 <strong>load imbalance를 활용</strong>하는 구조</li>
+<li>모든 expert가 같은 수의 토큰을 처리하는 경우 → 병렬 분배 어려움 → xPU 단일 처리와 유사</li>
+</ul>
+<p>→ <strong>Co-processing 이점이 희석됨</strong></p>
+<hr>
+<h3 id="3-sequence-length가-너무-짧은-경우">3. Sequence length가 너무 짧은 경우</h3>
+<ul>
+<li>Op/B 자체가 높아지고, KV 캐시도 적어져 Logic-PIM 활용 가치가 낮아짐</li>
+<li>DRAM TSV 확장, Logic-PIM area overhead 대비 성능 향상이 적음</li>
+</ul>
+<p>→ <strong>Duplex의 구조적 투자 대비 실익이 줄어듦</strong></p>
+<hr>
+<h2 id="-정리-3">✅ 정리</h2>
+<p>Duplex는 <strong>continuous batching에서 decoding-only stage가 성능 병목이 되는 구조적 특성</strong>을 정확히 포착하여,</p>
+<ul>
+<li>Logic-PIM으로 low Op/B 연산을 처리하고</li>
+<li>Co-processing으로 xPU와 동시 활용을 통해<br>
+→ <strong>latency + throughput + 에너지 효율</strong>을 동시에 끌어올리는 아키텍처입니다.</li>
+</ul>
+<p>하지만, prefill 비중이 과도하게 높거나, token 분포가 균등하거나, sequence가 짧은 경우에는 <strong>Duplex의 구조적 장점이 약화</strong>될 수 있습니다.</p>
+
+  <blockquote
+    class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
+    <div class="prose prose-sm max-w-none">
+      <p>결론적으로 Duplex는 “<strong>LLM Serving 환경에서 대화형 continuous generation 추론에 최적화된 구조</strong>”라고 평가할 수 있습니다.</p>
+    </div>
+  </blockquote>
+
+<p>필요하시면 Duplex가 비효율적인 조건에서 어떻게 구조를 개선할 수 있을지도 제안해드릴 수 있어요.</p>
+
+  </article>
+
+  
+  
+  <div class="post-license bg-muted/30 border-border mb-8 rounded-xl border p-6">
+    <div class="flex items-start gap-4">
+      <div
+        class="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="라이선스"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+</svg>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-foreground mb-2 text-lg font-semibold">
+          라이선스
+        </h3>
+
+        <div class="text-muted-foreground space-y-2 text-sm">
+          
+          <p>
+            <strong>저작자:</strong>
+            류재훈
+          </p>
+          
+
+          <p>
+            <strong>링크:</strong>
+            <a
+              href="http://192.168.1.11:1314/posts/Duplex-A-Device-for-Large-Language-Models-with-Mixture-of-Experts-Grouped-Query-Attention-and-Continuous-Batching/"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              http://192.168.1.11:1314/posts/Duplex-A-Device-for-Large-Language-Models-with-Mixture-of-Experts-Grouped-Query-Attention-and-Continuous-Batching/
+            </a>
+          </p>
+
+          <p>
+            <strong>라이선스:</strong>
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:text-primary/80 transition-colors duration-200">
+              CC BY-NC-SA 4.0
+            </a>
+          </p>
+
+          <p class="text-xs">
+            이 저작물은 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 표시하고, 비영리 목적으로만 사용하며, 동일한 라이선스를 유지해야 합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+
+
+
+
+
+  <nav
+    class="post-navigation mb-12"
+    aria-label="게시글 네비게이션">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/Mirage-A-Multi-Level-Superoptimizer-for-Tensor-Programs/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center gap-3">
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+</svg>
+                <span class="text-muted-foreground text-sm font-medium">
+                  이전
+                </span>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-lg leading-tight font-semibold transition-colors duration-200">
+                Mirage: A Multi-Level Superoptimizer for Tensor Programs
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center gap-2 text-xs">
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+              <time datetime="2025-04-13">
+                04月13日
+              </time>
+            </div>
+          </a>
+        
+      </div>
+
+      
+      <div class="nav-item">
+        
+          <a
+            href="/posts/SwitchHead-Accelerating-Transformers-with-Mixture-of-Experts-Attention/"
+            class="group bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex min-h-[140px] flex-col justify-between rounded-xl border p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg focus:ring-2 focus:outline-none">
+            <div>
+              <div class="mb-3 flex items-center justify-end gap-3">
+                <span class="text-muted-foreground text-sm font-medium">
+                  다음
+                </span>
+                
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+</svg>
+              </div>
+
+              <h3
+                class="text-foreground group-hover:text-primary mb-3 line-clamp-2 text-right text-lg leading-tight font-semibold transition-colors duration-200">
+                SwitchHead: Accelerating Transformers with Mixture-of-Experts Attention
+              </h3>
+            </div>
+
+            <div
+              class="text-muted-foreground mt-auto flex items-center justify-end gap-2 text-xs">
+              <time datetime="2025-04-14">
+                04月14日
+              </time>
+              
+  <svg class="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-8">
+  <div class="px-6 py-6">
+    
+    
+      <nav class="mb-6">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          
+            
+            
+            
+            <a
+              href="/index.xml"
+              
+              class="nav-link hover:text-primary hover:bg-primary/10 text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105">
+              
+                
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="RSS Feed">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+
+</svg>
+              
+              <span
+                >
+                  RSS Feed
+                </span
+              >
+            </a>
+          
+        </div>
+      </nav>
+    
+
+
+    
+    
+      <div class="border-border mb-6 border-t"></div>
+    
+
+
+    
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      
+      <div class="text-muted-foreground text-sm">
+        <p>
+          &copy; 2025 Jaehun&#39;s Blog.
+          모든 권리 보유.
+        </p>
+      </div>
+
+      
+      
+        <div class="flex items-center gap-3">
+          
+            <a
+              href="https://github.com/ryujaehun"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="GitHub"
+              aria-label="GitHub">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="GitHub"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5c.08-1.25-.27-2.48-1-3.5c.28-1.15.28-2.35 0-3.5c0 0-1 0-3 1.5c-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5c-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="https://www.linkedin.com/in/jaehunryu/"
+              
+                target="_blank" rel="noopener noreferrer"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Linkedin"
+              aria-label="Linkedin">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Linkedin"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></g></svg>
+              
+            </a>
+          
+            <a
+              href="mailto:jaehunryu@icloud.com"
+              
+              class="text-muted-foreground hover:text-primary focus:ring-primary/20 rounded-lg p-1 transition-all duration-300 ease-out hover:scale-110 focus:ring-2 focus:outline-none"
+              title="Email"
+              aria-label="Email">
+              
+                
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24" aria-label="Email">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+</svg>
+              
+            </a>
+          
+        </div>
+      
+
+    </div>
+  </div>
+</footer>
+
+
+    
+    
+
+
+
+<div
+  id="dock"
+  class="pointer-events-none fixed bottom-4 left-1/2 z-[9999] w-fit -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out sm:right-0 sm:left-0 sm:mx-auto sm:translate-x-0"
+  role="toolbar"
+  aria-label="바로가기 도구 모음">
+  <nav
+    class="border-border bg-card/80 scrollbar-hide xs:px-3 xs:py-2 mx-auto flex max-w-[calc(100vw-2rem)] min-w-fit items-center justify-center overflow-x-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+    
+    
+      <button
+        id="dock-back"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="뒤로"
+        aria-label="뒤로">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m12 19-7-7 7-7"/>
+  <path d="M19 12H5"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >뒤로</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    
+      <button
+        id="dock-toc"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+        title="목차"
+        aria-label="목차">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <span class="hidden sm:inline"
+          >목차</span
+        >
+      </button>
+
+      
+      <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+    
+
+
+    
+    <button
+      id="dock-search"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-3 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-4 sm:py-2"
+      title="검색"
+      aria-label="검색">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      <span class="hidden md:inline"
+        >검색</span
+      >
+    </button>
+
+    
+    <div class="bg-border xs:mx-1 mx-2 h-6 w-px sm:mx-2"></div>
+
+    
+    
+    
+
+
+    
+    <button
+      id="dock-top"
+      class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 xs:px-2 xs:py-1.5 flex flex-shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none sm:px-3 sm:py-2"
+      title="맨 위로"
+      aria-label="맨 위로">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path d="m18 15-6-6-6 6"/>
+
+</svg>
+      <span class="hidden sm:inline"
+        >맨 위로</span
+      >
+    </button>
+  </nav>
+</div>
+
+
+    
+      
+
+
+
+<div
+  id="toc-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-all duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title"></div>
+
+
+<div
+  id="toc-card"
+  class="pointer-events-none fixed inset-4 z-50 flex w-auto scale-95 items-center justify-center opacity-0 transition-all duration-300 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:block sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="toc-title">
+  <div
+    class="bg-card border-border w-full max-w-sm overflow-hidden rounded-xl border shadow-xl sm:max-w-md">
+    
+    <div
+      class="border-border bg-muted/30 flex items-center justify-between border-b p-4">
+      <div class="flex items-center gap-3">
+        
+  <svg class="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <line x1="8" x2="21" y1="6" y2="6"/>
+  <line x1="8" x2="21" y1="12" y2="12"/>
+  <line x1="8" x2="21" y1="18" y2="18"/>
+  <line x1="3" x2="3.01" y1="6" y2="6"/>
+  <line x1="3" x2="3.01" y1="12" y2="12"/>
+  <line x1="3" x2="3.01" y1="18" y2="18"/>
+
+</svg>
+        <h2 id="toc-title" class="text-foreground text-lg font-semibold">
+          목차
+        </h2>
+      </div>
+
+      
+      <button
+        id="toc-close"
+        class="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:ring-primary/20 rounded-lg p-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 focus:ring-2 focus:outline-none"
+        title="닫기"
+        aria-label="닫기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+    </div>
+
+    
+    <div class="max-h-96 overflow-y-auto p-4">
+      <nav
+        id="toc-nav"
+        class="toc-scrollbar"
+        aria-label="글 목차">
+          
+          <div id="toc-content">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#-결론-요약">📌 결론 요약</a></li>
+      </ul>
+    </li>
+    <li><a href="#-논문의-강점-및-독창성">📘 논문의 강점 및 독창성</a></li>
+    <li><a href="#-핵심-알고리즘-및-구조-예시로-설명">⚙️ 핵심 알고리즘 및 구조 예시로 설명</a>
+      <ul>
+        <li><a href="#-예시-입력-조건">🔧 예시 입력 조건</a></li>
+        <li><a href="#-expert-co-processing-과정">① Expert Co-processing 과정</a></li>
+        <li><a href="#-attention-co-processing-과정">② Attention Co-processing 과정</a></li>
+      </ul>
+    </li>
+    <li><a href="#-실험-결과-요약-정량적-수치">📈 실험 결과 요약 (정량적 수치)</a></li>
+    <li><a href="#-한계점-및-고려사항">⚠️ 한계점 및 고려사항</a></li>
+    <li><a href="#-정리">✅ 정리</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-개념-정리-co-processing이-필요한-이유">✅ 개념 정리: Co-processing이 필요한 이유</a></li>
+    <li><a href="#-핵심-아이디어-expert--attention-co-processing">🧠 핵심 아이디어: Expert &amp; Attention Co-processing</a>
+      <ul>
+        <li><a href="#구조">구조</a></li>
+      </ul>
+    </li>
+    <li><a href="#-예시-기반-전체-프로세스-설명">📌 예시 기반 전체 프로세스 설명</a>
+      <ul>
+        <li><a href="#-입력-조건-mixtral-모델-기준">🧪 입력 조건 (Mixtral 모델 기준)</a></li>
+        <li><a href="#-moe-co-processing---예시-기반-단계">① MoE Co-processing - 예시 기반 단계</a></li>
+        <li><a href="#-attention-co-processing---예시-기반-단계">② Attention Co-processing - 예시 기반 단계</a></li>
+      </ul>
+    </li>
+    <li><a href="#-알고리즘-흐름-요약-혼합-스테이지-기준">🔄 알고리즘 흐름 요약 (혼합 스테이지 기준)</a></li>
+    <li><a href="#-속도-향상을-위한-추가-기술-lookup-table-기반-expert-분배">🔄 속도 향상을 위한 추가 기술: Lookup Table 기반 Expert 분배</a></li>
+    <li><a href="#-정리-1">🧩 정리</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-논문에서-제시한-주요-실험-결과">📊 논문에서 제시한 주요 실험 결과</a></li>
+    <li><a href="#-어떤-방식이-이런-성능-향상을-이끌었는가">🧩 어떤 방식이 이런 성능 향상을 이끌었는가?</a>
+      <ul>
+        <li><a href="#1--logic-pim-아키텍처-설계">1. 💡 Logic-PIM 아키텍처 설계</a></li>
+        <li><a href="#2--expert--attention-co-processing">2. 🔀 Expert / Attention Co-processing</a></li>
+        <li><a href="#3--연산량-opb에-따른-스케줄링-최적화">3. 📈 연산량 (Op/B)에 따른 스케줄링 최적화</a></li>
+        <li><a href="#4--continuous-batching-구조-최적화">4. 🔄 Continuous Batching 구조 최적화</a></li>
+      </ul>
+    </li>
+    <li><a href="#-저자의-주장-vs-나의-해석">🧠 저자의 주장 vs 나의 해석</a></li>
+    <li><a href="#-다른-방법론과-차별점-요약">🔬 다른 방법론과 차별점 요약</a></li>
+    <li><a href="#-결론-요약-1">✅ 결론 요약</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#1--예시-기반-입력-데이터와-추론-경로">1. 🧪 예시 기반 입력 데이터와 추론 경로</a>
+      <ul>
+        <li><a href="#-예시-설정">📌 예시 설정</a></li>
+      </ul>
+    </li>
+    <li><a href="#2--모델-아키텍처-구성-moe--gqa-기반-디코더">2. 🧠 모델 아키텍처 구성 (MoE + GQA 기반 디코더)</a>
+      <ul>
+        <li><a href="#-구조-요약">▼ 구조 요약</a></li>
+      </ul>
+    </li>
+    <li><a href="#3--추론-과정-상세-예시">3. 🔄 추론 과정 상세 예시</a>
+      <ul>
+        <li><a href="#-stage-1-prefill-req3">▶ Stage 1: Prefill (Req3)</a></li>
+        <li><a href="#-stage-2-decoding-req02">▶ Stage 2: Decoding (Req0~2)</a></li>
+      </ul>
+    </li>
+    <li><a href="#4--각-연산별-요구-자원-분석">4. ⚙️ 각 연산별 요구 자원 분석</a></li>
+    <li><a href="#5--memory-요구량-in-decoding-stage">5. 📦 Memory 요구량 (in decoding stage)</a></li>
+    <li><a href="#6--computing-요구량-per-stage">6. ⚡ Computing 요구량 (per stage)</a></li>
+    <li><a href="#-정리-2">✅ 정리</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-1-한계-요약-및-대응-연구-흐름">✅ 1. 한계 요약 및 대응 연구 흐름</a></li>
+    <li><a href="#-2-관련-후속-연구-흐름-상세">🔍 2. 관련 후속 연구 흐름 상세</a>
+      <ul>
+        <li><a href="#-a-reinforcement-learning-기반-co-processing-scheduler">🔸 A. Reinforcement Learning 기반 Co-processing Scheduler</a></li>
+        <li><a href="#-b-dram-aware-memory-allocation">🔸 B. DRAM-aware Memory Allocation</a></li>
+        <li><a href="#-c-kv-캐시-압박-대응-pagedattention-등">🔸 C. KV 캐시 압박 대응 (PagedAttention 등)</a></li>
+        <li><a href="#-d-unified-reconfigurable-architecture-pim-xpu-fusion">🔸 D. Unified Reconfigurable Architecture (PIM-XPU Fusion)</a></li>
+        <li><a href="#-e-weight-duplication-회피">🔸 E. Weight Duplication 회피</a></li>
+        <li><a href="#-f-expert-skew-대응">🔸 F. Expert Skew 대응</a></li>
+      </ul>
+    </li>
+    <li><a href="#-정리-duplex의-확장을-위한-연구-흐름-지도">📌 정리: Duplex의 확장을 위한 연구 흐름 지도</a></li>
+    <li><a href="#-마무리">✅ 마무리</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-왜-기존-pimbank-pim-bankgroup-pim이-아닌-logic-pim인가">✅ 왜 기존 PIM(Bank-PIM, BankGroup-PIM)이 아닌 Logic-PIM인가?</a>
+      <ul>
+        <li><a href="#1-기존-pim-구조의-한계">1. 기존 PIM 구조의 한계</a></li>
+        <li><a href="#2-logic-pim-구조의-장점">2. Logic-PIM 구조의 장점</a></li>
+      </ul>
+    </li>
+    <li><a href="#-moe와-gqa-연산에서-logic-pim의-구체적-역할">⚙️ MoE와 GQA 연산에서 Logic-PIM의 구체적 역할</a>
+      <ul>
+        <li><a href="#1-moe-layer-top-k-ffn">1. MoE Layer (Top-k FFN)</a></li>
+        <li><a href="#2-gqa-layer-grouped-query-attention">2. GQA Layer (Grouped Query Attention)</a></li>
+      </ul>
+    </li>
+    <li><a href="#-성능-수치-요약-논문-결과">📊 성능 수치 요약 (논문 결과)</a></li>
+    <li><a href="#-결론-및-제-해석">🧠 결론 및 제 해석</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-개념-요약-expert--attention-co-processing">✅ 개념 요약: Expert &amp; Attention Co-processing</a></li>
+    <li><a href="#1--expert-co-processing-moe-layer-처리">1. 🧠 Expert Co-processing: MoE Layer 처리</a>
+      <ul>
+        <li><a href="#-왜-필요한가">💡 왜 필요한가?</a></li>
+        <li><a href="#-분배-알고리즘">📦 분배 알고리즘</a></li>
+        <li><a href="#-성능-향상-요인">✨ 성능 향상 요인</a></li>
+      </ul>
+    </li>
+    <li><a href="#2--attention-co-processing-gqa-처리">2. 🔄 Attention Co-processing: GQA 처리</a>
+      <ul>
+        <li><a href="#-왜-필요한가-1">💡 왜 필요한가?</a></li>
+        <li><a href="#-분배-정책">📦 분배 정책</a></li>
+        <li><a href="#-성능-향상-요인-1">✨ 성능 향상 요인</a></li>
+      </ul>
+    </li>
+    <li><a href="#3--분배-시-고려되는-연산량-불균형의-활용">3. 🔀 분배 시 고려되는 &ldquo;연산량 불균형&quot;의 활용</a>
+      <ul>
+        <li><a href="#a-expert-skew">A. Expert skew</a></li>
+        <li><a href="#b-gqa-구조의-그룹화-특징">B. GQA 구조의 그룹화 특징</a></li>
+      </ul>
+    </li>
+    <li><a href="#-실험-결과로-본-효과">🧪 실험 결과로 본 효과</a></li>
+    <li><a href="#-결론-요약-2">✅ 결론 요약</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-duplex가-continuous-batching에-최적화된-이유">✅ Duplex가 Continuous Batching에 최적화된 이유</a>
+      <ul>
+        <li><a href="#-continuous-batching-이란">📌 Continuous Batching 이란?</a></li>
+      </ul>
+    </li>
+    <li><a href="#1--실험-결과-기반-정량적-근거">1. 📈 실험 결과 기반 정량적 근거</a>
+      <ul>
+        <li><a href="#a-stage-비중-분석-논문-fig-5a">A. Stage 비중 분석 (논문 Fig. 5a)</a></li>
+        <li><a href="#b-throughput--latency-성능-향상-논문-fig-11-12-13">B. Throughput &amp; Latency 성능 향상 (논문 Fig. 11, 12, 13)</a></li>
+        <li><a href="#c-실시간-요청-시나리오-fig-13-qps-실험">C. 실시간 요청 시나리오 (Fig. 13, QPS 실험)</a></li>
+      </ul>
+    </li>
+    <li><a href="#2--continuous-batching-구조와-duplex-설계의-alignment">2. 💡 Continuous Batching 구조와 Duplex 설계의 Alignment</a></li>
+    <li><a href="#-duplex가-비효율적일-수-있는-조건">⚠️ Duplex가 비효율적일 수 있는 조건</a>
+      <ul>
+        <li><a href="#1-prefill-중심-요청-비중이-높을-때-eg-단발형-qa">1. Prefill 중심 요청 비중이 높을 때 (e.g., 단발형 Q&amp;A)</a></li>
+        <li><a href="#2-expert-간-토큰-분포가-균등할-때">2. Expert 간 토큰 분포가 <strong>균등</strong>할 때</a></li>
+        <li><a href="#3-sequence-length가-너무-짧은-경우">3. Sequence length가 너무 짧은 경우</a></li>
+      </ul>
+    </li>
+    <li><a href="#-정리-3">✅ 정리</a></li>
+  </ul>
+</nav>
+          </div>
+      </nav>
+    </div>
+
+    
+    <div class="border-border bg-muted/20 border-t px-4 py-3">
+      <div class="text-muted-foreground text-center text-xs">
+        <span>제목을 클릭하면 해당 위치로 이동합니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+    crossorigin="anonymous" />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+
+<script>
+    
+    function initKaTeX() {
+        if (typeof renderMathInElement === 'undefined') {
+            setTimeout(initKaTeX, 100);
+            return;
+        }
+
+        var delimiters = [{"display":true,"left":"$$","right":"$$"},{"display":false,"left":"$","right":"$"}];
+
+        renderMathInElement(document.body, {
+            delimiters: delimiters,
+            throwOnError: false,
+            errorColor: '#cc0000',
+            fleqn: false,
+            leqno: false,
+            trust: false
+        });
+    }
+
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initKaTeX);
+    } else {
+        initKaTeX();
+    }
+</script>
+    
+
+
+
+    
+    
+<div
+  id="search-overlay"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+
+<div
+  id="search-modal"
+  class="bg-card border-border pointer-events-none fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 scale-95 transform overflow-hidden rounded-xl border opacity-0 shadow-xl transition-all duration-300">
+  
+  <div class="border-border flex items-center gap-3 border-b p-4">
+    
+    <div class="text-muted-foreground h-5 w-5 flex-shrink-0">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+    </div>
+
+    
+    <div class="relative flex-1">
+      
+      <button
+        id="search-clear"
+        class="text-muted-foreground hover:text-foreground hover:bg-muted/50 pointer-events-none absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 rounded opacity-0 transition-all duration-200"
+        title="지우기"
+        aria-label="지우기">
+        
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+      </button>
+
+      
+      <input
+        id="search-input"
+        type="text"
+        placeholder="게시글 검색..."
+        class="text-foreground placeholder:text-muted-foreground w-full border-none bg-transparent pl-8 text-lg outline-none"
+        autocomplete="off"
+        spellcheck="false" />
+    </div>
+
+    
+    <button
+      id="search-close"
+      class="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-6 w-6 items-center justify-center rounded-md p-0.5 transition-all duration-200"
+      title="닫기"
+      aria-label="닫기">
+      
+  <svg class="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+</svg>
+    </button>
+  </div>
+
+  
+  <div id="search-results" class="max-h-96 overflow-y-auto">
+    
+    <div
+      id="search-empty"
+      class="flex flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 시작
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        검색어를 입력하세요
+      </p>
+    </div>
+
+    
+    <div
+      id="search-loading"
+      class="flex hidden items-center justify-center py-8">
+      <div
+        class="mr-3 h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+      <span class="text-muted-foreground"
+        >검색 중...</span
+      >
+    </div>
+
+    
+    <div
+      id="search-no-results"
+      class="flex hidden flex-col items-center justify-center py-12 text-center">
+      <div
+        class="bg-muted/50 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        
+  <svg class="h-6 w-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+</svg>
+      </div>
+      <h3 class="text-foreground mb-2 text-lg font-semibold">
+        검색 결과 없음
+      </h3>
+      <p class="text-muted-foreground text-sm">
+        다른 검색어로 시도해보세요
+      </p>
+    </div>
+
+    
+    <div id="search-results-list" class="hidden">
+      
+      <div
+        id="search-stats"
+        class="text-muted-foreground border-border border-b px-4 py-3 text-sm"
+        data-template="%d개의 결과 찾음">
+      </div>
+
+      
+      <div id="search-items" class="divide-border divide-y">
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="border-border bg-muted/20 border-t px-4 py-3">
+    <div
+      class="text-muted-foreground flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↑↓</kbd
+          >
+          <span class="hidden sm:inline"
+            >이동</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >↵</kbd
+          >
+          <span class="hidden sm:inline"
+            >선택</span
+          >
+        </div>
+        <div class="flex items-center gap-1">
+          <kbd
+            class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+            >ESC</kbd
+          >
+          <span class="hidden sm:inline"
+            >닫기</span
+          >
+        </div>
+      </div>
+      <div class="search-hint-desktop flex items-center gap-1">
+        <kbd class="bg-muted border-border rounded border px-1.5 py-0.5 text-xs"
+          >⌘K</kbd
+        >
+        <span>단축키</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Transformer on Jaehun&#39;s Blog</title>
+    <link>http://192.168.1.11:1314/tags/Transformer/</link>
+    <description>Recent content in Transformer on Jaehun&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Wed, 09 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://192.168.1.11:1314/tags/Transformer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Massive Activations in Large Language Models</title>
+      <link>http://192.168.1.11:1314/posts/Massive-Activations-in-Large-Language-Models/</link>
+      <pubDate>Wed, 09 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Massive-Activations-in-Large-Language-Models/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2402.17762v2&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;massive-activations-hidden-biases-재해석된-self-attention의-비밀&#34;&gt;Massive Activations, Hidden Biases: 재해석된 Self-Attention의 비밀&lt;/h1&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;수천만 개 중 &lt;strong&gt;4–10 개의 초거대 스칼라(×10 000)&lt;/strong&gt; 가 LLM · ViT의 성능을 사실상 ‘혼자서’ 지탱한다.&#xA;이 스칼라는 &lt;strong&gt;입력과 무관한 상수형 자기-어텐션 bias&lt;/strong&gt; 로 작동하며, -0-으로 만들면 모델이 즉시 붕괴(PPL → ∞)한다.&#xA;저자들은 이 암묵적 현상을 &lt;strong&gt;Explicit Attention Bias(EAB)&lt;/strong&gt; 라는 모듈로 치환해 &lt;strong&gt;성능을 완전히 복구&lt;/strong&gt;하면서 분석·압축·안전성까지 한 번에 열어젖혔다. &lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Code I/O: Condensing Reasoning Patterns via Code Input-Output Prediction</title>
+      <link>http://192.168.1.11:1314/posts/Code-I/O-Condensing-Reasoning-Patterns-via-Code-Input-Output-Prediction/</link>
+      <pubDate>Mon, 07 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Code-I/O-Condensing-Reasoning-Patterns-via-Code-Input-Output-Prediction/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2502.07316v4&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;code-io-코드-입출력--자연어-cot로-범용-추론까지데이터-설계만으로-7b-30b-llm을-평균-2-점-끌어올리다&#34;&gt;CODE I/O: 코드 입·출력 + 자연어 CoT로 범용 추론까지 — 데이터 설계만으로 7B-30B LLM을 평균 +2 점 끌어올리다&lt;/h1&gt;&#xA;&lt;h2 id=&#34;tldr&#34;&gt;TL;DR&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;“코드 함수 → 입력·출력 예측 + 체계적 Chain-of-Thought(CoT)”라는 단일 데이터 파이프라인만으로, 3.5 M 샘플이 14 M 규모 SOTA 데이터보다 더 크고 균형 잡힌 이득(+2.9 점)을 만든다.&lt;/strong&gt;&#xA;검증 가능·저비용·다양성 세 마리 토끼를 잡은 &lt;strong&gt;CODE I/O&lt;/strong&gt;는 “데이터 품질 &amp;gt; 데이터 양”이라는 사실을 실험적으로 증명한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Auxiliary-Loss-Free Load Balancing Strategy for Mixture-of-Experts</title>
+      <link>http://192.168.1.11:1314/posts/Auxiliary-Loss-Free-Load-Balancing-Strategy-for-Mixture-of-Experts/</link>
+      <pubDate>Tue, 01 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/Auxiliary-Loss-Free-Load-Balancing-Strategy-for-Mixture-of-Experts/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2408.15664v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;Loss-Free Balancing(LFB)은 &lt;em&gt;auxiliary loss&lt;/em&gt;를 완전히 제거한 채, &lt;strong&gt;전문가별 bias 한 줄 업데이트&lt;/strong&gt;만으로 Mixture-of-Experts(MoE) 모델의 ‘로드 밸런스 ↔ 성능’ 딜레마를 깨고 **Perplexity ≈ 0.5↓, MaxVio ≥ 90 %↓**를 동시에 달성했다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DeepSeek-Coder-V2: Breaking the Barrier of Closed-Source Models in Code Intelligence</title>
+      <link>http://192.168.1.11:1314/posts/DeepSeek-Coder-V2-Breaking-the-Barrier-of-Closed-Source-Models-in-Code-Intelligence/</link>
+      <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://192.168.1.11:1314/posts/DeepSeek-Coder-V2-Breaking-the-Barrier-of-Closed-Source-Models-in-Code-Intelligence/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2406.11931v1&#34;&gt;논문 링크&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;deepseek-coder-v2-오픈소스-코드-llm이-gpt-4-급으로-뛰어오른-순간&#34;&gt;DeepSeek-Coder-V2: 오픈소스 코드-LLM이 GPT-4 급으로 뛰어오른 순간&lt;/h1&gt;&#xA;&lt;h2 id=&#34;한-줄-요약-tldr&#34;&gt;한 줄 요약 (TL;DR)&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;236 B 파라미터 MoE + 10.2 T 토큰 + YaRN 128 K 컨텍스트&lt;/strong&gt; 만으로, **HumanEval 90.2 %·MATH 75.7 %**를 기록해 오픈모델 최초로 GPT-4-Turbo와 동일 선상에 올라섰다.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
