@@ -3,7 +3,7 @@ categories:
 - paper-review
 - with-gpt
 - finance
-date: "2024-12-09T00:00:00Z"
+date: "2024-12-09"
 title: Momentum Strategies
 ---
 

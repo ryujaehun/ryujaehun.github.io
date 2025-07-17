@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Explicit Attention Bias on Jaehun's Blog</title><link>https://jaehun.me/ko/tags/Explicit-Attention-Bias/</link><description>Recent content in Explicit Attention Bias on Jaehun's Blog</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Wed, 09 Jul 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://jaehun.me/ko/tags/Explicit-Attention-Bias/index.xml" rel="self" type="application/rss+xml"/><item><title>Massive Activations in Large Language Models</title><link>https://jaehun.me/ko/ko/posts/2025-07-09-paper-2402.17762v2/</link><pubDate>Wed, 09 Jul 2025 00:00:00 +0000</pubDate><guid>https://jaehun.me/ko/ko/posts/2025-07-09-paper-2402.17762v2/</guid><description>&lt;p>&lt;a href="https://arxiv.org/abs/2402.17762v2">논문 링크&lt;/a>&lt;/p>
-&lt;h1 id="massive-activations-hidden-biases-재해석된-self-attention의-비밀">Massive Activations, Hidden Biases: 재해석된 Self-Attention의 비밀&lt;/h1>
-&lt;hr>
-&lt;h2 id="한-줄-요약-tldr">한 줄 요약 (TL;DR)&lt;/h2>
-&lt;p>수천만 개 중 &lt;strong>4–10 개의 초거대 스칼라(×10 000)&lt;/strong> 가 LLM · ViT의 성능을 사실상 ‘혼자서’ 지탱한다.
-이 스칼라는 &lt;strong>입력과 무관한 상수형 자기-어텐션 bias&lt;/strong> 로 작동하며, -0-으로 만들면 모델이 즉시 붕괴(PPL → ∞)한다.
-저자들은 이 암묵적 현상을 &lt;strong>Explicit Attention Bias(EAB)&lt;/strong> 라는 모듈로 치환해 &lt;strong>성능을 완전히 복구&lt;/strong>하면서 분석·압축·안전성까지 한 번에 열어젖혔다. &lt;/p></description></item></channel></rss>

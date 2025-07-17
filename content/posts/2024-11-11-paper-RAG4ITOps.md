@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-11T00:00:00Z"
+date: "2024-11-11"
 tags: null
 title: RAG4ITOps A Supervised Fine-Tunable and Comprehensive RAG Framework for IT
   Operations and Maintenance

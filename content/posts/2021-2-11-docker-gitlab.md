@@ -1,7 +1,7 @@
 ---
 categories:
 - linux
-date: "2021-02-11T00:00:00Z"
+date: "2021-02-11"
 tags: null
 title: docker 로 gitlab만들기
 ---

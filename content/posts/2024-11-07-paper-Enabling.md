@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-07T00:00:00Z"
+date: "2024-11-07"
 tags: null
 title: Enabling Tensor Language Model to Assist in Generating High-Performance Tensor
   Programs for Deep Learning

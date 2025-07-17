@@ -3,7 +3,7 @@ categories:
 - paper-review
 - with-gpt
 - finance
-date: "2024-11-11T00:00:00Z"
+date: "2024-11-11"
 tags: null
 title: Scientific Beta Multi-Beta Multi-Strategy Indices Implementing Multi-Factor
   Equity Portfolios with Smart Factor Indices

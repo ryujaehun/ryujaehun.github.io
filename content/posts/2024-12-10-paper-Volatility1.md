@@ -3,7 +3,7 @@ categories:
 - paper-review
 - with-gpt
 - finance
-date: "2024-12-10T00:00:00Z"
+date: "2024-12-10"
 title: 'High Idiosyncratic Volatility and Low Returns: International and Further U.S.
   Evidence'
 ---

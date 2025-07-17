@@ -1,7 +1,7 @@
 ---
 categories:
 - compiler
-date: "2021-02-12T00:00:00Z"
+date: "2021-02-12"
 tags: null
 title: LLVM (clang) build and install (ubuntu 18.04)
 ---

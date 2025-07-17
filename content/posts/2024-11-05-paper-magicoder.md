@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-05T00:00:00Z"
+date: "2024-11-05"
 tags: null
 title: Magicoder Empowering Code Generation with OSS-Instruct
 ---

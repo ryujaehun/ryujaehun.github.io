@@ -3,7 +3,7 @@ categories:
 - compiler
 - ML
 - paper-review
-date: "2021-02-12T00:00:00Z"
+date: "2021-02-12"
 tags: null
 title: 논문 정리 NeuroVectorizer End-to-End Vectorization with Deep Reinforcement Learning
   (CGO 20)

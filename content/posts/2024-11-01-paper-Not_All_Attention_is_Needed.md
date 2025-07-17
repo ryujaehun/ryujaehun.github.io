@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-01T00:00:00Z"
+date: "2024-11-01"
 tags: null
 title: What Matters in Transformers? Not All Attention is Needed Fusion
 ---

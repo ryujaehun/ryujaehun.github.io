@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-03T00:00:00Z"
+date: "2024-11-03"
 tags: null
 title: Reasoning over Public and Private Data in Retrieval-Based Systems
 ---

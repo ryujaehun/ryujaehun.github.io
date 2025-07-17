@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-12T00:00:00Z"
+date: "2024-11-12"
 tags: null
 title: ShadowKV KV Cache in Shadows for High-Throughput Long-Context LLM Inference
 ---

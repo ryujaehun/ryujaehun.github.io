@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-11T00:00:00Z"
+date: "2024-11-11"
 tags: null
 title: COMET Towards Partical W4A4KV4 LLMs Serving
 ---

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>IntrinsicReward on Jaehun's Blog</title><link>https://jaehun.me/ko/tags/IntrinsicReward/</link><description>Recent content in IntrinsicReward on Jaehun's Blog</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Tue, 01 Jul 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://jaehun.me/ko/tags/IntrinsicReward/index.xml" rel="self" type="application/rss+xml"/><item><title>DeepSeek-Prover-V1.5: Harnessing Proof Assistant Feedback for Reinforcement Learning and Monte-Carlo Tree Search</title><link>https://jaehun.me/ko/ko/posts/2025-07-01-paper-2408.08152v1/</link><pubDate>Tue, 01 Jul 2025 00:00:00 +0000</pubDate><guid>https://jaehun.me/ko/ko/posts/2025-07-01-paper-2408.08152v1/</guid><description>&lt;p>&lt;a href="https://arxiv.org/abs/2408.08152v1">논문 링크&lt;/a>&lt;/p>
-&lt;h2 id="한-줄-요약-tldr">한 줄 요약 (TL;DR)&lt;/h2>
-
- &lt;blockquote
- class="border-primary bg-muted/30 hover:bg-muted/40 my-6 rounded-r-lg border-l-4 py-4 pr-4 pl-6 italic transition-all duration-200 ease-out hover:translate-x-1">
- &lt;div class="prose prose-sm max-w-none">
- &lt;p>&lt;strong>“끊어 쓰고(Truncate-and-Resume) 탐험하며(내재 보상 MCTS) Lean 4 증명을 찾자”&lt;/strong> – DeepSeek-Prover-V1.5는 7 B 모델로 &lt;em>miniF2F 63.5 %&lt;/em> / *ProofNet 25.3 %*를 달성해 이전 SOTA를 &lt;strong>+9.0 pp / +7.2 pp&lt;/strong> 앞지르면서도 탐색 샘플을 &lt;strong>최대 64 × 절감&lt;/strong>했다.&lt;/p>
- &lt;/div>
- &lt;/blockquote></description></item></channel></rss>

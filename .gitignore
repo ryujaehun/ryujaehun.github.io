@@ -1,0 +1,39 @@
+# Hugo
+# 빌드된 정적 사이트 파일 (가장 중요)
+/public/
+/static/dist/
+
+# Hugo가 생성하는 리소스 캐시
+/resources/
+
+# Hugo 서버가 생성하는 임시 파일
+hugo_stats.json
+.hugo_build.lock
+
+# Sass/SCSS 캐시
+.sass-cache/
+
+# Node.js/npm/yarn 관련 파일 (테마나 추가 기능 사용 시)
+/node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# 운영체제(OS) 관련 파일
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+
+# 에디터 및 IDE 관련 설정 파일
+# VSCode
+.vscode/
+# JetBrains IDEs (WebStorm, GoLand 등)
+.idea/

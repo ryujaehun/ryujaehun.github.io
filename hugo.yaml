@@ -1,257 +1,227 @@
+# -----------------------------------------------------------------------------
+# Hugo 블로그 기본 설정 (hugo.yaml)
+# -----------------------------------------------------------------------------
+
+# 1. 사이트 기본 정보
+# -----------------------------------------------------------------------------
 baseURL: https://jaehun.me
-disablePathToLower: true
-languageCode: ko-kr
 title: Jaehun's Blog
-theme: "hugo-narrow" # Theme name
+theme: "hugo-narrow" # 적용할 테마의 이름입니다.
 
-defaultContentLanguage: ko # Default content language, determines site display language
-defaultContentLanguageInSubdir: false # Whether default language uses subdirectory
+# 2. 언어 및 다국어 설정
+# -----------------------------------------------------------------------------
+languageCode: ko-kr # 사이트의 주 언어 코드입니다.
+defaultContentLanguage: ko # 기본으로 표시할 언어를 설정합니다.
+defaultContentLanguageInSubdir: false # 기본 언어를 '/ko'와 같은 하위 경로 없이 루트('/')에 표시합니다.
+hasCJKLanguage: true # 콘텐츠에 한중일 문자가 포함되어 있어, 글자 수 계산 등을 올바르게 처리합니다.
+enableEmoji: true # 이모지(:smile:) 사용을 활성화합니다.
 
-# 언어별 설정
+# 언어별 상세 설정
 languages:
   # 한국어 설정
   ko:
     languageCode: ko-kr
-    languageName: "한국어"
-    weight: 1
-    # 한국어 전용 파라미터
+    languageName: "한국어" # 언어 선택 메뉴에 표시될 이름입니다.
+    weight: 1 # 언어 선택 메뉴의 순서입니다. (숫자가 작을수록 먼저 표시)
+    # 한국어 페이지에 적용될 파라미터
     params:
-      description: "기술과 일상에 대한 생각을 기록하는 블로그입니다."
-      keywords:
-        - "개발"
-        - "컴파일러"
-        - "프로그래밍"
-        - "에세이"
+      description: "기술과 일상에 대한 생각을 기록하는 블로그입니다." # SEO를 위한 사이트 설명
+      keywords: ["개발", "컴파일러", "프로그래밍", "에세이"] # SEO를 위한 검색 키워드
       author:
-        name: "류재훈"
-        title: "안녕하세요! 기술과 일상에 대한 생각을 기록하는 블로그입니다"
-        description: 리벨리온(Rebellions)에서 딥러닝 컴파일러를 개발하는 엔지니어입니다. AI 모델, 최근엔 LLM을 하드웨어에서 더 효율적으로 실행하기 위한 컴파일러 기술과 최적화에 대해서 공부하려고 만든 블로그입니다. 또한 취미와 투자에 대해서도 간간히 글을 올리려고 하고있습니다.
+        name: "류재훈" # 작성자 이름
+        title: "안녕하세요! 기술과 일상에 대한 생각을 기록하는 블로그입니다" # 작성자 소개 제목
+        description: | # 여러 줄의 작성자 상세 소개
+          리벨리온(Rebellions)에서 딥러닝 컴파일러를 개발하는 엔지니어입니다.
+          AI 모델, 최근엔 LLM을 하드웨어에서 더 효율적으로 실행하기 위한 컴파일러 기술과 최적화에 대해서 공부하려고 만든 블로그입니다.
+          또한 취미와 투자에 대해서도 간간히 글을 올리려고 하고있습니다.
 
   # 영어 설정
   en:
     languageCode: en-US
     languageName: "English"
     weight: 2
-    # 영어 전용 파라미터
+    # 영어 페이지에 적용될 파라미터
     params:
       description: "A blog about technology, daily life, and thoughts."
-      keywords:
-        - "Development"
-        - "Compiler"
-        - "Programming"
-        - "Essay"
+      keywords: ["Development", "Compiler", "Programming", "Essay"]
       author:
         name: "Jaehun Ryu"
         title: "A blog about technology, daily life, and thoughts."
-        description: I am a deep learning compiler engineer at Rebellions. This blog was established for the purpose of studying compiler technologies and optimization methods required to execute AI models, particularly LLMs, with greater efficiency on hardware. Furthermore, I intend to publish articles concerning my hobbies and investments intermittently
+        description: |
+          I am a deep learning compiler engineer at Rebellions. This blog was established for the purpose of studying compiler technologies and optimization methods required to execute AI models, particularly LLMs, with greater efficiency on hardware. Furthermore, I intend to publish articles concerning my hobbies and investments intermittently.
 
-# Timezone setting
-timeZone: "Asia/Seoul" # Timezone setting
-
-# Content processing configuration
-hasCJKLanguage: true # Whether content includes CJK (Chinese, Japanese, Korean) characters
-enableEmoji: true # Enable emoji support
-
-# Pagination configuration
-pagination:
-  pagerSize: 6 # Number of pages shown in paginator
-
-# URL configuration
-permalinks:
+# 3. URL 및 페이지네이션 설정
+# -----------------------------------------------------------------------------
+permalinks: # 각 콘텐츠 타입별 URL 주소 구조입니다.
   posts: /posts/:slug/
   pages: /:slug/
 
-# Taxonomy configuration (no need to modify)
-taxonomies:
-  category: categories # Categories
-  tag: tags # Tags
+pagination: # 한 페이지에 표시될 글의 개수입니다.
+  pagerSize: 6
 
+taxonomies: # 콘텐츠 분류 체계입니다. (카테고리, 태그)
+  category: categories
+  tag: tags
+
+# 4. 테마 파라미터 및 UI 설정
+# -----------------------------------------------------------------------------
 params:
-  # Site information for SEO
-  shortName: "Jaehun's Blog" # PWA
-
+  # 사이트 정보
+  shortName: "Jaehun's Blog" # PWA(웹 앱)으로 설치 시 표시될 짧은 이름입니다.
   logo:
-    image: "" # Relative path in static directory, leave empty to use site title's first letter with theme color
-    link: "/" # Click to visit site homepage
-
+    image: "" # 로고 이미지 경로입니다. 비워두면 사이트 제목의 첫 글자가 로고로 자동 생성됩니다.
+    link: "/" # 로고 클릭 시 이동할 경로입니다.
   favicon:
-    svg: "/favicon.svg" # SVG format favicon
-
+    svg: "/favicon.svg" # 브라우저 탭에 표시될 SVG 형식의 파비콘입니다.
   images:
-    - "/images/og-default.avif" # Default Open Graph image
-  stickyHeader: true # Sticky navigation bar
-  showThemeSwitch: true # Whether to show theme color switch button
-  showDarkModeSwitch: true # Whether to show dark mode switch button
-  showLanguageSwitch: true # Whether to show language switch button
+    - "/images/og-default.avif" # 소셜 미디어에 공유 시 표시될 기본 미리보기 이미지입니다.
 
+  # 작성자 정보 (모든 언어 공통)
   author:
-    avatar: "/images/avatar.jpg"
-    social:
+    avatar: "/images/avatar.jpg" # 프로필에 표시될 아바타 이미지입니다.
+    social: # 소셜 미디어 링크 목록입니다.
       - name: GitHub
         url: https://github.com/ryujaehun
-        weight: 10
-        params:
-          icon: github
+        params: { icon: github }
       - name: Linkedin
         url: https://www.linkedin.com/in/jaehunryu/
-        weight: 10
-        params:
-          icon: linkedin
+        params: { icon: linkedin }
       - name: Email
         url: mailto:jaehunryu@icloud.com
-        weight: 20
-        params:
-          icon: email
+        params: { icon: email }
 
+  # UI/UX 기능 제어
+  stickyHeader: true # 스크롤 시 상단 내비게이션 바를 고정합니다.
+  showThemeSwitch: true # 테마 색상 변경 버튼을 표시합니다.
+  showDarkModeSwitch: true # 다크 모드 전환 버튼을 표시합니다.
+  showLanguageSwitch: true # 언어 변경 버튼을 표시합니다.
   home:
-    recentPostsCount: 5
+    recentPostsCount: 5 # 홈페이지에 표시할 최근 글의 개수입니다.
+  colorScheme: "claude" # 기본으로 적용할 테마 색상 스킴입니다.
+  themes: # 사용 가능한 테마 색상 스킴 목록입니다.
+    claude: { name: "Default", order: 1 }
+    default: { name: "White", order: 2 }
+    bumblebee: { name: "Bumblebee", order: 3 }
+    emerald: { name: "Emerald", order: 4 }
+    nord: { name: "Nord", order: 5 }
+    sunset: { name: "Sunset", order: 6 }
+    abyss: { name: "Abyss", order: 7 }
+    dracula: { name: "Dracula", order: 8 }
+    amethyst: { name: "Amethyst", order: 9 }
+    slate: { name: "Slate", order: 10 }
+    twitter: { name: "Twitter", order: 11 }
 
-  colorScheme: "claude"
-
+  # KaTeX (수학 공식 렌더링) 설정
   katex:
     enabled: true
     delimiters:
-      - left: "$$"
-        right: "$$"
-        display: true
-      - left: "$"
-        right: "$"
-        display: false # $...$ -> 인라인 수식
+      - { left: "$$", right: "$$", display: true } # 블록 단위 수식
+      - { left: "$", right: "$", display: false } # 인라인 수식
 
-  # Theme list
-  themes:
-    claude:
-      name: "Default"
-      order: 1
-    default:
-      name: "White"
-      order: 2
-    bumblebee:
-      name: "Bumblebee"
-      order: 3
-    emerald:
-      name: "Emerald"
-      order: 4
-    nord:
-      name: "Nord"
-      order: 5
-    sunset:
-      name: "Sunset"
-      order: 6
-    abyss:
-      name: "Abyss"
-      order: 7
-    dracula:
-      name: "Dracula"
-      order: 8
-    amethyst:
-      name: "Amethyst"
-      order: 9
-    slate:
-      name: "Slate"
-      order: 10
-    twitter:
-      name: "Twitter"
-      order: 11
-
+# 5. 글(Post) 페이지 관련 설정
+# -----------------------------------------------------------------------------
 post:
-  showRelated: true # Related
-  relatedPostsCount: 3 # Related posts numbers
-
-  license:
+  showRelated: true # 각 글 하단에 관련 글을 표시합니다.
+  relatedPostsCount: 3 # 표시할 관련 글의 개수입니다.
+  license: # 글에 적용될 라이선스 정보입니다.
     show: true
-    author: "Jaehun Ryu" # 저작자 이름
+    author: "Jaehun Ryu"
     name: "CC BY 4.0"
     description: "이 저작물은 크리에이티브 커먼즈 저작자표시 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 밝히면 상업적 목적을 포함해 자유롭게 이용 가능합니다."
     url: "https://creativecommons.org/licenses/by/4.0/"
     displayName: "CC BY 4.0"
-outputs:
-  home: ["HTML", "RSS", "JSON", "WebAppManifest"]
 
-# WebManifest
+# 6. 메뉴 설정
+# -----------------------------------------------------------------------------
+menus:
+  # 상단 메인 메뉴
+  main:
+    - { name: nav.posts, pageRef: /posts, weight: 20, params: { icon: posts } }
+    - {
+        name: nav.categories,
+        pageRef: /categories,
+        weight: 30,
+        params: { icon: categories },
+      }
+    - { name: nav.tags, pageRef: /tags, weight: 40, params: { icon: tags } }
+    - {
+        name: nav.archives,
+        pageRef: /archives,
+        weight: 50,
+        params: { icon: archive },
+      }
+  # 하단 푸터 메뉴
+  footer:
+    - { name: RSS Feed, url: /index.xml, weight: 30, params: { icon: rss } }
+  # 푸터 소셜 링크 (테마에 따라 params.author.social과 통합될 수 있음)
+  social:
+    - {
+        name: GitHub,
+        url: https://github.com/ryujaehun,
+        weight: 10,
+        params: { icon: github },
+      }
+    - {
+        name: Linkedin,
+        url: https://www.linkedin.com/in/jaehunryu/,
+        weight: 10,
+        params: { icon: linkedin },
+      }
+    - {
+        name: Email,
+        url: mailto:jaehunryu@icloud.com,
+        weight: 20,
+        params: { icon: email },
+      }
+
+# 7. 마크다운 및 코드 블록 설정
+# -----------------------------------------------------------------------------
+markup:
+  tableOfContents: # 목차(TOC) 생성 시 포함할 제목 레벨입니다.
+    startLevel: 1 # h2부터
+    endLevel: 3 # h4까지
+    ordered: false # 번호 없는 목록으로 생성합니다.
+  goldmark:
+    renderer:
+      unsafe: true # KaTeX 렌더링과 같은 일부 HTML 렌더링을 허용합니다.
+  highlight: # 코드 블록 하이라이팅 설정입니다.
+    codeFences: true # 코드 펜스(```)를 활성화합니다.
+    guessSyntax: true # 코드 언어를 자동으로 추측합니다.
+    lineNos: false # 줄 번호를 표시합니다.
+    lineNumbersInTable: false # 테마 호환성을 위해 테이블 스타일 줄 번호를 비활성화합니다.
+    noClasses: false # 클래스 기반의 CSS 스타일링을 사용합니다.
+    style: "monokai" # 하이라이팅 테마 (테마 자체 CSS에 의해 덮어쓰일 수 있음)
+    tabWidth: 4 # 탭의 너비를 4칸으로 설정합니다.
+
+codeblock: # 코드 블록 접기 기능 설정입니다.
+  collapse:
+    enabled: true
+    defaultState: expanded # 기본 상태 (expanded: 펼침, collapsed: 접힘)
+    autoCollapseLines: 30 # 이 줄 수를 초과하면 자동으로 접습니다.
+    autoCollapseHeight: 400 # 이 높이(px)를 초과하면 자동으로 접습니다.
+    collapsedHeight: 120 # 접혔을 때의 높이(px)입니다.
+
+readingProgress: # 스크롤 시 상단에 읽기 진행률 표시줄 설정입니다.
+  enabled: true
+  height: 3 # 진행률 표시줄의 높이(px)입니다.
+  showOnHomepage: true # 홈페이지에도 표시합니다.
+  smoothScroll: true
+  hideOnComplete: false
+
+# 8. 빌드 및 출력 설정
+# -----------------------------------------------------------------------------
+outputs:
+  home: ["HTML", "RSS", "JSON", "WebAppManifest"] # 홈페이지에서 생성할 파일 형식입니다.
+
 outputFormats:
-  WebAppManifest:
+  WebAppManifest: # PWA를 위한 웹 앱 매니페스트 파일 설정입니다.
     mediaType: "application/manifest+json"
     baseName: "site"
     isPlainText: true
 
-readingProgress:
-  enabled: true
-  height: 3
-  showOnHomepage: true
-  smoothScroll: true
-  hideOnComplete: false
-
-menus:
-  main:
-    - name: nav.posts
-      pageRef: /posts
-      weight: 20
-      params:
-        icon: posts
-    - name: nav.categories
-      pageRef: /categories
-      weight: 30
-      params:
-        icon: categories
-    - name: nav.tags
-      pageRef: /tags
-      weight: 40
-      params:
-        icon: tags
-    - name: nav.archives
-      pageRef: /archives
-      weight: 50
-      params:
-        icon: archive
-  footer:
-    - name: RSS Feed
-      url: /index.xml
-      weight: 30
-      params:
-        icon: rss
-  # footer social link
-  social:
-    - name: GitHub
-      url: https://github.com/ryujaehun
-      weight: 10
-      params:
-        icon: github
-    - name: Linkedin
-      url: https://www.linkedin.com/in/jaehunryu/
-      weight: 10
-      params:
-        icon: linkedin
-    - name: Email
-      url: mailto:jaehunryu@icloud.com
-      weight: 20
-      params:
-        icon: email
-markup:
-  tableOfContents:
-    startLevel: 2
-    endLevel: 4
-    ordered: false
-  goldmark:
-    renderer:
-      # KaTeX 렌더링을 활성화하기 위해 필요
-      unsafe: true
-  highlight:
-    codeFences: true # Enable code fences
-    guessSyntax: true # Auto-detect language
-    lineNos: true # Show line numbers
-    lineNumbersInTable: false # Use table-style line numbers, set to false for theme compatibility
-    noClasses: false # Use CSS classes instead of inline styles
-    style: "monokai" # Code highlighting theme (setting here has no effect, details below)
-    tabWidth: 4 # Tab width
-codeblock:
-  collapse:
-    enabled: true
-    defaultState: expanded # Default collapse behavior: expanded, collapsed
-    autoCollapseLines: 30 # Collapse when exceeding specified lines
-    autoCollapseHeight: 400 # Collapse when exceeding specified height
-    collapsedHeight: 120 # Height when collapsed
-module:
+module: # Hugo 모듈 및 버전 설정입니다.
   hugoVersion:
-    extended: true
+    extended: true # Sass/SCSS 처리가 가능한 extended 버전을 요구합니다.
     min: 0.146.0
+
+timeZone: "Asia/Seoul" # 빌드 시 사용할 시간대입니다.

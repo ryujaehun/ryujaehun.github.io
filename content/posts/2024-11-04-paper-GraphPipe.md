@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-04T00:00:00Z"
+date: "2024-11-04"
 tags: null
 title: GraphPipe Improving Performance and Scalability of DNN Training with Graph
   Pipeline Parallelism

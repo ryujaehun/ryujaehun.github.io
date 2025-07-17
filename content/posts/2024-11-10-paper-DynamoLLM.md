@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-10T00:00:00Z"
+date: "2024-11-10"
 tags: null
 title: DynamoLLM Designing LLM Inference Clusters for Performance and Energy Efficiency
 ---

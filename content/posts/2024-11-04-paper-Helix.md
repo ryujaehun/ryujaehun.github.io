@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-04T00:00:00Z"
+date: "2024-11-04"
 tags: null
 title: Helix Distributed Serving of Large Language Models via Max-Flow on Heterogeneous
   GPUs

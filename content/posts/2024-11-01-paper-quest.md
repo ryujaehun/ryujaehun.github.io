@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-01T00:00:00Z"
+date: "2024-11-01"
 tags: null
 title: Quest Query-Aware Sparsity for Efficient Long-Context LLM Inference
 ---

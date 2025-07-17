@@ -3,7 +3,7 @@ categories:
 - paper-review
 - with-gpt
 - LLM
-date: "2024-12-08T00:00:00Z"
+date: "2024-12-08"
 title: Improving Language Understanding by Generative Pre-Training
 ---
 

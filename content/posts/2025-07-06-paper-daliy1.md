@@ -3,7 +3,7 @@ categories:
 - 자전거정비
 - 일상
 - with gpt
-date: "2025-07-06T00:00:00Z"
+date: "2025-07-06"
 tags:
 - 첼로
 - 스칼라티

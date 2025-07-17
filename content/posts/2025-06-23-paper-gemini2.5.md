@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt-o3
-date: "2025-06-23T00:00:00Z"
+date: "2025-06-23"
 tags:
 - Gemini 2.5
 - null

@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-11T00:00:00Z"
+date: "2024-11-11"
 tags: null
 title: EPIC Efficient Position-Independent Context Caching for Serving Large Language
   Models

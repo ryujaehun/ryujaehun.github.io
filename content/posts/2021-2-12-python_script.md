@@ -1,7 +1,7 @@
 ---
 categories:
 - python
-date: "2021-02-12T00:00:00Z"
+date: "2021-02-12"
 tags: null
 title: 자주쓰는 파이썬 스크립트 패턴
 ---

@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-01T00:00:00Z"
+date: "2024-11-01"
 tags: null
 title: Teola Towards End-to-End Optimization of LLM-based Applications
 ---

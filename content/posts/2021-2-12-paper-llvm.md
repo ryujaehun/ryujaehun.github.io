@@ -2,7 +2,7 @@
 categories:
 - compiler
 - paper-review
-date: "2021-02-12T00:00:00Z"
+date: "2021-02-12"
 tags: null
 title: 논문 정리 LLVM A Compilation Framework for Lifelong Program Analysis & Transformation(CGO
   04)

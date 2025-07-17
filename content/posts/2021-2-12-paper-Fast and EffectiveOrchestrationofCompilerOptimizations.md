@@ -3,7 +3,7 @@ categories:
 - compiler
 - ML
 - paper-review
-date: "2021-02-12T00:00:00Z"
+date: "2021-02-12"
 tags: null
 title: 간단논문 정리 Fast and Effective Orchestration of Compiler Optimizations(Zhelong
   Pan,Rudolf Eigenmann;Purdue University ;CGO’06)

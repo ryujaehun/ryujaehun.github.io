@@ -2,7 +2,7 @@
 categories:
 - paper-review
 - with-gpt
-date: "2024-11-12T00:00:00Z"
+date: "2024-11-12"
 tags: null
 title: LiteMoE Customizing On-device LLM Serving via Proxy Submodel Tuning
 ---

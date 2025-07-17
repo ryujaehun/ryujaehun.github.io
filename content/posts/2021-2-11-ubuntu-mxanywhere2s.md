@@ -1,7 +1,7 @@
 ---
 categories:
 - linux
-date: "2021-02-11T00:00:00Z"
+date: "2021-02-11"
 tags:
 - logitech
 title: Logitech MX anywhere 2s 우분투에서 제스쳐 사용하기

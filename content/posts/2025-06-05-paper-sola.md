@@ -3,7 +3,7 @@ categories:
 - paper-review
 - with-gemini-2.5-pro(preview)
 - MLSYS2025
-date: "2025-06-05T00:00:00Z"
+date: "2025-06-05"
 title: 'SOLA: Optimizing SLO Attainment for Large Language Model Serving with State-Aware
   Scheduling'
 ---
