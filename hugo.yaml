@@ -271,3 +271,6 @@ module: # Hugo 모듈 및 버전 설정입니다.
 
 timeZone: "Asia/Seoul" # 빌드 시 사용할 시간대입니다.
 
+caches:
+  images:
+    dir: :cacheDir/images
