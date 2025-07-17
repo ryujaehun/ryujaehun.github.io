@@ -118,6 +118,51 @@ params:
       - { left: "$$", right: "$$", display: true } # 블록 단위 수식
       - { left: "$", right: "$", display: false } # 인라인 수식
 
+  comments:
+    enabled: true # Master switch for comment system
+    system: "giscus" # Choose comment system: giscus, disqus, utterances, waline, artalk, twikoo
+    giscus:
+      repo: "ryujaehun/ryujaehun.github.io" # GitHub repository
+      repoId: "MDEwOlJlcG9zaXRvcnkyNDgyMzc2Nzk=" # Repository ID
+      category: "General" # Discussion category
+      categoryId: "DIC_xxx" # Category ID
+      mapping: "pathname" # Mapping method
+      strict: "0" # Strict matching
+      reactionsEnabled: "1" # Enable reactions
+      emitMetadata: "0" # Metadata
+      inputPosition: "bottom" # Input box position
+      theme: "preferred_color_scheme" # Theme
+      lang: "ko" # Language
+  analytics:
+    google:
+      enabled: true
+      id: "G-H0BXJ7BBWY"
+    clarity:
+      enabled: true
+      analytics: "sgbwt9976d"
+  # GLightbox
+  lightbox:
+    enabled: true
+    loop: true
+    width: 80vw
+    height: 80vh
+    touchNavigation: true
+    draggable: true
+    zoomable: true
+    preload: true
+    descPosition: bottom
+
+  # Justified Gallery
+  justified_gallery:
+    enabled: true
+    rowHeight: 300
+    gutter: 30
+    lastRow: center
+    transitionDuration: 0.3s
+    resizeDebounce: 100
+    rowHeightTolerance: 0.25
+    maxRowsCount: 999999
+    calculateItemsHeight: false
 # 5. 글(Post) 페이지 관련 설정
 # -----------------------------------------------------------------------------
 post:
@@ -225,3 +270,4 @@ module: # Hugo 모듈 및 버전 설정입니다.
     min: 0.146.0
 
 timeZone: "Asia/Seoul" # 빌드 시 사용할 시간대입니다.
+
