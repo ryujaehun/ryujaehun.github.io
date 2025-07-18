@@ -34,6 +34,9 @@ languages:
           리벨리온(Rebellions)에서 딥러닝 컴파일러를 개발하는 엔지니어입니다.
           AI 모델, 최근엔 LLM을 하드웨어에서 더 효율적으로 실행하기 위한 컴파일러 기술과 최적화에 대해서 공부하려고 만든 블로그입니다.
           또한 취미와 투자에 대해서도 간간히 글을 올리려고 하고있습니다.
+      comments:
+          giscus:
+            lang: "ko" # 한국어 페이지에서는 'ko' 사용 (기본값과 동일)
 
   # 영어 설정
   en:
@@ -49,6 +52,9 @@ languages:
         title: "A blog about technology, daily life, and thoughts."
         description: |
           I am a deep learning compiler engineer at Rebellions. This blog was established for the purpose of studying compiler technologies and optimization methods required to execute AI models, particularly LLMs, with greater efficiency on hardware. Furthermore, I intend to publish articles concerning my hobbies and investments intermittently.
+      comments:
+        giscus:
+          lang: "en" # 한국어 페이지에서는 'ko' 사용 (기본값과 동일)
 
 # 3. URL 및 페이지네이션 설정
 # -----------------------------------------------------------------------------
