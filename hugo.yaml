@@ -35,8 +35,8 @@ languages:
           AI 모델, 최근엔 LLM을 하드웨어에서 더 효율적으로 실행하기 위한 컴파일러 기술과 최적화에 대해서 공부하려고 만든 블로그입니다.
           또한 취미와 투자에 대해서도 간간히 글을 올리려고 하고있습니다.
       comments:
-          giscus:
-            lang: "ko" # 한국어 페이지에서는 'ko' 사용 (기본값과 동일)
+        giscus:
+          lang: "ko" # 한국어 페이지에서는 'ko' 사용 (기본값과 동일)
 
   # 영어 설정
   en:
@@ -106,12 +106,12 @@ params:
   colorScheme: "claude" # 기본으로 적용할 테마 색상 스킴입니다.
   themes: # 사용 가능한 테마 색상 스킴 목록입니다.
     claude: { name: "Default", order: 1 }
-    default: { name: "White", order: 2 }
+    # default: { name: "White", order: 2 }
     bumblebee: { name: "Bumblebee", order: 3 }
-    emerald: { name: "Emerald", order: 4 }
-    nord: { name: "Nord", order: 5 }
-    sunset: { name: "Sunset", order: 6 }
-    abyss: { name: "Abyss", order: 7 }
+    # emerald: { name: "Emerald", order: 4 }
+    # nord: { name: "Nord", order: 5 }
+    # sunset: { name: "Sunset", order: 6 }
+    # abyss: { name: "Abyss", order: 7 }
     dracula: { name: "Dracula", order: 8 }
     amethyst: { name: "Amethyst", order: 9 }
     slate: { name: "Slate", order: 10 }
@@ -277,32 +277,32 @@ module: # Hugo 모듈 및 버전 설정입니다.
 
 timeZone: "Asia/Seoul" # 빌드 시 사용할 시간대입니다.
 
-caches:
-  # 원격 API 데이터 캐시는 12시간으로 설정
-  getjson:
-    dir: ":cacheDir/getJSON"
-    maxAge: "12h"
+# caches:
+#   # 원격 API 데이터 캐시는 12시간으로 설정
+#   getjson:
+#     dir: ":cacheDir/getJSON"
+#     maxAge: "12h"
 
-  # 이미지, 애셋, 모듈은 파일 변경 시에만 다시 생성되도록 영구 캐시
-  images:
-    dir: ":cacheDir/images"
-    maxAge: -1
-  assets:
-    dir: ":cacheDir/assets"
-    maxAge: -1
-  modules:
-    dir: ":cacheDir/modules"
-    maxAge: -1
+#   # 이미지, 애셋, 모듈은 파일 변경 시에만 다시 생성되도록 영구 캐시
+#   images:
+#     dir: ":cacheDir/images"
+#     maxAge: -1
+#   assets:
+#     dir: ":cacheDir/assets"
+#     maxAge: -1
+#   modules:
+#     dir: ":cacheDir/modules"
+#     maxAge: -1
 
-minify:
-  tdewolff:
-    html:
-      keepComments: false
-      keepWhitespace: false
-    css:
-      precision: 3
-    js:
-      # 일부 JS 라이브러리는 압축 시 오류가 발생할 수 있으므로,
-      # 문제가 생긴다면 JS 압축만 비활성화할 수 있습니다.
-      # disable: true
-      precision: 3
+# minify:
+#   tdewolff:
+#     html:
+#       keepComments: false
+#       keepWhitespace: false
+#     css:
+#       precision: 3
+#     js:
+#       # 일부 JS 라이브러리는 압축 시 오류가 발생할 수 있으므로,
+#       # 문제가 생긴다면 JS 압축만 비활성화할 수 있습니다.
+#       # disable: true
+#       precision: 3
