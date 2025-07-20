@@ -140,6 +140,7 @@ params:
       theme: "preferred_color_scheme" # Theme
       lang: "ko" # Language
   analytics:
+    enabled: true
     google:
       enabled: true
       id: "G-H0BXJ7BBWY"
