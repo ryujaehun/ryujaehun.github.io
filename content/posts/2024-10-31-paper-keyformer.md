@@ -162,7 +162,7 @@ k = KV_cache_size               # KV Cache 크기
 w = recent_window               # 최신 윈도우 크기
 T = text_generation_length      # 생성할 텍스트 길이
 tau_init, tau_end = init_temp, end_temp # 온도 초기값과 종료값
-S_n = prompt_sequence_length    # 프롬프트 시퀀스 길이
+S_n = prompt_sequence_length    ## 프롬프트 시퀀스 길이
 
 # 초기화
 f_theta = 0                     # Score Function 초기화
@@ -173,7 +173,7 @@ zeta = gumbel_distribution()    # Gumbel 노이즈 초기화
 for t in range(T):               # 각 디코딩 단계에서
     tau = tau_init + t * delta_tau  # 온도 매개변수 업데이트
     
-    if phase == 'prompt':         # 프롬프트 처리 단계인 경우
+    if phase == 'prompt':         ## 프롬프트 처리 단계인 경우
         x_i = compute_logits(Q_i, K_all, S_n)  # 모든 토큰에 대해 로짓 계산
         m = n                      # 전체 시퀀스 길이로 설정
     else:                          # 생성 단계인 경우
