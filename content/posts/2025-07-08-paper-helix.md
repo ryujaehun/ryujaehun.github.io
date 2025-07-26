@@ -16,7 +16,8 @@ tags:
 - Efficient Transformer Inference
 - Serving LLMs at Scale
 - Long Context Inference
-title: 'Helix Parallelism: Rethinking Sharding Strategies for Interactive Multi-Million-Token
+cover : https://www.storagereview.com/wp-content/uploads/2025/07/image2-2-png-e1752234784623.webp
+title: '[논문리뷰] Helix Parallelism: Rethinking Sharding Strategies for Interactive Multi-Million-Token
   LLM Decoding'
 ---
 

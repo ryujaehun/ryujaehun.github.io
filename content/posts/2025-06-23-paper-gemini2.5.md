@@ -136,8 +136,8 @@ title: 'Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality,
 ## 한눈에 보는 결론 — 연구 공백 & 최신 기술 요약
 
 * **연구 공백 1 : “생각(Thinking)·멀티모달·100 만 토큰 롱컨텍스트·툴 사용”을 *한 모델*에 동시에 담은 사례가 없었다.** 기존 GPT-4, Claude 4, Gemini 1.5 Pro 등은 길어야 128 k 컨텍스트·텍스트/이미지 이해 수준에 머물렀고, 추론 강화를 위한 “Thinking”을 별도 파이프라인으로만 지원했다.
-* **연구 공백 2 : 고성능을 유지하며 *비용-지연* Pareto Frontier를 확장할 방법이 부족했다.** Flash-Lite\~Pro까지 단일 아키텍처로 **출력 250 \~ 300 tokens/s**, 가격도 1.5 세대 대비 \*\*평균 35 %↓\*\*로 줄인 사례가 없었다.&#x20;
-* **연구 공백 3 : 1 M+ 컨텍스트에서 *안정적 MoE 학습*과 *안전성*을 동시에 달성한 선행 연구가 전무.** Gemini 2.5는 TPU v5p 8960-chip pod에서 새로운 slice-elasticity·SDC 정책으로 **훈련 손실 0.25 %만 리플레이**하며 안정성을 증명.&#x20;
+* **연구 공백 2 : 고성능을 유지하며 *비용-지연* Pareto Frontier를 확장할 방법이 부족했다.** Flash-Lite\~Pro까지 단일 아키텍처로 **출력 250 \~ 300 tokens/s**, 가격도 1.5 세대 대비 \*\*평균 35 %↓\*\*로 줄인 사례가 없었다.
+* **연구 공백 3 : 1 M+ 컨텍스트에서 *안정적 MoE 학습*과 *안전성*을 동시에 달성한 선행 연구가 전무.** Gemini 2.5는 TPU v5p 8960-chip pod에서 새로운 slice-elasticity·SDC 정책으로 **훈련 손실 0.25 %만 리플레이**하며 안정성을 증명.
 
 ---
 
@@ -347,7 +347,7 @@ T3: ")"
 ## ‘비밀 병기’ — **Slice-Granularity Elasticity**
 
 > **정의** : 8960-chip TPU v5p 팟을 **수 십 개 칩 규모 “슬라이스(slice)”** 단위로 잘라서 학습을 진행하다가,
-> 특정 slice에서 **HW 결함·재부팅·SDC**가 감지되면 *몇 초 안에* 그 slice만 빼고 다시 **동기 SGD**를 재개(≈ 97 % throughput)하는 가변 집합식 데이터-병렬 알고리즘.&#x20;
+> 특정 slice에서 **HW 결함·재부팅·SDC**가 감지되면 *몇 초 안에* 그 slice만 빼고 다시 **동기 SGD**를 재개(≈ 97 % throughput)하는 가변 집합식 데이터-병렬 알고리즘.
 
 ### 왜 결정적인가?
 
@@ -787,7 +787,7 @@ Gemini 2.5는 **순수 Decoder-only** (Autoregressive) 구조다. 따라서 전�
 | **오디오**  | YouTube-8M 음성·환경음               | **≈15 %**   |
 | **비디오**  | 3 h 영상까지 프레임·자막·오디오      | **≈10 %**   |
 
-*컷오프 날짜:* **2025-01**(v 2.5) / 2024-06(v 2.0)&#x20;
+*컷오프 날짜:* **2025-01**(v 2.5) / 2024-06(v 2.0)
 *품질향상:* 새 필터·Dedup 알고리즘으로 노이즈 감소 동일 소스 대비 **퍼플렉시티 –12 %** (내부 측정).
 
 ---
@@ -836,15 +836,15 @@ Gemini 2.5는 **순수 Decoder-only** (Autoregressive) 구조다. 따라서 전�
 
 ### 1. 핵심 소프트웨어 의존성
 
-* **Pathways single-controller** 아키텍처 – 모든 8 960 TPU v5p 칩을 하나의 파이썬 프로그램에서 실시간 오케스트레이션&#x20;
+* **Pathways single-controller** 아키텍처 – 모든 8 960 TPU v5p 칩을 하나의 파이썬 프로그램에서 실시간 오케스트레이션
 
   * slice-granularity elasticity로 노드 장애 시 < 1 분 내 재구성, 97 % 이상 처리량 유지
-  * split-phase **SDC** ( silent-data-corruption ) detector – 의심 스텝 즉시 replay 후 per-device checksum 비교 → 전체 스텝의 0.25 %만 replay, 그중 6 %가 실제 HW 오류&#x20;
+  * split-phase **SDC** ( silent-data-corruption ) detector – 의심 스텝 즉시 replay 후 per-device checksum 비교 → 전체 스텝의 0.25 %만 replay, 그중 6 %가 실제 HW 오류
 * **JAX / Flax + XLA** – TPU v5p의 Systolic TensorCore 사용, GSPMD sharding·remat for memory-compute trade-off.
 * 커스텀 커널
 
   * **FlashAttention-2** (프리필 구간) – O(N²) 메모리 제거.
-  * **Hydragen** (생성 단계 prefix-sharing attention) – shared prefix 가 길수록 TPS 가속 (LLM inference 엔진 논문 부록)&#x20;
+  * **Hydragen** (생성 단계 prefix-sharing attention) – shared prefix 가 길수록 TPS 가속 (LLM inference 엔진 논문 부록)
 * 기타: TensorStore check-pointing, Google-internal **FusedAdamW**, BigTable logging pipeline.
 
 ### 2. 하드웨어 & 메모리 세부
@@ -872,7 +872,7 @@ Figure 2의 벤치마크(2025-06-15 ArtificialAnalysis.ai) 기준
 | Gemini 2.0 Flash-Lite | ≈ 150 token/s     |
 | OpenAI o3             | ≈ 100 token/s     |
 
-(수치는 0-350 눈금 막대 길이 비례 측정)&#x20;
+(수치는 0-350 눈금 막대 길이 비례 측정)
 
 ### 4. 총 연산 비용(Compute)
 
