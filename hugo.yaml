@@ -138,6 +138,8 @@ params:
     delimiters:
       - { left: "$$", right: "$$", display: true } # 블록 단위 수식
       - { left: "$", right: "$", display: false } # 인라인 수식
+  mermaid:
+    enabled: true
 
   comments:
     enabled: true # Master switch for comment system
