@@ -37,6 +37,14 @@ languages:
       comments:
         giscus:
           lang: "ko" # 한국어 페이지에서는 'ko' 사용 (기본값과 동일)
+      post:
+        license: # 글에 적용될 라이선스 정보입니다.
+          show: true
+          author: "Jaehun Ryu"
+          name: "CC BY 4.0"
+          description: "이 저작물은 크리에이티브 커먼즈 저작자표시 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 밝히면 상업적 목적을 포함해 자유롭게 이용 가능합니다."
+          url: "https://creativecommons.org/licenses/by/4.0/"
+          displayName: "CC BY 4.0"
 
   # 영어 설정
   en:
@@ -55,6 +63,14 @@ languages:
       comments:
         giscus:
           lang: "en" # 한국어 페이지에서는 'ko' 사용 (기본값과 동일)
+      post:
+        license: # 글에 적용될 라이선스 정보입니다.
+          show: true
+          author: "Jaehun Ryu"
+          name: "CC BY 4.0"
+          description: "This work is licensed under the Creative Commons Attribution 4.0 International License. You are free to use it for any purpose, including commercial use, as long as you provide proper attribution."
+          url: "https://creativecommons.org/licenses/by/4.0/"
+          displayName: "CC BY 4.0"
 
 # 3. URL 및 페이지네이션 설정
 # -----------------------------------------------------------------------------
@@ -76,7 +92,6 @@ params:
   shortName: "Jaehun's Blog" # PWA(웹 앱)으로 설치 시 표시될 짧은 이름입니다.
   logo:
     image: "" # 로고 이미지 경로입니다. 비워두면 사이트 제목의 첫 글자가 로고로 자동 생성됩니다.
-    link: "/" # 로고 클릭 시 이동할 경로입니다.
   favicon:
     svg: "/favicon.svg" # 브라우저 탭에 표시될 SVG 형식의 파비콘입니다.
   images:
@@ -170,18 +185,12 @@ params:
     rowHeightTolerance: 0.25
     maxRowsCount: 999999
     calculateItemsHeight: false
+  post:
+    showRelated: true # 각 글 하단에 관련 글을 표시합니다.
+    relatedPostsCount: 3 # 표시할 관련 글의 개수입니다.
+
 # 5. 글(Post) 페이지 관련 설정
 # -----------------------------------------------------------------------------
-post:
-  showRelated: true # 각 글 하단에 관련 글을 표시합니다.
-  relatedPostsCount: 3 # 표시할 관련 글의 개수입니다.
-  license: # 글에 적용될 라이선스 정보입니다.
-    show: true
-    author: "Jaehun Ryu"
-    name: "CC BY 4.0"
-    description: "이 저작물은 크리에이티브 커먼즈 저작자표시 4.0 국제 라이선스에 따라 이용할 수 있습니다. 출처를 밝히면 상업적 목적을 포함해 자유롭게 이용 가능합니다."
-    url: "https://creativecommons.org/licenses/by/4.0/"
-    displayName: "CC BY 4.0"
 
 # 6. 메뉴 설정
 # -----------------------------------------------------------------------------
