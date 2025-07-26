@@ -4,8 +4,21 @@ date: "2025-07-26"
 categories:
  - paper-review
  - with-gpt
+ - open-source
+ - agentic-intelligence
+ - RL-alignment
+ - foundation-models
 tags:
- - 2505.09388v1
+ - KimiK2
+ - MuonClip
+ - tool-use
+ - self-critique-RL
+ - agentic-llm
+ - long-context
+ - MoE-models
+ - open-source-LLM
+ - Tau2-bench
+ - SWE-bench
 cover: https://github.com/MoonshotAI/Kimi-K2/raw/main/figures/kimi-logo.png
 ---
 
@@ -38,9 +51,10 @@ Moreover, at scale, the Muon optimizer has been prone to **loss spikes**, and ac
 
 ```mermaid
 flowchart LR
-    Pretrain[MuonClip Pretraining] --> Data[Agentic Tool-Use Data Generation]
-    Data --> RL[Verifiable RL + Self-Critique Alignment]
-    RL --> Model[Kimi K2 (1T MoE)]
+    Pretrain["MuonClip Pretraining"] --> Data["Agentic Tool-Use Data Generation"]
+    Data --> RL["Verifiable RL + Self-Critique Alignment"]
+    RL --> Model["Kimi K2 (1T MoE)"]
+
 ```
 
 ### MuonClip — The “Secret Weapon”
@@ -477,3 +491,72 @@ graph TB
 
 </details>
 
+
+## 📊 Prompt 1.7.x (Model Evaluation and Metrics)
+
+> "What are the key performance metrics used for evaluation—latency, throughput, energy, or cost-efficiency? How does the system scale with more data, users, or compute nodes?"
+
+### 🔑 Key Summary — In Two Sentences
+
+* The evaluation focuses on **latency (seconds)**, **kernel throughput (TOPS)**, and **scalability with sequence length or batch size**.
+* **SageAttention 3 / SageBwd** achieve **1038 TOPS (5× ↑)** and **2–3× end-to-end speedups**, while training speeds up by **1.67×** on RTX4090 — all scaling efficiently to **32K sequence lengths**, with no reported degradation.
+
+---
+
+## 1. Core Performance Metrics Used in the Paper
+
+| Metric                       | Definition / Unit                          | Example Results (Sage vs. Baseline)                             |
+| ---------------------------- | ------------------------------------------ | --------------------------------------------------------------- |
+| **Kernel Throughput**        | Attention matmul FLOPs/sec → **TOPS**      | 1038 TOPS vs. FlashAttn2: 212 TOPS → **\~5× speedup**           |
+| **End-to-End Latency**       | Wall-clock execution time (seconds)        | CogVideoX: 64s → **27s**, HunyuanVideo: 489s → **164s**         |
+| **Training Iteration Time**  | Time per forward + backward pass (seconds) | Llama 16K: 6.0s → **5.2s**                                      |
+| **Forward+Backward Speedup** | Total attention kernel acceleration        | Up to **1.67× faster**                                          |
+| **Sequence Length Scaling**  | Throughput vs. SeqLen graph                | Flat up to **32K tokens**, while baselines OOM at 16K or beyond |
+
+> 🔍 Metrics like energy efficiency (Watt), \$/token, or power usage are not directly measured. The focus is on speed, memory, and precision.
+
+---
+
+## 2. Scalability — Data, Users, Nodes
+
+### 2-1 Sequence Length / Batch Size Scaling
+
+* Supports up to **32K token** sequences without throughput drop
+* FP4/INT8 quantization compresses memory footprint → **4× larger batches or context windows** can fit into same VRAM
+* FlashAttention 2 and others **fail (OOM)** beyond 16K in same hardware setup
+
+### 2-2 Concurrent Users Scaling
+
+* Since latency drops 2–3×, each GPU can **handle more concurrent requests**
+* Lower latency + KV-cache compression → **higher tokens/sec throughput**
+
+### 2-3 Multi-GPU or Node Scaling
+
+* The paper is **limited to single-GPU** tests
+* However, the attention block is kernel-local and compatible with **data and tensor parallelism**, so multi-GPU scaling is **linearly feasible in theory**
+* Authors point out that integrating with distributed attention frameworks like **RingAttention** remains **future work**
+
+---
+
+## 3. Cost vs. Quality Tradeoffs
+
+| Category              | Result                                 | Interpretation                                 |
+| --------------------- | -------------------------------------- | ---------------------------------------------- |
+| **Quality Retention** | CLIPSIM, FID, GSM8K etc. within ±0.3pp | Speedup comes with **negligible quality loss** |
+| **Memory Usage**      | 75% KV-cache reduction in FP4 vs. FP16 | Helps avoid OOM and enables longer sequences   |
+| **Energy / \$ Cost**  | Not measured                           | Indirectly improved via shorter runtimes       |
+
+---
+
+### ✨ Summary
+
+SageAttention 3 and SageBwd are evaluated on **four key axes**:
+
+1. **Kernel-level throughput (TOPS)**
+2. **End-to-end latency**
+3. **Training step latency**
+4. **Length & batch size scalability**
+
+While all results are measured on **a single Blackwell GPU**, the design allows smooth scaling to longer sequences and larger batch sizes, and is conceptually compatible with **multi-GPU distributed systems**. However, real-world tests in distributed settings remain **future work**.
+
+</details>

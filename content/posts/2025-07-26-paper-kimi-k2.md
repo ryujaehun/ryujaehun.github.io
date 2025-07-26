@@ -4,8 +4,21 @@ date: "2025-07-26"
 categories:
  - paper-review
  - with-gpt
+ - open-source
+ - agentic-intelligence
+ - RL-alignment
+ - foundation-models
 tags:
- - 2505.09388v1
+ - KimiK2
+ - MuonClip
+ - tool-use
+ - self-critique-RL
+ - agentic-llm
+ - long-context
+ - MoE-models
+ - open-source-LLM
+ - Tau2-bench
+ - SWE-bench
 cover: https://github.com/MoonshotAI/Kimi-K2/raw/main/figures/kimi-logo.png
 ---
 
@@ -39,9 +52,9 @@ cover: https://github.com/MoonshotAI/Kimi-K2/raw/main/figures/kimi-logo.png
 
 ```mermaid
 flowchart LR
-    Pretrain[MuonClip 프리트레인] --> Data[Agentic Tool‑Use 데이터 합성]
-    Data --> RL[Verifiable‑RL + Self‑Critique 정렬]
-    RL --> Model[Kimi K2 (1 T MoE)]
+    Pretrain["MuonClip Pretraining"] --> Data["Agentic Tool-Use Data Generation"]
+    Data --> RL["Verifiable RL + Self-Critique Alignment"]
+    RL --> Model["Kimi K2 (1T MoE)"]
 ```
 
 ### MuonClip — ‘비밀 병기’
