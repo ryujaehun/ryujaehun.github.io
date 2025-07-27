@@ -99,7 +99,7 @@ params:
 
   # 작성자 정보 (모든 언어 공통)
   author:
-    avatar: "/images/avatar.jpg" # 프로필에 표시될 아바타 이미지입니다.
+    avatar: "/images/avatar.webp" # 프로필에 표시될 아바타 이미지입니다.
     social: # 소셜 미디어 링크 목록입니다.
       - name: GitHub
         url: https://github.com/ryujaehun
@@ -162,8 +162,8 @@ params:
       enabled: true
       id: "G-H0BXJ7BBWY"
     clarity:
-      enabled: true
-      analytics: "sgbwt9976d"
+      enabled: false
+      id: "sgbwt9976d"
   # GLightbox
   lightbox:
     enabled: true
@@ -270,9 +270,9 @@ readingProgress: # 스크롤 시 상단에 읽기 진행률 표시줄 설정입�
   showOnHomepage: true # 홈페이지에도 표시합니다.
   smoothScroll: true
   hideOnComplete: false
-enableRobotsTXT : true
-enableGitInfo   :  true
-canonifyURLs    : true
+enableRobotsTXT: true
+enableGitInfo: true
+canonifyURLs: true
 # 8. 빌드 및 출력 설정
 # -----------------------------------------------------------------------------
 outputs:
