@@ -313,10 +313,9 @@ minify:
     html:
       keepComments: false
       keepWhitespace: false
-    # css:
-    #   precision: 3
-    # js:
-    #   # 일부 JS 라이브러리는 압축 시 오류가 발생할 수 있으므로,
-    #   # 문제가 생긴다면 JS 압축만 비활성화할 수 있습니다.
-    #   # disable: true
-    #   precision: 3
+    css:
+      precision: 3
+    js:
+      # 일부 JS 라이브러리는 압축 시 오류가 발생할 수 있으므로,
+      # 문제가 생긴다면 JS 압축만 비활성화할 수 있습니다.
+      precision: 3
