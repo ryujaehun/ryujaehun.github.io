@@ -93,7 +93,7 @@ params:
   logo:
     image: "" # 로고 이미지 경로입니다. 비워두면 사이트 제목의 첫 글자가 로고로 자동 생성됩니다.
   favicon:
-    svg: "/favicon.svg" # 브라우저 탭에 표시될 SVG 형식의 파비콘입니다.
+    svg: "/favicon.ico" # 브라우저 탭에 표시될 SVG 형식의 파비콘입니다.
   images:
     - "/images/og-default.avif" # 소셜 미디어에 공유 시 표시될 기본 미리보기 이미지입니다.
 
