@@ -116,6 +116,7 @@ params:
   showThemeSwitch: true # 테마 색상 변경 버튼을 표시합니다.
   showDarkModeSwitch: true # 다크 모드 전환 버튼을 표시합니다.
   showLanguageSwitch: true # 언어 변경 버튼을 표시합니다.
+  languageSwitchMode: dropdown # Language switch mode: "dropdown" (show panel) or "cycle" (direct cycle)
   home:
     recentPostsCount: 5 # 홈페이지에 표시할 최근 글의 개수입니다.
   colorScheme: "claude" # 기본으로 적용할 테마 색상 스킴입니다.
@@ -138,6 +139,7 @@ params:
     delimiters:
       - { left: "$$", right: "$$", display: true } # 블록 단위 수식
       - { left: "$", right: "$", display: false } # 인라인 수식
+      - { left: "[", right: "]", display: false } # 인라인 수식
   mermaid:
     enabled: true
 
