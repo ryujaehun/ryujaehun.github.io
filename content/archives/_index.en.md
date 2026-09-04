@@ -1,5 +1,5 @@
 ---
 title: "Archives"
-description: ""
+description: "All posts by year."
 layout: "archives"
 ---

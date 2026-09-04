@@ -2,10 +2,9 @@
 categories:
 - 자전거정비
 - 일상
-- with gpt
+- with-gpt
 date: "2025-07-06"
 tags:
-- 첼로
 - 스칼라티
 - 로드자전거
 - 자가정비

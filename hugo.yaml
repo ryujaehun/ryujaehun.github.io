@@ -10,7 +10,7 @@ theme: "hugo-narrow" # 적용할 테마의 이름입니다.
 
 # 2. 언어 및 다국어 설정
 # -----------------------------------------------------------------------------
-languageCode: ko-kr # 사이트의 주 언어 코드입니다.
+locale: ko-kr # 사이트의 주 언어 코드입니다. (Hugo 0.158+ 에서 languageCode 를 대체)
 defaultContentLanguage: ko # 기본으로 표시할 언어를 설정합니다.
 defaultContentLanguageInSubdir: false # 기본 언어를 '/ko'와 같은 하위 경로 없이 루트('/')에 표시합니다.
 hasCJKLanguage: true # 콘텐츠에 한중일 문자가 포함되어 있어, 글자 수 계산 등을 올바르게 처리합니다.
@@ -20,8 +20,8 @@ enableEmoji: true # 이모지(:smile:) 사용을 활성화합니다.
 languages:
   # 한국어 설정
   ko:
-    languageCode: ko-kr
-    languageName: "한국어" # 언어 선택 메뉴에 표시될 이름입니다.
+    locale: ko-kr
+    label: "한국어" # 언어 선택 메뉴에 표시될 이름입니다.
     weight: 1 # 언어 선택 메뉴의 순서입니다. (숫자가 작을수록 먼저 표시)
     # 한국어 페이지에 적용될 파라미터
     params:
@@ -48,8 +48,8 @@ languages:
 
   # 영어 설정
   en:
-    languageCode: en-US
-    languageName: "English"
+    locale: en-US
+    label: "English"
     weight: 2
     # 영어 페이지에 적용될 파라미터
     params:
@@ -90,10 +90,11 @@ taxonomies: # 콘텐츠 분류 체계입니다. (카테고리, 태그)
 params:
   # 사이트 정보
   shortName: "Jaehun's Blog" # PWA(웹 앱)으로 설치 시 표시될 짧은 이름입니다.
+  defaultAuthor: "Jaehun Ryu" # <meta name="author"> 기본값입니다.
   logo:
     image: "" # 로고 이미지 경로입니다. 비워두면 사이트 제목의 첫 글자가 로고로 자동 생성됩니다.
   favicon:
-    svg: "/favicon.ico" # 브라우저 탭에 표시될 SVG 형식의 파비콘입니다.
+    svg: "/favicon.svg" # 브라우저 탭에 표시될 SVG 형식의 파비콘입니다.
   images:
     - "/images/og-default.avif" # 소셜 미디어에 공유 시 표시될 기본 미리보기 이미지입니다.
 
@@ -139,7 +140,8 @@ params:
     delimiters:
       - { left: "$$", right: "$$", display: true } # 블록 단위 수식
       - { left: "$", right: "$", display: false } # 인라인 수식
-      - { left: "[", right: "]", display: false } # 인라인 수식
+      - { left: "\\[", right: "\\]", display: true } # 블록 단위 수식 (LaTeX 표기)
+      - { left: "\\(", right: "\\)", display: false } # 인라인 수식 (LaTeX 표기)
   mermaid:
     enabled: true
 
@@ -150,7 +152,7 @@ params:
       repo: "ryujaehun/ryujaehun.github.io" # GitHub repository
       repoId: "MDEwOlJlcG9zaXRvcnkyNDgyMzc2Nzk=" # Repository ID
       category: "General" # Discussion category
-      categoryId: "DIC_xxx" # Category ID
+      categoryId: "DIC_kwDODsvOb84CsidD" # Category ID (General)
       mapping: "pathname" # Mapping method
       strict: "0" # Strict matching
       reactionsEnabled: "1" # Enable reactions
@@ -193,6 +195,18 @@ params:
     showRelated: true # 각 글 하단에 관련 글을 표시합니다.
     relatedPostsCount: 3 # 표시할 관련 글의 개수입니다.
 
+  codeblock: # 코드 블록 접기 기능 설정입니다.
+    collapse:
+      enabled: true
+      defaultState: expanded # 기본 상태 (expanded: 펼침, collapsed: 접힘)
+      autoCollapseLines: 30 # 이 줄 수를 초과하면 자동으로 접습니다.
+      autoCollapseHeight: 400 # 이 높이(px)를 초과하면 자동으로 접습니다.
+      collapsedHeight: 120 # 접혔을 때의 높이(px)입니다.
+
+  readingProgress: # 스크롤 시 상단에 읽기 진행률 표시줄 설정입니다.
+    enabled: true
+    showOnHomepage: true # 홈페이지에도 표시합니다.
+
 # 5. 글(Post) 페이지 관련 설정
 # -----------------------------------------------------------------------------
 
@@ -202,6 +216,7 @@ menus:
   # 상단 메인 메뉴
   main:
     - { name: nav.posts, pageRef: /posts, weight: 20, params: { icon: posts } }
+    - { name: nav.about, pageRef: /about, weight: 10, params: { icon: about } }
     - {
         name: nav.categories,
         pageRef: /categories,
@@ -243,8 +258,8 @@ menus:
 # -----------------------------------------------------------------------------
 markup:
   tableOfContents: # 목차(TOC) 생성 시 포함할 제목 레벨입니다.
-    startLevel: 1 # h2부터
-    endLevel: 3 # h4까지
+    startLevel: 2 # h2부터
+    endLevel: 4 # h4까지
     ordered: false # 번호 없는 목록으로 생성합니다.
   goldmark:
     renderer:
@@ -258,21 +273,7 @@ markup:
     style: "monokai" # 하이라이팅 테마 (테마 자체 CSS에 의해 덮어쓰일 수 있음)
     tabWidth: 4 # 탭의 너비를 4칸으로 설정합니다.
 
-codeblock: # 코드 블록 접기 기능 설정입니다.
-  collapse:
-    enabled: true
-    defaultState: expanded # 기본 상태 (expanded: 펼침, collapsed: 접힘)
-    autoCollapseLines: 30 # 이 줄 수를 초과하면 자동으로 접습니다.
-    autoCollapseHeight: 400 # 이 높이(px)를 초과하면 자동으로 접습니다.
-    collapsedHeight: 120 # 접혔을 때의 높이(px)입니다.
-
-readingProgress: # 스크롤 시 상단에 읽기 진행률 표시줄 설정입니다.
-  enabled: true
-  height: 3 # 진행률 표시줄의 높이(px)입니다.
-  showOnHomepage: true # 홈페이지에도 표시합니다.
-  smoothScroll: true
-  hideOnComplete: false
-enableRobotsTXT: true
+enableRobotsTXT: false # static/robots.txt 를 사용합니다. (true 로 두면 내장 템플릿이 덮어써 Sitemap 줄이 사라집니다)
 enableGitInfo: true
 canonifyURLs: true
 # 8. 빌드 및 출력 설정
@@ -289,14 +290,14 @@ outputFormats:
 module: # Hugo 모듈 및 버전 설정입니다.
   hugoVersion:
     extended: true # Sass/SCSS 처리가 가능한 extended 버전을 요구합니다.
-    min: 0.146.0
+    min: 0.165.0
 
 timeZone: "Asia/Seoul" # 빌드 시 사용할 시간대입니다.
 
 caches:
   # 원격 API 데이터 캐시는 12시간으로 설정
-  getjson:
-    dir: ":cacheDir/getJSON"
+  getresource:
+    dir: ":cacheDir/getresource"
     maxAge: "12h"
 
   # 이미지, 애셋, 모듈은 파일 변경 시에만 다시 생성되도록 영구 캐시

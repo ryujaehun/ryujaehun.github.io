@@ -6,9 +6,6 @@ categories:
 - with-gemini
 date: "2025-07-07"
 tags:
-- 데이터센터
-- 배터리
-- LFP
 - CATL
 - BYD
 - AI

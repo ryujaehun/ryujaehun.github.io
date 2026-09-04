@@ -2,7 +2,8 @@
 categories:
 - paper-review
 - with-gpt
-comments: true
+comments:
+  enabled: true
 date: "2024-11-06"
 tags: null
 title: KVSharer Efficient Inference via Layer-Wise Dissimilar KV Cache Sharing
