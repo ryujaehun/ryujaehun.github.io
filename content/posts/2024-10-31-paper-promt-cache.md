@@ -3,7 +3,8 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-10-31"
-tags: null
+tags:
+- Natural Language Processing
 title: Prompt Cache Modular Attention Reuse for Low-Latency Inference
 ---
 

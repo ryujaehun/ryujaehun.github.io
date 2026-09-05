@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-10"
-tags: null
+tags:
+- Hardware Architecture
+- Distributed Computing
 title: DynamoLLM Designing LLM Inference Clusters for Performance and Energy Efficiency
 ---
 

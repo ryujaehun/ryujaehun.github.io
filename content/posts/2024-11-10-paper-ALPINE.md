@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-10"
-tags: null
+tags:
+- Machine Learning
+- Natural Language Processing
 title: ALPINE Unveiling the Planning Capability of Autoregressive Learning in Language
   Models
 ---

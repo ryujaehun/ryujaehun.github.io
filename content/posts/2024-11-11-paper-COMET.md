@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-11"
-tags: null
+tags:
+- Hardware Architecture
+- Machine Learning
 title: COMET Towards Partical W4A4KV4 LLMs Serving
 ---
 

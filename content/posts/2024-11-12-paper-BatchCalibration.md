@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-12"
-tags: null
+tags:
+- Natural Language Processing
+- Machine Learning
 title: Batch Calibration Rethinking Calibration for In-Context Learning and Prompt
   Engineering
 ---

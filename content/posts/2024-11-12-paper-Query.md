@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-12"
-tags: null
+tags:
+- Machine Learning
+- Data Structures and Algorithms
 title: Query-Efficient Correlation Clustering with Noisy Oracle
 ---
 

@@ -5,7 +5,9 @@ categories:
  - paper-review
  - with-gpt-5.2
 tags:
- - 2506.19852v1
+- Natural Language Processing
+- Machine Learning
+- Mixture of Experts
 cover: https://developer-blogs.nvidia.com/wp-content/uploads/2025/12/image3-8-png.webp
 ---
 [논문 링크](https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-White-Paper.pdf)

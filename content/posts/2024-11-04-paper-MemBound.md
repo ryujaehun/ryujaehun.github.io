@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-04"
-tags: null
+tags:
+- Data Structures and Algorithms
+- Machine Learning
 title: Memory Bounds for the Experts Problem
 ---
 

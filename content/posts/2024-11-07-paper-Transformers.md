@@ -3,7 +3,8 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-07"
-tags: null
+tags:
+- Natural Language Processing
 title: Transformers are Multi-State RNNs
 ---
 

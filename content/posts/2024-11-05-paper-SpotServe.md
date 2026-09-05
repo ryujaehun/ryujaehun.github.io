@@ -3,7 +3,10 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-05"
-tags: null
+tags:
+- Distributed Computing
+- Natural Language Processing
+- Machine Learning
 title: SpotServe Serving Generative Large Language Models on Preemptible Instances
 ---
 

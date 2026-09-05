@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-05"
-tags: null
+tags:
+- Natural Language Processing
+- Software Engineering
 title: Magicoder Empowering Code Generation with OSS-Instruct
 ---
 

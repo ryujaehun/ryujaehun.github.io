@@ -4,7 +4,9 @@ categories:
 - ML
 - paper-review
 date: "2021-02-12"
-tags: null
+tags:
+- Machine Learning
+- Programming Languages
 title: 간단논문 정리 TVM An Automated End-to-End Optimizing Compiler for Deep Learning  (OSDI
   18)
 ---

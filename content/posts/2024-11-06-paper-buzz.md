@@ -3,7 +3,8 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-06"
-tags: null
+tags:
+- Natural Language Processing
 title: BUZZ Beehive-structured Sparse KV Cache with Segmented Heavy Hitters for Efficient
   LLM Inference
 ---

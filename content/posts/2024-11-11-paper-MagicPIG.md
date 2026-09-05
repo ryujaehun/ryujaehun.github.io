@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-11"
-tags: null
+tags:
+- Natural Language Processing
+- Machine Learning
 title: MagicPIG LSH Sampling for Efficient LLM Generation
 ---
 

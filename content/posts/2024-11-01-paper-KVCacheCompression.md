@@ -3,7 +3,8 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-01"
-tags: null
+tags:
+- Natural Language Processing
 title: KV Cache Compression, But What Must We Give in Return? A Comprehensive Benchmark
   of Long Context Capable Approaches
 ---

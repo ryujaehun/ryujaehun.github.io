@@ -23,6 +23,20 @@ languages:
     locale: ko-kr
     label: "한국어" # 언어 선택 메뉴에 표시될 이름입니다.
     weight: 1 # 언어 선택 메뉴의 순서입니다. (숫자가 작을수록 먼저 표시)
+    # 한국어 메뉴 (테마 v1.3 부터 메뉴 name 을 i18n 키가 아닌 표시 문구로 그대로 씁니다)
+    menus:
+      main:
+        - { name: 소개, pageRef: /about, weight: 10, params: { icon: about } }
+        - { name: 게시글, pageRef: /posts, weight: 20, params: { icon: posts } }
+        - { name: 카테고리, pageRef: /categories, weight: 30, params: { icon: categories } }
+        - { name: 태그, pageRef: /tags, weight: 40, params: { icon: tags } }
+        - { name: 아카이브, pageRef: /archives, weight: 50, params: { icon: archive } }
+      footer:
+        - { name: RSS, url: /index.xml, weight: 30, params: { icon: rss } }
+      social:
+        - { name: GitHub, url: "https://github.com/ryujaehun", weight: 10, params: { icon: github } }
+        - { name: Linkedin, url: "https://www.linkedin.com/in/jaehunryu/", weight: 20, params: { icon: linkedin } }
+        - { name: Email, url: "mailto:jaehunryu@icloud.com", weight: 30, params: { icon: email } }
     # 한국어 페이지에 적용될 파라미터
     params:
       description: "기술과 일상에 대한 생각을 기록하는 블로그입니다." # SEO를 위한 사이트 설명
@@ -51,6 +65,20 @@ languages:
     locale: en-US
     label: "English"
     weight: 2
+    # 영어 메뉴
+    menus:
+      main:
+        - { name: About, pageRef: /about, weight: 10, params: { icon: about } }
+        - { name: Posts, pageRef: /posts, weight: 20, params: { icon: posts } }
+        - { name: Categories, pageRef: /categories, weight: 30, params: { icon: categories } }
+        - { name: Tags, pageRef: /tags, weight: 40, params: { icon: tags } }
+        - { name: Archives, pageRef: /archives, weight: 50, params: { icon: archive } }
+      footer:
+        - { name: RSS, url: /index.xml, weight: 30, params: { icon: rss } }
+      social:
+        - { name: GitHub, url: "https://github.com/ryujaehun", weight: 10, params: { icon: github } }
+        - { name: Linkedin, url: "https://www.linkedin.com/in/jaehunryu/", weight: 20, params: { icon: linkedin } }
+        - { name: Email, url: "mailto:jaehunryu@icloud.com", weight: 30, params: { icon: email } }
     # 영어 페이지에 적용될 파라미터
     params:
       description: "A blog about technology, daily life, and thoughts."
@@ -91,8 +119,6 @@ params:
   # 사이트 정보
   shortName: "Jaehun's Blog" # PWA(웹 앱)으로 설치 시 표시될 짧은 이름입니다.
   defaultAuthor: "Jaehun Ryu" # <meta name="author"> 기본값입니다.
-  logo:
-    image: "" # 로고 이미지 경로입니다. 비워두면 사이트 제목의 첫 글자가 로고로 자동 생성됩니다.
   favicon:
     svg: "/favicon.svg" # 브라우저 탭에 표시될 SVG 형식의 파비콘입니다.
   images:
@@ -112,12 +138,25 @@ params:
         url: mailto:jaehunryu@icloud.com
         params: { icon: email }
 
-  # UI/UX 기능 제어
-  stickyHeader: true # 스크롤 시 상단 내비게이션 바를 고정합니다.
-  showThemeSwitch: true # 테마 색상 변경 버튼을 표시합니다.
-  showDarkModeSwitch: true # 다크 모드 전환 버튼을 표시합니다.
-  showLanguageSwitch: true # 언어 변경 버튼을 표시합니다.
-  languageSwitchMode: dropdown # Language switch mode: "dropdown" (show panel) or "cycle" (direct cycle)
+  # UI/UX 기능 제어 (테마 v1.3 부터 header 하위로 이동했습니다)
+  header:
+    sticky: true # 스크롤 시 상단 내비게이션 바를 고정합니다.
+    logo:
+      image: "" # 로고 이미지 경로입니다. 비워두면 사이트 제목의 첫 글자가 로고로 자동 생성됩니다.
+      link: "/" # 로고 클릭 시 이동할 주소입니다.
+    showThemeSwitch: true # 테마 색상 변경 버튼을 표시합니다.
+    showDarkModeSwitch: true # 다크 모드 전환 버튼을 표시합니다.
+    showContentWidthSwitch: true # 본문 너비 전환 버튼을 표시합니다.
+    showLanguageSwitch: true # 언어 변경 버튼을 표시합니다.
+    languageSwitchMode: dropdown # "dropdown"(패널) 또는 "cycle"(바로 순환)
+
+  dock: "scroll" # 하단 독 표시 방식: scroll(위로 스크롤 시) | always | float
+  contentWidth: "56rem" # 본문 최대 너비입니다.
+  toc:
+    enabled: true # 목차를 표시합니다.
+    position: side # center(본문 위) 또는 side(측면 패널)
+    pinned: false # side 모드에서 공간이 넉넉하면 목차를 항상 펼쳐 둡니다.
+
   home:
     recentPostsCount: 5 # 홈페이지에 표시할 최근 글의 개수입니다.
   colorScheme: "claude" # 기본으로 적용할 테마 색상 스킴입니다.
@@ -168,29 +207,19 @@ params:
     clarity:
       enabled: false
       id: "sgbwt9976d"
-  # GLightbox
+  # 이미지 라이트박스 (GLightbox)
   lightbox:
     enabled: true
-    loop: true
-    width: 80vw
-    height: 80vh
-    touchNavigation: true
-    draggable: true
-    zoomable: true
-    preload: true
-    descPosition: bottom
 
-  # Justified Gallery
-  justified_gallery:
+  # 이미지 갤러리 (테마 v1.3 에서 justified_gallery -> gallery 로 이름/스키마 변경)
+  gallery:
     enabled: true
-    rowHeight: 300
-    gutter: 30
-    lastRow: center
-    transitionDuration: 0.3s
-    resizeDebounce: 100
-    rowHeightTolerance: 0.25
-    maxRowsCount: 999999
-    calculateItemsHeight: false
+    defaultLayout: justified # justified | masonry | grid
+    gap: 10
+    targetRowHeight: 300
+    lastRowBehavior: center # left | center | right | fill | hide
+    columnWidth: 200
+    columns: 4
   post:
     showRelated: true # 각 글 하단에 관련 글을 표시합니다.
     relatedPostsCount: 3 # 표시할 관련 글의 개수입니다.
@@ -207,54 +236,7 @@ params:
     enabled: true
     showOnHomepage: true # 홈페이지에도 표시합니다.
 
-# 5. 글(Post) 페이지 관련 설정
-# -----------------------------------------------------------------------------
-
-# 6. 메뉴 설정
-# -----------------------------------------------------------------------------
-menus:
-  # 상단 메인 메뉴
-  main:
-    - { name: nav.posts, pageRef: /posts, weight: 20, params: { icon: posts } }
-    - { name: nav.about, pageRef: /about, weight: 10, params: { icon: about } }
-    - {
-        name: nav.categories,
-        pageRef: /categories,
-        weight: 30,
-        params: { icon: categories },
-      }
-    - { name: nav.tags, pageRef: /tags, weight: 40, params: { icon: tags } }
-    - {
-        name: nav.archives,
-        pageRef: /archives,
-        weight: 50,
-        params: { icon: archive },
-      }
-  # 하단 푸터 메뉴
-  footer:
-    - { name: RSS Feed, url: /index.xml, weight: 30, params: { icon: rss } }
-  # 푸터 소셜 링크 (테마에 따라 params.author.social과 통합될 수 있음)
-  social:
-    - {
-        name: GitHub,
-        url: https://github.com/ryujaehun,
-        weight: 10,
-        params: { icon: github },
-      }
-    - {
-        name: Linkedin,
-        url: https://www.linkedin.com/in/jaehunryu/,
-        weight: 10,
-        params: { icon: linkedin },
-      }
-    - {
-        name: Email,
-        url: mailto:jaehunryu@icloud.com,
-        weight: 20,
-        params: { icon: email },
-      }
-
-# 7. 마크다운 및 코드 블록 설정
+# 5. 마크다운 및 코드 블록 설정
 # -----------------------------------------------------------------------------
 markup:
   tableOfContents: # 목차(TOC) 생성 시 포함할 제목 레벨입니다.
@@ -275,8 +257,7 @@ markup:
 
 enableRobotsTXT: false # static/robots.txt 를 사용합니다. (true 로 두면 내장 템플릿이 덮어써 Sitemap 줄이 사라집니다)
 enableGitInfo: true
-canonifyURLs: true
-# 8. 빌드 및 출력 설정
+# 6. 빌드 및 출력 설정
 # -----------------------------------------------------------------------------
 outputs:
   home: ["HTML", "RSS", "JSON", "WebAppManifest"] # 홈페이지에서 생성할 파일 형식입니다.

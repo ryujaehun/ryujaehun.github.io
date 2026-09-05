@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-01"
-tags: null
+tags:
+- Distributed Computing
+- Networking
 title: Teola Towards End-to-End Optimization of LLM-based Applications
 ---
 

@@ -1,0 +1,14 @@
+/* 사이트 고유 CSS 보정. 테마가 assets/css/custom/*.css 를 자동으로 포함합니다. */
+
+/* 공백 없이 이어진 긴 제목(예: 논문 제목)이 모바일에서 가로 스크롤을 만드는 문제.
+   아카이브/목록/카드/본문 제목에 줄바꿈을 허용한다. */
+h1,
+h2,
+h3,
+h4,
+article h4 a,
+.prose h1,
+.prose h2,
+.prose h3 {
+  overflow-wrap: anywhere;
+}

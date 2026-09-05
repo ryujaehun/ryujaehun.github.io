@@ -3,7 +3,8 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-07"
-tags: null
+tags:
+- Natural Language Processing
 title: Model Tells You What to Discard Adaptive KV Cache Compression for LLMs
 ---
 

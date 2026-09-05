@@ -3,7 +3,8 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-04"
-tags: null
+tags:
+- Natural Language Processing
 title: SpecExec Massively Parallel Speculative Decoding for Interactive LLM Inference
   on Consumer Devices
 ---

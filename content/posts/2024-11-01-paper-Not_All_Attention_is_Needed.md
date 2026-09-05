@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-01"
-tags: null
+tags:
+- Machine Learning
+- Natural Language Processing
 title: What Matters in Transformers? Not All Attention is Needed Fusion
 ---
 

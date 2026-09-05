@@ -4,7 +4,9 @@ categories:
 - ML
 - paper-review
 date: "2021-02-12"
-tags: null
+tags:
+- Machine Learning
+- Programming Languages
 title: 논문 정리 NeuroVectorizer End-to-End Vectorization with Deep Reinforcement Learning
   (CGO 20)
 ---

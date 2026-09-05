@@ -3,7 +3,8 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-03"
-tags: null
+tags:
+- Machine Learning
 title: MEGABYTE Predicting Million-byte Sequences with Multiscale Transformers
 ---
 

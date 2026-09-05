@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-01"
-tags: null
+tags:
+- Machine Learning
+- Performance
 title: FlexGen High-Throughput Generative Inference of Large Language Models with
   a Single GPU
 ---

@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-05"
-tags: null
+tags:
+- Data Structures and Algorithms
+- Machine Learning
 title: Optimal Kernel Orchestration for Tensor Programs with Korch
 ---
 

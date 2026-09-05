@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-14"
-tags: null
+tags:
+- Computer Vision
+- Machine Learning
 title: Learning Transferable Visual Models From Natural Language Supervision
 ---
 

@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-10"
-tags: null
+tags:
+- Natural Language Processing
+- Machine Learning
 title: MInference 1.0 Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse
   Attention
 ---

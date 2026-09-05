@@ -4,7 +4,6 @@ categories:
 - with-gpt
 date: "2025-07-08"
 tags:
-- 2505.09343v1
 - Tensor Parallelism
 - Mixture of Experts
 - FlashAttention

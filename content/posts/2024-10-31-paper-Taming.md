@@ -3,7 +3,9 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-10-31"
-tags: null
+tags:
+- Machine Learning
+- Distributed Computing
 title: Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve
 ---
 

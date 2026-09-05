@@ -3,7 +3,8 @@ categories:
 - paper-review
 - with-gpt
 date: "2024-11-11"
-tags: null
+tags:
+- Artificial Intelligence
 title: RAG4ITOps A Supervised Fine-Tunable and Comprehensive RAG Framework for IT
   Operations and Maintenance
 ---
