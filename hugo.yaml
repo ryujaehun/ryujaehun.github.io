@@ -275,6 +275,12 @@ module: # Hugo 모듈 및 버전 설정입니다.
 
 timeZone: "Asia/Seoul" # 빌드 시 사용할 시간대입니다.
 
+services:
+  rss:
+    # 기본값은 무제한이라 전체 글이 한 파일(1.3MB+)로 나갑니다.
+    # 리더가 폴링할 때마다 받아가므로 최근 글로 제한합니다.
+    limit: 30
+
 caches:
   # 원격 API 데이터 캐시는 12시간으로 설정
   getresource:
