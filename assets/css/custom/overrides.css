@@ -37,3 +37,43 @@ article h4 a,
 .prose h3 {
   overflow-wrap: anywhere;
 }
+
+/* --------------------------------------------------------------------------
+   3) 강조색(--color-primary) 대비비를 WCAG AA(4.5:1) 이상으로
+
+   기본값 claude 에서 흰 글자/강조색 버튼이 3.86:1, 배경 위 강조색 링크가
+   3.63:1 이라 "더 보기" 버튼과 푸터 링크가 기준 미달이었다.
+
+   - 라이트 스킴: 색조(C·H)는 그대로 두고 명도(L)만 낮춘다.
+   - 다크 스킴: 강조색을 어둡게 하면 어두운 배경과의 대비가 무너지므로
+     (두 조건을 동시에 만족하는 색이 존재하지 않는다) 강조색은 두고
+     그 위에 얹히는 --color-primary-foreground 를 어둡게 바꾼다.
+   -------------------------------------------------------------------------- */
+[data-theme="claude"]:not(.dark) {
+  --color-primary: oklch(0.565 0.14 39.04); /* 3.86/3.65 -> 4.84/4.58 */
+}
+[data-theme="dracula"]:not(.dark) {
+  --color-primary: oklch(0.55 0.15 346.812); /* 2.72/2.48 -> 4.98/4.55 */
+}
+[data-theme="amethyst"]:not(.dark) {
+  --color-primary: oklch(0.555 0.0767 299.7335); /* 3.64/3.64 -> 4.57/4.57 */
+}
+[data-theme="slate"]:not(.dark) {
+  --color-primary: oklch(0.57 0.2041 277.1173); /* 4.47/4.27 -> 4.76/4.55 */
+}
+[data-theme="twitter"]:not(.dark) {
+  --color-primary: oklch(0.557 0.1606 244.9955); /* 2.94/2.94 -> 4.59/4.59 */
+}
+
+[data-theme="claude"].dark {
+  --color-primary-foreground: oklch(0.28 0.01 38.76); /* 3.15 -> 4.65 */
+}
+[data-theme="bumblebee"].dark {
+  --color-primary-foreground: oklch(0.3 0.01 91.936); /* 2.31 -> 5.11 */
+}
+[data-theme="twitter"].dark {
+  --color-primary-foreground: oklch(0.295 0.01 245.011); /* 2.97 -> 4.66 */
+}
+
+/* bumblebee 라이트는 손대지 않는다. 노란색(#fdc700)을 밝은 배경 위에서
+   4.5:1 로 만들려면 #9b6700 같은 갈색이 되어 스킴 정체성이 사라진다. */
