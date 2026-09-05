@@ -1,0 +1,18 @@
+{{/*
+  테마가 비워 둔 head 확장 지점.
+
+  hreflang: 한국어 글과 영어 번역(*.en.md)이 서로 다른 URL 로 나가는데
+  둘을 이어 주는 표시가 없어 검색엔진이 별개 문서로 취급하고 있었다.
+  번역이 있는 페이지에만 대체 URL 을 내보낸다. x-default 는 언어 weight 가
+  가장 낮은 쪽(= 기본 언어 한국어)을 가리킨다.
+  https://developers.google.com/search/docs/specialty/international/localized-versions
+*/}}
+{{- if .IsTranslated -}}
+  {{- $all := .AllTranslations -}}
+  {{- range $all }}
+  <link rel="alternate" hreflang="{{ .Language.Locale }}" href="{{ .Permalink }}" />
+  {{- end }}
+  {{- with index $all 0 }}
+  <link rel="alternate" hreflang="x-default" href="{{ .Permalink }}" />
+  {{- end }}
+{{- end -}}
