@@ -1,0 +1,20 @@
+{{/*
+  테마 파셜 오버라이드: gtag.js 에 async 를 붙인다.
+  테마 원본은 <script src="...gtag/js"> 를 동기로 넣어 렌더를 막고 있었다
+  (Lighthouse 기준 렌더 블로킹 약 1.8초). 나머지는 테마 원본과 동일하다.
+  참고: https://developers.google.com/tag-platform/gtagjs/install
+*/}}
+<script
+  async
+  src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.analytics.google.id }}"></script>
+<script data-pjax>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+
+  gtag('js', new Date());
+
+  gtag('config', '{{ .Site.Params.analytics.google.id }}');
+</script>
