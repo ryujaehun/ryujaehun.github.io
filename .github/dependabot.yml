@@ -1,0 +1,10 @@
+# GitHub Actions 버전 업데이트를 자동으로 추적합니다.
+# (Node.js 20 지원 종료처럼 액션이 낡아 경고가 뜨는 걸 미리 잡기 위함)
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "ci"
