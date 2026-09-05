@@ -150,7 +150,7 @@ params:
     showLanguageSwitch: true # 언어 변경 버튼을 표시합니다.
     languageSwitchMode: dropdown # "dropdown"(패널) 또는 "cycle"(바로 순환)
 
-  dock: "scroll" # 하단 독 표시 방식: scroll(위로 스크롤 시) | always | float
+  dock: "always" # 하단 독 표시 방식: scroll(위로 스크롤 시) | always | float
   contentWidth: "56rem" # 본문 최대 너비입니다.
   toc:
     enabled: true # 목차를 표시합니다.
