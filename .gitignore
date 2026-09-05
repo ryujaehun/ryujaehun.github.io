@@ -44,3 +44,6 @@ __pycache__/
 
 # Hugo가 자동 생성하는 에디터 보조 파일
 /assets/jsconfig.json
+
+# 로컬 검증용 임시 빌드 출력
+/.hugo_*/
