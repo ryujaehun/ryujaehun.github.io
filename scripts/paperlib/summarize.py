@@ -97,11 +97,55 @@ def extract_run_cost(stdout):
     return None
 
 
+# 본문이라고 볼 최소 길이. 에이전트의 작업 보고문은 보통 1KB 안쪽이다.
+MIN_BODY_CHARS = 2000
+
+OUTPUT_CONTRACT = """
+
+---
+
+## 출력 규칙 (반드시 지킬 것)
+
+위 지시에 따라 작성한 **블로그 포스트 전문**을 아래 경로 파일 하나에만 쓴다.
+
+    {output_path}
+
+- 이 파일에는 포스트 본문만 넣는다. 작업 요약이나 설명을 섞지 않는다.
+- YAML front matter 는 쓰지 않는다. 파이프라인이 따로 붙인다.
+- 다른 파일은 만들지 않는다.
+"""
+
+
+def build_review_prompt(prompt, output_path):
+    """프롬프트에 출력 파일 계약을 덧붙인다.
+
+    opencode 는 완성 응답을 내는 LLM 이 아니라 파일을 쓰고 결과를 보고하는
+    에이전트다. 그대로 두면 본문을 제 맘대로 파일에 쓰고 stdout 으로는
+    "완료했습니다" 같은 보고만 낸다. 그러면 그 보고문이 초안 본문이 된다.
+    그래서 쓸 경로를 명시하고, 그 파일을 읽는다.
+    """
+    return prompt + OUTPUT_CONTRACT.format(output_path=Path(output_path).absolute())
+
+
 def summarize_with_opencode(
-    pdf_path, prompt, model, workdir, variant=None, timeout=900, runner=subprocess.run
+    pdf_path,
+    prompt,
+    model,
+    workdir,
+    output_path,
+    variant=None,
+    timeout=900,
+    min_chars=MIN_BODY_CHARS,
+    runner=subprocess.run,
 ):
     """opencode 로 논문 요약 본문을 만든다. 실패하면 SummarizeError."""
-    cmd = build_opencode_command(pdf_path, prompt, model, workdir, variant=variant)
+    output_path = Path(output_path).absolute()
+    # 이전 실행이 남긴 파일을 새 결과로 착각하지 않게 먼저 치운다.
+    output_path.unlink(missing_ok=True)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    cmd = build_opencode_command(
+        pdf_path, build_review_prompt(prompt, output_path), model, workdir, variant=variant
+    )
     try:
         completed = runner(
             cmd, capture_output=True, text=True, timeout=timeout, check=False
@@ -117,7 +161,24 @@ def summarize_with_opencode(
             f"{(completed.stderr or '').strip()[:500]}"
         )
 
-    return extract_assistant_text(completed.stdout)
+    # 약속한 파일이 우선이다. 없으면 stdout 이 통짜 본문인 경우만 받는다.
+    if output_path.exists():
+        body = output_path.read_text(encoding="utf-8")
+        if len(body) >= min_chars:
+            return body
+
+    try:
+        body = extract_assistant_text(completed.stdout)
+    except SummarizeError:
+        body = ""
+
+    if len(body) >= min_chars:
+        return body
+
+    raise SummarizeError(
+        f"본문이 너무 짧습니다({len(body)}자, 최소 {min_chars}자). "
+        f"에이전트가 작업 보고만 냈을 수 있습니다. 앞부분:\n{body[:300]}"
+    )
 
 
 def write_task_file(

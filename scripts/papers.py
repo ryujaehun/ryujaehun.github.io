@@ -360,6 +360,7 @@ def cmd_summarize(args):
                 prompt=prompt,
                 model=model,
                 workdir=WORKDIR,
+                output_path=WORKDIR / f"{arxiv_id}-review.md",
                 variant=settings.get("variant"),
                 timeout=settings.get("timeout_seconds", 900),
             )
