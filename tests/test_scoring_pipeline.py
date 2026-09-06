@@ -12,6 +12,7 @@ BASE_CONFIG = {
         "hf_min_score": 0.45,
         "arxiv_min_topic": 0.70,
         "arxiv_min_core_hits": 2,
+        "min_substantive_hits": 1,
         "top_k": 5,
     },
     "preferred_categories": ["cs.LG", "cs.CL", "cs.DC"],
@@ -175,3 +176,120 @@ def test_top_k_caps_the_number_of_selected_papers():
     assert len(passed) == 5
     # 점수 내림차순이라 upvote 가 가장 높은 것이 앞선다
     assert passed[0].id == "2609.08"
+
+
+def test_config_exposes_fetch_categories_separately_from_preferred():
+    cfg = config(fetch_categories=["cs.LG", "cs.DC"])
+
+    # 무엇을 긁어올까(fetch)와 무엇에 감점하지 않을까(preferred)는 다른 목록이다
+    assert cfg.fetch_categories == ("cs.LG", "cs.DC")
+    assert cfg.preferred_categories == ("cs.LG", "cs.CL", "cs.DC")
+
+
+def test_config_falls_back_to_preferred_when_fetch_categories_absent():
+    assert config().fetch_categories == ("cs.LG", "cs.CL", "cs.DC")
+
+
+def test_real_config_file_loads():
+    from pathlib import Path
+
+    from paperlib.scoring import FilterConfig
+
+    cfg = FilterConfig.load(Path(__file__).parent.parent / "data" / "paper-filter.yaml")
+
+    assert cfg.gates["top_k"] == 5
+    assert cfg.fetch_categories
+    assert cfg.summarize["model"].startswith("opencode-go/")
+
+
+
+def _real_config():
+    from pathlib import Path
+
+    return FilterConfig.load(Path(__file__).parent.parent / "data" / "paper-filter.yaml")
+
+
+def test_paper_without_a_substantive_term_is_rejected():
+    """약한 용어가 쌓여 topic 이 높아져도, 실질 용어가 없으면 주제 밖이다.
+
+    실제로 걸렸던 사례: 'SolarWM: Long-Horizon Video World Models' 가
+    upvote 140 + topic 0.714 로 통과했다. 매칭은 autoregressive/distillation
+    같은 adjacent 뿐이었다. 실제 어휘집으로 재현해야 의미가 있다.
+    """
+    cfg = _real_config()
+    popular_off_topic = score_paper(
+        paper(
+            title="SolarWM: Open Data and Scalable Training for Long-Horizon Video World Models",
+            abstract=(
+                "We introduce SolarWM, a fully open foundation for building interactive "
+                "video world models from data preparation through long-horizon inference. "
+                "Training across heterogeneous data sources and video backbones is "
+                "challenging. We use autoregressive distillation."
+            ),
+            sources=["hf"],
+            hf={"upvotes": 140, "github_repo": "https://x", "github_stars": 200},
+        ),
+        cfg,
+    )
+
+    assert popular_off_topic.components["buzz"] > 0.9, "인기 신호는 실제로 높다"
+    assert popular_off_topic.substantive_hits == 0, "실질 용어가 하나도 없다"
+    assert select([popular_off_topic], cfg) == []
+
+
+def test_substantive_rule_does_not_block_a_relevant_popular_paper():
+    cfg = _real_config()
+    relevant = score_paper(
+        paper(
+            title="Random Attention: Rethinking KV Cache Eviction for Efficient Reasoning",
+            abstract="We revisit sparse attention and cache compression for vLLM serving.",
+            sources=["hf"],
+            hf={"upvotes": 140},
+        ),
+        cfg,
+    )
+
+    assert [p.id for p in select([relevant], cfg)] == [relevant.id]
+
+
+
+def test_substantive_hits_count_core_named_and_systems_but_not_adjacent():
+    cfg = _real_config()
+
+    only_adjacent = score_paper(
+        paper(title="Attention and caching in autoregressive models", sources=["arxiv"]), cfg
+    )
+    with_systems = score_paper(
+        paper(title="NVFP4 quantization for language models", sources=["arxiv"]), cfg
+    )
+
+    assert only_adjacent.substantive_hits == 0
+    assert with_systems.substantive_hits >= 1
+
+
+def test_zero_upvote_paper_with_core_terms_beats_a_popular_off_topic_one():
+    """실제 순위 뒤집힘 재현: upvote 0 인 표적 논문이 밀려나면 안 된다."""
+    cfg = _real_config()
+
+    target = score_paper(
+        paper(
+            id="2609.aaaa",
+            title="SGD-KV: Summarization Guided KV Cache Compression",
+            abstract="We compress the KV cache during decoding for LLM serving.",
+            sources=["hf"],
+            hf={"upvotes": 0},
+        ),
+        cfg,
+    )
+    popular = score_paper(
+        paper(
+            id="2609.bbbb",
+            title="SolarWM: Scalable Training for Long-Horizon Video World Models",
+            abstract="Interactive video world models with autoregressive distillation.",
+            sources=["hf"],
+            hf={"upvotes": 140},
+        ),
+        cfg,
+    )
+
+    assert [p.id for p in select([popular, target], cfg)] == ["2609.aaaa"]

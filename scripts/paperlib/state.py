@@ -57,7 +57,14 @@ class State:
             {"first_seen": date.today().isoformat(), "status": "seen", "failures": 0},
         )
 
-    def mark_materialized(self, paper_id, score, draft_path):
+    def mark_materialized(
+        self, paper_id, score, draft_path, title=None, version=None, matched=None
+    ):
+        """제목과 매칭 근거도 같이 남긴다.
+
+        반자동(task) 경로에서 에이전트가 논문을 식별하고 무엇이 왜 걸렸는지
+        알려면 이 정보가 필요하다.
+        """
         entry = self._entry(paper_id)
         entry.update(
             {
@@ -67,6 +74,12 @@ class State:
                 "status": "materialized",
             }
         )
+        if title is not None:
+            entry["title"] = title
+        if version is not None:
+            entry["version"] = version
+        if matched is not None:
+            entry["matched"] = matched
 
     def mark_failed(self, paper_id, reason):
         entry = self._entry(paper_id)
@@ -81,3 +94,12 @@ class State:
             if entry.get("status") == "materialized"
             or entry.get("failures", 0) >= max_failures
         }
+
+
+def repo_relative(path, root):
+    """state.json 은 커밋되므로 리포 안 경로는 상대 경로로 적는다."""
+    path = Path(path)
+    try:
+        return str(path.resolve().relative_to(Path(root).resolve()))
+    except ValueError:
+        return str(path)

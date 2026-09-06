@@ -190,6 +190,16 @@ Generation`처럼 도메인은 비디오지만 sparse attention이 본체인 논
 arXiv에만 있는 논문은 `buzz = 0`이라 HF 출신과 같은 임계값으로는 영원히
 통과하지 못한다. 그래서 게이트를 나눈다.
 
+모든 후보는 먼저 **실질 용어 관문**을 넘어야 한다. `core` / `named_systems`
+/ `systems` 티어에서 최소 1개가 걸려야 한다(`min_substantive_hits`).
+
+이 규칙은 구현 중 실제 데이터에서 발견해 추가했다. 없으면 upvote 140 의
+`SolarWM: Long-Horizon Video World Models` 가 `autoregressive` +
+`distillation` 만 걸고도 topic 0.714 로 통과한다. 인기와 약한 용어 누적이
+주제 관련성을 대신해서는 안 된다.
+
+관문을 넘은 뒤 출처별 게이트를 적용한다.
+
 | 출처 | 통과 조건 |
 |---|---|
 | `sources`에 `hf` 포함 | `score ≥ 0.45` |
@@ -428,12 +438,22 @@ papers.py summarize --backend {none|opencode|task} [--id <arxiv-id>]
 ### 9.2 `opencode` — 완전 자동
 
 ```
-opencode run --format json \
+opencode run --format json --auto \
+             --dir .cache/papers/workdir \
              --model <summarize.model> \
              [--variant <v>] \
              --file .cache/papers/<id>.pdf \
              "<프롬프트 본문>"
 ```
+
+**`--auto` 가 필요하다.** 없이 돌리면 비대화형 실행에서 권한 프롬프트를
+기다리다 그대로 멈춘다(opencode 1.18.27 에서 확인). opencode 자체 도움말이
+"dangerous" 로 표시하는 플래그라, `--dir` 을 리포 밖 전용 작업 폴더
+(`.cache/papers/workdir`)로 좁혀 파일 조작을 가둔다.
+
+출력은 **줄 단위 JSON 이벤트**다. 본문은 `{"type":"text","part":{"type":
+"text","text":...}}` 이벤트에 조각으로 실려 오고, `step_finish` 이벤트에
+`cost`(USD)와 토큰 수가 담긴다.
 
 - 논문마다 **새 세션**(`--continue` 미사용) — 컨텍스트 오염 방지
 - `--format json`으로 받아 파싱, 실패하면 stderr를 보존하고 초안은

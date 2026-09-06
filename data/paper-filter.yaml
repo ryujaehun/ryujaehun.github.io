@@ -29,6 +29,9 @@ stars_reference: 500
 
 gates:
   hf_min_score: 0.45        # HF 에 올라온 논문의 총점 기준
+  min_substantive_hits: 1   # core/named_systems/systems 에서 최소 몇 개나 걸려야 하는지.
+                            # 인기(upvote)나 약한 용어 누적이 주제 관련성을
+                            # 대신하지 못하게 막는다.
   arxiv_min_topic: 0.70     # arXiv 단독 — buzz 가 0 이라 토픽만 본다
   arxiv_min_core_hits: 2
   top_k: 5                  # 한 번에 만들 초안 상한 (주 3~5 편 목표)
@@ -39,6 +42,9 @@ non_preferred_multiplier: 0.9
 # 수집 대상 arXiv 카테고리 (preferred_categories 와 다른 목록이다.
 # 이쪽은 "무엇을 긁어올까", 저쪽은 "무엇에 감점하지 않을까")
 fetch_categories: [cs.LG, cs.CL, cs.DC, cs.AR, cs.PF]
+
+# 실질 축. 여기서 하나도 안 걸리면 gates.min_substantive_hits 에 막힌다.
+substantive_tiers: [core, named_systems, systems]
 
 tiers:
   - name: core
@@ -135,6 +141,9 @@ tiers:
       - gpu sharing
       - multi-tenant
       - multitasking
+      - compression
+      - sparsity
+      - pruning
 
   - name: adjacent
     weight: 1.5
@@ -145,11 +154,8 @@ tiers:
       - throughput
       - latency
       - memory efficient
-      - compression
       - attention
       - distillation
-      - pruning
-      - sparsity
       - batching
       - cache
       - kernel

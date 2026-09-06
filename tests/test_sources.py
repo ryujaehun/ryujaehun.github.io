@@ -1,3 +1,4 @@
+import pytest
 import json
 from pathlib import Path
 
@@ -84,3 +85,73 @@ def test_merge_combines_both_sources_and_keeps_hf_signals():
     assert record["title"] == "arXiv title"
     assert record["primary_category"] == "cs.LG"
     assert record["version"] == "v1"
+
+
+class _FakeResponse:
+    def __init__(self, body):
+        self.body = body
+
+    def read(self):
+        return self.body
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+
+def test_download_pdf_writes_the_file_and_returns_its_path(tmp_path):
+    from paperlib.sources import download_pdf
+
+    requested = []
+
+    def opener(request, timeout=None):
+        requested.append(request.full_url)
+        return _FakeResponse(b"%PDF-1.7 fake")
+
+    path = download_pdf("2506.19852", dest_dir=tmp_path, opener=opener)
+
+    assert path.read_bytes() == b"%PDF-1.7 fake"
+    assert path.name == "2506.19852.pdf"
+    assert requested == ["https://arxiv.org/pdf/2506.19852"]
+
+
+def test_download_pdf_rejects_a_response_that_is_not_a_pdf(tmp_path):
+    from paperlib.sources import SourceError, download_pdf
+
+    def opener(request, timeout=None):
+        return _FakeResponse(b"<html>404 not found</html>")
+
+    with pytest.raises(SourceError):
+        download_pdf("2506.19852", dest_dir=tmp_path, opener=opener)
+
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_within_window_accepts_a_record_published_inside_the_range():
+    from paperlib.sources import within_window
+
+    assert within_window({"published": "2026-09-04T12:00:00Z"}, ["2026-09-04"])
+
+
+def test_within_window_rejects_a_record_published_after_a_single_day_window():
+    from paperlib.sources import within_window
+
+    # --date 2026-09-04 는 그 하루만 뜻해야 한다. 그 뒤 날짜까지 통과하면 안 된다.
+    assert not within_window({"published": "2026-09-05T00:30:00Z"}, ["2026-09-04"])
+
+
+def test_within_window_rejects_a_record_older_than_the_range():
+    from paperlib.sources import within_window
+
+    assert not within_window(
+        {"published": "2026-09-01T00:00:00Z"}, ["2026-09-06", "2026-09-05"]
+    )
+
+
+def test_within_window_keeps_records_with_no_publication_date():
+    from paperlib.sources import within_window
+
+    assert within_window({"published": None}, ["2026-09-06"])
+    assert within_window({"published": "garbage"}, ["2026-09-06"])

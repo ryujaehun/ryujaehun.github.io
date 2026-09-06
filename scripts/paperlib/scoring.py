@@ -109,6 +109,8 @@ class FilterConfig:
     stars_reference: float
     gates: dict
     preferred_categories: tuple
+    fetch_categories: tuple
+    substantive_tiers: tuple
     non_preferred_multiplier: float
     vocabulary: Vocabulary
     exclude_terms: tuple
@@ -137,6 +139,15 @@ class FilterConfig:
             stars_reference=float(raw["stars_reference"]),
             gates=dict(raw["gates"]),
             preferred_categories=tuple(raw.get("preferred_categories", [])),
+            # 'efficient', 'attention' 같은 약한 용어가 쌓여도 주제 논문이
+            # 되지는 않는다. 실질 축에서 최소 하나는 걸려야 한다.
+            substantive_tiers=tuple(
+                raw.get("substantive_tiers") or ("core", "named_systems", "systems")
+            ),
+            # 수집 대상과 감점 기준은 별개다. 없으면 감점 기준을 따라간다.
+            fetch_categories=tuple(
+                raw.get("fetch_categories") or raw.get("preferred_categories", [])
+            ),
             non_preferred_multiplier=float(raw.get("non_preferred_multiplier", 1.0)),
             vocabulary=Vocabulary(tiers),
             exclude_terms=tuple(raw.get("exclude_terms", [])),
@@ -158,6 +169,7 @@ class ScoredPaper:
     score: float
     components: dict
     core_hits: int
+    substantive_hits: int
     matched: dict
     sources: tuple
     record: dict
@@ -204,11 +216,16 @@ def score_paper(record, config):
     if record.get("primary_category") not in config.preferred_categories:
         weighted *= config.non_preferred_multiplier
 
+    substantive = sum(
+        len(topic.matched.get(tier, [])) for tier in config.substantive_tiers
+    )
+
     return ScoredPaper(
         id=record["id"],
         score=weighted,
         components=components,
         core_hits=topic.core_hits,
+        substantive_hits=substantive,
         matched=topic.matched,
         sources=tuple(record.get("sources", [])),
         record=record,
@@ -234,9 +251,15 @@ def passes_gate(scored, config):
     그래서 토픽만으로 판정한다.
     """
     gates = config.gates
+    topic = scored.components["topic"]
+
+    # 실질 용어가 하나도 없으면 주제 밖이다. 이게 없으면 'efficient',
+    # 'attention', 'distillation' 이 쌓인 인기 논문이 통과해 버린다.
+    if scored.substantive_hits < gates.get("min_substantive_hits", 1):
+        return False
+
     if "hf" in scored.sources:
         return scored.score >= gates["hf_min_score"]
-    topic = scored.components["topic"]
     return topic >= gates["arxiv_min_topic"] or scored.core_hits >= gates["arxiv_min_core_hits"]
 
 

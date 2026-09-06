@@ -45,3 +45,36 @@ def test_state_excludes_materialized_and_repeatedly_failed_ids(tmp_path):
     assert "done" in excluded
     assert "broken" in excluded
     assert "flaky" not in excluded
+
+
+def test_repo_relative_keeps_committed_state_portable(tmp_path):
+    from paperlib.state import repo_relative
+
+    root = tmp_path / "blog"
+    (root / "content" / "posts").mkdir(parents=True)
+    draft = root / "content" / "posts" / "x.md"
+
+    # state.json 은 커밋되므로 절대 경로가 들어가면 홈 디렉터리가 새어 나간다
+    assert repo_relative(draft, root) == "content/posts/x.md"
+    # 리포 밖 경로는 그대로 둔다
+    assert repo_relative(tmp_path / "elsewhere.md", root) == str(tmp_path / "elsewhere.md")
+
+
+def test_mark_materialized_keeps_the_metadata_the_task_backend_needs(tmp_path):
+    state = State.load(tmp_path / "state.json")
+
+    state.mark_materialized(
+        "2609.03430",
+        score=0.89,
+        draft_path="content/posts/x.md",
+        title="Random Attention: Rethinking KV Cache Eviction",
+        version="v1",
+        matched={"core": ["kv cache", "cache eviction"]},
+    )
+    state.save()
+    entry = State.load(tmp_path / "state.json").entries["2609.03430"]
+
+    # 반자동 경로에서 에이전트가 논문을 식별하려면 제목과 근거가 있어야 한다
+    assert entry["title"].startswith("Random Attention")
+    assert entry["version"] == "v1"
+    assert entry["matched"]["core"] == ["kv cache", "cache eviction"]

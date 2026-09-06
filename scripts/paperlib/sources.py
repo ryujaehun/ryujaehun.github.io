@@ -5,6 +5,7 @@
 """
 
 import json
+import os
 import re
 import time
 import urllib.error
@@ -196,3 +197,47 @@ def fetch_arxiv(categories, max_results=200, opener=None, timeout=30, delay=3.0,
         )
         records.extend(parse_arxiv_atom(body))
     return records
+
+
+ARXIV_PDF_URL = "https://arxiv.org/pdf/{arxiv_id}"
+
+
+def download_pdf(arxiv_id, dest_dir, opener=None, timeout=60):
+    """arXiv PDF 를 내려받는다. 실패하면 부분 파일을 남기지 않는다."""
+    from pathlib import Path
+
+    body = _read(ARXIV_PDF_URL.format(arxiv_id=arxiv_id), opener=opener, timeout=timeout)
+    if not body.startswith(b"%PDF"):
+        raise SourceError(f"{arxiv_id}: PDF 가 아닌 응답을 받았습니다 ({len(body)} bytes)")
+
+    dest_dir = Path(dest_dir)
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    path = dest_dir / f"{arxiv_id}.pdf"
+    tmp = path.with_suffix(".pdf.tmp")
+    tmp.write_bytes(body)
+    os.replace(tmp, path)
+    return path
+
+
+def within_window(record, dates):
+    """레코드가 수집 날짜 범위 안에 있는지.
+
+    범위는 [가장 이른 날 00:00, 가장 늦은 날 다음날 00:00) 이다.
+    --date 하나만 준 경우 그 하루만 통과해야 하므로 위쪽도 닫는다.
+    발행일을 모르면 버리지 않는다 — 놓치는 쪽보다 낫다.
+    """
+    from datetime import timedelta
+
+    published = record.get("published")
+    if not published:
+        return True
+    try:
+        stamp = datetime.fromisoformat(str(published).replace("Z", "+00:00"))
+    except ValueError:
+        return True
+    if stamp.tzinfo is None:
+        stamp = stamp.replace(tzinfo=timezone.utc)
+
+    start = datetime.fromisoformat(min(dates)).replace(tzinfo=timezone.utc)
+    end = datetime.fromisoformat(max(dates)).replace(tzinfo=timezone.utc) + timedelta(days=1)
+    return start <= stamp < end
