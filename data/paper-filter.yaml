@@ -1,0 +1,214 @@
+# LLM 추론 최적화 논문 선별 규칙
+#
+# 어휘집은 두 곳에서 뽑았다.
+#   - 이 블로그가 2025~2026 에 리뷰한 arXiv 논문 149 편의 제목 n-gram
+#   - MLSys 2023~2025 채택 논문 144 편의 제목 n-gram
+# MLSys 는 federated learning / GNN / 클러스터 스케줄링 비중이 커서 통째로
+# 넣지 않고 LLM 추론과 겹치는 축만 가져왔다.
+#
+# 점수: (0.55*topic + 0.25*buzz + 0.12*impl + 0.08*venue) * category_mult
+# 자세한 정의는 docs/superpowers/specs/2026-09-06-paper-pipeline-design.md
+
+version: 1
+
+weights:
+  topic: 0.55
+  buzz: 0.25
+  impl: 0.12
+  venue: 0.08
+
+field_weights:
+  title: 2.0
+  keywords: 1.5
+  abstract: 1.0
+
+# raw 점수를 1-exp(-raw/k) 로 포화시킨다. 작을수록 빨리 1 에 붙는다.
+saturation_k: 6.0
+buzz_reference: 150   # 이 upvote 수를 buzz 1.0 으로 본다
+stars_reference: 500
+
+gates:
+  hf_min_score: 0.45        # HF 에 올라온 논문의 총점 기준
+  arxiv_min_topic: 0.70     # arXiv 단독 — buzz 가 0 이라 토픽만 본다
+  arxiv_min_core_hits: 2
+  top_k: 5                  # 한 번에 만들 초안 상한 (주 3~5 편 목표)
+
+preferred_categories: [cs.LG, cs.CL, cs.DC, cs.AR, cs.PF, cs.SE, cs.MS, cs.OS]
+non_preferred_multiplier: 0.9
+
+# 수집 대상 arXiv 카테고리 (preferred_categories 와 다른 목록이다.
+# 이쪽은 "무엇을 긁어올까", 저쪽은 "무엇에 감점하지 않을까")
+fetch_categories: [cs.LG, cs.CL, cs.DC, cs.AR, cs.PF]
+
+tiers:
+  - name: core
+    weight: 3.0
+    terms:
+      # 추론·서빙 고유 개념. 이게 걸리면 거의 확실히 관심 논문이다.
+      - kv cache
+      - key-value cache
+      - kv compression
+      - cache compression
+      - kv eviction
+      - cache eviction
+      - prefix caching
+      - prefix cache
+      - speculative decoding
+      - speculative sampling
+      - paged attention
+      - pagedattention
+      - continuous batching
+      - prefill
+      - decode phase
+      - decoding phase
+      - ttft
+      - tpot
+      - time to first token
+      - time per output token
+      - llm serving
+      - llm inference
+      - inference serving
+      - model serving
+      - sparse attention
+      - flash attention
+      - flashattention
+      - efficient inference
+      - inference efficiency
+      - disaggregated
+      - disaggregation
+      - slo
+
+  - name: named_systems
+    weight: 2.5
+    terms:
+      # 고유명사 자체가 강한 신호다.
+      - vllm
+      - sglang
+      - flashinfer
+      - tensorrt
+      - qserve
+      - lserve
+      - xgrammar
+      - deepspeed
+      - sarathi
+      - cutlass
+      - triton
+
+  - name: systems
+    weight: 2.0
+    terms:
+      # MLSys 축. 2025 채택 논문에서 실제로 반복된 것들.
+      - quantization
+      - post-training quantization
+      - w4a8
+      - w4a16
+      - w8a8
+      - fp8
+      - fp4
+      - nvfp4
+      - mxfp4
+      - int4
+      - int8
+      - low-precision
+      - offloading
+      - cpu offload
+      - attention kernel
+      - attention engine
+      - fused attention
+      - context parallelism
+      - pipeline parallelism
+      - tensor parallelism
+      - communication overlap
+      - computation-communication
+      - overlapping
+      - scheduling
+      - structured generation
+      - resharding
+      - gpu memory
+      - on-device
+      - edge llm
+      - linear attention
+      - state space model
+      - state space duality
+      - ssm
+      - mamba
+      - gpu sharing
+      - multi-tenant
+      - multitasking
+
+  - name: adjacent
+    weight: 1.5
+    terms:
+      - mixture-of-experts
+      - moe
+      - long context
+      - throughput
+      - latency
+      - memory efficient
+      - compression
+      - attention
+      - distillation
+      - pruning
+      - sparsity
+      - batching
+      - cache
+      - kernel
+      - decoding
+      - autoregressive
+
+  - name: weak
+    weight: 0.5
+    terms:
+      - efficient
+      - efficiency
+      - scaling
+      - transformer
+      - llm
+      - large language model
+      - acceleration
+      - optimization
+
+# 제목에 있고 core 용어가 하나도 없을 때만 제외한다.
+# 조건부인 이유: 'Radial Attention ... for Long Video Generation' 처럼
+# 도메인은 비디오지만 sparse attention 이 본체인 논문을 살리기 위해서다.
+exclude_terms:
+  - text-to-image
+  - image generation
+  - video generation
+  - protein
+  - molecule
+  - drug discovery
+  - recommendation
+  - federated learning
+  - autonomous driving
+  - robot
+  - speech synthesis
+  - medical imaging
+  - time series
+  - graph neural network
+
+# venue 항 화이트리스트. 소문자 부분 일치.
+organizations:
+  - deepseek
+  - qwen
+  - alibaba
+  - moonshot
+  - zhipu
+  - bytedance
+  - nvidia
+  - microsoft
+  - google
+  - deepmind
+  - meta
+  - tsinghua
+  - berkeley
+  - stanford
+  - carnegie mellon
+  - lmsys
+  - hazy research
+  - han lab
+
+summarize:
+  model: opencode-go/glm-5.3
+  variant: null           # opencode --variant 값. null 이면 생략한다.
+  timeout_seconds: 900

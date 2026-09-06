@@ -1,0 +1,296 @@
+[
+ {
+  "paper": {
+   "id": "2609.04199",
+   "authors": [
+    {
+     "_id": "6a9a61498f7c3b7557239686",
+     "user": {
+      "_id": "63081e15a670ed10f9d44229",
+      "avatarUrl": "https://cdn-avatars.huggingface.co/v1/production/uploads/63081e15a670ed10f9d44229/w1b9uq-9774bMMgJbSPsS.jpeg",
+      "isPro": true,
+      "fullname": "Yuntian Deng",
+      "user": "yuntian-deng",
+      "type": "user",
+      "name": "yuntian-deng"
+     },
+     "name": "Yuntian Deng",
+     "status": "claimed_verified",
+     "statusLastChangedAt": "2026-09-05T00:45:04.097Z",
+     "hidden": false
+    },
+    {
+     "_id": "6a9a61498f7c3b7557239687",
+     "name": "Pengyu Nie",
+     "hidden": false
+    },
+    {
+     "_id": "6a9a61498f7c3b7557239688",
+     "name": "Stuart Shieber",
+     "hidden": false
+    }
+   ],
+   "mediaUrls": [
+    "https://cdn-uploads.huggingface.co/production/uploads/63081e15a670ed10f9d44229/WJTQ0-4Q9_U1t9NnrVvie.mp4"
+   ],
+   "publishedAt": "2026-09-03T00:00:00.000Z",
+   "submittedOnDailyAt": "2026-09-04T00:00:00.000Z",
+   "title": "Compile by Training: Turning Natural-Language Specifications into Local Neural Functions",
+   "submittedOnDailyBy": {
+    "_id": "63081e15a670ed10f9d44229",
+    "avatarUrl": "https://cdn-avatars.huggingface.co/v1/production/uploads/63081e15a670ed10f9d44229/w1b9uq-9774bMMgJbSPsS.jpeg",
+    "isPro": true,
+    "fullname": "Yuntian Deng",
+    "user": "yuntian-deng",
+    "type": "user",
+    "name": "yuntian-deng"
+   },
+   "summary": "Many recurring text functions are easy to describe but difficult to implement with rules, while calling a large remote model for every input introduces repeated cost, latency, and dependency on a provider. We present compile by training, which turns a natural-language specification into a reusable neural function. At compile time, teacher models generate task-specific examples that are used to train a small adapter for a compact interpreter. The resulting function runs without the teachers and can be stored, versioned, and composed like ordinary software. On FuzzyBench-Hard, a subset on which the Program-as-Weights fast compiler produced no exact matches, compile by training reaches 83.6% semantic accuracy. This higher accuracy comes with a higher compile-time cost: roughly a minute rather than seconds for the fast compiler. We deploy the compiler in a public interactive service and demonstrate compiled functions in a multi-site website helper, a language-controlled 3D avatar, and a bidirectional English-Claudish translator.",
+   "upvotes": 314,
+   "discussionId": "6a9a61498f7c3b7557239689",
+   "projectPage": "https://programasweights.com/playground?compiler=paw-ft-bs48",
+   "githubRepo": "https://github.com/programasweights/compile-by-training",
+   "githubRepoAddedBy": "user",
+   "ai_summary": "Compile by training converts natural-language specifications into reusable neural functions by distilling teacher-generated examples into small adapters, enabling efficient deployment without remote model dependencies.",
+   "ai_keywords": [
+    "compile by training",
+    "neural function",
+    "adapter",
+    "compact interpreter",
+    "Program-as-Weights",
+    "semantic accuracy"
+   ],
+   "ai_summary_model": "thinkingmachines/Inkling-Small",
+   "githubStars": 4,
+   "organization": {
+    "_id": "6230c3ced93e84e2338765f3",
+    "name": "UWaterloo",
+    "fullname": "University of Waterloo",
+    "avatar": "https://cdn-avatars.huggingface.co/v1/production/uploads/1647363004040-6230c34bacb94a81eec91ed5.png"
+   }
+  },
+  "publishedAt": "2026-09-02T20:00:00.000Z",
+  "title": "Compile by Training: Turning Natural-Language Specifications into Local Neural Functions",
+  "summary": "Many recurring text functions are easy to describe but difficult to implement with rules, while calling a large remote model for every input introduces repeated cost, latency, and dependency on a provider. We present compile by training, which turns a natural-language specification into a reusable neural function. At compile time, teacher models generate task-specific examples that are used to train a small adapter for a compact interpreter. The resulting function runs without the teachers and can be stored, versioned, and composed like ordinary software. On FuzzyBench-Hard, a subset on which the Program-as-Weights fast compiler produced no exact matches, compile by training reaches 83.6% semantic accuracy. This higher accuracy comes with a higher compile-time cost: roughly a minute rather than seconds for the fast compiler. We deploy the compiler in a public interactive service and demonstrate compiled functions in a multi-site website helper, a language-controlled 3D avatar, and a bidirectional English-Claudish translator.",
+  "mediaUrls": [
+   "https://cdn-uploads.huggingface.co/production/uploads/63081e15a670ed10f9d44229/WJTQ0-4Q9_U1t9NnrVvie.mp4"
+  ],
+  "thumbnail": "https://cdn-thumbnails.huggingface.co/social-thumbnails/papers/2609.04199.png",
+  "numComments": 3,
+  "submittedBy": {
+   "_id": "63081e15a670ed10f9d44229",
+   "avatarUrl": "https://cdn-avatars.huggingface.co/v1/production/uploads/63081e15a670ed10f9d44229/w1b9uq-9774bMMgJbSPsS.jpeg",
+   "fullname": "Yuntian Deng",
+   "name": "yuntian-deng",
+   "type": "user",
+   "isPro": true,
+   "isHf": false,
+   "isHfAdmin": false,
+   "isMod": false,
+   "followerCount": 277,
+   "isUserFollowing": false
+  },
+  "organization": {
+   "_id": "6230c3ced93e84e2338765f3",
+   "name": "UWaterloo",
+   "fullname": "University of Waterloo",
+   "avatar": "https://cdn-avatars.huggingface.co/v1/production/uploads/1647363004040-6230c34bacb94a81eec91ed5.png"
+  },
+  "isAuthorParticipating": true
+ },
+ {
+  "paper": {
+   "id": "2609.03430",
+   "authors": [
+    {
+     "_id": "6a9a13288f7c3b75572393a1",
+     "user": {
+      "_id": "64a5583f1e1d475f6da4928c",
+      "avatarUrl": "/avatars/a46ddc1479ab6e1d14568822b7546a69.svg",
+      "isPro": false,
+      "fullname": "Heng Wang",
+      "user": "Heng-Wang",
+      "type": "user",
+      "name": "Heng-Wang"
+     },
+     "name": "Heng Wang",
+     "status": "claimed_verified",
+     "statusLastChangedAt": "2026-09-04T08:45:04.204Z",
+     "hidden": false
+    },
+    {
+     "_id": "6a9a13288f7c3b75572393a2",
+     "name": "Jielin Qiu",
+     "hidden": false
+    },
+    {
+     "_id": "6a9a13288f7c3b75572393a3",
+     "name": "Wenting Zhao",
+     "hidden": false
+    },
+    {
+     "_id": "6a9a13288f7c3b75572393a4",
+     "name": "Cheng Qian",
+     "hidden": false
+    },
+    {
+     "_id": "6a9a13288f7c3b75572393a5",
+     "name": "Liangwei Yang",
+     "hidden": false
+    },
+    {
+     "_id": "6a9a13288f7c3b75572393a6",
+     "name": "Jiawei Han",
+     "hidden": false
+    },
+    {
+     "_id": "6a9a13288f7c3b75572393a7",
+     "name": "Heng Ji",
+     "hidden": false
+    },
+    {
+     "_id": "6a9a13288f7c3b75572393a8",
+     "name": "Silvio Savarese",
+     "hidden": false
+    },
+    {
+     "_id": "6a9a13288f7c3b75572393a9",
+     "name": "Shelby Heinecke",
+     "hidden": false
+    },
+    {
+     "_id": "6a9a13288f7c3b75572393aa",
+     "name": "Huan Wang",
+     "hidden": false
+    }
+   ],
+   "publishedAt": "2026-09-03T00:00:00.000Z",
+   "submittedOnDailyAt": "2026-09-04T00:00:00.000Z",
+   "title": "Random Attention: Rethinking KV Cache Eviction for Efficient Reasoning",
+   "submittedOnDailyBy": {
+    "_id": "62ea79dd01ed9b0e8f61ccd3",
+    "avatarUrl": "/avatars/70af83e0e267be39fcd5f23b85e2dafa.svg",
+    "isPro": false,
+    "fullname": "Chengsong Huang",
+    "user": "ChengsongHuang",
+    "type": "user",
+    "name": "ChengsongHuang"
+   },
+   "summary": "Large language models achieve superior performance on tasks that require extended reasoning, but long chains of thought make the KV cache a severe memory bottleneck. Existing KV cache compression methods share one paradigm: score each cached token by some estimate of how much it will matter later, and keep the top-scoring ones. We show that the selection signal contributes almost nothing. Random Attention keeps the prompt and evicts uniformly at random within each attention head, computing no score at all; across four models and six reasoning tasks it matches the strongest prior evictor while serving 32-43% higher throughput than it in vLLM deployment. Controlled experiments explain this by showing that 1) the prompt is the fragile part of the cache, and most of the gap between selectors is just whether their selection signal happened to keep it; 2) the reasoning trace protects itself against eviction with redundancy at two levels, in the text (the model restates what it still needs as it works) and across attention heads (each keeps its own copy of the trace), so once the prompt is safe, a random draw retains enough copies of what the model still needs, and no score is required to pick them. Our code is publicly available at https://github.com/SalesforceAIResearch/Random-Attention.",
+   "upvotes": 161,
+   "discussionId": "6a9a13298f7c3b75572393ab",
+   "projectPage": "https://arthur-heng.github.io/Random-Attention-page/",
+   "githubRepo": "https://github.com/SalesforceAIResearch/Random-Attention",
+   "githubRepoAddedBy": "user",
+   "ai_summary": "Random eviction of reasoning tokens matches selective KV cache compression because reasoning traces are self-protecting through redundancy, making scoring unnecessary once prompts are preserved.",
+   "ai_keywords": [
+    "KV cache compression",
+    "attention heads",
+    "reasoning trace",
+    "redundancy",
+    "prompt preservation",
+    "vLLM throughput"
+   ],
+   "ai_summary_model": "thinkingmachines/Inkling-Small",
+   "githubStars": 31,
+   "organization": {
+    "_id": "5f6d64475e78cc6b0ed31e4c",
+    "name": "Salesforce",
+    "fullname": "Salesforce AI Research",
+    "avatar": "https://cdn-avatars.huggingface.co/v1/production/uploads/1602756670970-noauth.jpeg"
+   }
+  },
+  "publishedAt": "2026-09-02T20:00:00.000Z",
+  "title": "Random Attention: Rethinking KV Cache Eviction for Efficient Reasoning",
+  "summary": "Large language models achieve superior performance on tasks that require extended reasoning, but long chains of thought make the KV cache a severe memory bottleneck. Existing KV cache compression methods share one paradigm: score each cached token by some estimate of how much it will matter later, and keep the top-scoring ones. We show that the selection signal contributes almost nothing. Random Attention keeps the prompt and evicts uniformly at random within each attention head, computing no score at all; across four models and six reasoning tasks it matches the strongest prior evictor while serving 32-43% higher throughput than it in vLLM deployment. Controlled experiments explain this by showing that 1) the prompt is the fragile part of the cache, and most of the gap between selectors is just whether their selection signal happened to keep it; 2) the reasoning trace protects itself against eviction with redundancy at two levels, in the text (the model restates what it still needs as it works) and across attention heads (each keeps its own copy of the trace), so once the prompt is safe, a random draw retains enough copies of what the model still needs, and no score is required to pick them. Our code is publicly available at https://github.com/SalesforceAIResearch/Random-Attention.",
+  "thumbnail": "https://cdn-thumbnails.huggingface.co/social-thumbnails/papers/2609.03430.png",
+  "numComments": 4,
+  "submittedBy": {
+   "_id": "62ea79dd01ed9b0e8f61ccd3",
+   "avatarUrl": "/avatars/70af83e0e267be39fcd5f23b85e2dafa.svg",
+   "fullname": "Chengsong Huang",
+   "name": "ChengsongHuang",
+   "type": "user",
+   "isPro": false,
+   "isHf": false,
+   "isHfAdmin": false,
+   "isMod": false,
+   "followerCount": 16,
+   "isUserFollowing": false
+  },
+  "organization": {
+   "_id": "5f6d64475e78cc6b0ed31e4c",
+   "name": "Salesforce",
+   "fullname": "Salesforce AI Research",
+   "avatar": "https://cdn-avatars.huggingface.co/v1/production/uploads/1602756670970-noauth.jpeg"
+  },
+  "isAuthorParticipating": true
+ },
+ {
+  "paper": {
+   "id": "2609.01507",
+   "authors": [
+    {
+     "_id": "6a98e8b0fea818274321fefd",
+     "name": "Zhengze Zhou",
+     "hidden": false
+    },
+    {
+     "_id": "6a98e8b0fea818274321fefe",
+     "name": "Hejian Sang",
+     "hidden": false
+    }
+   ],
+   "publishedAt": "2026-09-01T00:00:00.000Z",
+   "submittedOnDailyAt": "2026-09-04T00:00:00.000Z",
+   "title": "LatentPress: Context Compression Beyond Text and Vision",
+   "submittedOnDailyBy": {
+    "_id": "646af200ca17a49700e94aa1",
+    "avatarUrl": "https://cdn-avatars.huggingface.co/v1/production/uploads/646af200ca17a49700e94aa1/7nqby5QEtLktCMrBCqwuo.jpeg",
+    "isPro": false,
+    "fullname": "Hejian Sang",
+    "user": "pb09204048",
+    "type": "user",
+    "name": "pb09204048"
+   },
+   "summary": "Compressed context is usually carried as human-readable text or as rendered images that must be decoded, even when its consumer is a language model. We introduce LatentPress, which writes conversational histories and long documents into a third representation: continuous memory tokens that a frozen decoder reads directly through its input-embedding interface, with no text reconstruction at inference. A small reader-matched writer compresses 4-16times while training only an adapter (4.2M-26.2M parameters, sim!0.1% of the decoder). On LongMemEval, LatentPress reaches 0.504 accuracy at 7.70times compression versus 0.490 for uncompressed evidence, outperforming text summaries (0.184) and OCR-based compression (0.426 to 0.312). On LongBench-QA, in-domain writers match or exceed raw-context reading at 4-8times compression, while 16times trails raw. Writing takes 43ms per conversation, roughly an order of magnitude faster than text summarization or OCR reconstruction, and reading is 5-9times faster than raw context or cached OCR. We validate the interface under two transfer settings, zero-shot from UltraChat to LongMemEval memory QA and from LongMemEval-derived QA to unseen LongBench document domains, establishing direct soft tokens as a practical machine-facing context interface beyond text and vision. The implementation of the experiments could be found at: https://github.com/xuyd16ai/context_softtoken_compress .",
+   "upvotes": 108,
+   "discussionId": "6a98e8b0fea818274321feff",
+   "projectPage": "https://github.com/HJSang/LatentPress",
+   "githubRepo": "https://github.com/HJSang/LatentPress",
+   "githubRepoAddedBy": "user",
+   "ai_summary": "LatentPress compresses conversational and document context into continuous memory tokens read directly by a frozen decoder, achieving high compression with faster inference and improved accuracy over text or OCR methods.",
+   "ai_keywords": [
+    "continuous memory tokens",
+    "frozen decoder",
+    "input-embedding interface",
+    "adapter",
+    "LongMemEval",
+    "LongBench-QA",
+    "soft tokens",
+    "context compression"
+   ],
+   "ai_summary_model": "thinkingmachines/Inkling-Small",
+   "githubStars": 3
+  },
+  "publishedAt": "2026-08-31T20:00:00.000Z",
+  "title": "LatentPress: Context Compression Beyond Text and Vision",
+  "summary": "Compressed context is usually carried as human-readable text or as rendered images that must be decoded, even when its consumer is a language model. We introduce LatentPress, which writes conversational histories and long documents into a third representation: continuous memory tokens that a frozen decoder reads directly through its input-embedding interface, with no text reconstruction at inference. A small reader-matched writer compresses 4-16times while training only an adapter (4.2M-26.2M parameters, sim!0.1% of the decoder). On LongMemEval, LatentPress reaches 0.504 accuracy at 7.70times compression versus 0.490 for uncompressed evidence, outperforming text summaries (0.184) and OCR-based compression (0.426 to 0.312). On LongBench-QA, in-domain writers match or exceed raw-context reading at 4-8times compression, while 16times trails raw. Writing takes 43ms per conversation, roughly an order of magnitude faster than text summarization or OCR reconstruction, and reading is 5-9times faster than raw context or cached OCR. We validate the interface under two transfer settings, zero-shot from UltraChat to LongMemEval memory QA and from LongMemEval-derived QA to unseen LongBench document domains, establishing direct soft tokens as a practical machine-facing context interface beyond text and vision. The implementation of the experiments could be found at: https://github.com/xuyd16ai/context_softtoken_compress .",
+  "thumbnail": "https://cdn-thumbnails.huggingface.co/social-thumbnails/papers/2609.01507.png",
+  "numComments": 2,
+  "submittedBy": {
+   "_id": "646af200ca17a49700e94aa1",
+   "avatarUrl": "https://cdn-avatars.huggingface.co/v1/production/uploads/646af200ca17a49700e94aa1/7nqby5QEtLktCMrBCqwuo.jpeg",
+   "fullname": "Hejian Sang",
+   "name": "pb09204048",
+   "type": "user",
+   "isPro": false,
+   "isHf": false,
+   "isHfAdmin": false,
+   "isMod": false,
+   "followerCount": 11,
+   "isUserFollowing": false
+  },
+  "isAuthorParticipating": false
+ }
+]

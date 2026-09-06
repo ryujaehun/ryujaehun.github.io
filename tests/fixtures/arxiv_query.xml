@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/YfLIHsO+YkX2zCxmQu5HqUciM4Q</id>
+  <title>arXiv Query: search_query=cat:cs.LG&amp;id_list=&amp;start=0&amp;max_results=3</title>
+  <updated>2026-09-06T07:53:53Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=cat:cs.LG&amp;start=0&amp;max_results=3&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>3</opensearch:itemsPerPage>
+  <opensearch:totalResults>284134</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2609.04199v1</id>
+    <title>Compile by Training: Turning Natural-Language Specifications into Local Neural Functions</title>
+    <updated>2026-09-03T17:59:49Z</updated>
+    <link href="https://arxiv.org/abs/2609.04199v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2609.04199v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Many recurring text functions are easy to describe but difficult to implement with rules, while calling a large remote model for every input introduces repeated cost, latency, and dependency on a provider. We present compile by training, which turns a natural-language specification into a reusable neural function. At compile time, teacher models generate task-specific examples that are used to train a small adapter for a compact interpreter. The resulting function runs without the teachers and can be stored, versioned, and composed like ordinary software. On FuzzyBench-Hard, a subset on which the Program-as-Weights fast compiler produced no exact matches, compile by training reaches 83.6% semantic accuracy. This higher accuracy comes with a higher compile-time cost: roughly a minute rather than seconds for the fast compiler. We deploy the compiler in a public interactive service and demonstrate compiled functions in a multi-site website helper, a language-controlled 3D avatar, and a bidirectional English-Claudish translator.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-09-03T17:59:49Z</published>
+    <arxiv:comment>EMNLP 2026 System Demonstrations. Demo: https://programasweights.com</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yuntian Deng</name>
+    </author>
+    <author>
+      <name>Pengyu Nie</name>
+    </author>
+    <author>
+      <name>Stuart Shieber</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2609.04198v1</id>
+    <title>Clean Engineering, Unstable Measurement: A Preregistered Reliability Failure of Black-Box LLM Observers on Shared Endpoints</title>
+    <updated>2026-09-03T17:59:43Z</updated>
+    <link href="https://arxiv.org/abs/2609.04198v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2609.04198v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Language-model judges now gate training data, score generations, and drive leaderboards. The judge is then a measurement instrument, resting on one rarely stated assumption: the same request, sent to the same model name, reads the same tomorrow. We audited that assumption in two preregistered campaigns with every threshold fixed in advance; neither got past validating its instrument. Across 52,988 audited request attempts, same-window repeat rankings agreed at Spearman 0.400 against a required 0.90, and byte-identical next-day replays agreed at 0.78 against a required 0.99, each time with the execution record at ceiling. Three mechanisms explain the gap: a label-to-meaning mapping that biased readouts as strongly as the signal; candidate gaps seven orders of magnitude below the instrument's own noise floor; and byte-identical inputs returning different rankings, a noise that exact-permutation readouts compound. Neither metric substitution nor sampling repaired it on the tested grid. Preregistered follow-ups bound the problem: waiting did not help on the days sampled (0.805 versus 0.800, replicated over five further days); switching providers did not help (four providers share the floor, medians 0.74 to 0.88, predicted by none of the metadata fields they expose); self-hosting on batch-invariant kernels helped only while the server was quiet; and on constructed errors with known gaps, the readout's separation tracks error type, not size. We distill the evidence into a three-level snapshot-identity ladder, eight design rules, and a reporting checklist; a pilot at roughly 2% of the study's call volume would have exposed both unreachable gates in advance. All results concern externally measured behaviour on shared serving infrastructure. On a shared endpoint, a model name is not a frozen instrument; a preregistered evaluation must measure its instrument before freezing any gate on it.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-09-03T17:59:43Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Haoyaun Zhu</name>
+    </author>
+    <author>
+      <name>Jie Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2609.04194v1</id>
+    <title>Legibility is Not Interpretability: Comparing Judged and Actual Importance in Chain-Of-Thought Reasoning</title>
+    <updated>2026-09-03T17:59:08Z</updated>
+    <link href="https://arxiv.org/abs/2609.04194v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2609.04194v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reasoning traces from chain-of-thought models appear to offer a legible window into how a model arrives at its answer. A growing body of work treats them as such, using LLM judges to diagnose errors, evaluate faithfulness, and provide step-level supervision via process reward models and generative critics. These practices rely on the text of a reasoning step carrying information about its functional role. But does the text actually encode information about which reasoning steps matter? We operationalize the importance of a reasoning step as its advantage: the change in expected reward, e.g., producing the correct final answer, from including that step, estimated via Monte Carlo rollouts. Basing ground truth on these estimates, we evaluate whether LLM judges can identify high-advantage steps and find that sufficiently capable LLMs can outperform a prevalence baseline but fall well short of a noise ceiling. Fine-tuning a model as a step-level critic yields strong improvement for incorrect responses but remains distant from ceiling for correct responses, suggesting that step importance is only partially recoverable from the text of the reasoning trace. Our findings contribute to a growing body of chain-of-thought faithfulness work that cautions against treating the legibility of reasoning traces as interpretability, especially with implications for process reward modeling.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-09-03T17:59:08Z</published>
+    <arxiv:comment>Published at COLM 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Kevin Du</name>
+    </author>
+    <author>
+      <name>Alexander Hoyle</name>
+    </author>
+    <author>
+      <name>Laura Ruis</name>
+    </author>
+    <author>
+      <name>Acyr Locatelli</name>
+    </author>
+  </entry>
+</feed>

@@ -47,3 +47,9 @@ __pycache__/
 
 # 로컬 검증용 임시 빌드 출력
 /.hugo_*/
+
+# 논문 파이프라인 중간 산출물
+.cache/papers/
+data/papers/raw/
+data/papers/scored/
+data/papers/tasks/
