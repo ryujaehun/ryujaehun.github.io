@@ -106,6 +106,7 @@ class FilterConfig:
     field_weights: dict
     saturation_k: float
     buzz_reference: float
+    buzz_floor: float
     stars_reference: float
     gates: dict
     preferred_categories: tuple
@@ -136,6 +137,9 @@ class FilterConfig:
             field_weights=dict(raw["field_weights"]),
             saturation_k=float(raw["saturation_k"]),
             buzz_reference=float(raw["buzz_reference"]),
+            # 이 아래 upvote 는 신호로 치지 않는다. 저자 자신 + 지인 몇 명이면
+            # 닿는 수치라 주제 관련성과 무관하다.
+            buzz_floor=float(raw.get("buzz_floor", 0.0)),
             stars_reference=float(raw["stars_reference"]),
             gates=dict(raw["gates"]),
             preferred_categories=tuple(raw.get("preferred_categories", [])),
@@ -181,6 +185,20 @@ def _log_ratio(value, reference):
     return min(1.0, math.log1p(value) / math.log1p(reference))
 
 
+def _floored_ratio(value, floor, reference):
+    """문턱 위에서만 선형으로 오르는 0~1 비율.
+
+    log 곡선을 쓰지 않는 이유: 저구간이 지나치게 후하다. log1p(2)/log1p(150)
+    은 0.22 로, upvote 2 개가 최대치의 22% 를 가져갔다. 반대로 log 는
+    upvote 20 과 80 을 거의 구분하지 못한다(0.48 vs 0.89). 실제로 의미 있는
+    구간(문턱~기준)을 고르게 펴는 편이 낫다.
+    """
+    span = reference - floor
+    if span <= 0:
+        return 0.0
+    return max(0.0, min(1.0, (value - floor) / span))
+
+
 def _organization_name(hf):
     org = (hf or {}).get("organization")
     if isinstance(org, dict):
@@ -200,7 +218,9 @@ def score_paper(record, config):
         saturation_k=config.saturation_k,
     )
 
-    buzz = _log_ratio(hf.get("upvotes") or 0, config.buzz_reference)
+    buzz = _floored_ratio(
+        hf.get("upvotes") or 0, config.buzz_floor, config.buzz_reference
+    )
 
     has_repo = 0.5 if hf.get("github_repo") else 0.0
     impl = min(

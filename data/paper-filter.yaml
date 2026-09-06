@@ -24,7 +24,10 @@ field_weights:
 
 # raw 점수를 1-exp(-raw/k) 로 포화시킨다. 작을수록 빨리 1 에 붙는다.
 saturation_k: 6.0
-buzz_reference: 150   # 이 upvote 수를 buzz 1.0 으로 본다
+# buzz 는 문턱 위에서만 선형으로 오른다. log 곡선은 저구간이 너무 후해서
+# (upvote 2 개 = 최대치의 22%) 관련 없는 인기 논문이 표적 논문을 밀어냈다.
+buzz_floor: 10        # 이 아래는 신호로 안 친다 (저자 + 지인 수준)
+buzz_reference: 150   # 이 upvote 수부터 buzz 1.0
 stars_reference: 500
 
 gates:

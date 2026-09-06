@@ -293,3 +293,62 @@ def test_zero_upvote_paper_with_core_terms_beats_a_popular_off_topic_one():
     )
 
     assert [p.id for p in select([popular, target], cfg)] == ["2609.aaaa"]
+
+
+def test_buzz_ignores_upvotes_below_the_noise_floor():
+    """upvote 2~3 개는 신호가 아니다.
+
+    log 곡선은 저구간에 지나치게 후해서 log1p(2)/log1p(150) = 0.22,
+    즉 upvote 2 개가 최대치의 22% 를 받았다. 그 0.055 점 때문에
+    bias 논문이 KV Cache Compression 논문을 밀어냈다.
+    """
+    cfg = config(buzz_floor=10)
+
+    for upvotes in (0, 1, 2, 5, 10):
+        result = score_paper(paper(sources=["hf"], hf={"upvotes": upvotes}), cfg)
+        assert result.components["buzz"] == 0.0, f"upvote {upvotes}"
+
+
+def test_buzz_rises_across_the_meaningful_range_and_caps_at_the_reference():
+    cfg = config(buzz_floor=10)
+
+    def buzz(upvotes):
+        return score_paper(paper(sources=["hf"], hf={"upvotes": upvotes}), cfg).components[
+            "buzz"
+        ]
+
+    # 문턱 위에서는 완만하게 올라야 한다. log 는 20 개에서 벌써 0.48 이었다.
+    assert 0.0 < buzz(20) < 0.2
+    assert 0.2 < buzz(50) < 0.4
+    assert buzz(20) < buzz(50) < buzz(100) < buzz(150)
+    assert buzz(150) == 1.0
+    assert buzz(900) == 1.0
+
+
+def test_two_upvotes_no_longer_outrank_a_more_relevant_paper():
+    """실제로 걸렸던 순위 뒤집힘 재현."""
+    cfg = _real_config()
+
+    barely_upvoted = score_paper(
+        paper(
+            id="2609.02496",
+            title="Debias-SparseGPT: Bias-Aware Pruning for Large Language Models",
+            abstract="We prune large language models with bias awareness.",
+            sources=["hf"],
+            hf={"upvotes": 2},
+        ),
+        cfg,
+    )
+    on_target = score_paper(
+        paper(
+            id="2609.03235",
+            title="SGD-KV: Summarization Guided KV Cache Compression",
+            abstract="We compress the KV cache during decoding for efficient LLM serving.",
+            sources=["arxiv"],
+            hf=None,
+        ),
+        cfg,
+    )
+
+    assert barely_upvoted.components["buzz"] == 0.0
+    assert on_target.score > barely_upvoted.score
