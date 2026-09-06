@@ -39,33 +39,35 @@ content/
 static/           그대로 배포되는 파일 (CNAME, robots.txt, favicon, 이미지)
 themes/hugo-narrow/  테마 (submodule)
 hugo.yaml         사이트 설정
+
+scripts/          논문 파이프라인 (papers.py, paperlib/, create_post.py)
+data/             파이프라인 설정·프롬프트·산출물
+tests/            파이프라인 테스트 (pytest)
+docs/             문서
 ```
 
 다국어는 `content/` 한 곳에서 파일명 접미사로 관리합니다. 한국어는 기본 언어라 `/`, 영어는 `/en/` 아래에 배포됩니다.
 
 ## 논문 파이프라인
 
-LLM 추론 최적화 논문을 모아 걸러 초안까지 만드는 도구입니다.
-`pip install -r requirements.txt` 한 번만 해두면 됩니다.
+LLM 추론 최적화 논문을 찾아 읽을 만한 것만 골라 Hugo 초안까지 만드는
+도구입니다. 자세한 사용법은 [docs/paper-pipeline.md](docs/paper-pipeline.md)
+를 보세요.
 
 ```bash
-python3 scripts/papers.py fetch --since 5d     # HF Daily Papers + arXiv 수집
-python3 scripts/papers.py score                # 채점 (네트워크 안 씀)
-python3 scripts/papers.py materialize --dry-run  # 무엇이 초안이 될지 미리보기
-python3 scripts/papers.py materialize          # PDF 다운로드 + 초안 생성
+pip install -r requirements.txt
+
+python3 scripts/papers.py fetch --since 5d        # HF Daily Papers + arXiv 수집
+python3 scripts/papers.py score                   # 채점 (네트워크 안 씀)
+python3 scripts/papers.py materialize --dry-run   # 무엇이 초안이 될지 미리보기
+python3 scripts/papers.py materialize             # PDF + 초안 생성
+python3 scripts/papers.py summarize --backend task      # 반자동: 작업 지시서
+python3 scripts/papers.py summarize --backend opencode  # 완전 자동: 본문까지
 ```
 
-요약은 두 가지 경로가 있습니다.
-
-```bash
-python3 scripts/papers.py summarize --backend task      # 반자동: 작업 지시서만
-python3 scripts/papers.py summarize --backend opencode  # 완전 자동: opencode 로 본문까지
-python3 scripts/papers.py run --since 5d --backend task # 네 단계 이어서
-```
-
-무엇을 고를지는 `data/paper-filter.yaml` 이 정합니다. 어휘집과 가중치를
+무엇을 고를지는 `data/paper-filter.yaml` 이 정합니다. 어휘집이나 가중치를
 고친 뒤 `score` 만 다시 돌리면 됩니다 — 네트워크를 타지 않아 즉시 끝납니다.
-결과는 `data/papers/reports/<날짜>.md` 에 선정·탈락 이유와 함께 남습니다.
+선정·탈락 이유는 `data/papers/reports/<날짜>.md` 에 남습니다.
 
 
 ## 배포
