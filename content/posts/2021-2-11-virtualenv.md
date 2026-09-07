@@ -3,7 +3,7 @@ categories:
 - linux
 date: "2021-02-11"
 tags: null
-title: ElementryOS mouch pad Using it like a Mac Touch Gestures (Loki,Juno)
+title: virtualenv로 파이썬 환경 격리하기
 ---
 
 # About
