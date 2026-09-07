@@ -322,7 +322,7 @@ automation 을 체크아웃해야 할 때 그때 PAT 를 secret 으로 넣는다
 | 2 | 파이프라인 cron 실행 + 자동 커밋/배포 | **완료** — [2026-09-07-daily-cron-design.md](2026-09-07-daily-cron-design.md) |
 | 3 | 영어 번역 단계 (deepseek-4-flash / muse-spark-1.3-free) | **완료** — [2026-09-07-english-translation-design.md](2026-09-07-english-translation-design.md) |
 | 4 | PDF 표·그림 추출 (표부터) | 미착수 (1 의존) |
-| 5 | 템플릿 일원화 + 기존 중복 25쌍 처리 | 미착수, 독립 |
+| 5 | 템플릿 일원화 + 기존 중복 25쌍 처리 | **완료** — [2026-09-07-template-and-duplicates-design.md](2026-09-07-template-and-duplicates-design.md) |
 
 `create_post.py` 의 front matter 생성은 **그대로 옮기기만** 한다.
 `archetypes/posts.md` 와의 일원화, 그리고 확인된 `<h1>` 중복(테마가
