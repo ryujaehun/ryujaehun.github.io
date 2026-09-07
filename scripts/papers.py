@@ -313,7 +313,14 @@ def cmd_materialize(args):
 def cmd_summarize(args):
     config = load_config()
     settings = dict(config.summarize)
-    model = args.model or settings.get("model")
+    try:
+        models = summarize_mod.model_chain(
+            args.model or settings.get("model"),
+            getattr(args, "fallback_model", None) or settings.get("fallback_model"),
+        )
+    except summarize_mod.SummarizeError as exc:
+        log(str(exc))
+        return EXIT_CONFIG
     state = State.load(STATE_PATH)
 
     targets = _summarize_targets(args, state)
@@ -355,10 +362,10 @@ def cmd_summarize(args):
 
         WORKDIR.mkdir(parents=True, exist_ok=True)
         try:
-            body = summarize_mod.summarize_with_opencode(
+            body, used_model = summarize_mod.summarize_with_models(
+                models=models,
                 pdf_path=pdf,
                 prompt=prompt,
-                model=model,
                 workdir=WORKDIR,
                 output_path=WORKDIR / f"{arxiv_id}-review.md",
                 variant=settings.get("variant"),
@@ -371,7 +378,7 @@ def cmd_summarize(args):
             failed.append(arxiv_id)
             continue
 
-        category = render.model_category(model)
+        category = render.model_category(used_model)
         text = render.build_draft(
             title=entry.get("title") or arxiv_id,
             arxiv_id=arxiv_id,
@@ -453,6 +460,9 @@ def build_parser():
     p_sum.add_argument("--backend", choices=("none", "opencode", "task"), default="none")
     p_sum.add_argument("--id", help="이 arXiv ID 하나만")
     p_sum.add_argument("--model", help="설정의 summarize.model 을 덮어씀")
+    p_sum.add_argument(
+        "--fallback-model", help="설정의 summarize.fallback_model 을 덮어씀"
+    )
     p_sum.set_defaults(func=cmd_summarize)
 
     p_run = sub.add_parser("run", help="fetch → score → materialize → summarize")
@@ -464,6 +474,7 @@ def build_parser():
     p_run.add_argument("--backend", choices=("none", "opencode", "task"), default="none")
     p_run.add_argument("--id", default=None, help=argparse.SUPPRESS)
     p_run.add_argument("--model", default=None)
+    p_run.add_argument("--fallback-model", default=None)
     p_run.set_defaults(func=cmd_run)
 
     return parser

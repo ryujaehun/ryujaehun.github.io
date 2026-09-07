@@ -8,6 +8,8 @@ from paperlib.summarize import (
     SummarizeError,
     build_opencode_command,
     extract_assistant_text,
+    model_chain,
+    summarize_with_models,
     summarize_with_opencode,
     write_task_file,
 )
@@ -294,3 +296,86 @@ def test_stale_output_file_is_removed_before_the_run(tmp_path):
         )
 
     assert seen["existed"] is False
+
+
+# --------------------------------------------------------------------------
+# 모델 폴백
+
+
+def _runner_recording(calls, fail_models=(), article="본문 " * 1000):
+    """호출된 --model 을 기록하고, fail_models 에 있으면 실패시키는 러너."""
+
+    def runner(cmd, *args, **kwargs):
+        model = cmd[cmd.index("--model") + 1]
+        calls.append(model)
+        if model in fail_models:
+            return _Completed(returncode=1, stderr=f"{model} 사용 불가")
+        return _Completed(stdout=_event("text", {"type": "text", "text": article}))
+
+    return runner
+
+
+def test_fallback_is_not_used_when_the_first_model_succeeds(tmp_path):
+    calls = []
+
+    body, used = summarize_with_models(
+        models=["primary", "backup"],
+        pdf_path="/a.pdf",
+        prompt="p",
+        workdir=tmp_path,
+        output_path=tmp_path / "review.md",
+        runner=_runner_recording(calls),
+    )
+
+    assert calls == ["primary"], "성공했는데 폴백까지 부르면 돈이 두 배 든다"
+    assert used == "primary"
+    assert len(body) >= 2000
+
+
+def test_fallback_takes_over_when_the_first_model_fails(tmp_path):
+    calls = []
+
+    body, used = summarize_with_models(
+        models=["primary", "backup"],
+        pdf_path="/a.pdf",
+        prompt="p",
+        workdir=tmp_path,
+        output_path=tmp_path / "review.md",
+        runner=_runner_recording(calls, fail_models={"primary"}),
+    )
+
+    assert calls == ["primary", "backup"]
+    # 초안 카테고리가 실제로 쓴 모델을 가리켜야 한다.
+    assert used == "backup"
+    assert len(body) >= 2000
+
+
+def test_every_model_failing_raises_with_all_the_reasons(tmp_path):
+    calls = []
+
+    with pytest.raises(SummarizeError) as excinfo:
+        summarize_with_models(
+            models=["primary", "backup"],
+            pdf_path="/a.pdf",
+            prompt="p",
+            workdir=tmp_path,
+            output_path=tmp_path / "review.md",
+            runner=_runner_recording(calls, fail_models={"primary", "backup"}),
+        )
+
+    assert calls == ["primary", "backup"]
+    # 어느 모델이 왜 죽었는지 둘 다 남아야 원인을 찾는다.
+    assert "primary" in str(excinfo.value)
+    assert "backup" in str(excinfo.value)
+
+
+def test_models_are_deduplicated_and_blanks_dropped():
+    assert model_chain("a", "a") == ["a"]
+    assert model_chain("a", None) == ["a"]
+    assert model_chain("a", "") == ["a"]
+    assert model_chain("a", "b") == ["a", "b"]
+
+
+def test_model_chain_refuses_to_run_with_no_model():
+    with pytest.raises(SummarizeError, match="모델"):
+        model_chain(None, None)

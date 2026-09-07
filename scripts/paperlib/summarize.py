@@ -201,3 +201,37 @@ def write_task_file(
         json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
     )
     return path
+
+
+def model_chain(primary, fallback):
+    """시도할 모델 순서. 앞에서부터 쓰고 실패하면 다음으로 넘어간다.
+
+    같은 모델을 두 번 부르면 같은 이유로 두 번 죽으므로 중복은 지운다.
+    """
+    chain = []
+    for model in (primary, fallback):
+        model = (model or "").strip()
+        if model and model not in chain:
+            chain.append(model)
+    if not chain:
+        raise SummarizeError(
+            "요약할 모델이 없습니다. data/paper-filter.yaml 의 summarize.model "
+            "을 채우거나 --model 을 주세요."
+        )
+    return chain
+
+
+def summarize_with_models(models, **kwargs):
+    """모델을 순서대로 시도한다. `(본문, 실제로 쓴 모델)` 을 준다.
+
+    폴백이 필요한 이유: 프로바이더 쪽 한도·장애로 한 모델이 통째로 막히는
+    일이 있다. 그때 그날 수집분을 전부 버리는 대신 값싼 모델로라도 본문을
+    남긴다. 어느 모델이 썼는지는 초안 카테고리에 남으므로 나중에 구분된다.
+    """
+    reasons = []
+    for model in models:
+        try:
+            return summarize_with_opencode(model=model, **kwargs), model
+        except SummarizeError as exc:
+            reasons.append(f"{model}: {exc}")
+    raise SummarizeError("모든 모델이 실패했습니다.\n" + "\n".join(reasons))

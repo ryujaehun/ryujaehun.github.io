@@ -45,7 +45,18 @@ data/papers/raw/<날짜>.jsonl
 
 HF 는 날짜별 API 라 `--since 5d` 면 5일치를 각각 부른다. **주말에는 HF 에
 논문이 올라오지 않는다** — `0편` 이 떠도 고장이 아니다. arXiv 도 주말에는
-신규가 없다. 월요일에 `--since 5d` 정도로 도는 게 무난하다.
+신규가 없다.
+
+**`--since` 는 게시일이 아니라 arXiv 제출일(v1)로 거른다.** 그런데 HF
+데일리는 제출된 지 2~4일 지난 논문을 올린다. 창을 좁게 잡으면 소스가
+멀쩡히 읽혀도 최종 0편이 된다.
+
+```
+--since 3d → HF 19편 + arXiv 1000편 → 창(09-05~09-07) 밖 947편 제외 → 0편
+--since 5d → HF 86편 + arXiv 1000편 → 창(09-03~09-07) 밖 600편 제외 → 400편
+```
+
+**`--since 5d` 아래로는 내리지 마라.** 월요일에 `5d` 로 도는 게 기준선이다.
 
 날짜 범위 밖이라 버린 편수를 로그에 찍는다. `1000편 수집 → 0편` 같은
 일이 조용히 벌어지지 않게 하기 위함이다.
@@ -103,6 +114,30 @@ python3 scripts/papers.py summarize --backend opencode --id 2609.03430 \
         --model opencode-go/kimi-k3
 ```
 
+#### 모델과 폴백
+
+`data/paper-filter.yaml` 의 `summarize` 에서 정한다.
+
+```yaml
+summarize:
+  model: opencode-go/deepseek-v4-pro                    # 1차
+  fallback_model: opencode/muse-spark-1.3-contributor-free  # 2차 (무료)
+```
+
+1차가 `SummarizeError` 로 죽으면 2차로 넘어간다. 프로바이더 한도나 장애로
+한 모델이 통째로 막혔을 때 그날 수집분을 전부 버리지 않으려는 장치다.
+**둘 다 실패해야 실패**이고, 그때 두 모델의 사유가 함께 남는다.
+
+폴백 모델의 `contributor-free` 는 프로바이더가 `opencode-go` 가 아니라
+`opencode` 다. 접두사를 옮겨 쓰면 모델을 못 찾는다.
+
+한 번만 바꿔 볼 때는 CLI 로 덮어쓴다. 둘은 독립이다.
+
+```bash
+python3 scripts/papers.py summarize --backend opencode \
+        --model opencode-go/glm-5.3 --fallback-model opencode-go/qwen3.8-flash
+```
+
 `task` 가 만드는 지시서는 이렇게 생겼다. 에이전트에게 이 파일 경로만
 알려주면 된다.
 
@@ -120,6 +155,8 @@ python3 scripts/papers.py summarize --backend opencode --id 2609.03430 \
 
 `opencode` 백엔드가 성공하면 초안 카테고리에 `with-<모델>` 이 붙는다
 (`opencode-go/glm-5.3` → `with-glm-5-3`). 기존 `with-gpt-5.2` 관례를 잇는 것이다.
+**폴백이 돌았으면 폴백 모델 이름이 붙는다** — 나중에 어느 글을 어느 모델이
+썼는지 카테고리만 보면 된다.
 
 **실패하면 초안을 건드리지 않는다.** 프롬프트만 있는 상태로 남고 종료
 코드 5 를 낸다. 반쯤 채워진 글이 생기지 않게 하기 위함이다.
@@ -210,6 +247,8 @@ tiers:
 만들면서 실제로 밟은 것들이다.
 
 - **주말엔 논문이 없다.** HF Daily Papers 도 arXiv 도 그렇다. `0편` 은 정상
+- **`--since 3d` 는 좁다.** HF 데일리가 올리는 논문은 제출된 지 2~4일
+  지난 것들이라 3일 창에는 하나도 안 들어온다. 최소 `5d`
 - **arXiv API 는 `https` 여야 한다.** `http` 는 301 을 주고 본문이 비어 있다
 - **opencode 는 완성 응답을 내는 LLM 이 아니라 에이전트다.** 그냥 두면
   본문을 파일에 쓰고 stdout 으로는 "완료했습니다" 만 낸다. 그래서
@@ -225,6 +264,9 @@ tiers:
 ## 비용
 
 요약 자동화만 돈이 든다. 수집·채점·초안 생성은 무료다.
+
+폴백(`opencode/muse-spark-1.3-contributor-free`)은 무료라 1차가 막혔을 때
+비용이 늘지 않는다. 1차 `opencode-go/deepseek-v4-pro` 만 과금된다.
 
 `opencode-go/qwen3.8-flash` 로 논문 한 편을 끝까지 정리하는 데 약 6분,
 `step_finish` 이벤트가 보고한 비용은 센트 단위였다. 더 큰 모델을 쓰면

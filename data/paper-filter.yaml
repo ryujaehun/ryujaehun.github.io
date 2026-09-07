@@ -218,6 +218,10 @@ organizations:
   - han lab
 
 summarize:
-  model: opencode-go/glm-5.3
+  model: opencode-go/deepseek-v4-pro
+  # 1차가 실패하면(프로바이더 한도·장애) 여기로 넘어간다. 무료 모델이라
+  # 그날 수집분을 통째로 버리는 것보다 낫다. 실제로 쓴 모델은 초안
+  # 카테고리(with-…)에 남으니 나중에 구분된다.
+  fallback_model: opencode/muse-spark-1.3-contributor-free
   variant: null           # opencode --variant 값. null 이면 생략한다.
   timeout_seconds: 900
