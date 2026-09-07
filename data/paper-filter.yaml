@@ -37,7 +37,7 @@ gates:
                             # 대신하지 못하게 막는다.
   arxiv_min_topic: 0.70     # arXiv 단독 — buzz 가 0 이라 토픽만 본다
   arxiv_min_core_hits: 2
-  top_k: 5                  # 한 번에 만들 초안 상한 (주 3~5 편 목표)
+  top_k: 2                  # 한 번에 만들 초안 상한 (매일 cron → 평일 주 10편 상한)
 
 preferred_categories: [cs.LG, cs.CL, cs.DC, cs.AR, cs.PF, cs.SE, cs.MS, cs.OS]
 non_preferred_multiplier: 0.9
