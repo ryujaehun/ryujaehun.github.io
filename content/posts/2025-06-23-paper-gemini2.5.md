@@ -13,7 +13,7 @@ title: 'Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality,
 [논문 링크](https://storage.googleapis.com/deepmind-media/gemini/gemini_v2_5_report.pdf)
 
 
-# Gemini 2.5: 1 M 토큰·멀티모달·초저지연 LLM의 비밀을 벗기다
+## Gemini 2.5: 1 M 토큰·멀티모달·초저지연 LLM의 비밀을 벗기다
 
 ## 한 줄 요약 (TL;DR)
 

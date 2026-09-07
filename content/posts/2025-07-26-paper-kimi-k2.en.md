@@ -19,7 +19,7 @@ cover: https://github.com/MoonshotAI/Kimi-K2/raw/main/figures/kimi-logo.png
 
 [Paper Link](https://github.com/MoonshotAI/Kimi-K2/blob/main/tech_report.pdf)
 
-# Kimi K2: An Open-Source LLM’s Leap Toward Agentic Intelligence
+## Kimi K2: An Open-Source LLM’s Leap Toward Agentic Intelligence
 
 ## TL;DR
 

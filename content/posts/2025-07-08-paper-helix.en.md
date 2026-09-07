@@ -14,7 +14,7 @@ cover : https://www.storagereview.com/wp-content/uploads/2025/07/image2-2-png-e1
 
 [Paper Link](https://research.nvidia.com/publication/2025-07_helix-parallelism-rethinking-sharding-strategies-interactive-multi-million)
 
-# Helix Parallelism: Breaking the Latency-Throughput Wall of Ultra-Long LLM Decoding
+## Helix Parallelism: Breaking the Latency-Throughput Wall of Ultra-Long LLM Decoding
 
 ## TL;DR
 

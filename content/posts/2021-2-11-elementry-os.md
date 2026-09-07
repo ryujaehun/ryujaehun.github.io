@@ -6,7 +6,7 @@ tags: null
 title: ElementryOS mouch pad Using it like a Mac Touch Gestures (Loki,Juno)
 ---
 
-# Adding Gestures
+## Adding Gestures
 
 ## Add yourself to the input group 
 ```
