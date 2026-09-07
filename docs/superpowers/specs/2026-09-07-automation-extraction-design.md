@@ -1,7 +1,7 @@
 # 자동화 코드를 `blog-automation` submodule 로 분리한다
 
 - 날짜: 2026-09-07
-- 상태: 설계 승인 대기 → 구현 계획서로
+- 상태: **구현 완료** (아래 "구현 결과" 참고)
 - 범위: 서브프로젝트 1 (전체 분해안은 아래 "이 스펙이 다루지 않는 것" 참고)
 
 ## 왜
@@ -331,3 +331,53 @@ front matter `title` 로 h1 을 만드는데 본문도 `# 제목` 으로 시작�
 불가능해진다.
 
 `core/http.py` 의 재시도, `sources.py` 의 백오프도 이 스펙 밖이다.
+
+## 구현 결과
+
+| 리포 | 커밋 |
+|---|---|
+| `blog-automation` | `1d79c27` 재배치+workspace / `1b72b06` README / `ac0e723` CI / `69851fb` ruff 고정 |
+| 블로그 | `9ebe5ea` 이 스펙 / `637a741` submodule 분리 |
+
+히스토리: `git filter-repo` 로 75 커밋 → 해당 경로 8 커밋. `git mv` 는
+별도 커밋이라 `git log --follow` 로 이전 히스토리가 이어진다.
+
+검증 결과:
+
+1. `pytest` 102개 통과 (이전 79개 → workspace 7, jsonl 7, http 4,
+   layout 6 추가, `repo_relative` 1 제거). 블로그 경로를 읽는 테스트가
+   없어 automation 리포 단독으로 통과한다.
+2. `ruff check` 통과.
+3. 회귀 없음 — 같은 raw 로 구/신 코드를 돌려 `reports/2026-09-07.md` 와
+   `scored/2026-09-07.jsonl` 이 바이트 단위로 동일했다.
+4. `materialize --dry-run` 동일.
+5. `--workspace` 없이 블로그 안에서 실행 → 경로가 블로그를 가리킨다.
+   `--backend task` 로 만든 지시서의 `prompt_path` 가 패키지 기본값이
+   아니라 workspace 오버라이드로 해석되는 것까지 확인했다.
+6. workspace 없는 위치(`/tmp`)에서 실행 → 종료 코드 4.
+7. `hugo --gc --minify` KO 998 / EN 191 — 변동 없음.
+8. 블로그 배포 workflow 성공 (`submodules: false` + 테마만 초기화).
+
+### 설계와 달라진 것
+
+**`core/http.py` 에 재시도를 넣지 않았다.** 스펙 초안에 "재시도·예의"
+라고 적었지만, 현재 `sources.py:_read` 에는 재시도가 없다. 추출
+커밋에 넣으면 순수 이동이 아니라 동작 변경이 된다. 후속 항목으로 뺐다.
+
+### 구현 중 알게 된 것
+
+**ruff 를 핀 하지 않으면 CI 가 코드 변경 없이 깨진다.** 로컬 0.11.10 은
+통과했는데 CI 가 받은 0.16.6 은 19건을 잡았다(DTZ011 9, RUF100 7,
+I001 2, EXE001 1). 기본 `select` 가 버전마다 넓어지기 때문이다.
+`ruff.toml` 에 룰셋을 명시하고 `ruff==0.16.6` 을 고정했다.
+
+`DTZ011`(`date.today()` 시간대 미지정)은 일부러 뺐다. 수집 대상이
+"오늘 올라온 논문"이고 기준 시간대가 Asia/Seoul 이라, UTC 로 바꾸면
+날짜 경계가 밀려 하루치를 놓친다.
+
+### 남은 후속 항목
+
+- `core/http.py` 재시도·백오프
+- `automation` 리포에 Dependabot 설정 (ruff 를 핀 했으므로 갱신 알림이
+  필요하다). 블로그는 이미 `github-actions` 생태계를 추적하고 있다.
+- 서브프로젝트 2~5 (위 표 참고)
