@@ -233,3 +233,19 @@ translate:
   fallback_model: opencode/muse-spark-1.3-contributor-free
   variant: null
   timeout_seconds: 900
+
+assets:
+  # 논문 원문에서 표·그림을 뽑는 단계(summarize 앞에 돈다).
+  max_figures: 4          # 편당 그림 상한. 저장 용량이 실질적 제약이다.
+  max_tables: 8           # 편당 표 상한. 부록 표가 20개씩 있는 논문도 있다.
+
+  # 그림을 다시 올릴 수 있는 라이선스. 좁게 잡은 이유:
+  #  - arXiv 기본 라이선스는 arXiv 에게만 배포권을 준 것이다(실측 8편 중 5편).
+  #  - 이 블로그는 static/ads.txt 에 AdSense ID 가 있어 상업적 이용이다 -> NC 불가.
+  #  - ND 는 리사이즈가 변경에 해당할 수 있어 뺐다.
+  #  - SA 는 그 의무가 글 전체로 번질 수 있어 뺐다.
+  # 표는 이 목록과 무관하다 - 사실 데이터를 다시 표현하고 출처를 밝힌다.
+  allowed_licenses:
+    - creativecommons.org/licenses/by/
+    - creativecommons.org/publicdomain/zero/
+    - creativecommons.org/publicdomain/mark/

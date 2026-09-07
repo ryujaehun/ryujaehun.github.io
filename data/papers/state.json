@@ -1,5 +1,10 @@
 {
  "2609.01343": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 2
+  },
   "draft_path": "content/posts/2026-09-07-paper-2609.01343.md",
   "failures": 0,
   "first_seen": "2026-09-07",
@@ -23,6 +28,16 @@
   "title": "SMELT: Scaling Laws for Compute-Matched MoE Looped Transformers"
  },
  "2609.02737": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.02737/method.webp",
+    "/assets/images/papers/2609.02737/size-scaling-acc.webp",
+    "/assets/images/papers/2609.02737/size-scaling-tok.webp",
+    "/assets/images/papers/2609.02737/context-scaling-acc.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 10
+  },
   "draft_path": "content/posts/2026-09-07-paper-2609.02737v1.md",
   "failures": 0,
   "first_seen": "2026-09-07",
@@ -45,6 +60,11 @@
   "version": "v1"
  },
  "2609.03235": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 5
+  },
   "draft_path": "content/posts/2026-09-07-paper-2609.03235v1.md",
   "failures": 0,
   "first_seen": "2026-09-07",
@@ -100,6 +120,11 @@
   "version": "v1"
  },
  "2609.04098": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 6
+  },
   "draft_path": "content/posts/2026-09-07-paper-2609.04098.md",
   "failures": 0,
   "first_seen": "2026-09-07",
@@ -128,6 +153,16 @@
   "title": "Why Gated DeltaNet Survives 4-Bit Quantization: NVFP4 W4A4 for the Recurrent Half of a Hybrid 27B LLM"
  },
  "2609.04105": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.04105/headline-pareto.webp",
+    "/assets/images/papers/2609.04105/cross-shape-speed-accuracy.webp",
+    "/assets/images/papers/2609.04105/nvmx-fast-report.webp",
+    "/assets/images/papers/2609.04105/llama8b-b4-matched-training-curves.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 30
+  },
   "draft_path": "content/posts/2026-09-07-paper-2609.04105v1.md",
   "failures": 0,
   "first_seen": "2026-09-07",
@@ -153,6 +188,11 @@
   "version": "v1"
  },
  "2609.04748": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 3
+  },
   "draft_path": "content/posts/2026-09-07-paper-2609.04748v1.md",
   "failures": 0,
   "first_seen": "2026-09-07",
@@ -179,6 +219,11 @@
   "version": "v1"
  },
  "2609.04971": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 6
+  },
   "draft_path": "content/posts/2026-09-07-paper-2609.04971v1.md",
   "failures": 0,
   "first_seen": "2026-09-07",
