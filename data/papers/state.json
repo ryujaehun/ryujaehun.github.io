@@ -1,4 +1,49 @@
 {
+ "2609.01343": {
+  "draft_path": "content/posts/2026-09-07-paper-2609.01343.md",
+  "failures": 0,
+  "first_seen": "2026-09-07",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "mixture-of-experts",
+    "moe"
+   ],
+   "core": [
+    "kv cache"
+   ],
+   "weak": [
+    "scaling",
+    "transformer"
+   ]
+  },
+  "materialized_at": "2026-09-07",
+  "score": 0.7001,
+  "status": "materialized",
+  "title": "SMELT: Scaling Laws for Compute-Matched MoE Looped Transformers"
+ },
+ "2609.02737": {
+  "draft_path": "content/posts/2026-09-07-paper-2609.02737v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-07",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "cache",
+    "decoding",
+    "long context"
+   ],
+   "core": [
+    "kv cache",
+    "sparse attention"
+   ]
+  },
+  "materialized_at": "2026-09-07",
+  "score": 0.6417,
+  "status": "materialized",
+  "title": "Language Models Can Control Their Own Attention",
+  "version": "v1"
+ },
  "2609.03235": {
   "draft_path": "content/posts/2026-09-07-paper-2609.03235v1.md",
   "failures": 0,
