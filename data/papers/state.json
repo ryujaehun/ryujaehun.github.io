@@ -1,0 +1,30 @@
+{
+ "2609.03430": {
+  "draft_path": "content/posts/2026-09-06-paper-2609.03430v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-06",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "cache",
+    "throughput"
+   ],
+   "core": [
+    "cache compression",
+    "cache eviction",
+    "kv cache"
+   ],
+   "named_systems": [
+    "vllm"
+   ],
+   "weak": [
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-09-06",
+  "score": 0.892,
+  "status": "materialized",
+  "title": "Random Attention: Rethinking KV Cache Eviction for Efficient Reasoning",
+  "version": "v1"
+ }
+}
