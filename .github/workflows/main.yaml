@@ -44,8 +44,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          submodules: recursive
+          # automation submodule 은 private 이라 기본 GITHUB_TOKEN 으로는
+          # 체크아웃되지 않는다. Hugo 빌드는 그걸 읽지 않으므로 테마만
+          # 따로 초기화한다.
+          submodules: false
           fetch-depth: 0
+      - name: Checkout theme submodule
+        run: git submodule update --init themes/hugo-narrow
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v6

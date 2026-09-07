@@ -1,3 +1,0 @@
-# 논문 파이프라인(scripts/papers.py)에 필요한 것만. Hugo 빌드에는 필요 없다.
-PyYAML>=6.0        # 어휘집 설정. 사람이 손보는 파일이라 주석이 필요해 JSON 대신 YAML.
-defusedxml>=0.7    # arXiv Atom 파싱. 표준 ElementTree 의 entity 확장 공격 방어.
