@@ -1,4 +1,31 @@
 {
+ "2609.03235": {
+  "draft_path": "content/posts/2026-09-07-paper-2609.03235v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-07",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "cache",
+    "long context"
+   ],
+   "core": [
+    "cache compression",
+    "kv cache"
+   ],
+   "systems": [
+    "compression"
+   ],
+   "weak": [
+    "efficiency"
+   ]
+  },
+  "materialized_at": "2026-09-07",
+  "score": 0.5268,
+  "status": "materialized",
+  "title": "SGD-KV: Summarization Guided KV Cache Compression",
+  "version": "v1"
+ },
  "2609.03430": {
   "draft_path": "content/posts/2026-09-06-paper-2609.03430v1.md",
   "failures": 0,
@@ -25,6 +52,113 @@
   "score": 0.892,
   "status": "materialized",
   "title": "Random Attention: Rethinking KV Cache Eviction for Efficient Reasoning",
+  "version": "v1"
+ },
+ "2609.04098": {
+  "draft_path": "content/posts/2026-09-07-paper-2609.04098.md",
+  "failures": 0,
+  "first_seen": "2026-09-07",
+  "matched": {
+   "adjacent": [
+    "attention"
+   ],
+   "core": [
+    "kv cache",
+    "prefill"
+   ],
+   "systems": [
+    "fp8",
+    "linear attention",
+    "nvfp4",
+    "quantization"
+   ],
+   "weak": [
+    "llm",
+    "scaling"
+   ]
+  },
+  "materialized_at": "2026-09-07",
+  "score": 0.5975,
+  "status": "materialized",
+  "title": "Why Gated DeltaNet Survives 4-Bit Quantization: NVFP4 W4A4 for the Recurrent Half of a Hybrid 27B LLM"
+ },
+ "2609.04105": {
+  "draft_path": "content/posts/2026-09-07-paper-2609.04105v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-07",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "throughput"
+   ],
+   "core": [
+    "flashattention"
+   ],
+   "systems": [
+    "fp4",
+    "fp8",
+    "mxfp4",
+    "quantization"
+   ]
+  },
+  "materialized_at": "2026-09-07",
+  "score": 0.5334,
+  "status": "materialized",
+  "title": "Hardware-Aware FP4 FlashAttention-4",
+  "version": "v1"
+ },
+ "2609.04748": {
+  "draft_path": "content/posts/2026-09-07-paper-2609.04748v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-07",
+  "matched": {
+   "adjacent": [
+    "cache",
+    "decoding"
+   ],
+   "core": [
+    "llm serving",
+    "prefix caching"
+   ],
+   "systems": [
+    "quantization"
+   ],
+   "weak": [
+    "optimization"
+   ]
+  },
+  "materialized_at": "2026-09-07",
+  "score": 0.5347,
+  "status": "materialized",
+  "title": "Same Request, Different Answer: Quantization Amplifies Cache-Induced Divergence in LLM Serving",
+  "version": "v1"
+ },
+ "2609.04971": {
+  "draft_path": "content/posts/2026-09-07-paper-2609.04971v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-07",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "cache",
+    "decoding",
+    "throughput"
+   ],
+   "core": [
+    "cache compression",
+    "kv cache"
+   ],
+   "systems": [
+    "compression"
+   ],
+   "weak": [
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-09-07",
+  "score": 0.5334,
+  "status": "materialized",
+  "title": "BeaconKV: Key-Value Cache Compression Guided by Beacon Queries for Efficient Large Reasoning Model Inference",
   "version": "v1"
  }
 }
