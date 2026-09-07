@@ -225,3 +225,11 @@ summarize:
   fallback_model: opencode/muse-spark-1.3-contributor-free
   variant: null           # opencode --variant 값. null 이면 생략한다.
   timeout_seconds: 900
+
+translate:
+  # 번역은 요약보다 쉬운 일이라 싼 모델로 충분하다. 실측 비용은 요약이
+  # 편당 $0.008 남짓이었고 번역은 입력이 짧아 더 싸다.
+  model: opencode-go/deepseek-v4-flash
+  fallback_model: opencode/muse-spark-1.3-contributor-free
+  variant: null
+  timeout_seconds: 900
