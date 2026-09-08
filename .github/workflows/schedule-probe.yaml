@@ -1,0 +1,23 @@
+# 임시 진단용. 삭제 예정.
+#
+# blog-automation(private) 에서 schedule 이벤트가 전혀 발화하지 않는다.
+# 그 리포의 워크플로는 workflow_dispatch 로는 정상 실행되므로 파일과
+# Actions 자체는 문제가 없다. 이 프로브는 "공개 리포에서는 발화하는지" 를
+# 확인해 문제 범위를 리포 가시성 대 계정 전체로 좁힌다.
+name: Schedule probe (temporary)
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - run: |
+          echo "event=${{ github.event_name }} utc=$(date -u +%H:%M:%SZ)"
