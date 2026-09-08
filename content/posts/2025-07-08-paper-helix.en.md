@@ -130,7 +130,7 @@ Helix breaks the existing “KV duplication vs FFN bottleneck” trade-off, enab
 2. **Multi-node Helix** — Extend to cluster scale with topology-aware All-to-All.
 3. **Adaptive Scheduler** — Dynamically switch between Helix and traditional TP based on real-time KV/FFN workload balance.
 4. **Precision & Quality Evaluation** — Validate softmax rescaling stability under FP4/FP8; test for drift and robustness.
-5. **Energy & Cost Metrics** — Report J·token⁻¹ and $/million tokens to show realistic ROI.
+5. **Energy & Cost Metrics** — Report J·token⁻¹ and `$`/million tokens to show realistic ROI.
 
 Helix completes a critical piece of the “real-time LLM serving” puzzle.  
 The remaining pieces—**distributed topology, sparse computation, and energy efficiency**—will turn *million-context* LLMs into everyday deployable technology.
