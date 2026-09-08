@@ -59,6 +59,42 @@
   "title": "Language Models Can Control Their Own Attention",
   "version": "v1"
  },
+ "2609.02780": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.02780/latency-performance-teaser.webp",
+    "/assets/images/papers/2609.02780/qwen3vl-layer-retr-ability.webp",
+    "/assets/images/papers/2609.02780/llava-layer-retr-ability.webp",
+    "/assets/images/papers/2609.02780/method.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 5
+  },
+  "draft_path": "content/posts/2026-09-08-paper-2609.02780v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-08",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "cache",
+    "latency"
+   ],
+   "core": [
+    "kv cache",
+    "prefill"
+   ],
+   "systems": [
+    "offloading",
+    "pruning",
+    "quantization"
+   ]
+  },
+  "materialized_at": "2026-09-08",
+  "score": 0.5512,
+  "status": "materialized",
+  "title": "ShallowStream: Index Shallow then Answer Deep for Streaming Video Understanding",
+  "version": "v1"
+ },
  "2609.03235": {
   "assets": {
    "figures": [],
@@ -117,6 +153,41 @@
   "score": 0.892,
   "status": "materialized",
   "title": "Random Attention: Rethinking KV Cache Eviction for Efficient Reasoning",
+  "version": "v1"
+ },
+ "2609.04010": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.04010/resultsfigure-combined.webp",
+    "/assets/images/papers/2609.04010/uno-dflash-eagle3-qwen-pareto.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "draft_path": "content/posts/2026-09-08-paper-2609.04010v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-08",
+  "matched": {
+   "adjacent": [
+    "autoregressive",
+    "decoding",
+    "distillation",
+    "long context",
+    "throughput"
+   ],
+   "core": [
+    "speculative decoding"
+   ],
+   "weak": [
+    "acceleration",
+    "llm",
+    "scaling"
+   ]
+  },
+  "materialized_at": "2026-09-08",
+  "score": 0.6408,
+  "status": "materialized",
+  "title": "Unlocking Lossless Speedups in LLMs via Discrete Diffusion",
   "version": "v1"
  },
  "2609.04098": {
