@@ -770,7 +770,7 @@ Gemini 2.5는 **순수 Decoder-only** (Autoregressive) 구조다. 따라서 전�
 
 | 단계                     | 학습 목적                                                   | 수식·설명                                             | 특징                                                                                |
 | ------------------------ | ----------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| **프리트레인**           | **Causal LM** (next-token prediction)                       | minimize  \$ℒ = −∑*{t} \log p\_θ(x\_t \mid x*{\<t})\$ | 멀티모달 토큰(텍스트·패치·프레임·MFCC 등)을 **단일 시퀀스**로 넣어 동일 목표로 학습 |
+| **프리트레인**           | **Causal LM** (next-token prediction)                       | minimize  $ℒ = −∑_{t} \log p_θ(x_t \mid x_{<t})$ | 멀티모달 토큰(텍스트·패치·프레임·MFCC 등)을 **단일 시퀀스**로 넣어 동일 목표로 학습 |
 | **SFT (지도·지침)**      | Supervised Fine-Tuning on instruction–response              | same loss, but on ⟨instruction, desired output⟩ pairs | “도구 호출·체인-오브-씽킹” 예시 포함                                                |
 | **RLHF + RL-Critic**     | Maximize human-preference reward; penalize policy-violation | PPO / Rejection-Sampling pipeline                     | 헬프풀 점수 +14.8 %·위반 –0.9 % (텍스트)                                            |
 | **Distillation (Flash)** | **k-sparse KL** to teacher next-token dist.                 | store top-k≈20 logits/token → KL                      | 작은 모델도 품질 유지·서빙 비용 –35 %                                               |

@@ -59,7 +59,7 @@ $$
 S_{\max}^{\,h}=\frac{1}{\sqrt{d}}\max_{i,j}(q_i^{\,h}\cdot k_j^{\,h})
 $$
 
-If the maximum attention logit \$S\_{\max}^{,h}\$ for a head \$h\$ exceeds the threshold \$\tau\$, the associated \$W\_q\$ and \$W\_k\$ matrices are rescaled by \$\sqrt{\gamma\_h}\$.
+If the maximum attention logit $S_{\max}^{,h}$ for a head $h$ exceeds the threshold $\tau$, the associated $W_q$ and $W_k$ matrices are rescaled by $\sqrt{\gamma_h}$.
 This mechanism allows training on **15.5 trillion tokens** without a single loss spike, maximizing token efficiency and training stability.
 
 
@@ -337,8 +337,8 @@ flowchart LR
 
 ### 🧪 Step 3: Verifiable RL + Self-Critique Loop
 
-1. **Actor Rollout**: Generate K responses \$y\_1, \dots, y\_K\$
-2. **Critic Scoring**: Combine objective reward \$r(x, y)\$ + rubric-based self-evaluation
+1. **Actor Rollout**: Generate K responses $y_1, \dots, y_K$
+2. **Critic Scoring**: Combine objective reward $r(x, y)$ + rubric-based self-evaluation
 3. **Policy Update**:
 
 $$
@@ -362,7 +362,7 @@ $$
 S_{\max}^{\,h} = \frac{1}{\sqrt{d}} \max_{i,j}(q_i^{\,h} \cdot k_j^{\,h})
 $$
 
-If the attention logit for any head exceeds the threshold \$\tau\$, it is scaled down via \$\gamma\_h\$, and the corresponding \$W\_q\$, \$W\_k\$ matrices are updated:
+If the attention logit for any head exceeds the threshold $\tau$, it is scaled down via $\gamma_h$, and the corresponding $W_q$, $W_k$ matrices are updated:
 
 $$
 W_q^{\,h} \leftarrow \sqrt{\gamma_h} W_q^{\,h}, \quad
@@ -437,7 +437,7 @@ This is **essential** for preventing unstable optimization in large batches and 
 
 ### ⚠️ Additional Inferred Limitations
 
-* **QK-Clip hyperparameter sensitivity** – Fixed \$\tau\$ may not generalize across domains
+* **QK-Clip hyperparameter sensitivity** – Fixed $\tau$ may not generalize across domains
 * **Synthetic trajectory bias** – May fail on unseen real-world tool sequences
 * **Reward ambiguity** – Difficult to balance creativity, safety, and correctness
 * **Inference latency** – QK-Clip may slow down real-time inference

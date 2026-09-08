@@ -1,0 +1,23 @@
+# 커밋 전에 글의 LaTeX·mermaid·코드펜스를 검사한다.
+#
+# 왜 필요한가: 파이프라인이 만든 글에서 실측으로 이런 문제들이 나왔다.
+#   - 수식에 마크다운 이스케이프가 적용돼 KaTeX 가 렌더하지 못함
+#     (72편, KaTeX 실패 139건)
+#   - 코드펜스가 닫히지 않아 66~75행이 코드 블록에 삼켜짐 (4편)
+#   - 산문의 `$` 가 이스케이프되지 않아 뒤 문장이 수식으로 렌더됨
+#
+# 검사기는 automation submodule 에 있다. 순수 파이썬이라 네트워크가
+# 필요 없다. `--fix` 가 수식 이스케이프는 자동으로 고치고, 사람 판단이
+# 필요한 것(닫히지 않은 펜스 등)은 막고 알려 준다.
+#
+# 설치: pre-commit install
+# 전체 검사: python3 automation/tasks/papers/cli.py check
+repos:
+  - repo: local
+    hooks:
+      - id: post-lint
+        name: 글의 LaTeX·mermaid·코드펜스 검사
+        entry: python3 automation/tasks/papers/cli.py check --fix --path
+        language: system
+        files: ^content/posts/.*\.md$
+        pass_filenames: true
