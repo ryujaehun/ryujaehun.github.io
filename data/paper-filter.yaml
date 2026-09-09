@@ -262,8 +262,8 @@ taxonomy:
   min_vocab_uses: 2     # 몇 번 이상 쓰인 태그를 "기존 어휘" 로 볼지
 
   # 주제 카테고리. **닫힌 목록이다.** 자유 입력으로 두면 지금처럼
-  # 카테고리가 95개까지 늘어나고(`LLM` / `LLM Systems` / `efficient-llm`
-  # 이 따로 있다) 카테고리 페이지가 의미를 잃는다. 늘리려면 여기에
+  # 카테고리가 60종까지 늘어나 같은 뜻이 갈라진다(`LLM` / `LLM Systems` /
+  # `LLM-Inference` / `efficient-llm` 이 따로 있다). 늘리려면 여기에
   # 추가한다.
   topics:
     - kv-cache
