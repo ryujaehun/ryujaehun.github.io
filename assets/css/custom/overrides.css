@@ -102,6 +102,16 @@ article h4 a,
    스크롤할 때 표의 테두리가 컨테이너 안에서 따라 움직여 어긋나 보인다. */
 .prose .table-scroll {
   margin: 1.5rem 0;
+  /* 절대배치 후손의 컨테이닝 블록이 되어야 한다. static 으로 두면
+     `overflow-x` 가 그 후손을 자르지 못한다 — 자르기는 컨테이닝 블록이
+     스크롤러 안에 있을 때만 적용된다.
+
+     실제로 이것 때문에 모바일에서 페이지가 옆으로 밀렸다. KaTeX 는
+     수식마다 숨은 MathML(`.katex-mathml`)을 `position: absolute` 로
+     둔다. 표 칸 안의 그것이 body 를 기준으로 배치되면서 **잘리지 않은
+     표 폭만큼 오른쪽**에 놓이고, 루트 스크롤 영역이 거기까지 늘어났다.
+     390px 화면에서 페이지 폭 721px. 이 한 줄로 390px 이 된다. */
+  position: relative;
   overflow-x: auto;
   overflow-y: hidden;
   /* 표 끝에 닿았을 때 브라우저 뒤로가기 제스처가 발동하지 않게 한다. */
@@ -137,6 +147,15 @@ article h4 a,
      생겼으니 정상 규칙으로 돌리고, 끊을 데가 없는 긴 토큰만 끊는다. */
   word-break: normal;
   overflow-wrap: break-word;
+}
+
+/* 원시 HTML 로 쓴 표는 렌더 훅이 감싸지 않는다 — 훅은 마크다운 표에만
+   걸린다. 감싸이지 않은 표에도 같은 대비를 직접 준다. 2021 년 글 하나가
+   표를 이미지 배치용으로 쓰고 있고, 그 표가 모바일에서 20px 넘쳤다. */
+.prose table:not(.table-scroll table) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 /* 스크롤할 것이 있을 때만 JS 가 붙인다. 마우스에는 스크롤바가 유일한
