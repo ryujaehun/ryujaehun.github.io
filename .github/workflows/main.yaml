@@ -68,11 +68,20 @@ jobs:
         run: git config core.quotepath false
       - name: Build with Hugo
         run: |
+          # --printPathWarnings 로 URL 이 겹치는 글을 잡는다. 겹치면 한쪽만
+          # 게시되고 나머지는 조용히 덮여 사라진다(실측 2쌍). Hugo 는 이걸
+          # 경고로만 알리고 종료 코드는 0 이라 직접 걸러 실패시킨다.
           hugo \
             --gc \
             --minify \
+            --printPathWarnings \
             --baseURL "${{ steps.pages.outputs.base_url }}/" \
-            --cacheDir "${{ runner.temp }}/hugo_cache"
+            --cacheDir "${{ runner.temp }}/hugo_cache" 2>&1 | tee hugo-build.log
+          if grep -q "Duplicate target paths" hugo-build.log; then
+            echo "::error::URL 이 겹치는 글이 있습니다. 위 경고의 경로를 확인하세요."
+            grep "Duplicate target paths" hugo-build.log
+            exit 1
+          fi
       - name: Cache Save
         id: cache-save
         uses: actions/cache/save@v6

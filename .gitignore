@@ -53,3 +53,4 @@ __pycache__/
 data/papers/raw/
 data/papers/scored/
 data/papers/tasks/
+hugo-build.log
