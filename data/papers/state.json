@@ -155,6 +155,34 @@
   "title": "Random Attention: Rethinking KV Cache Eviction for Efficient Reasoning",
   "version": "v1"
  },
+ "2609.03949": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 8
+  },
+  "draft_path": "content/posts/2026-09-09-paper-2609.03949v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-09",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "cache",
+    "kernel"
+   ],
+   "core": [
+    "kv cache"
+   ],
+   "systems": [
+    "quantization"
+   ]
+  },
+  "materialized_at": "2026-09-09",
+  "score": 0.5085,
+  "status": "materialized",
+  "title": "VestigeKV: The NoPE-MLA KV Cache Carries Its Own Eviction Signal in a Vestigial Branch",
+  "version": "v1"
+ },
  "2609.04010": {
   "assets": {
    "figures": [
@@ -287,6 +315,36 @@
   "score": 0.5347,
   "status": "materialized",
   "title": "Same Request, Different Answer: Quantization Amplifies Cache-Induced Divergence in LLM Serving",
+  "version": "v1"
+ },
+ "2609.04895": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 3
+  },
+  "draft_path": "content/posts/2026-09-09-paper-2609.04895v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-09",
+  "matched": {
+   "adjacent": [
+    "cache",
+    "decoding",
+    "memory efficient",
+    "mixture-of-experts",
+    "moe"
+   ],
+   "systems": [
+    "gpu memory"
+   ],
+   "weak": [
+    "efficiency"
+   ]
+  },
+  "materialized_at": "2026-09-09",
+  "score": 0.5202,
+  "status": "materialized",
+  "title": "Cache-Aware Joint Router Adaptation for Memory-Efficient MoE Inference",
   "version": "v1"
  },
  "2609.04971": {
