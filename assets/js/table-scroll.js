@@ -34,11 +34,15 @@
     var max = el.scrollWidth - el.clientWidth;
     if (max <= 1) return;
 
-    var next = el.scrollLeft + event.deltaY;
-    // 끝에 닿았다. 여기서 삼키면 페이지가 스크롤되지 않는다.
-    if (next < 0 || next > max) return;
+    // **이미 끝에 있을 때만** 페이지에 넘긴다. "한 번의 휠이 끝을
+    // 넘어가면 넘긴다" 로 짰다가 실측에서 걸렸다 — 남은 거리가 휠
+    // 한 칸보다 짧으면 표가 끝에 닿기 전에 페이지가 먼저 움직였다
+    // (709px 짜리 표가 500px 에서 멈췄다). 남은 만큼은 밀고, 끝에
+    // 닿은 다음 휠부터 페이지로 보낸다.
+    if (event.deltaY > 0 && el.scrollLeft >= max - 1) return;
+    if (event.deltaY < 0 && el.scrollLeft <= 0) return;
 
-    el.scrollLeft = next;
+    el.scrollLeft = Math.max(0, Math.min(max, el.scrollLeft + event.deltaY));
     event.preventDefault();
   }
 
