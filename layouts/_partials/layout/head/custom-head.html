@@ -16,3 +16,24 @@
   <link rel="alternate" hreflang="x-default" href="{{ .Permalink }}" />
   {{- end }}
 {{- end -}}
+
+{{/*
+  표 가로 스크롤 보조 스크립트. 테마가 body 끝 확장 지점을 주지 않아
+  head 에서 defer 로 싣는다. `layouts/_markup/render-table.html` 이
+  만드는 `.table-scroll` 이 없는 페이지에서는 아무것도 하지 않는다.
+*/}}
+{{- with resources.Get "js/table-scroll.js" }}
+  {{- $js := . | js.Build (dict "minify" (not hugo.IsDevelopment)) }}
+  {{- if hugo.IsDevelopment }}
+  <script defer src="{{ $js.RelPermalink }}"></script>
+  {{- else }}
+    {{- with $js | fingerprint }}
+  <script
+    defer
+    src="{{ .RelPermalink }}"
+    integrity="{{ .Data.Integrity }}"
+    crossorigin="anonymous"
+  ></script>
+    {{- end }}
+  {{- end }}
+{{- end }}

@@ -77,3 +77,150 @@ article h4 a,
 
 /* bumblebee 라이트는 손대지 않는다. 노란색(#fdc700)을 밝은 배경 위에서
    4.5:1 로 만들려면 #9b6700 같은 갈색이 되어 스킴 정체성이 사라진다. */
+
+/* --------------------------------------------------------------------------
+   4) 표가 폭에 눌려 글자가 쪼개지는 문제
+
+   문제: 테마의 `.prose table` 은 `width: 100%` + `word-break: break-word`
+   다. 표를 항상 본문 폭에 맞추므로 열이 많으면 칸이 좁아지고, 좁아진
+   칸 안에서 단어가 낱자로 쪼개진다. 실측값:
+     - 데스크톱 1280px, 16열 표(2609.04895): 칸 폭 약 44px
+     - 모바일 390px, 6열 표(2609.03430): 칸 폭 37px, `Phi-4-reasoning`
+   그리고 표가 잘려 있다는 사실 자체가 화면에 드러나지 않았다.
+
+   해결: `layouts/_markup/render-table.html` 이 표를 `.table-scroll` 로
+   감싼다. 표는 더 이상 폭에 맞추지 않고 내용만큼 넓어지고, 컨테이너가
+   가로로 스크롤된다. 칸마다 최소 폭을 줘서 눌리는 대신 넘치게 한다.
+   `assets/js/table-scroll.js` 가 넘치는 표에만 표시를 붙이고 세로 휠을
+   가로 이동으로 바꾼다.
+
+   측정(390px, 2609.04895 글): 페이지 가로 스크롤 폭 1776px -> 721px.
+   남은 721px 은 본문의 긴 인라인 수식이 원인이고 표와 무관하다.
+   -------------------------------------------------------------------------- */
+
+/* 테두리·둥근 모서리·그림자는 표에서 컨테이너로 옮긴다. 둘 다 가지면
+   스크롤할 때 표의 테두리가 컨테이너 안에서 따라 움직여 어긋나 보인다. */
+.prose .table-scroll {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* 표 끝에 닿았을 때 브라우저 뒤로가기 제스처가 발동하지 않게 한다. */
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0
+    color-mix(in srgb, var(--color-foreground) 10%, transparent);
+}
+
+/* 표에 있던 장식을 걷어낸다. `overflow` 를 되돌리는 것이 특히 중요하다 —
+   `overflow: hidden` 은 스크롤 컨테이너를 만들고, 그러면 아래 첫 열
+   고정(`position: sticky`)이 이 표를 기준으로 잡혀 동작하지 않는다. */
+.prose .table-scroll > table {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  /* 좁은 표는 폭을 채우고, 넓은 표는 내용만큼 넘친다. */
+  width: auto;
+  min-width: 100%;
+}
+
+/* 최소 폭이 이 수정의 핵심이다. 이게 없으면 표가 컨테이너 폭에 맞춰
+   다시 눌린다 — `min-width: 100%` 만으로는 좁아지는 것을 막지 못한다.
+   열 수와 무관하게 적용한다: 5~6열 표도 모바일에서는 눌렸다. */
+.prose .table-scroll th,
+.prose .table-scroll td {
+  min-width: 4.5rem;
+  /* 테마 기본값 `break-word` 는 칸이 좁으면 단어 안을 끊는다. 최소 폭이
+     생겼으니 정상 규칙으로 돌리고, 끊을 데가 없는 긴 토큰만 끊는다. */
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+/* 스크롤할 것이 있을 때만 JS 가 붙인다. 마우스에는 스크롤바가 유일한
+   단서라 항상 보이게 둔다 — macOS 처럼 스크롤바를 숨기는 환경에서는
+   표가 잘려 있다는 사실 자체가 보이지 않는다. */
+.prose .table-scroll.can-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+.prose .table-scroll.can-scroll::-webkit-scrollbar {
+  height: 0.5rem;
+}
+.prose .table-scroll.can-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.prose .table-scroll.can-scroll::-webkit-scrollbar-thumb {
+  border-radius: 0.25rem;
+  background: color-mix(in srgb, var(--color-foreground) 25%, transparent);
+}
+.prose .table-scroll.can-scroll:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* 오른쪽이 잘려 있다는 신호. 스크롤바만으로는 부족했다 — 스크롤바를
+   숨기는 환경(macOS 기본)에서는 표가 딱 맞게 끝난 것처럼 보인다.
+
+   원리: 그림자는 `scroll` 로 붙여 컨테이너 오른쪽 끝에 고정하고, 그
+   위를 덮는 배경색은 `local` 로 붙여 내용과 함께 움직인다. 끝까지 밀면
+   덮개가 그림자 자리에 도착해 그림자가 사라진다. */
+.prose .table-scroll.can-scroll {
+  background:
+    linear-gradient(to left, var(--color-background) 45%, transparent) right /
+      2rem 100% no-repeat,
+    radial-gradient(
+        farthest-side at 100% 50%,
+        color-mix(in srgb, var(--color-foreground) 13%, transparent),
+        transparent
+      )
+      right / 0.75rem 100% no-repeat;
+  background-attachment: local, scroll;
+}
+
+/* 열이 많은 표(7열 이상)는 칸을 조인다. 좁은 표까지 글자를 줄이면
+   본문과 어긋나 보인다. 기준은 CSS 에서 셀 개수를 물어볼 수 없어
+   렌더 훅이 `is-wide` 로 알려 준다. */
+.prose .table-scroll.is-wide th,
+.prose .table-scroll.is-wide td {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+/* 첫 열은 행 이름(모델·기법)이다. 가로로 밀면 이게 먼저 사라져서 지금
+   보고 있는 숫자가 어느 행인지 알 수 없게 된다. 고정한다. */
+.prose .table-scroll.is-wide th:first-child,
+.prose .table-scroll.is-wide td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 7rem;
+  /* 아래로 지나가는 셀이 비쳐 보이면 안 되므로 불투명해야 한다. */
+  background: var(--color-background);
+  box-shadow: inset -1px 0 0 0 var(--color-border);
+}
+.prose .table-scroll.is-wide thead th:first-child {
+  z-index: 2;
+  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-muted));
+}
+/* 고정된 칸이 행 강조에서 빠지면 어긋나 보인다. 같이 강조한다. */
+.prose .table-scroll.is-wide tr:hover td:first-child {
+  background: color-mix(
+    in srgb,
+    var(--color-muted) 50%,
+    var(--color-background)
+  );
+}
+
+@media (max-width: 640px) {
+  /* 화면이 좁으면 5열도 넘친다. 좁은 표에도 같은 여백 축소를 적용한다. */
+  .prose .table-scroll th,
+  .prose .table-scroll td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+    min-width: 5rem;
+  }
+}

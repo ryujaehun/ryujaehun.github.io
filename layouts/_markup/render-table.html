@@ -1,0 +1,49 @@
+{{/*
+  표를 가로 스크롤 컨테이너로 감싼다.
+
+  왜 필요한가: 테마의 `.prose table` 은 `width: 100%` + `word-break:
+  break-word` 다. 열이 많으면 한 칸이 좁아지고 그 안의 글자가 낱자로
+  쪼개진다. 실측으로 16열 표(2609.04895)의 칸 폭이 약 44px 이었다.
+  표를 폭에 맞춰 우겨넣는 대신 넘치게 두고 가로로 밀어 보게 한다.
+
+  렌더 훅은 기본 출력을 완전히 대체한다. 그래서 표 마크업 전체를 여기서
+  다시 만든다 — Goldmark 가 주는 것은 셀 텍스트와 정렬뿐이다.
+
+  열 수를 세어 `is-wide` 를 붙인다. 좁은 표까지 스크롤 UI 를 씌우면
+  본문 흐름만 어수선해진다. 기준은 CSS 가 아니라 여기서 정한다 —
+  CSS 에는 "셀 개수" 를 물어볼 방법이 없다.
+*/}}
+{{- $cols := 0 -}}
+{{- range .THead -}}
+  {{- if gt (len .) $cols }}{{ $cols = len . }}{{ end -}}
+{{- end -}}
+{{- range .TBody -}}
+  {{- if gt (len .) $cols }}{{ $cols = len . }}{{ end -}}
+{{- end -}}
+{{- $wide := ge $cols 7 -}}
+<div class="table-scroll{{ if $wide }} is-wide{{ end }}" data-cols="{{ $cols }}">
+  <table>
+    {{- with .THead }}
+    <thead>
+      {{- range . }}
+      <tr>
+        {{- range . }}
+        <th{{ with .Alignment }} style="text-align: {{ . }}"{{ end }}>{{ .Text }}</th>
+        {{- end }}
+      </tr>
+      {{- end }}
+    </thead>
+    {{- end }}
+    {{- with .TBody }}
+    <tbody>
+      {{- range . }}
+      <tr>
+        {{- range . }}
+        <td{{ with .Alignment }} style="text-align: {{ . }}"{{ end }}>{{ .Text }}</td>
+        {{- end }}
+      </tr>
+      {{- end }}
+    </tbody>
+    {{- end }}
+  </table>
+</div>

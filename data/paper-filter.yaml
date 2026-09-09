@@ -249,3 +249,32 @@ assets:
     - creativecommons.org/licenses/by/
     - creativecommons.org/publicdomain/zero/
     - creativecommons.org/publicdomain/mark/
+
+taxonomy:
+  # 글의 태그와 주제 카테고리. 요약 모델이 본문 끝의 `<!--meta-->` 블록에
+  # 제안하고 파이프라인이 검사해서 머리말에 넣는다.
+  #
+  # 태그 어휘는 여기에 적지 않는다. 블로그의 기존 글에서 세어 온다 —
+  # 목록을 고정하면 글이 늘어날 때마다 어긋난다. 자세한 이유는
+  # tasks/papers/taxonomy.py 설명 참고.
+  max_tags: 6
+  max_new_tags: 2       # 기존 어휘에 없는 태그의 편당 상한
+  min_vocab_uses: 2     # 몇 번 이상 쓰인 태그를 "기존 어휘" 로 볼지
+
+  # 주제 카테고리. **닫힌 목록이다.** 자유 입력으로 두면 지금처럼
+  # 카테고리가 95개까지 늘어나고(`LLM` / `LLM Systems` / `efficient-llm`
+  # 이 따로 있다) 카테고리 페이지가 의미를 잃는다. 늘리려면 여기에
+  # 추가한다.
+  topics:
+    - kv-cache
+    - attention-kernels
+    - quantization
+    - speculative-decoding
+    - mixture-of-experts
+    - serving-systems
+    - long-context
+    - parallelism
+    - sparsity-pruning
+    - hardware-accelerators
+    - training-efficiency
+    - model-architecture
