@@ -379,5 +379,71 @@
   "status": "materialized",
   "title": "BeaconKV: Key-Value Cache Compression Guided by Beacon Queries for Efficient Large Reasoning Model Inference",
   "version": "v1"
+ },
+ "2609.07108": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.07108/cp-branch-attention.webp",
+    "/assets/images/papers/2609.07108/tap-channel.webp",
+    "/assets/images/papers/2609.07108/qwen3-8b-learning-and-performance.webp",
+    "/assets/images/papers/2609.07108/qwen3-8b-workplace-learning-and-performance.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 2
+  },
+  "categories": [
+   "cs.LG",
+   "cs.DC"
+  ],
+  "draft_path": "content/posts/2026-09-10-paper-2609.07108v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-10",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "long context"
+   ],
+   "core": [
+    "speculative decoding"
+   ],
+   "weak": [
+    "scaling"
+   ]
+  },
+  "materialized_at": "2026-09-10",
+  "score": 0.6395,
+  "status": "materialized",
+  "title": "Online Draft Co-Training for Speculative Decoding in Large-Scale, Long-Context RL Post-Training",
+  "version": "v1"
+ },
+ "2609.08368": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 8
+  },
+  "categories": [
+   "cs.LG",
+   "cs.CL"
+  ],
+  "draft_path": "content/posts/2026-09-10-paper-2609.08368v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-10",
+  "matched": {
+   "adjacent": [
+    "distillation"
+   ],
+   "named_systems": [
+    "sglang"
+   ],
+   "weak": [
+    "efficiency"
+   ]
+  },
+  "materialized_at": "2026-09-10",
+  "score": 0.6351,
+  "status": "materialized",
+  "title": "Miles v0.1: Production-Level Post-Training",
+  "version": "v1"
  }
 }
