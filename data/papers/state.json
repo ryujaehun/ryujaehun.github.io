@@ -416,6 +416,46 @@
   "title": "Online Draft Co-Training for Speculative Decoding in Large-Scale, Long-Context RL Post-Training",
   "version": "v1"
  },
+ "2609.07883": {
+  "assets": {
+   "figures": [],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 4
+  },
+  "categories": [
+   "cs.CL"
+  ],
+  "draft_path": "content/posts/2026-09-11-paper-2609.07883v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-11",
+  "matched": {
+   "adjacent": [
+    "latency",
+    "long context",
+    "throughput"
+   ],
+   "core": [
+    "continuous batching",
+    "model serving",
+    "prefill",
+    "time per output token"
+   ],
+   "systems": [
+    "scheduling"
+   ],
+   "weak": [
+    "efficiency",
+    "efficient",
+    "large language model",
+    "llm"
+   ]
+  },
+  "materialized_at": "2026-09-11",
+  "score": 0.5463,
+  "status": "materialized",
+  "title": "Deadline-Aware Adaptive Prefill Chunking for Efficient Large Language Model Serving",
+  "version": "v1"
+ },
  "2609.08368": {
   "assets": {
    "figures": [],
@@ -444,6 +484,40 @@
   "score": 0.6351,
   "status": "materialized",
   "title": "Miles v0.1: Production-Level Post-Training",
+  "version": "v1"
+ },
+ "2609.10355": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 7
+  },
+  "categories": [
+   "cs.CV",
+   "cs.CL",
+   "cs.MM"
+  ],
+  "draft_path": "content/posts/2026-09-11-paper-2609.10355v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-11",
+  "matched": {
+   "adjacent": [
+    "decoding",
+    "latency"
+   ],
+   "core": [
+    "inference efficiency"
+   ],
+   "weak": [
+    "efficiency",
+    "efficient",
+    "llm"
+   ]
+  },
+  "materialized_at": "2026-09-11",
+  "score": 0.551,
+  "status": "materialized",
+  "title": "Why Is Video Still So Expensive? A Survey of Inference-Efficiency Mechanisms in Video and Audiovisual LLMs",
   "version": "v1"
  }
 }
