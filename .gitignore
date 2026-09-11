@@ -53,6 +53,7 @@ __pycache__/
 
 # 논문 파이프라인 중간 산출물
 .cache/papers/
+.cache/code-series/
 data/papers/raw/
 data/papers/scored/
 data/papers/tasks/
