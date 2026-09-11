@@ -3,10 +3,16 @@
     "id": "recon",
     "kind": "recon",
     "depends_on": [],
-    "status": "pending",
+    "status": "complete",
     "attempts": 1,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "evidence/recon.md"
+      ],
+      "cost": 0.00233475,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "inventory line counts were corrected"
   },
   {
