@@ -75,7 +75,7 @@
     "depends_on": [
       "brief"
     ],
-    "status": "complete",
+    "status": "pending",
     "attempts": 0,
     "lease_until": null,
     "outcome": {
@@ -85,7 +85,7 @@
       "cost": 0.0046059,
       "model": "opencode-go/deepseek-v4-flash"
     },
-    "reason": null
+    "reason": "review requires revision"
   },
   {
     "id": "review-ko-01",
@@ -97,7 +97,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "review requires revision"
   },
   {
     "id": "translate-en-01",
