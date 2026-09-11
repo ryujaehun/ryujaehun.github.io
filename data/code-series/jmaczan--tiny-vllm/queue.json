@@ -3,11 +3,17 @@
     "id": "recon",
     "kind": "recon",
     "depends_on": [],
-    "status": "pending",
-    "attempts": 0,
+    "status": "complete",
+    "attempts": 1,
     "lease_until": null,
-    "outcome": null,
-    "reason": null
+    "outcome": {
+      "paths": [
+        "evidence/recon.md"
+      ],
+      "cost": 0.0034947,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
+    "reason": "all models failed: opencode-go/deepseek-v4-flash: opencode failed (1): \u001b[91m\u001b[1mError: \u001b[0mFailed to change directory to /home/jaehun/blog/.cache/code-series/work/recon"
   },
   {
     "id": "trace",
