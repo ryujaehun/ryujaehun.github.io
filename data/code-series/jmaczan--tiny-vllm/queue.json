@@ -21,10 +21,16 @@
     "depends_on": [
       "recon"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "evidence/trace.md"
+      ],
+      "cost": 0.005321076,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
