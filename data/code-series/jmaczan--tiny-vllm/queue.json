@@ -75,10 +75,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-01.md"
+      ],
+      "cost": 0.0054306,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "inventory line counts were corrected"
   },
   {
