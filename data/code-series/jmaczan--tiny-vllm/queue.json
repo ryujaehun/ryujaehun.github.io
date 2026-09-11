@@ -82,8 +82,8 @@
       "paths": [
         "articles/ko-01.md"
       ],
-      "cost": 0.0047418,
-      "model": "opencode-go/deepseek-v4-flash"
+      "model": "manual-review-fix",
+      "cost": null
     },
     "reason": "review requires revision"
   },
