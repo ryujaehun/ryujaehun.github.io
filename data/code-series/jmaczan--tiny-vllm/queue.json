@@ -39,10 +39,16 @@
     "depends_on": [
       "trace"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "evidence/claims.md"
+      ],
+      "cost": 0.0065484,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
