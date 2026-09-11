@@ -165,10 +165,16 @@
     "depends_on": [
       "write-ko-02"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-02.md"
+      ],
+      "cost": 0.0042618,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "inventory line counts were corrected"
   },
   {
