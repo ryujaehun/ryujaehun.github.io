@@ -75,14 +75,14 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
     "outcome": {
       "paths": [
         "articles/ko-01.md"
       ],
-      "cost": 0.00457755,
+      "cost": 0.00492675,
       "model": "opencode-go/deepseek-v4-flash"
     },
     "reason": "review requires revision"
