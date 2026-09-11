@@ -3,17 +3,11 @@
     "id": "recon",
     "kind": "recon",
     "depends_on": [],
-    "status": "complete",
+    "status": "pending",
     "attempts": 1,
     "lease_until": null,
-    "outcome": {
-      "paths": [
-        "evidence/recon.md"
-      ],
-      "cost": 0.0034947,
-      "model": "opencode-go/deepseek-v4-flash"
-    },
-    "reason": "all models failed: opencode-go/deepseek-v4-flash: opencode failed (1): \u001b[91m\u001b[1mError: \u001b[0mFailed to change directory to /home/jaehun/blog/.cache/code-series/work/recon"
+    "outcome": null,
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "trace",
@@ -21,17 +15,11 @@
     "depends_on": [
       "recon"
     ],
-    "status": "complete",
+    "status": "pending",
     "attempts": 0,
     "lease_until": null,
-    "outcome": {
-      "paths": [
-        "evidence/trace.md"
-      ],
-      "cost": 0.005321076,
-      "model": "opencode-go/deepseek-v4-flash"
-    },
-    "reason": null
+    "outcome": null,
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "evidence",
@@ -39,17 +27,11 @@
     "depends_on": [
       "trace"
     ],
-    "status": "complete",
+    "status": "pending",
     "attempts": 0,
     "lease_until": null,
-    "outcome": {
-      "paths": [
-        "evidence/claims.md"
-      ],
-      "cost": 0.0065484,
-      "model": "opencode-go/deepseek-v4-flash"
-    },
-    "reason": null
+    "outcome": null,
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "brief",
@@ -57,17 +39,11 @@
     "depends_on": [
       "evidence"
     ],
-    "status": "complete",
+    "status": "pending",
     "attempts": 0,
     "lease_until": null,
-    "outcome": {
-      "paths": [
-        "briefs.md"
-      ],
-      "cost": 0.0025494,
-      "model": "opencode-go/deepseek-v4-flash"
-    },
-    "reason": null
+    "outcome": null,
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "write-ko-01",
@@ -75,17 +51,11 @@
     "depends_on": [
       "brief"
     ],
-    "status": "complete",
+    "status": "pending",
     "attempts": 0,
     "lease_until": null,
-    "outcome": {
-      "paths": [
-        "articles/ko-01.md"
-      ],
-      "model": "manual-review-fix",
-      "cost": null
-    },
-    "reason": "review requires revision"
+    "outcome": null,
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-ko-01",
@@ -97,7 +67,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": "review requires revision"
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "translate-en-01",
@@ -109,7 +79,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-en-01",
@@ -121,7 +91,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "write-ko-02",
@@ -133,7 +103,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-ko-02",
@@ -145,7 +115,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "translate-en-02",
@@ -157,7 +127,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-en-02",
@@ -169,7 +139,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "write-ko-03",
@@ -181,7 +151,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-ko-03",
@@ -193,7 +163,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "translate-en-03",
@@ -205,7 +175,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-en-03",
@@ -217,7 +187,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "write-ko-04",
@@ -229,7 +199,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-ko-04",
@@ -241,7 +211,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "translate-en-04",
@@ -253,7 +223,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-en-04",
@@ -265,7 +235,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "write-ko-05",
@@ -277,7 +247,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-ko-05",
@@ -289,7 +259,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "translate-en-05",
@@ -301,7 +271,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-en-05",
@@ -313,7 +283,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "write-ko-06",
@@ -325,7 +295,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-ko-06",
@@ -337,7 +307,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "translate-en-06",
@@ -349,7 +319,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-en-06",
@@ -361,7 +331,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "write-ko-07",
@@ -373,7 +343,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-ko-07",
@@ -385,7 +355,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "translate-en-07",
@@ -397,7 +367,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-en-07",
@@ -409,7 +379,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "write-ko-08",
@@ -421,7 +391,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-ko-08",
@@ -433,7 +403,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "translate-en-08",
@@ -445,7 +415,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-en-08",
@@ -457,7 +427,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "write-ko-09",
@@ -469,7 +439,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-ko-09",
@@ -481,7 +451,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "translate-en-09",
@@ -493,7 +463,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-en-09",
@@ -505,7 +475,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "write-ko-10",
@@ -517,7 +487,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-ko-10",
@@ -529,7 +499,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "translate-en-10",
@@ -541,7 +511,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "review-en-10",
@@ -553,7 +523,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   },
   {
     "id": "series-review",
@@ -574,6 +544,6 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "inventory line counts were corrected"
   }
 ]
