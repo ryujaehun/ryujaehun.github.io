@@ -1,0 +1,33 @@
+title: "tiny-vllm: CUDA로 읽는 LLM 추론 엔진"
+open_questions: []
+chapters:
+  - id: 1
+    title: "tiny-vllm의 실행 경로와 빌드"
+    scope: ["CMakeLists.txt", "src/main.cpp", "test.sh"]
+  - id: 2
+    title: "Safetensors와 Llama 가중치 적재"
+    scope: ["src/main.cpp", "include/json.hpp"]
+  - id: 3
+    title: "토크나이저, 임베딩, 첫 토큰"
+    scope: ["src/main.cpp", "python/tokenizer.py"]
+  - id: 4
+    title: "RMSNorm, RoPE, GEMM으로 만드는 transformer block"
+    scope: ["src/main.cpp", "src/kernels.cu"]
+  - id: 5
+    title: "attention과 KV cache"
+    scope: ["src/main.cpp", "src/kernels.cu"]
+  - id: 6
+    title: "prefill과 decode의 서로 다른 병목"
+    scope: ["src/main.cpp", "README.md"]
+  - id: 7
+    title: "static batching"
+    scope: ["src/main.cpp"]
+  - id: 8
+    title: "continuous batching과 scheduler"
+    scope: ["src/main.cpp"]
+  - id: 9
+    title: "online softmax CUDA kernel"
+    scope: ["src/kernels.cu", "tests/test_softmax.cu"]
+  - id: 10
+    title: "paged KV cache와 paged attention"
+    scope: ["src/main.cpp", "src/kernels.cu"]
