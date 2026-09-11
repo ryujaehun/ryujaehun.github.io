@@ -75,7 +75,7 @@
     "depends_on": [
       "brief"
     ],
-    "status": "complete",
+    "status": "pending",
     "attempts": 0,
     "lease_until": null,
     "outcome": {
