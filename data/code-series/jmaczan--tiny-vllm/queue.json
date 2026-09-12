@@ -291,11 +291,17 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
-    "attempts": 0,
+    "status": "complete",
+    "attempts": 1,
     "lease_until": null,
-    "outcome": null,
-    "reason": "inventory line counts were corrected"
+    "outcome": {
+      "paths": [
+        "articles/ko-04.md"
+      ],
+      "cost": 0.000541584,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
+    "reason": "all models failed: opencode-go/deepseek-v4-flash: agent output is too short (0 chars; need 3000)"
   },
   {
     "id": "review-ko-04",
