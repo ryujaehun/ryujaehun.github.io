@@ -633,10 +633,16 @@
     "depends_on": [
       "translate-en-08"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-08.md"
+      ],
+      "cost": 0.007012626,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "inventory line counts were corrected"
   },
   {
