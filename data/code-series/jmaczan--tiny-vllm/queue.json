@@ -547,7 +547,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": "citation path corrected"
+    "reason": "batch width wording corrected"
   },
   {
     "id": "review-en-07",
@@ -559,7 +559,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": "citation path corrected"
+    "reason": "batch width wording corrected"
   },
   {
     "id": "write-ko-08",
@@ -724,6 +724,6 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": "citation path corrected"
+    "reason": "batch width wording corrected"
   }
 ]
