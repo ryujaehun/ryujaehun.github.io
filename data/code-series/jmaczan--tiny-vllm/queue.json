@@ -529,7 +529,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": "inventory line counts were corrected"
+    "reason": "citation path corrected"
   },
   {
     "id": "translate-en-07",
@@ -541,7 +541,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": "inventory line counts were corrected"
+    "reason": "citation path corrected"
   },
   {
     "id": "review-en-07",
@@ -553,7 +553,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": "inventory line counts were corrected"
+    "reason": "citation path corrected"
   },
   {
     "id": "write-ko-08",
@@ -718,6 +718,6 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": "inventory line counts were corrected"
+    "reason": "citation path corrected"
   }
 ]
