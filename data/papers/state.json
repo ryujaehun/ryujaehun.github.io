@@ -416,6 +416,42 @@
   "title": "Online Draft Co-Training for Speculative Decoding in Large-Scale, Long-Context RL Post-Training",
   "version": "v1"
  },
+ "2609.07816": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.07816/approximate.webp",
+    "/assets/images/papers/2609.07816/kdn-overwrite-distributions.webp",
+    "/assets/images/papers/2609.07816/kdn-layer.webp",
+    "/assets/images/papers/2609.07816/mixer-throughput-scaling.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 4
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-12-paper-2609.07816.md",
+  "failures": 0,
+  "first_seen": "2026-09-12",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "decoding",
+    "long context"
+   ],
+   "systems": [
+    "linear attention",
+    "state space model"
+   ],
+   "weak": [
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-09-12",
+  "score": 0.5452,
+  "status": "materialized",
+  "title": "Kalman Delta Networks: Uncertainty-aware Associative Memory"
+ },
  "2609.07883": {
   "assets": {
    "figures": [],
@@ -519,5 +555,37 @@
   "status": "materialized",
   "title": "Why Is Video Still So Expensive? A Survey of Inference-Efficiency Mechanisms in Video and Audiovisual LLMs",
   "version": "v1"
+ },
+ "2609.11412": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.11412/fig-radar.webp",
+    "/assets/images/papers/2609.11412/fig-pipeline.webp",
+    "/assets/images/papers/2609.11412/fig-datapipe.webp",
+    "/assets/images/papers/2609.11412/fig-ter-curve.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-12-paper-2609.11412.md",
+  "failures": 0,
+  "first_seen": "2026-09-12",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "distillation"
+   ],
+   "systems": [
+    "compression",
+    "pruning"
+   ]
+  },
+  "materialized_at": "2026-09-12",
+  "score": 0.5402,
+  "status": "materialized",
+  "title": "X-AuT: Progressive Audio-Encoder Compression for Speech LLMs with Cross-Scale Distillation"
  }
 }
