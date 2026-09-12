@@ -759,10 +759,16 @@
     "depends_on": [
       "review-ko-10"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-10.md"
+      ],
+      "cost": 0.006478626,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "GQA and block-table roles corrected"
   },
   {
