@@ -651,16 +651,10 @@
     "depends_on": [
       "brief"
     ],
-    "status": "complete",
+    "status": "pending",
     "attempts": 0,
     "lease_until": null,
-    "outcome": {
-      "paths": [
-        "articles/ko-09.md"
-      ],
-      "cost": 0.004771476,
-      "model": "opencode-go/deepseek-v4-flash"
-    },
+    "outcome": null,
     "reason": "review requires revision"
   },
   {
