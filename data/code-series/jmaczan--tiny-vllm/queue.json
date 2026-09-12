@@ -742,10 +742,10 @@
       "write-ko-10"
     ],
     "status": "pending",
-    "attempts": 0,
+    "attempts": 1,
     "lease_until": null,
     "outcome": null,
-    "reason": "review requires revision"
+    "reason": "review output Decision must be PASS or REVISE"
   },
   {
     "id": "translate-en-10",
