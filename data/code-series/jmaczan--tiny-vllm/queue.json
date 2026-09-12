@@ -327,10 +327,16 @@
     "depends_on": [
       "review-ko-04"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-04.md"
+      ],
+      "cost": 0.005352576,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "inventory line counts were corrected"
   },
   {
