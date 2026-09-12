@@ -597,11 +597,17 @@
     "depends_on": [
       "write-ko-08"
     ],
-    "status": "pending",
-    "attempts": 0,
+    "status": "complete",
+    "attempts": 1,
     "lease_until": null,
-    "outcome": null,
-    "reason": "inventory line counts were corrected"
+    "outcome": {
+      "paths": [
+        "reviews/ko-08.md"
+      ],
+      "cost": 0.004812426,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
+    "reason": "review output Decision must be PASS or REVISE"
   },
   {
     "id": "translate-en-08",
