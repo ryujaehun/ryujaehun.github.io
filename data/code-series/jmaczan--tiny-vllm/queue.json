@@ -723,17 +723,11 @@
     "depends_on": [
       "brief"
     ],
-    "status": "complete",
+    "status": "pending",
     "attempts": 0,
     "lease_until": null,
-    "outcome": {
-      "paths": [
-        "articles/ko-10.md"
-      ],
-      "cost": 0.004930026,
-      "model": "opencode-go/deepseek-v4-flash"
-    },
-    "reason": "inventory line counts were corrected"
+    "outcome": null,
+    "reason": "review requires revision"
   },
   {
     "id": "review-ko-10",
@@ -745,7 +739,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": "inventory line counts were corrected"
+    "reason": "review requires revision"
   },
   {
     "id": "translate-en-10",
