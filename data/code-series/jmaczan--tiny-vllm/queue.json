@@ -777,10 +777,16 @@
     "depends_on": [
       "translate-en-10"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-10.md"
+      ],
+      "cost": 0.003560226,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "GQA and block-table roles corrected"
   },
   {
