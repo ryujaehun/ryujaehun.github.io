@@ -669,10 +669,16 @@
     "depends_on": [
       "write-ko-09"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 1,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-09.md"
+      ],
+      "cost": 0.003979776,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "review output Decision must be PASS or REVISE"
   },
   {
