@@ -21,7 +21,7 @@
   7. 초기 prefill 루프로 슬롯 채우기(`:695-708`).
   8. 무한 decode 루프(`:720-1039`).
   9. 종료: `"Ok bye!"` 출력, `cublasDestroy`, `cudaDeviceSynchronize`,
-     `return 0`(`:1040-1043`).
+     `return 0`(`:1040-1044`).
 - 상수: `N_LAYERS=16`, `EMBEDDING_LENGTH=2048`, `HIDDEN_DIM=8192`, `KV_DIM=512`,
   `HEAD_DIM=64`, `NUM_Q_HEADS=32`, `NUM_K_HEADS=NUM_V_HEADS=8`, `GQA_Q_TO_K_RATIO=4`,
   `VOCAB_SIZE=128256`, `MAX_SEQ_LEN=2048`, `BATCH_SIZE=2`, `MAX_PROMPT_LEN=512`,
@@ -206,9 +206,10 @@ prefill 내부 순서:
 - argmax 종료 조건(EOT/EOT_ID 또는 `MAX_SEQ_LEN-1`) → 슬롯 해제
   (`:1015-1031`); 아니면 생성 지속(`:1032-1037`).
 - 정상 종료: `cublasDestroy` + `cudaDeviceSynchronize` + `return 0`
-  (`:1040-1043`).
-- 커널 가드: `num_tokens > 1024`면 `rope`, `causalMask`, `softmax` 실행을
-  건너뛰고 메시지만 출력(`kernels.cu:205-209`, `:241-244`, `:295-298`).
+  (`:1040-1044`).
+- 커널 가드: RoPE는 `num_threads = proj_dim / 2 > 1024`일 때 실행을 건너뛰고
+  메시지만 출력(`kernels.cu:204-209`). `causalMask`와 `softmax`는
+  `num_tokens > 1024`일 때 실행을 건너뛴다(`:241-244`, `:295-298`).
 - `siluKernel`은 `a`를 in-place로 덮어씀(`kernels.cu:331-344`).
 
 ## Unresolved gaps

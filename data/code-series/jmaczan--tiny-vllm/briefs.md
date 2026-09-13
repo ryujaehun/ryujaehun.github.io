@@ -6,7 +6,7 @@
 
 - **Claim 1** — safetensors 헤더의 `data_offsets`로 `max_offset`을 잡고 원시 바이트 전체를 1회 H2D 복사한 뒤 오프셋 기반으로 텐서 포인터를 배정한다(`src/main.cpp:96-117`, `:120-127`, `:132-145`). `__metadata__`는 건너뛴다.
 - **Claim 2** — 모든 GEMM이 cuBLAS 전치 트릭(`CUBLAS_OP_T/CUBLAS_OP_N`)으로 행-주 메모리를 처리한다(`src/main.cpp:168-176`, `:177-196`, `:509-527`).
-- **Claim 3** — prefill은 레이어마다 rmsNorm → Q/K/V → RoPE → KV 산포 → attention → MLP 순서를 따른다(`src/main.cpp:150-163`, `:164-492`, `:494-548`; `src/kernels.cu:42-53`).
+- **Claim 3** — prefill은 레이어마다 rmsNorm → Q/K/V → RoPE → KV 산포 → attention → MLP 순서를 따른다(`src/main.cpp:150-163`, `:164-493`, `:494-548`; `src/kernels.cu:42-53`).
 - **Claim 4** — decode는 활성 슬롯을 묶어 배치 처리하고 argmax는 CPU에서 수행한다(`src/main.cpp:722-737`, `:759`, `:763-842`, `:996-1012`; `src/kernels.cu:358-369`).
 - **Claim 5** — KV 캐시는 2GiB 고정 블록 풀과 CPU/GPU 블록 테이블로 관리된다(`src/main.cpp:32-37`, `:576-581`; `src/kernels.cu:16-19`).
 - **Claim 6** — KV 산포는 prefill에서 블록 단위, decode에서 토큰 단위로 일어난다(`src/main.cpp:251-288`, `:851-873`, `:552`, `:876`, `:1030`).
@@ -90,7 +90,7 @@
 
 ### Claims
 - **Claim 2 (주 소유):** cuBLAS 전치 트릭. `CUBLAS_OP_T/CUBLAS_OP_N`, Q 투영 `m=EMBEDDING_LENGTH, n=prompt_len, k=EMBEDDING_LENGTH`, 로짓 `m=VOCAB_SIZE, n=prompt_len, k=EMBEDDING_LENGTH`. 근거: `src/main.cpp:168-176`, `:177-196`, `:509-527`.
-- **Claim 3 (주 소유):** 레이어 순서 rmsNorm → Q/K/V GEMM → RoPE → KV 산포 → attention → o_proj → residual → post-attn rmsNorm → SwiGLU MLP → residual, 최종 rmsNorm 후 로짓 GEMM. 근거: `src/main.cpp:164-492`, `:494-548`.
+- **Claim 3 (주 소유):** 레이어 순서 rmsNorm → Q/K/V GEMM → RoPE → KV 산포 → attention → o_proj → residual → post-attn rmsNorm → SwiGLU MLP → residual, 최종 rmsNorm 후 로짓 GEMM. 근거: `src/main.cpp:164-493`, `:494-548`.
 - **Claim 7 (참조):** Q 32헤드·K/V 8헤드와 GQA 비율 4(`src/main.cpp:20-24`).
 
 ### Exclusions
@@ -195,7 +195,7 @@
 - `src/kernels.cu`, `tests/test_softmax.cu` (`series.yaml` 9장).
 
 ### Claims
-- **Claim 8 (주 소유):** FlashAttention 방식 온라인 softmax가 `current_max`/`d`/`acc`를 갱신하고 `acc/d`를 출력한다(`src/kernels.cu:509-519`, `:522`).
+- **Claim 8 (주 소유):** FlashAttention 방식 온라인 softmax가 `current_max`/`d`/`acc`를 갱신하고 `acc/d`를 출력한다(`src/kernels.cu:510-519`, `:522`).
 - **Claim 8 (참조):** 각 스레드가 Q의 1차원을 담당하고, `__shfl_down_sync` 트리 합으로 dot product를 구한다(`src/kernels.cu:489-493`, `:494-507`).
 - **Claim 2 Limitation (참조):** 커널 단위 테스트는 `tests/test_softmax.cu` 하나뿐이다.
 

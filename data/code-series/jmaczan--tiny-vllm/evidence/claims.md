@@ -29,7 +29,7 @@
 - **Confidence**: 높음 — `prefill` 함수와 레이어 루프를 직접 확인.
 - **Evidence**:
   - `src/main.cpp:150-163` — 큐에서 프롬프트 pop, `embeddingGather`(`:158`), 임베딩을 `hidden_state`로 복사.
-  - `src/main.cpp:164-492` — 레이어 루프 전체 순서(`rmsNorm:166`, Q/K/V:`177-240`, rope:`244-245`, KV 산포:`247-288`, attention:`301-371`, o_proj:`377-396`, residual:`399`, post-attn norm:`401`, MLP:`414-492`).
+  - `src/main.cpp:164-493` — 레이어 루프 전체 순서(`rmsNorm:166`, Q/K/V:`177-240`, rope:`244-245`, KV 산포:`247-288`, attention:`301-371`, o_proj:`377-396`, residual:`399`, post-attn norm:`401`, MLP:`414-492`).
   - `src/main.cpp:494-548` — 최종 `rmsNorm`(`:494`), 로짓 GEMM(`:509-527`), CPU argmax(`:533-543`), 상태 갱신(`:546-548`).
   - `src/kernels.cu:42-53` — `embeddingGather` 커널은 토큰당 2048 요소를 1024 스레드×2로 수집.
 - **Limitation**: `prompt_len > 1024`면 `causalMask`/`softmax` 커널이 실행되지 않고 메시지만 출력된다(`src/kernels.cu:241-244`, `:295-298`). 이 커밋의 프롬프트는 17토큰 이하여서 도달하지 않지만, 일반 prefill 경로의 한계로 남는다.
@@ -83,7 +83,7 @@
 - **Confidence**: 높음 — 커널 구현을 직접 확인.
 - **Evidence**:
   - `src/kernels.cu:525-527` — `pagedAttention` 호출 래퍼, 그리드/블록 구성.
-  - `src/kernels.cu:461-523` — 커널 본문: 슬롯·헤드 매핑(`:464-469`), 물리 블록 조회(`:480`), 블록 내 토큰 루프(`:482-520`), warp 트리 합(`:489-493`), online softmax(`:509-519`), 출력(`:522`).
+  - `src/kernels.cu:461-523` — 커널 본문: 슬롯·헤드 매핑(`:464-469`), 물리 블록 조회(`:480`), 블록 내 토큰 루프(`:482-520`), warp 트리 합(`:489-493`), online softmax(`:510-519`), 출력(`:522`).
   - `src/main.cpp:878` — decode 루프의 호출 지점.
 - **Limitation**: `dot_products`는 크기 2의 shared 배열로 두 warp 절반을 결합한다(`src/kernels.cu:463`, `:494-507`) — `HEAD_DIM=64`에서 두 번째 warp은 블록이 비는지 보장되지 않으나, 시퀀스/헤드 크기가 64라 모든 스레드가 유효하다고 가정한다. 캐시에 이미 쓴 KV만 읽으므로 causal 마스킹은 별도 커널 없이 "읽지 않음"으로 구현된다.
 
