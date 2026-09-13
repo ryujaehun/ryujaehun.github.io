@@ -805,7 +805,7 @@
       "review-en-10"
     ],
     "status": "pending",
-    "attempts": 0,
+    "attempts": 1,
     "lease_until": null,
     "outcome": null,
     "reason": "series review requires revision"
