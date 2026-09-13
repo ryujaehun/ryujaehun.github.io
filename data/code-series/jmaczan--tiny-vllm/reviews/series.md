@@ -1,110 +1,37 @@
-# Series review: tiny-vllm (10 chapters, ko/en)
+# tiny-vllm 시리즈 전체 리뷰
 
-Review scope: `guide.md`, `series.yaml`, `briefs.md`, `evidence/claims.md`,
-`evidence/trace.md`, and `articles/ko-01..10.md` / `articles/en-01..10.md`.
-Checked coverage and ordering, terminology, cross-chapter contradictions, claim
-ownership and boundaries, Korean-English pairing, and citation consistency.
+검토 대상: `guide.md`, `series.yaml`, `briefs.md`, `evidence/claims.md`, `evidence/trace.md`, `articles/ko-01~10.md`, `articles/en-01~10.md`. 시리즈 수준에서 커버리지·순서·용어·교차 일관성·주장 소유권·한영 대응·인용 일관성을 검토했다.
 
 ## Decision
 
-REVISE
+**REVISE**
+
+콘텐츠·구조·주장 소유권·한영 대응은 전반적으로 일관되고 완전하지만, `en-08.md:81`의 교차 인용이 잘못된 줄 범위를 가리켜 수정이 필요하다. 그 외 문제는 모두 경미하거나 선택 수정이다.
 
 ## Coverage
 
-- All ten chapters exist in both Korean (`ko-01`…`ko-10`) and English
-  (`en-01`…`en-10`) in `series.yaml` order 1–10; none is missing, out of order,
-  or duplicated.
-- Ordering follows the `guide.md:24-29` arc: runnable program and build (1),
-  weight format (2), token→logit forward path (3, 4), attention/KV cache (5),
-  prefill/decode structure (6), batching and scheduling (7, 8), paged attention
-  kernel (9 = online softmax, 10 = traversal and data structures). Chapter 9
-  precedes 10 inside the final paged-attention pair, matching
-  `briefs.md:194-209` and `:213-233`.
-- Each chapter's scope matches `series.yaml` and the briefs' Scope/Claims/
-  Exclusions: build system (1), loader and `json.hpp` (2), tokenizer/embedding
-  (3), transformer block (4), attention/KV cache (5), prefill/decode bottlenecks
-  (6), static batching (7), continuous batching + block-table resync (8), online
-  softmax (9), paged KV cache and paged attention (10).
-- Claim ownership follows the briefs: Claim 1 (ch2); Claims 2–3 + Claim 7 ref
-  (ch4); Claims 5–7 (ch5); Claims 3–4 + Claims 5–6 refs (ch6); Claim 9 (ch7);
-  Claims 9–10 + Claim 6 ref (ch8); Claim 8 softmax/warp + Claim 2 limitation
-  (ch9); Claim 8 kernel + Claims 5–7, 10 (ch10). Each chapter also carries its
-  briefed limitations.
-- Visuals from every brief are present as diagrams/tables in the corresponding
-  chapters: main() flow + constants table (1); safetensors layout + pointer table
-  (2); gather flow + comparison table (3); layer pipeline + transpose-trick
-  diagram (4); block_table/free_blocks + GQA diagrams (5); side-by-side sequence
-  + step table (6); slot state table + timeline (7); iteration timeline +
-  sync-point diagram (8); online-softmax update + warp tree-sum diagrams (9);
-  block pool + kernel flow + causal-masking diagrams (10).
+- **모든 챕터 존재**: `series.yaml`의 챕터 1~10이 `ko-XX.md`/`en-XX.md` 각 10편으로 모두 구현되어 있다. 순서는 1→10으로 `series.yaml`과 `guide.md:24-29`의 서사(실행 프로그램·가중치 포맷 → 토큰→로짓 순전파 → 메모리·스케줄링 → paged attention)를 그대로 따른다.
+- **Scope 일치**: 각 장의 "이 장이 다루는 파일과 범위"가 `series.yaml`의 scope 줄 인용과 정확히 맞는다(1장 `series.yaml:4-6` … 10장 `series.yaml:31-33`). 브리프의 Scope와도 일치한다.
+- **주장 소유권**: Claim 1~10 전체가 브리프의 배분대로 소유·참조된다 — Claim 1→2장, 2→4장, 3→4장(주)/3장(일부)/6장(참조), 4→6장(주)/3장(일부)/7장(참조), 5→5장(주)/1·6·10장(참조), 6→5장(주)/6·8·10장(참조), 7→5장(주)/4·10장(참조), 8→9장(주)/10장(주), 9→7장(주)/8장(주)/1·3장(참조·일부), 10→8장(주)/10장(참조). 분할 소유권의 인계는 양쪽에서 명시된다(예: Claim 8 온라인 softmax는 9장, 블록 테이블 순회·그리드는 10장 — `ko-09.md:29-31`/`ko-10.md:194`가 서로 상대의 몫을 정확히 위임; Claim 9 고정 슬롯은 7장, 여유 슬롯 즉시 재사용은 8장 — `ko-07.md:25-27`).
+- **시각 자료**: 브리프의 Visuals 항목이 전부 구현되어 있다(1장 상수 표+9단계 흐름도, 2장 safetensors 배치+텐서 포인터 표, 3장 gather 비교표, 4장 레이어 파이프라인+전치 트릭, 5장 블록 풀·block_table·GQA 도식, 6장 나란한 시퀀스+단계별 표, 7장 슬롯 상태 표+타임라인, 8장 반복 타임라인+동기화 도식, 9장 온라인 softmax 갱신+warp 트리 합, 10장 블록 풀·인덱싱·커널 흐름+causal 마스킹).
 
 ## Cross-chapter consistency
 
-- Constants agree wherever they recur: `N_LAYERS=16`, `EMBEDDING_LENGTH=2048`,
-  `HIDDEN_DIM=8192`, `KV_DIM=512`, `HEAD_DIM=64`, `NUM_Q_HEADS=32`,
-  `NUM_K_HEADS=NUM_V_HEADS=8`, `GQA_Q_TO_K_RATIO=4`, `VOCAB_SIZE=128256`,
-  `MAX_SEQ_LEN=2048`, `BATCH_SIZE=2`, `MAX_PROMPT_LEN=512`, `BLOCK_SIZE=16`,
-  `V_OFFSET=16384`, `BLOCK_BYTES=32768`, `KV_CACHE_SIZE_BYTES=2GiB`,
-  `MAX_BLOCKS_PER_SEQ=128`, `NUM_BLOCKS=65536`. The derivations
-  `2GiB/32768=65536` and `2048/16=128` are computed identically in ch1, 5, 10.
-- Prompt queue lengths 17·14·13·14 (ch1, 3, 7) and the "prompts ≤ 17 tokens so
-  the 1024-thread guards never trigger" statement (ch3, 4, 6) agree.
-- Decode-loop exit (`queue.empty() && num_active_slots==0` → break, else
-  continue), the unused `MAX_NEW_TOKENS_GENERATED`, and EOT IDs 128001/128009
-  are stated identically in ch1, 7, 8.
-- GQA 4:1 sharing (`k_head_idx = i/4` at `src/main.cpp:303`,
-  `v_head_idx = i/4` at `:346`, `kv_head_idx = q_head_id/4` at
-  `src/kernels.cu:468`) is consistent across ch4, 5, 10.
-- `pagedAttentionKernel` launch (grid `(num_active_slots, NUM_Q_HEADS)`, block
-  `HEAD_DIM=64`, `src/kernels.cu:525-527`), the `gpu_active_slots` mapping,
-  `dot_products[2]` + `__shfl_down_sync` offsets, `acc/d` output, and "masking =
-  not reading unwritten tokens" via `num_blocks`/`tokens_in_block` agree across
-  ch8, 9, 10. `WARP_FULL_MASK` (`src/cuda_to_hip.h:50` HIP 64-bit, `:59` CUDA
-  32-bit) is consistent in ch1, 9, 10.
-- KV scatter (prefill block-wise `:251-288`, decode token-wise `:851-873`) and
-  the GEMM widths (`n=prompt_len` vs `n=num_active_slots`) agree across ch4, 5,
-  6, 10.
-- Terminology is uniform: 산포/scatter vs gather, `block_table`/`block_table_gpu`/
-  `free_blocks`, online softmax/온라인 softmax, and the ch10 phrase "최대
-  BLOCK_SIZE 토큰 청크(마지막은 일부)" all match their ko/en counterparts.
-- Korean–English pairs are faithful section-by-section translations with matching
-  citations and figures; the only pairing deviation is the en-08 cross-reference
-  (Problems item 1).
+- **상수**: `BATCH_SIZE=2`(`:29`), 2GiB(`:35`, `:576`), `NUM_BLOCKS=65536`(`:37`), `BLOCK_BYTES=32768`(`:34`), `V_OFFSET=16384`(`:33`), `MAX_BLOCKS_PER_SEQ=128`(`:36`), GQA 비율 4(`:20-24`, `:303`, `:346`, `src/kernels.cu:468`), `attn_alpha=1/8` 체인(`:649` ↔ `kernels.cu:12`의 `SQRT_HEAD_DIM=8`)이 모든 장에서 일치한다.
+- **공유 사실**: 프롬프트 길이 17/14/13/14(1·3·7장, `trace.md:69`), KV 산포 방식(prefill `:251-288` 블록 단위·마지막 블록은 일부, decode `:851-873` 토큰 단위), 동기화 지점(`:876` 매 레이어 / `:552` prefill 종료 / `:1030` 슬롯 해제), `prompt_len>1024` 가드, `softmaxDecode` 미사용(dead code), `MAX_NEW_TOKENS_GENERATED` 선언만·루프 조건 미사용 — 관련 장에서 모두 동일하게 서술된다.
+- **장간 연결**: 각 장의 도입부가 이전 장의 실제 내용을 그대로 요약한다(예: 8장이 "7장은 슬롯 2칸의 뼈대·해제 시 `free_blocks` 반환"을 인용 — `ko-08.md:3-7`, 7장 내용과 일치). prefill 스코어 GEMM이 산포한 캐시가 아니라 임시 버퍼 `k_proj_temp_buf`를 읽는다는 관찰(5장)이 다른 어느 장과도 충돌하지 않는다.
+- **출장 경계**: 9장의 `num_blocks`/`tokens_in_block` 수식이 10장의 순회 영역과 겹치지만 내용 자체는 10장과 정확히 일치한다(아래 Problems 3 참조).
 
 ## Problems
 
-1. **en-08 cross-references the Korean article.** `en-08.md:81` cites
-   `` `ko-07.md:140-141` `` for the batch-width claim, while `ko-08.md:78`
-   correctly cites `ko-07.md:140-141`. The English chapter should point to its
-   English counterpart `en-07.md:140-141` (equivalent content at those lines).
-2. **`softmaxDecode` range differs between ch1 and ch9.** `ko-01.md:191-194` /
-   `en-01.md:215-217` give the wrapper as `src/kernels.cu:442-458` (guard
-   `:444-448`), while `ko-09.md:180-182` / `en-09.md:188-190` give
-   `` `src/kernels.cu:408-458` `` for the same symbol. `trace.md:258-259`
-   distinguishes wrapper `:442-458` from kernel `:408-439`; trace.md:217 itself
-   conflates the two, which is the likely origin.
-3. **Minor boundary overlap in ch9.** `ko-09.md:142-144` / `en-09.md:147-149`
-   state the grid `(num_active_slots, NUM_Q_HEADS)` and block `HEAD_DIM=64`
-   (`src/kernels.cu:525-527`), which `briefs.md:213-233` assigns to ch10, and the
-   same chapter's "이 장에서 다루지 않는 것" lists grid/block placement as
-   ch10's. The mention is needed for ch9's `dot_products[2]`/two-warp argument
-   and is framed as call-site context, so it is not a contradiction — but the
-   boundary is softer than the briefs intend.
-4. **Minor evidence gap in ch4.** `ko-04.md:190-191` / `en-04.md:209-210` state
-   the prefill argmax "casts bf16 to float" (`:533-543`), but `claims.md:47`
-   documents the bf16→float cast only for the decode argmax (`:1003-1010`); no
-   attached evidence attests the cast for prefill.
+1. **[필수] `en-08.md:81`의 교차 인용 오류** — `en-08.md:81`은 `en-07.md:140-141`을 인용하지만 `en-07.md`는 122줄뿐이라 해당 줄이 존재하지 않는다. 한글 쌍 `ko-08.md:77-78`은 `ko-07.md:140-141`을 올바르게 인용하며(`ko-07.md` 193줄, 해당 줄이 "배치 폭이 슬롯 수 2에 묶인다" 서술), 그 영어 대응 문장은 `en-07.md:94`("`num_active_slots` is the batch size, and its value is bounded by the slot count…")에 있다. 한영 인용 불일치이자 깨진 인용이다.
+2. **[경미] `ko-05.md:204-205`의 인용 대상** — "prefill과 decode가 같은 비율 상수(4)를 공유"를 `evidence/claims.md:77`로 뒷받침하는데, `:77`은 `kernels.cu:468` 증거 항목이고 정확한 대상은 Claim 7 본문(`evidence/claims.md:71`)이다. 내용은 틀리지 않았으나 인용 정밀도가 아쉽다.
+3. **[경미·경계] 9장의 순회 수식 포함** — `ko-09.md:149-154`(영어 `en-09.md:154-159`)가 `num_blocks`(`:471`)·`tokens_in_block`(`:481-482`) 수식을 서술한다. 브리프는 블록 테이블 순회를 10장 소유로 배정했고, 내용은 10장과 일치하며 Claim 8의 "누적 K만 읽음" 한계에 묶여 있어 자연스럽지만, 소유권 경계를 엄격히 하려면 10장으로의 전방 참조 표기가 도움이 된다.
+4. **[참고] 첨부 밖 파일 인용** — `project.yaml`(`ko-01.md:4`, `en-01.md:4`, `ko-10.md:15`, `en-10.md:18`)과 `evidence/recon.md`(`:4`, `:12`, `:13`, `:15`, `:38` — 전 장에 분포)가 첨부 파일에 없다. 인용 내용은 `guide.md`/`claims.md`/`trace.md`와 내부적으로 일치하지만 첨부 세트만으로는 검증 불가다.
 
 ## Required fixes
 
-1. In `en-08.md:81`, change `` `ko-07.md:140-141` `` → `` `en-07.md:140-141` ``.
-2. Align the `softmaxDecode` range: in both `ko-09.md` and `en-09.md`, cite the
-   wrapper as `src/kernels.cu:442-458` (kernel `softmaxKernelDecode` as
-   `:408-439`), mirroring `trace.md:258-259`, so ch1 and ch9 agree.
-3. (Recommended) In `ko-09.md`/`en-09.md`, explicitly defer the grid/block
-   placement detail to ch10 at the call-site mention, matching
-   `briefs.md:213-233`.
-4. (Recommended) In `ko-04.md`/`en-04.md`, either remove "casts bf16 to float"
-   from the prefill-argmax sentence or add a supporting citation; otherwise keep
-   only the source-attested fact that argmax runs on the CPU after the D2H copy
-   (`:529`, `:533-543`).
+1. `en-08.md:81`의 `en-07.md:140-141`을 `en-07.md:94`로 고친다(영어 대응 문장 위치). 한글 쪽 `ko-07.md:140-141`은 올바르므로 그대로 둔다.
+2. (선택) `ko-05.md:204-205`의 인용을 `evidence/claims.md:71`로 재배치한다.
+3. (선택) `ko-09.md:149-154`/`en-09.md:154-159`에 10장으로의 전방 참조를 추가해 순회 수식이 10장 영역임을 명시한다(내용 변경은 불필요).
+4. 그 외 수정 사항 없음. 필수 수정은 1번뿐이다.
