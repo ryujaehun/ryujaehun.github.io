@@ -1,101 +1,110 @@
-# Series review — tiny-vllm: CUDA로 읽는 LLM 추론 엔진
+# Series review: tiny-vllm (10 chapters, ko/en)
+
+Review scope: `guide.md`, `series.yaml`, `briefs.md`, `evidence/claims.md`,
+`evidence/trace.md`, and `articles/ko-01..10.md` / `articles/en-01..10.md`.
+Checked coverage and ordering, terminology, cross-chapter contradictions, claim
+ownership and boundaries, Korean-English pairing, and citation consistency.
 
 ## Decision
 
 REVISE
 
-The series is structurally sound: all 10 chapters exist in both Korean and English, follow
-`series.yaml` ordering and scope, respect the claim ownership in `briefs.md`, and stay
-consistent on every numeric and structural fact. The revision is warranted not by content
-errors but by a handful of citation-range inconsistencies that cut against the series' own
-"every claim cites exact line ranges" discipline (`guide.md:11-16`). Fixes are surgical and
-listed below.
-
 ## Coverage
 
-- **Chapter coverage.** All 10 chapters are present as ko-01..10 and en-01..10. Titles match
-  `series.yaml` exactly (Ch7 "static batching", Ch8 "continuous batching과 scheduler", Ch9
-  "online softmax CUDA kernel", Ch10 "paged KV cache와 paged attention").
-- **Ordering.** The narrative follows `guide.md:24-29`: runnable program + build (Ch1) →
-  weight format (Ch2) → token→logit forward path (Ch3-6) → memory/scheduling for many
-  requests (Ch7-8) → paged attention as the meeting point of data structure and kernel
-  (Ch9-10). Ch10 explicitly closes the arc as the series' end point.
-- **File scope.** Each chapter stays within its `series.yaml` scope. README.md is never used
-  as primary evidence (Ch6 explicitly defers it per `guide.md:7-9`); `python/tokenizer.py` is
-  in Ch3's scope but correctly handled as "no claim backs its internals"; `test.sh` and
-  `CMakeLists.txt` internals are not claimed by any chapter.
-- **Claim ownership.** Matches `briefs.md`: Ch1 makes no direct claims (references Claims
-  5/9/3/4 only); Ch2 owns Claim 1; Ch3 owns Claims 3/4/9 (partial); Ch4 owns Claims 2/3 with
-  Claim 7 reference; Ch5 owns Claims 5/6/7; Ch6 owns Claims 3/4; Ch7 owns Claim 9 with Claim
-  4 reference; Ch8 owns Claims 9/10 with Claim 6 reference; Ch9 owns Claim 8's online-softmax
-  and warp-tree-sum parts; Ch10 owns Claim 8's grid/traversal part with Claims 5/6/7/10 as
-  references.
-- **Deferred-topic hand-offs.** Consistent everywhere: attention scores and KV scatter →
-  Ch5; `pagedAttentionKernel` traversal → Ch10; online softmax details → Ch9; batching and
-  the scheduler → Ch7-8; `block_table_gpu` re-sync → Ch8 (Claim 10); dead `softmaxDecode` →
-  Ch1/9. No chapter duplicates another's owned content.
-- **Korean-English pairing.** Every chapter has a structurally parallel ko/en pair; spot
-  checks of tables, code blocks, diagrams, and citations show matched content (e.g., the
-  online-softmax update block in Ch9, the slot-release table in Ch7/8, the prefill/decode
-  comparison table in Ch6).
-- **Terminology.** Consistent across the series: `KV 캐시`/KV cache, `논리/물리 블록`
-  (logical/physical block), `산포`/scatter, `전치 트릭`/transpose trick, `온라인 softmax`/
-  online softmax, `warp 트리 합`/warp tree sum, and untranslated `prefill`/`decode`/`attention`
-  in both languages.
+- All ten chapters exist in both Korean (`ko-01`…`ko-10`) and English
+  (`en-01`…`en-10`) in `series.yaml` order 1–10; none is missing, out of order,
+  or duplicated.
+- Ordering follows the `guide.md:24-29` arc: runnable program and build (1),
+  weight format (2), token→logit forward path (3, 4), attention/KV cache (5),
+  prefill/decode structure (6), batching and scheduling (7, 8), paged attention
+  kernel (9 = online softmax, 10 = traversal and data structures). Chapter 9
+  precedes 10 inside the final paged-attention pair, matching
+  `briefs.md:194-209` and `:213-233`.
+- Each chapter's scope matches `series.yaml` and the briefs' Scope/Claims/
+  Exclusions: build system (1), loader and `json.hpp` (2), tokenizer/embedding
+  (3), transformer block (4), attention/KV cache (5), prefill/decode bottlenecks
+  (6), static batching (7), continuous batching + block-table resync (8), online
+  softmax (9), paged KV cache and paged attention (10).
+- Claim ownership follows the briefs: Claim 1 (ch2); Claims 2–3 + Claim 7 ref
+  (ch4); Claims 5–7 (ch5); Claims 3–4 + Claims 5–6 refs (ch6); Claim 9 (ch7);
+  Claims 9–10 + Claim 6 ref (ch8); Claim 8 softmax/warp + Claim 2 limitation
+  (ch9); Claim 8 kernel + Claims 5–7, 10 (ch10). Each chapter also carries its
+  briefed limitations.
+- Visuals from every brief are present as diagrams/tables in the corresponding
+  chapters: main() flow + constants table (1); safetensors layout + pointer table
+  (2); gather flow + comparison table (3); layer pipeline + transpose-trick
+  diagram (4); block_table/free_blocks + GQA diagrams (5); side-by-side sequence
+  + step table (6); slot state table + timeline (7); iteration timeline +
+  sync-point diagram (8); online-softmax update + warp tree-sum diagrams (9);
+  block pool + kernel flow + causal-masking diagrams (10).
 
 ## Cross-chapter consistency
 
-- **Constants.** Agree everywhere: `BATCH_SIZE=2`, `BLOCK_SIZE=16`, `KV_DIM=512`,
-  `V_OFFSET=16384`, `BLOCK_BYTES=32768`, `NUM_BLOCKS=65536`, `MAX_BLOCKS_PER_SEQ=128`, 2GiB
-  reservation, `attn_alpha=1/8` ≡ `SQRT_HEAD_DIM=8` (both `1/sqrt(64)`), EOT/EOT_ID
-  128001/128009, `MAX_SEQ_LEN-1=2047`, prompt lengths 17/14/13/14, and the 1024-thread guard.
-- **Facts.** No substantive contradictions found. Prefill's score GEMM reads the temp buffers
-  rather than the cache (Ch5) with no conflict in Ch4/6/10; decode's paged attention reads
-  only accumulated K tokens, standing in for causal masking (Ch6/9/10); GQA 4:1 appears in
-  both prefill (`k_head_idx`, `v_head_idx`) and the kernel (`kv_head_idx`); `block_table`
-  sync sites `:876`/`:552`/`:1030` are consistent (Ch5/8/10); the four-state slot-release
-  table is identical in Ch7 and Ch8; the 16KiB full-table sync (2×16×128×4 bytes) is
-  consistent in Ch8/Ch10.
-- **Hand-offs.** Each chapter opens by citing the previous chapter's endpoint accurately
-  (e.g., Ch8 opens on Ch7's slot release at `:1015-1031`; Ch9 opens on Ch8's sync at
-  `:876`/`:878`; Ch10 opens on Ch9's softmax/traversal split). Internal cross-references
-  resolve correctly (e.g., Ch8 cites `ko-07.md:140-141`, which matches Ch7's slot-bound
-  batch-width paragraph).
-- **Evidence rules.** Citations to claims.md/trace.md line ranges are internally consistent
-  across chapters except for the items in Problems below.
+- Constants agree wherever they recur: `N_LAYERS=16`, `EMBEDDING_LENGTH=2048`,
+  `HIDDEN_DIM=8192`, `KV_DIM=512`, `HEAD_DIM=64`, `NUM_Q_HEADS=32`,
+  `NUM_K_HEADS=NUM_V_HEADS=8`, `GQA_Q_TO_K_RATIO=4`, `VOCAB_SIZE=128256`,
+  `MAX_SEQ_LEN=2048`, `BATCH_SIZE=2`, `MAX_PROMPT_LEN=512`, `BLOCK_SIZE=16`,
+  `V_OFFSET=16384`, `BLOCK_BYTES=32768`, `KV_CACHE_SIZE_BYTES=2GiB`,
+  `MAX_BLOCKS_PER_SEQ=128`, `NUM_BLOCKS=65536`. The derivations
+  `2GiB/32768=65536` and `2048/16=128` are computed identically in ch1, 5, 10.
+- Prompt queue lengths 17·14·13·14 (ch1, 3, 7) and the "prompts ≤ 17 tokens so
+  the 1024-thread guards never trigger" statement (ch3, 4, 6) agree.
+- Decode-loop exit (`queue.empty() && num_active_slots==0` → break, else
+  continue), the unused `MAX_NEW_TOKENS_GENERATED`, and EOT IDs 128001/128009
+  are stated identically in ch1, 7, 8.
+- GQA 4:1 sharing (`k_head_idx = i/4` at `src/main.cpp:303`,
+  `v_head_idx = i/4` at `:346`, `kv_head_idx = q_head_id/4` at
+  `src/kernels.cu:468`) is consistent across ch4, 5, 10.
+- `pagedAttentionKernel` launch (grid `(num_active_slots, NUM_Q_HEADS)`, block
+  `HEAD_DIM=64`, `src/kernels.cu:525-527`), the `gpu_active_slots` mapping,
+  `dot_products[2]` + `__shfl_down_sync` offsets, `acc/d` output, and "masking =
+  not reading unwritten tokens" via `num_blocks`/`tokens_in_block` agree across
+  ch8, 9, 10. `WARP_FULL_MASK` (`src/cuda_to_hip.h:50` HIP 64-bit, `:59` CUDA
+  32-bit) is consistent in ch1, 9, 10.
+- KV scatter (prefill block-wise `:251-288`, decode token-wise `:851-873`) and
+  the GEMM widths (`n=prompt_len` vs `n=num_active_slots`) agree across ch4, 5,
+  6, 10.
+- Terminology is uniform: 산포/scatter vs gather, `block_table`/`block_table_gpu`/
+  `free_blocks`, online softmax/온라인 softmax, and the ch10 phrase "최대
+  BLOCK_SIZE 토큰 청크(마지막은 일부)" all match their ko/en counterparts.
+- Korean–English pairs are faithful section-by-section translations with matching
+  citations and figures; the only pairing deviation is the en-08 cross-reference
+  (Problems item 1).
 
 ## Problems
 
-1. **Guard citation range mismatch (Ch1 vs the rest).** ko-01/en-01 cite the
-   `causalMask`/`softmax` launch guard as `src/kernels.cu:241-245`, `:295-299`, while
-   `claims.md`, `trace.md`, and Ch3/4/6 consistently cite `:241-244`, `:295-298`. Same code,
-   two ranges inside the series.
-2. **Break-branch citation range mismatch.** ko-01/en-01 cite the loop-exit `break` as
-   `src/main.cpp:739-746`, while `trace.md` and Ch7/8 cite `:739-744` (with `continue` at
-   `:745`). Minor, but it is the same branch cited two ways.
-3. **Uncorroborated Python filename.** Ch4's not-covered section names
-   `python/rms_norm.py`; Ch5 and Ch6 name `python/reference.py`. Only `python/tokenizer.py`
-   is corroborated (`series.yaml:10-12`, `trace.md:69`); the briefs corroborate only
-   `python/reference.py` (`briefs.md`, Ch5 exclusions). `python/rms_norm.py` appears nowhere
-   else and conflicts with the other chapters' example.
-4. **`series.yaml` citation-style inconsistency.** Ch1 omits the `series.yaml` scope citation
-   that every other chapter includes, and Ch9 cites `series.yaml:29-30` (a 2-line slice)
-   while Ch2-8 and Ch10 cite their full 3-line chapter block (e.g., `:10-12`).
-5. **Minor: Ch1 constants table over-reach.** The table adds rows with claim "—"
-   (`N_LAYERS`, `EMBEDDING_LENGTH`, `HIDDEN_DIM`, `HEAD_DIM`, `VOCAB_SIZE`, `MAX_SEQ_LEN`,
-   `MAX_PROMPT_LEN`) beyond the briefs' "인용한 값만 담는다" visual spec (`briefs.md:41`).
-   Transparently marked, so low risk.
+1. **en-08 cross-references the Korean article.** `en-08.md:81` cites
+   `` `ko-07.md:140-141` `` for the batch-width claim, while `ko-08.md:78`
+   correctly cites `ko-07.md:140-141`. The English chapter should point to its
+   English counterpart `en-07.md:140-141` (equivalent content at those lines).
+2. **`softmaxDecode` range differs between ch1 and ch9.** `ko-01.md:191-194` /
+   `en-01.md:215-217` give the wrapper as `src/kernels.cu:442-458` (guard
+   `:444-448`), while `ko-09.md:180-182` / `en-09.md:188-190` give
+   `` `src/kernels.cu:408-458` `` for the same symbol. `trace.md:258-259`
+   distinguishes wrapper `:442-458` from kernel `:408-439`; trace.md:217 itself
+   conflates the two, which is the likely origin.
+3. **Minor boundary overlap in ch9.** `ko-09.md:142-144` / `en-09.md:147-149`
+   state the grid `(num_active_slots, NUM_Q_HEADS)` and block `HEAD_DIM=64`
+   (`src/kernels.cu:525-527`), which `briefs.md:213-233` assigns to ch10, and the
+   same chapter's "이 장에서 다루지 않는 것" lists grid/block placement as
+   ch10's. The mention is needed for ch9's `dot_products[2]`/two-warp argument
+   and is framed as call-site context, so it is not a contradiction — but the
+   boundary is softer than the briefs intend.
+4. **Minor evidence gap in ch4.** `ko-04.md:190-191` / `en-04.md:209-210` state
+   the prefill argmax "casts bf16 to float" (`:533-543`), but `claims.md:47`
+   documents the bf16→float cast only for the decode argmax (`:1003-1010`); no
+   attached evidence attests the cast for prefill.
 
 ## Required fixes
 
-1. Change ko-01/en-01 to `src/kernels.cu:241-244`, `:295-298`, matching claims.md, trace.md,
-   and Ch3/4/6.
-2. Pick one break-branch range (`:739-744` per trace/Ch7/8, or `:739-746` per Ch1) and apply
-   it consistently; align trace.md if Ch1's wider range is kept.
-3. Verify which Python reference files exist in the pinned commit and cite only corroborated
-   filenames; align Ch4's `python/rms_norm.py` with Ch5/Ch6's `python/reference.py` (or state
-   both files explicitly if both exist).
-4. Add the missing `series.yaml` scope citation to Ch1 and change Ch9's citation to the full
-   3-line block (`series.yaml:28-30`).
-5. Optional: trim or annotate the unclaimed rows in Ch1's constants table to stay within the
-   briefs' "인용한 값만 담는다" spec.
+1. In `en-08.md:81`, change `` `ko-07.md:140-141` `` → `` `en-07.md:140-141` ``.
+2. Align the `softmaxDecode` range: in both `ko-09.md` and `en-09.md`, cite the
+   wrapper as `src/kernels.cu:442-458` (kernel `softmaxKernelDecode` as
+   `:408-439`), mirroring `trace.md:258-259`, so ch1 and ch9 agree.
+3. (Recommended) In `ko-09.md`/`en-09.md`, explicitly defer the grid/block
+   placement detail to ch10 at the call-site mention, matching
+   `briefs.md:213-233`.
+4. (Recommended) In `ko-04.md`/`en-04.md`, either remove "casts bf16 to float"
+   from the prefill-argmax sentence or add a supporting citation; otherwise keep
+   only the source-attested fact that argmax runs on the CPU after the D2H copy
+   (`:529`, `:533-543`).
