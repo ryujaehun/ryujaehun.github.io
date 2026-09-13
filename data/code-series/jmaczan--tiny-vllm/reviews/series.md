@@ -1,37 +1,78 @@
 # tiny-vllm 시리즈 전체 리뷰
 
-검토 대상: `guide.md`, `series.yaml`, `briefs.md`, `evidence/claims.md`, `evidence/trace.md`, `articles/ko-01~10.md`, `articles/en-01~10.md`. 시리즈 수준에서 커버리지·순서·용어·교차 일관성·주장 소유권·한영 대응·인용 일관성을 검토했다.
+고정 커밋 `1896ff5c37a241050dbcd9527caf9dc1d3087a61`. 기준 문서: `guide.md`,
+`series.yaml`, `briefs.md`, `evidence/claims.md`, `evidence/trace.md`, 그리고
+`articles/ko-01.md`~`ko-10.md`, `articles/en-01.md`~`en-10.md`.
 
 ## Decision
 
-**REVISE**
-
-콘텐츠·구조·주장 소유권·한영 대응은 전반적으로 일관되고 완전하지만, `en-08.md:81`의 교차 인용이 잘못된 줄 범위를 가리켜 수정이 필요하다. 그 외 문제는 모두 경미하거나 선택 수정이다.
+**PASS**
 
 ## Coverage
 
-- **모든 챕터 존재**: `series.yaml`의 챕터 1~10이 `ko-XX.md`/`en-XX.md` 각 10편으로 모두 구현되어 있다. 순서는 1→10으로 `series.yaml`과 `guide.md:24-29`의 서사(실행 프로그램·가중치 포맷 → 토큰→로짓 순전파 → 메모리·스케줄링 → paged attention)를 그대로 따른다.
-- **Scope 일치**: 각 장의 "이 장이 다루는 파일과 범위"가 `series.yaml`의 scope 줄 인용과 정확히 맞는다(1장 `series.yaml:4-6` … 10장 `series.yaml:31-33`). 브리프의 Scope와도 일치한다.
-- **주장 소유권**: Claim 1~10 전체가 브리프의 배분대로 소유·참조된다 — Claim 1→2장, 2→4장, 3→4장(주)/3장(일부)/6장(참조), 4→6장(주)/3장(일부)/7장(참조), 5→5장(주)/1·6·10장(참조), 6→5장(주)/6·8·10장(참조), 7→5장(주)/4·10장(참조), 8→9장(주)/10장(주), 9→7장(주)/8장(주)/1·3장(참조·일부), 10→8장(주)/10장(참조). 분할 소유권의 인계는 양쪽에서 명시된다(예: Claim 8 온라인 softmax는 9장, 블록 테이블 순회·그리드는 10장 — `ko-09.md:29-31`/`ko-10.md:194`가 서로 상대의 몫을 정확히 위임; Claim 9 고정 슬롯은 7장, 여유 슬롯 즉시 재사용은 8장 — `ko-07.md:25-27`).
-- **시각 자료**: 브리프의 Visuals 항목이 전부 구현되어 있다(1장 상수 표+9단계 흐름도, 2장 safetensors 배치+텐서 포인터 표, 3장 gather 비교표, 4장 레이어 파이프라인+전치 트릭, 5장 블록 풀·block_table·GQA 도식, 6장 나란한 시퀀스+단계별 표, 7장 슬롯 상태 표+타임라인, 8장 반복 타임라인+동기화 도식, 9장 온라인 softmax 갱신+warp 트리 합, 10장 블록 풀·인덱싱·커널 흐름+causal 마스킹).
+- 10개 챕터가 ko/en 모두 존재하고, 번호·제목이 `series.yaml`과 정확히 일치하며, 각
+  챕터의 대상 파일(scope)도 `series.yaml`과 일치한다. 시리즈 서사(실행 경로·가중치 →
+  토큰→로짓 순전파 → 메모리·스케줄링 → paged attention)는 `guide.md:24-29`의 아크를
+  그대로 따른다. 리더 계약(각 장이 구현을 따라가기 전에 필요한 연산을 먼저 설명)도
+  모든 장에서 충족된다(safetensors 레이아웃, 임베딩/argmax, 전치 트릭·rmsNorm·RoPE,
+  블록 기하, 온라인 softmax의 이유, 물리 블록 풀 등).
+- Claim 소유권이 `briefs.md`와 정확히 일치한다. ch1=참조만, ch2=Claim 1, ch3=Claim
+  3/4/9(일부), ch4=Claim 2/3/7, ch5=Claim 5/6/7, ch6=Claim 3/4, ch7=Claim 9/4,
+  ch8=Claim 9/10/6, ch9=Claim 8, ch10=Claim 8(주)/5/6/7/10. 각 챕터의 Exclusions도
+  소유 챕터로 정확히 넘긴다(예: ch4의 attention 상세→ch5, ch7의 즉시 재사용→ch8,
+  ch9의 블록 테이블 순회·그리드→ch10).
+- Claim 1~10이 전부 시리즈 전체에 걸쳐 커버된다. Claim 1→ch2, Claim 2→ch4,
+  Claim 3→ch3/4/6, Claim 4→ch3/6/7, Claim 5→ch1(참조)/5/6/10, Claim 6→ch5/6/8/10,
+  Claim 7→ch4/5/10, Claim 8→ch9/10, Claim 9→ch1(참조)/3/7/8, Claim 10→ch8/10.
+- ko/en 쌍이 10개 모두 완비되어 있고, 각 쌍이 동일한 섹션 구조·주장·인용을 가진다
+  (en-07은 ko-07보다 압축적이나 섹션·표·도식·인용이 모두 대응).
 
 ## Cross-chapter consistency
 
-- **상수**: `BATCH_SIZE=2`(`:29`), 2GiB(`:35`, `:576`), `NUM_BLOCKS=65536`(`:37`), `BLOCK_BYTES=32768`(`:34`), `V_OFFSET=16384`(`:33`), `MAX_BLOCKS_PER_SEQ=128`(`:36`), GQA 비율 4(`:20-24`, `:303`, `:346`, `src/kernels.cu:468`), `attn_alpha=1/8` 체인(`:649` ↔ `kernels.cu:12`의 `SQRT_HEAD_DIM=8`)이 모든 장에서 일치한다.
-- **공유 사실**: 프롬프트 길이 17/14/13/14(1·3·7장, `trace.md:69`), KV 산포 방식(prefill `:251-288` 블록 단위·마지막 블록은 일부, decode `:851-873` 토큰 단위), 동기화 지점(`:876` 매 레이어 / `:552` prefill 종료 / `:1030` 슬롯 해제), `prompt_len>1024` 가드, `softmaxDecode` 미사용(dead code), `MAX_NEW_TOKENS_GENERATED` 선언만·루프 조건 미사용 — 관련 장에서 모두 동일하게 서술된다.
-- **장간 연결**: 각 장의 도입부가 이전 장의 실제 내용을 그대로 요약한다(예: 8장이 "7장은 슬롯 2칸의 뼈대·해제 시 `free_blocks` 반환"을 인용 — `ko-08.md:3-7`, 7장 내용과 일치). prefill 스코어 GEMM이 산포한 캐시가 아니라 임시 버퍼 `k_proj_temp_buf`를 읽는다는 관찰(5장)이 다른 어느 장과도 충돌하지 않는다.
-- **출장 경계**: 9장의 `num_blocks`/`tokens_in_block` 수식이 10장의 순회 영역과 겹치지만 내용 자체는 10장과 정확히 일치한다(아래 Problems 3 참조).
+- 상수 일관성: `N_LAYERS=16`, `EMBEDDING_LENGTH=2048`, `HIDDEN_DIM=8192`,
+  `KV_DIM=512`, `HEAD_DIM=64`, Q/KV 헤드 32/8, `GQA_Q_TO_K_RATIO=4`,
+  `VOCAB_SIZE=128256`, `MAX_SEQ_LEN=2048`, `MAX_PROMPT_LEN=512`, `BATCH_SIZE=2`,
+  `BLOCK_SIZE=16`, `V_OFFSET=16384`, `BLOCK_BYTES=32768`, 2GiB, `NUM_BLOCKS=65536`,
+  `MAX_BLOCKS_PER_SEQ=128` — ch1/5/10의 표·본문 전부 동일.
+- 프롬프트 길이 17/14/13/14와 EOT 토큰 ID 128001/128009, `MAX_SEQ_LEN-1=2047`이
+  ch1/3/7/8에서 일치.
+- prefill attention 순서(스코어 GEMM → causalMask → softmax → scores×V)가 ch4/5/6에서
+  동일. `attn_alpha = 1/8 = 1/sqrt(64)`도 ch4(`:649`)/ch5(`:298` 주석)/ch9
+  (`SQRT_HEAD_DIM=8`, `kernels.cu:12`)가 일치.
+- KV 산포(prefill 블록 단위 D2D, decode 토큰 단위 D2D, 블록 경계에서만 pop)가
+  ch5/6/8/10에서 동일. `block_table` 인덱스 공식(`slot*N_LAYERS*MAX_BLOCKS_PER_SEQ +
+  layer*MAX_BLOCKS_PER_SEQ + block_idx`)도 동일.
+- `block_table` 동기화 지점 `:876`/`:552`/`:1030`과 복사 크기 2×16×128×4=16KiB가
+  ch8/10에서 일치(ch5는 존재만 언급). 소스의 TODO 인지(`src/main.cpp:551`)도 동일.
+- GQA 매핑 `kv_head_idx = q_head_id/4`가 ch4/5/10에서 일치.
+- paged attention 그리드 `(num_active_slots, NUM_Q_HEADS)`·블록 `HEAD_DIM=64`
+  (`kernels.cu:525-527`)가 ch9/10에서 일치. `dot_products[2]`, thread 0/32 결합,
+  `WARP_FULL_MASK`(`cuda_to_hip.h:50/:59`)도 ch9/10 일치.
+- 커널 런치 가드 조건과 미사용 함수(`softmaxDecode`) 서술이 ch1/9에서 일치하고, 양쪽
+  모두 "잠재적 경로/현재 상수 구성에서는 미발동"으로 동일하게 프레이밍된다.
+- CPU argmax(매 decode 반복 D2H, bf16→float 캐스팅)가 ch3/6에서 일치.
+- `project.yaml:1-2` 인용은 해당 파일(줄 1-2)과 실제로 일치하여 유효하다.
+- 수치·사실 수준의 모순은 발견되지 않았다.
 
 ## Problems
 
-1. **[필수] `en-08.md:81`의 교차 인용 오류** — `en-08.md:81`은 `en-07.md:140-141`을 인용하지만 `en-07.md`는 122줄뿐이라 해당 줄이 존재하지 않는다. 한글 쌍 `ko-08.md:77-78`은 `ko-07.md:140-141`을 올바르게 인용하며(`ko-07.md` 193줄, 해당 줄이 "배치 폭이 슬롯 수 2에 묶인다" 서술), 그 영어 대응 문장은 `en-07.md:94`("`num_active_slots` is the batch size, and its value is bounded by the slot count…")에 있다. 한영 인용 불일치이자 깨진 인용이다.
-2. **[경미] `ko-05.md:204-205`의 인용 대상** — "prefill과 decode가 같은 비율 상수(4)를 공유"를 `evidence/claims.md:77`로 뒷받침하는데, `:77`은 `kernels.cu:468` 증거 항목이고 정확한 대상은 Claim 7 본문(`evidence/claims.md:71`)이다. 내용은 틀리지 않았으나 인용 정밀도가 아쉽다.
-3. **[경미·경계] 9장의 순회 수식 포함** — `ko-09.md:149-154`(영어 `en-09.md:154-159`)가 `num_blocks`(`:471`)·`tokens_in_block`(`:481-482`) 수식을 서술한다. 브리프는 블록 테이블 순회를 10장 소유로 배정했고, 내용은 10장과 일치하며 Claim 8의 "누적 K만 읽음" 한계에 묶여 있어 자연스럽지만, 소유권 경계를 엄격히 하려면 10장으로의 전방 참조 표기가 도움이 된다.
-4. **[참고] 첨부 밖 파일 인용** — `project.yaml`(`ko-01.md:4`, `en-01.md:4`, `ko-10.md:15`, `en-10.md:18`)과 `evidence/recon.md`(`:4`, `:12`, `:13`, `:15`, `:38` — 전 장에 분포)가 첨부 파일에 없다. 인용 내용은 `guide.md`/`claims.md`/`trace.md`와 내부적으로 일치하지만 첨부 세트만으로는 검증 불가다.
+1. (경계, 사소) ch1의 "커널 런치 가드" 절이 `src/kernels.cu`(`:204-209`, `:241-244`,
+   `:295-298`, `:390-395`, `:444-448`)와 `src/cuda_to_hip.h`(`:50`, `:59`)의 내용을
+   다룬다. ch1의 선언된 scope 파일은 `CMakeLists.txt`/`src/main.cpp`/`test.sh`이고
+   `briefs.md` ch1의 참조 목록에도 없다. 내용은 소스 인용으로 정확하고 Claim 소유권과
+   충돌하지 않지만("실행 맥락", "잠재적 경로"로 프레이밍됨), scope 경계를 벗어난다는
+   점은 남는다. `series.yaml`/`briefs.md` ch1 scope에 kernels.cu(가드)를 추가하거나
+   해당 절을 cross-scope 문맥으로 명시하면 해소된다.
+2. (표기, 사소) ch5(ko/en)의 주소 공식이 `token_in_block_idx*KV_DIM*bf16`로 쓰이면서
+   바로 다음 문장에서는 같은 양을 `KV_DIM * sizeof(bf16)`로 쓴다. 표기 통일이 필요하다.
+3. (유지보수, 사소) ko-08은 `ko-07.md:140-141`을, en-08은 `en-07.md:94`를 같은
+   교차 인용(배치 폭 상한)에 쓴다. 현재는 모두 정확하지만 언어 쌍의 줄 범위가 달라
+   챕터 편집 시 조용히 깨질 수 있다.
 
 ## Required fixes
 
-1. `en-08.md:81`의 `en-07.md:140-141`을 `en-07.md:94`로 고친다(영어 대응 문장 위치). 한글 쪽 `ko-07.md:140-141`은 올바르므로 그대로 둔다.
-2. (선택) `ko-05.md:204-205`의 인용을 `evidence/claims.md:71`로 재배치한다.
-3. (선택) `ko-09.md:149-154`/`en-09.md:154-159`에 10장으로의 전방 참조를 추가해 순회 수식이 10장 영역임을 명시한다(내용 변경은 불필요).
-4. 그 외 수정 사항 없음. 필수 수정은 1번뿐이다.
+- 블로킹 항목 없음.
+- 권장: (1) ch1 커널 가드 절의 scope 경계를 scope 문서에 반영하거나 명시적으로
+  cross-scope 문맥으로 표기; (2) ch5의 bf16 크기 표기(`KV_DIM*bf16` →
+  `KV_DIM * sizeof(bf16)`) 통일; (3) ko-08/en-08의 교차 챕터 줄 인용을 언어 쌍에서
+  유지.

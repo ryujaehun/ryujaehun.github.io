@@ -804,10 +804,16 @@
       "review-en-09",
       "review-en-10"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 1,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/series.md"
+      ],
+      "cost": 0.033934476,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "series review requires revision"
   }
 ]
