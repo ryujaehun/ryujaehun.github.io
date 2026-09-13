@@ -214,10 +214,11 @@ prefill 내부 순서:
 
 ## Unresolved gaps
 
-- `softmaxDecode`(`kernels.cu:408-458`)가 정의되어 있으나 `main.cpp`에서
-  호출되지 않는다. decode의 softmax는 `pagedAttentionKernel` 내부 온라인
-  softmax(`kernels.cu:508-519`)가 담당하므로 이 함수는 이 커밋에서 미사용
-  (dead code)으로 보인다.
+- `softmaxDecode` 래퍼(`kernels.cu:442-458`)와 `softmaxKernelDecode`
+  커널(`:408-439`)이 정의되어 있으나 둘 다 `main.cpp`에서 호출되지 않는다.
+  decode의 softmax는 `pagedAttentionKernel` 내부 온라인 softmax
+  (`kernels.cu:508-519`)가 담당하므로 이 둘은 이 커밋에서 미사용(dead code)으로
+  보인다.
 - `free_rope_frequencies`(`kernels.cu:154-171`)도 호출처가 없다.
 - `main.cpp`의 종료는 `break` 하나뿐이라, 큐가 빈 뒤 모든 슬롯이 EOT/
   MAX_SEQ_LEN에 도달할 때까지 루프가 계속된다(`:720`, `:739-744`).
