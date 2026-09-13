@@ -1,4 +1,37 @@
 {
+ "2510.08999": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2510.08999/sqs-main-diagram-crop.webp",
+    "/assets/images/papers/2510.08999/a-self-attention-layer-k-projection-weight-distribution.webp",
+    "/assets/images/papers/2510.08999/b-self-attention-layer-o-projection-weight-distribution.webp",
+    "/assets/images/papers/2510.08999/c-self-attention-layer-q-projection-weight-distribution.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-13-paper-2510.08999.md",
+  "failures": 0,
+  "first_seen": "2026-09-13",
+  "matched": {
+   "systems": [
+    "compression",
+    "pruning",
+    "quantization",
+    "sparsity"
+   ],
+   "weak": [
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-09-13",
+  "score": 0.5376,
+  "status": "materialized",
+  "title": "SQS: Bayesian DNN Compression through Sparse Quantized Sub-distributions"
+ },
  "2609.01343": {
   "assets": {
    "figures": [],
@@ -491,6 +524,31 @@
   "status": "materialized",
   "title": "Deadline-Aware Adaptive Prefill Chunking for Efficient Large Language Model Serving",
   "version": "v1"
+ },
+ "2609.08084": {
+  "assets": {
+   "figures": [],
+   "license": "http://creativecommons.org/licenses/by-sa/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-13-paper-2609.08084.md",
+  "failures": 0,
+  "first_seen": "2026-09-13",
+  "matched": {
+   "systems": [
+    "quantization"
+   ],
+   "weak": [
+    "transformer"
+   ]
+  },
+  "materialized_at": "2026-09-13",
+  "score": 0.5062,
+  "status": "materialized",
+  "title": "Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation"
  },
  "2609.08368": {
   "assets": {
