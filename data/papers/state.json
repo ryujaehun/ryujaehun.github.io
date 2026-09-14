@@ -639,6 +639,33 @@
   "title": "Why Is Video Still So Expensive? A Survey of Inference-Efficiency Mechanisms in Video and Audiovisual LLMs",
   "version": "v1"
  },
+ "2609.10540": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.10540/pwm-teaser2.webp",
+    "/assets/images/papers/2609.10540/tradeoff-v2.webp",
+    "/assets/images/papers/2609.10540/framework.webp",
+    "/assets/images/papers/2609.10540/qualitative-death-comparison.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 1
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-15-paper-2609.10540.md",
+  "failures": 0,
+  "first_seen": "2026-09-15",
+  "matched": {
+   "core": [
+    "model serving"
+   ]
+  },
+  "materialized_at": "2026-09-15",
+  "score": 0.4505,
+  "status": "materialized",
+  "title": "Programmable World Model"
+ },
  "2609.11412": {
   "assets": {
    "figures": [
@@ -670,5 +697,41 @@
   "score": 0.5402,
   "status": "materialized",
   "title": "X-AuT: Progressive Audio-Encoder Compression for Speech LLMs with Cross-Scale Distillation"
+ },
+ "2609.13141": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-15-paper-2609.13141.md",
+  "failures": 0,
+  "first_seen": "2026-09-15",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "distillation",
+    "kernel",
+    "long context",
+    "memory efficient"
+   ],
+   "core": [
+    "flashattention",
+    "sparse attention"
+   ],
+   "named_systems": [
+    "triton"
+   ],
+   "weak": [
+    "optimization"
+   ]
+  },
+  "materialized_at": "2026-09-15",
+  "score": 0.6459,
+  "status": "materialized",
+  "title": "SAS: Simple Attention Sparsification via End-to-End Optimization of Context Ranking"
  }
 }
