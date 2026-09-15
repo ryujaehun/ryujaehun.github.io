@@ -733,5 +733,67 @@
   "score": 0.6459,
   "status": "materialized",
   "title": "SAS: Simple Attention Sparsification via End-to-End Optimization of Context Ranking"
+ },
+ "2609.13356": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.13356/homepage-7b-rank-heatmap.webp",
+    "/assets/images/papers/2609.13356/teaser.webp",
+    "/assets/images/papers/2609.13356/zgcm1-arch.webp",
+    "/assets/images/papers/2609.13356/architecture-experiments.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-16-paper-2609.13356.md",
+  "failures": 0,
+  "first_seen": "2026-09-16",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "long context"
+   ],
+   "systems": [
+    "fp8",
+    "pruning"
+   ],
+   "weak": [
+    "efficiency",
+    "efficient",
+    "scaling"
+   ]
+  },
+  "materialized_at": "2026-09-16",
+  "score": 0.7924,
+  "status": "materialized",
+  "title": "ZGCM-1: A Fully Open and Extremely Efficient Foundation Model for Math and Agentic Search"
+ },
+ "2609.15504": {
+  "assets": {
+   "figures": [],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-16-paper-2609.15504.md",
+  "failures": 0,
+  "first_seen": "2026-09-16",
+  "matched": {
+   "adjacent": [
+    "autoregressive"
+   ],
+   "core": [
+    "speculative decoding"
+   ]
+  },
+  "materialized_at": "2026-09-16",
+  "score": 0.4831,
+  "status": "materialized",
+  "title": "How Lossless Is Lossless Speculative Decoding? The Role of Numerical Precision in Orthrus"
  }
 }
