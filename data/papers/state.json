@@ -768,12 +768,11 @@
   },
   "materialized_at": "2026-09-16",
   "notification": {
-   "attempts": 10,
-   "error": "Telegram is not configured",
-   "error_category": "notification-transport",
+   "attempts": 11,
    "message_sha256": "dfe59fd61a0fef1f07bf37b3f3a609d448fed60b31aed927e6b1a5dd4cd537a6",
    "notification_id": "paper:2609.13356:ko-en",
-   "status": "notify-pending",
+   "sent_at": "2026-09-16T11:51:00.395704+00:00",
+   "status": "sent",
    "urls": [
     "https://jaehun.me/posts/zgcm-1-a-fully-open-and-extremely-efficient-foundation-model-for-math-and-agentic-search/",
     "https://jaehun.me/en/posts/zgcm-1-a-fully-open-and-extremely-efficient-foundation-model-for-math-and-agentic-search/"
@@ -805,12 +804,11 @@
   },
   "materialized_at": "2026-09-16",
   "notification": {
-   "attempts": 10,
-   "error": "Telegram is not configured",
-   "error_category": "notification-transport",
+   "attempts": 11,
    "message_sha256": "724b33fc5fd5c37ad30c3f808c5f20e8895d92266d9e9524adecc8c52e42627a",
    "notification_id": "paper:2609.15504:ko-en",
-   "status": "notify-pending",
+   "sent_at": "2026-09-16T11:51:00.395704+00:00",
+   "status": "sent",
    "urls": [
     "https://jaehun.me/posts/how-lossless-is-lossless-speculative-decoding-the-role-of-numerical-precision-in-orthrus/",
     "https://jaehun.me/en/posts/how-lossless-is-lossless-speculative-decoding-the-role-of-numerical-precision-in-orthrus/"
