@@ -1,0 +1,160 @@
+title: "tiny-vLLM: CUDA로 직접 쓴 LLM 추론 엔진 읽기"
+open_questions: []
+chapters:
+  - id: build-and-entry
+    order: 1
+    title: "제품 경계와 실행 진입점"
+    questions:
+      - "이 저장소에서 제품으로 빌드되는 것은 정확히 무엇이고, 한 번의 실행은 어디서 시작하는가?"
+    code_scopes:
+      - "CMakeLists.txt"
+      - "build.sh"
+      - "run.sh"
+      - "test.sh"
+      - "full_test.sh"
+      - "src/cuda_to_hip.h"
+    depends_on: []
+    required_evidence:
+      code: 4
+      tests: 0
+      runtime: 0
+    visuals:
+      - id: product-translation-units
+        kind: table
+        required_claims:
+          - "제품 바이너리는 src/main.cpp 와 src/kernels.cu 두 번역 단위로만 만들어진다"
+          - "include/json.hpp 는 제품 코드가 아니라 include 경로로 들어오는 단일 헤더 의존이다"
+      - id: dual-backend-branch
+        kind: block-diagram
+        required_claims:
+          - "USE_HIP 옵션이 같은 CUDA 소스를 hipcc/hipBLAS 경로로 돌린다"
+          - "src/cuda_to_hip.h 가 bfloat16 타입 차이를 흡수하는 shim이다"
+  - id: weights-and-memory
+    order: 2
+    title: "가중치 적재와 GPU 버퍼 설계"
+    questions:
+      - "safetensors 가중치를 어떻게 읽어 GPU 메모리에 올리고, 어떤 버퍼를 미리 잡아 두는가?"
+    code_scopes:
+      - "src/main.cpp"
+    depends_on:
+      - build-and-entry
+    required_evidence:
+      code: 3
+      tests: 0
+      runtime: 0
+    visuals:
+      - id: buffer-allocation-table
+        kind: table
+        required_claims:
+          - "prefill 어텐션 점수 버퍼는 MAX_PROMPT_LEN 제곱에 쿼리 헤드 수를 곱한 크기로 잡힌다"
+          - "decode 전용 버퍼와 K/V 임시 버퍼는 별도로 할당되어 재사용된다"
+  - id: prefill-path
+    order: 3
+    title: "프롬프트 전체를 한 번에 흘리는 prefill 경로"
+    questions:
+      - "프롬프트 토큰이 임베딩부터 다음 토큰 선택까지 어떤 커널 순서로 흐르는가?"
+    code_scopes:
+      - "src/main.cpp"
+      - "src/kernels.cu"
+      - "src/kernels.cuh"
+      - "tests/test_softmax.cu"
+    depends_on:
+      - weights-and-memory
+    required_evidence:
+      code: 6
+      tests: 1
+      runtime: 0
+    visuals:
+      - id: prefill-kernel-sequence
+        kind: mermaid
+        required_claims:
+          - "prefill 은 embeddingGather, rmsNorm, RoPE, causalMask, softmax, residual, silu 커널을 순서대로 쓴다"
+          - "한 번의 prefill 호출이 프롬프트의 모든 토큰을 동시에 처리한다"
+      - id: rmsnorm-reduction
+        kind: block-diagram
+        required_claims:
+          - "rmsNormKernel 은 블록 내 병렬 리덕션으로 제곱 평균을 구한다"
+  - id: cublas-and-layout
+    order: 4
+    title: "cuBLAS 행렬곱과 열-행 우선 전치 트릭"
+    questions:
+      - "왜 가중치 행렬곱을 cuBLAS 에 전치된 형태로 넘기는가?"
+    code_scopes:
+      - "src/main.cpp"
+    depends_on:
+      - prefill-path
+    required_evidence:
+      code: 3
+      tests: 0
+      runtime: 0
+    visuals:
+      - id: column-row-major-trick
+        kind: block-diagram
+        required_claims:
+          - "cuBLAS 는 열 우선 레이아웃을 가정하므로 행 우선 데이터를 전치 플래그로 맞춘다"
+          - "alpha 와 beta 인자가 잔차 누적을 별도 커널 없이 처리한다"
+  - id: decode-path
+    order: 5
+    title: "토큰 하나만 만드는 decode 경로"
+    questions:
+      - "decode 는 왜 prefill 과 다른 커널 변형을 쓰는가?"
+    code_scopes:
+      - "src/kernels.cu"
+      - "src/main.cpp"
+      - "python/decode_test.py"
+    depends_on:
+      - prefill-path
+    required_evidence:
+      code: 4
+      tests: 1
+      runtime: 0
+    visuals:
+      - id: prefill-decode-contrast
+        kind: table
+        required_claims:
+          - "decode 계열 커널은 시퀀스 길이 1 을 가정해 인덱싱을 단순화한다"
+          - "ropeKernelDecode 는 전체 위치가 아니라 현재 위치 하나만 회전시킨다"
+  - id: paged-kv-cache
+    order: 6
+    title: "블록 단위로 인덱싱되는 paged KV cache"
+    questions:
+      - "KV cache 를 블록으로 나누고 block table 로 참조하면 어텐션 커널은 무엇을 어떻게 읽는가?"
+    code_scopes:
+      - "src/kernels.cu"
+      - "src/main.cpp"
+    depends_on:
+      - decode-path
+    required_evidence:
+      code: 5
+      tests: 0
+      runtime: 0
+    visuals:
+      - id: block-table-indexing
+        kind: block-diagram
+        required_claims:
+          - "pagedAttentionKernel 은 block_table 을 통해 비연속 KV 블록을 읽는다"
+          - "free_blocks 목록이 블록 할당과 반납을 관리한다"
+      - id: paged-attention-inputs
+        kind: table
+        required_claims:
+          - "pagedAttentionKernel 은 kv_cache, block_table, seq_lens, active_slots 를 함께 받는다"
+  - id: batching-and-slots
+    order: 7
+    title: "슬롯 테이블로 여러 요청을 함께 돌리기"
+    questions:
+      - "여러 프롬프트를 동시에 처리하기 위해 슬롯과 큐를 어떻게 쓰는가?"
+    code_scopes:
+      - "src/main.cpp"
+      - "python/batching_test_tokens.py"
+    depends_on:
+      - paged-kv-cache
+    required_evidence:
+      code: 4
+      tests: 0
+      runtime: 0
+    visuals:
+      - id: slot-lifecycle
+        kind: mermaid
+        required_claims:
+          - "is_slot_free 가 슬롯의 점유 상태를 관리하고 큐에서 다음 프롬프트를 채운다"
+          - "활성 슬롯 목록이 decode 스텝마다 커널에 전달된다"

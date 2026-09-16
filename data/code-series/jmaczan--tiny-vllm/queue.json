@@ -1,0 +1,108 @@
+[
+  {
+    "id": "recon",
+    "kind": "recon",
+    "depends_on": [],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "trace",
+    "kind": "trace",
+    "depends_on": [
+      "recon"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "evidence",
+    "kind": "evidence",
+    "depends_on": [
+      "trace"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "brief",
+    "kind": "brief",
+    "depends_on": [
+      "evidence"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "write-ko",
+    "kind": "write-ko",
+    "depends_on": [
+      "brief"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "review-ko",
+    "kind": "review-ko",
+    "depends_on": [
+      "write-ko"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "translate-en",
+    "kind": "translate-en",
+    "depends_on": [
+      "review-ko"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "review-en",
+    "kind": "review-en",
+    "depends_on": [
+      "translate-en"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "series-review",
+    "kind": "series-review",
+    "depends_on": [
+      "review-en"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  }
+]
