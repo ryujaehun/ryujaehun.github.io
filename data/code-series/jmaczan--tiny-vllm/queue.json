@@ -76,16 +76,16 @@
       "brief"
     ],
     "status": "complete",
-    "attempts": 0,
+    "attempts": 1,
     "lease_until": null,
     "outcome": {
       "paths": [
         "articles/ko-01.md"
       ],
-      "cost": 0.00606435,
+      "cost": 0.0064197,
       "model": "opencode-go/deepseek-v4-flash"
     },
-    "reason": null
+    "reason": "review requires revision"
   },
   {
     "id": "review-ko-01",
@@ -97,7 +97,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "review requires revision"
   },
   {
     "id": "translate-en-01",
@@ -136,10 +136,10 @@
       "paths": [
         "articles/ko-02.md"
       ],
-      "cost": 0.00612495,
+      "cost": 0.0064596,
       "model": "opencode-go/deepseek-v4-flash"
     },
-    "reason": null
+    "reason": "review requires revision"
   },
   {
     "id": "review-ko-02",
@@ -147,11 +147,17 @@
     "depends_on": [
       "write-ko-02"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
-    "reason": null
+    "outcome": {
+      "paths": [
+        "reviews/ko-02.md"
+      ],
+      "cost": 0.00563475,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
+    "reason": "review requires revision"
   },
   {
     "id": "translate-en-02",
@@ -190,10 +196,10 @@
       "paths": [
         "articles/ko-03.md"
       ],
-      "cost": 0.00613515,
+      "cost": 0.00654135,
       "model": "opencode-go/deepseek-v4-flash"
     },
-    "reason": null
+    "reason": "review requires revision"
   },
   {
     "id": "review-ko-03",
@@ -205,7 +211,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "review requires revision"
   },
   {
     "id": "translate-en-03",
@@ -237,17 +243,11 @@
     "depends_on": [
       "brief"
     ],
-    "status": "complete",
+    "status": "pending",
     "attempts": 0,
     "lease_until": null,
-    "outcome": {
-      "paths": [
-        "articles/ko-04.md"
-      ],
-      "cost": 0.00605775,
-      "model": "opencode-go/deepseek-v4-flash"
-    },
-    "reason": null
+    "outcome": null,
+    "reason": "visual annotation is required before table"
   },
   {
     "id": "review-ko-04",
@@ -256,10 +256,10 @@
       "write-ko-04"
     ],
     "status": "pending",
-    "attempts": 0,
+    "attempts": 1,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "visual annotation is required before table"
   },
   {
     "id": "translate-en-04",
@@ -291,11 +291,11 @@
     "depends_on": [
       "brief"
     ],
-    "status": "leased",
+    "status": "pending",
     "attempts": 0,
-    "lease_until": "2026-09-16T13:15:37.329849+00:00",
+    "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "visual annotation is required before table"
   },
   {
     "id": "review-ko-05",
@@ -307,7 +307,7 @@
     "attempts": 0,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "visual annotation is required before table"
   },
   {
     "id": "translate-en-05",
@@ -339,17 +339,11 @@
     "depends_on": [
       "brief"
     ],
-    "status": "complete",
+    "status": "pending",
     "attempts": 0,
     "lease_until": null,
-    "outcome": {
-      "paths": [
-        "articles/ko-06.md"
-      ],
-      "cost": 0.00598635,
-      "model": "opencode-go/deepseek-v4-flash"
-    },
-    "reason": null
+    "outcome": null,
+    "reason": "visual annotation is required before table"
   },
   {
     "id": "review-ko-06",
@@ -358,10 +352,10 @@
       "write-ko-06"
     ],
     "status": "pending",
-    "attempts": 0,
+    "attempts": 1,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "visual annotation is required before table"
   },
   {
     "id": "translate-en-06",
@@ -400,10 +394,10 @@
       "paths": [
         "articles/ko-07.md"
       ],
-      "cost": 0.00612735,
+      "cost": 0.0067146,
       "model": "opencode-go/deepseek-v4-flash"
     },
-    "reason": null
+    "reason": "review requires revision"
   },
   {
     "id": "review-ko-07",
@@ -412,10 +406,10 @@
       "write-ko-07"
     ],
     "status": "pending",
-    "attempts": 0,
+    "attempts": 1,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "all models failed: opencode-go/deepseek-v4-flash: opencode timed out after 900s"
   },
   {
     "id": "translate-en-07",
