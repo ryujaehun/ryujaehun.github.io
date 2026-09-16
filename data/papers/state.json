@@ -698,6 +698,36 @@
   "status": "materialized",
   "title": "X-AuT: Progressive Audio-Encoder Compression for Speech LLMs with Cross-Scale Distillation"
  },
+ "2609.12945": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 4
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-17-paper-2609.12945.md",
+  "failures": 0,
+  "first_seen": "2026-09-17",
+  "matched": {
+   "adjacent": [
+    "autoregressive"
+   ],
+   "systems": [
+    "quantization"
+   ],
+   "weak": [
+    "large language model",
+    "transformer"
+   ]
+  },
+  "materialized_at": "2026-09-17",
+  "score": 0.5215,
+  "slug": "paper-2609-12945",
+  "status": "materialized",
+  "title": "StepAudio 3 Gen Technical Report"
+ },
  "2609.13141": {
   "assets": {
    "figures": [],
