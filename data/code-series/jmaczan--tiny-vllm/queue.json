@@ -75,10 +75,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-01.md"
+      ],
+      "cost": 0.00606435,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -123,10 +129,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-02.md"
+      ],
+      "cost": 0.00612495,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -171,10 +183,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-03.md"
+      ],
+      "cost": 0.00613515,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -219,10 +237,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-04.md"
+      ],
+      "cost": 0.00605775,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -267,9 +291,9 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "leased",
     "attempts": 0,
-    "lease_until": null,
+    "lease_until": "2026-09-16T13:15:37.329849+00:00",
     "outcome": null,
     "reason": null
   },
@@ -315,10 +339,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-06.md"
+      ],
+      "cost": 0.00598635,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -363,10 +393,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-07.md"
+      ],
+      "cost": 0.00612735,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
