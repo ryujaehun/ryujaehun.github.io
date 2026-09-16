@@ -93,10 +93,16 @@
     "depends_on": [
       "write-ko-01"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-01.md"
+      ],
+      "cost": 0.0058572,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "review requires revision"
   },
   {
@@ -105,10 +111,16 @@
     "depends_on": [
       "review-ko-01"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-01.md"
+      ],
+      "cost": 0.00797625,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -165,10 +177,16 @@
     "depends_on": [
       "review-ko-02"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-02.md"
+      ],
+      "cost": 0.00794055,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -177,10 +195,16 @@
     "depends_on": [
       "translate-en-02"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-02.md"
+      ],
+      "cost": 0.0057132,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -207,10 +231,16 @@
     "depends_on": [
       "write-ko-03"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-03.md"
+      ],
+      "cost": 0.005710026,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "review requires revision"
   },
   {
@@ -219,10 +249,16 @@
     "depends_on": [
       "review-ko-03"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-03.md"
+      ],
+      "cost": 0.0102096,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -243,10 +279,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-04.md"
+      ],
+      "cost": 0.0060144,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "visual annotation is required before table"
   },
   {
@@ -256,10 +298,10 @@
       "write-ko-04"
     ],
     "status": "pending",
-    "attempts": 1,
+    "attempts": 2,
     "lease_until": null,
     "outcome": null,
-    "reason": "visual annotation is required before table"
+    "reason": "all models failed: opencode-go/deepseek-v4-flash: opencode timed out after 900s"
   },
   {
     "id": "translate-en-04",
@@ -291,10 +333,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-05.md"
+      ],
+      "cost": 0.0063132,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "visual annotation is required before table"
   },
   {
@@ -303,10 +351,16 @@
     "depends_on": [
       "write-ko-05"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-05.md"
+      ],
+      "cost": 0.0057576,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "visual annotation is required before table"
   },
   {
@@ -339,10 +393,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-06.md"
+      ],
+      "cost": 0.0060678,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "visual annotation is required before table"
   },
   {
@@ -351,10 +411,16 @@
     "depends_on": [
       "write-ko-06"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 1,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-06.md"
+      ],
+      "cost": 0.00591615,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": "visual annotation is required before table"
   },
   {
@@ -394,7 +460,7 @@
       "paths": [
         "articles/ko-07.md"
       ],
-      "cost": 0.0067146,
+      "cost": 0.00685245,
       "model": "opencode-go/deepseek-v4-flash"
     },
     "reason": "review requires revision"
@@ -409,7 +475,7 @@
     "attempts": 1,
     "lease_until": null,
     "outcome": null,
-    "reason": "all models failed: opencode-go/deepseek-v4-flash: opencode timed out after 900s"
+    "reason": "review requires revision"
   },
   {
     "id": "translate-en-07",
