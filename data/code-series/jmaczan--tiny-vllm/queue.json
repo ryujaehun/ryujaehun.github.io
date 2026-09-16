@@ -3,10 +3,16 @@
     "id": "recon",
     "kind": "recon",
     "depends_on": [],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "evidence/recon.md"
+      ],
+      "cost": 0.0042177,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
