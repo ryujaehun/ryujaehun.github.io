@@ -21,11 +21,17 @@
     "depends_on": [
       "recon"
     ],
-    "status": "pending",
-    "attempts": 0,
+    "status": "complete",
+    "attempts": 1,
     "lease_until": null,
-    "outcome": null,
-    "reason": null
+    "outcome": {
+      "paths": [
+        "evidence/trace.md"
+      ],
+      "cost": 0.00673545,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
+    "reason": "'url'"
   },
   {
     "id": "evidence",
