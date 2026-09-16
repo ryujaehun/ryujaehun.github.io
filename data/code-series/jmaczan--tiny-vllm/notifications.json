@@ -1,0 +1,15 @@
+{
+  "code-series:jmaczan--tiny-vllm:01:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-17T08:48:13.650143+09:00",
+    "post_commit": "8203bd08bd6989915abea8702e7cbe105790bad1",
+    "urls": [
+      "https://jaehun.me/posts/code-series-jmaczan--tiny-vllm-01/",
+      "https://jaehun.me/en/posts/code-series-jmaczan--tiny-vllm-01/"
+    ],
+    "message_sha256": "c16fa82ad4063dbb75aab4439effea7042fe08d07cb0a6a3eba4a6eb9cb7abc9"
+  }
+}
