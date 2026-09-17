@@ -29,7 +29,7 @@ This series reads those 1,572 lines across seven chapters. This one is the map: 
 
 ## What is in the box
 
-Here is what the repository implements. On the left is where the idea comes from, on the right is where it lives in this codebase.
+Here is what the repository implements. On the left is where the idea comes from; on the right is where to find it in the repository.
 
 | Idea | Origin | In tiny-vllm | Chapter |
 | --- | --- | --- | --- |

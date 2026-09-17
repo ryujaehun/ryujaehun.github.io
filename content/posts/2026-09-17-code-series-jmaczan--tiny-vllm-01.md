@@ -29,7 +29,7 @@ vLLM 본체가 십수만 줄인 걸 생각하면, 이건 "추론 엔진을 이�
 
 ## 무엇이 들어 있나
 
-저장소가 스스로 밝힌 구현 목록은 이렇다. 왼쪽은 원 아이디어의 출처, 오른쪽은 이 저장소에서 그게 사는 자리다.
+저장소가 스스로 밝힌 구현 목록은 이렇다. 왼쪽은 원 아이디어의 출처, 오른쪽은 저장소 상의 출처다.
 
 | 아이디어 | 원 출처 | tiny-vllm 에서 | 다룰 편 |
 | --- | --- | --- | --- |
@@ -141,7 +141,7 @@ void prefill(std::vector<int> &prompt, std::queue<std::vector<int>> &queue,
 
 **매개변수 51개.** 한 줄에 다 있다. 호출부도 당연히 한 줄이다.
 
-정상적인 코드 리뷰라면 반려될 물건이지만, 여기엔 이유가 있다. GPU 메모리 할당(`cudaMalloc`)은 비싸서 매 요청마다 하면 안 된다. 그래서 이 저장소는 **모든 버퍼를 `main()` 초입에서 한 번 잡고, 필요한 곳까지 인자로 들고 다닌다.** 구조체로 묶거나 클래스로 감쌀 수도 있었지만, 저장소가 교재를 겸하는 만큼 "이 시점에 GPU 메모리에 무엇이 살아 있는가"를 독자가 한눈에 보게 하려는 선택으로 읽힌다. `buf_2048_1`, `buf_2048_2` 같은 이름은 그 버퍼를 여러 용도로 **재사용**한다는 뜻이다. 실제로 `prefill` 안에서 같은 버퍼가 먼저 Q 투영 결과였다가
+보통의 코드 리뷰였다면 반려됐을 코드지만, 여기엔 이유가 있다. GPU 메모리 할당(`cudaMalloc`)은 비싸서 매 요청마다 하면 안 된다. 그래서 이 저장소는 **모든 버퍼를 `main()` 초입에서 한 번 잡고, 필요한 곳까지 인자로 들고 다닌다.** 구조체로 묶거나 클래스로 감쌀 수도 있었지만, 저장소가 교재를 겸하는 만큼 "지금 GPU 메모리에 무엇이 올라와 있는가"를 한눈에 보이게 하려는 선택으로 보인다. `buf_2048_1`, `buf_2048_2` 같은 이름은 그 버퍼를 여러 용도로 **재사용**한다는 뜻이다. 실제로 `prefill` 안에서 같은 버퍼가 먼저 Q 투영 결과였다가
 
 ```cpp
 q_proj = buf_2048_1;        // src/main.cpp:177
@@ -161,7 +161,7 @@ constexpr int BLOCK_SIZE = 16;            // TODO: tunable as well, defined the 
 ```
 — [`src/main.cpp:12-35`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L12-L35)
 
-모델 설정이 전부 컴파일 타임 상수고, 저자도 그걸 안다(`TODO` 가 나란히 달려 있다). `BATCH_SIZE = 2` 는 continuous batching 을 "있다"고 말할 수 있는 최소값이다. 이 시리즈는 이걸 결함으로 지적하기보다, **무엇이 본질이고 무엇이 미뤄 둔 것인지 가르는 선**으로 읽는다.
+모델 설정이 전부 컴파일 타임 상수고, 저자도 그걸 안다(`TODO` 가 나란히 달려 있다). `BATCH_SIZE = 2` 는 continuous batching 을 "있다"고 말할 수 있는 최소값이다. 이 시리즈는 이걸 결함으로 지적하기보다, **무엇이 핵심이고 무엇을 나중으로 미뤘는지 보여 주는 선**으로 읽는다.
 
 ## 빌드: 파일 두 개, 백엔드 둘
 
@@ -175,9 +175,9 @@ add_executable(tiny-vllm
 ```
 — [`CMakeLists.txt:49-52`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L49-L52)
 
-이게 전부다. 저장소에서 가장 큰 파일은 `include/json.hpp`(소스 바이트의 92%)지만 이건 [nlohmann/json](https://github.com/nlohmann/json) 을 통째로 넣어 둔 것이고, safetensors 헤더의 JSON 을 파싱하는 데 딱 한 번 쓰인다. 남의 코드이므로 이 시리즈는 읽지 않는다.
+이게 전부다. 저장소에서 가장 큰 파일은 `include/json.hpp`(소스 바이트의 92%)지만 이건 [nlohmann/json](https://github.com/nlohmann/json) 을 통째로 넣어 둔 것이고, safetensors 헤더의 JSON 을 파싱하는 데 딱 한 번 쓰인다. 직접 작성한 코드가 아니므로 이 시리즈에서는 다루지 않는다.
 
-한 가지 더. 같은 소스가 NVIDIA 와 AMD 양쪽에서 빌드된다. 방법은 소박하다 — CUDA 이름을 HIP 이름으로 바꿔치는 헤더 하나다.
+한 가지 더. 같은 코드가 NVIDIA 와 AMD 양쪽에서 빌드된다. 방법은 단순하다 — CUDA 이름을 HIP 이름으로 바꿔 주는 헤더 하나다.
 
 ```cpp
 #if defined(USE_HIP) || defined(__HIP_PLATFORM_AMD__)
@@ -207,7 +207,7 @@ add_executable(tiny-vllm
 
 ## 더 읽을거리
 
-개념 쪽이 얕다고 느껴진다면, 이 저장소의 [README](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/README.md) 자체가 94KB 짜리 강의 자료다. 부동소수점부터 PagedAttention 까지 차례로 유도한다. 이 시리즈는 그 강의를 반복하지 않고 **완성된 코드를 읽는 쪽**에 선다.
+개념 쪽이 얕다고 느껴진다면, 이 저장소의 [README](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/README.md) 자체가 94KB 짜리 강의 자료다. 부동소수점부터 PagedAttention 까지 차례로 유도한다. 이 시리즈는 그 강의를 되풀이하지 않고 **완성된 코드를 읽는 데** 집중한다.
 
 - [PagedAttention 논문 (Kwon et al., SOSP 2023)](https://arxiv.org/pdf/2309.06180) — 6편의 배경
 - [FlashAttention / online softmax 강의노트](https://courses.cs.washington.edu/courses/cse599m/23sp/notes/flashattn.pdf) — 6편의 배경
