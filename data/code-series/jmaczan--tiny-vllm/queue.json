@@ -147,11 +147,17 @@
     "depends_on": [
       "brief"
     ],
-    "status": "leased",
+    "status": "complete",
     "attempts": 0,
-    "lease_until": "2026-09-17T01:49:53.911486+00:00",
-    "outcome": null,
-    "reason": null
+    "lease_until": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-02.md"
+      ],
+      "cost": 0.007378026,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
+    "reason": "review requires revision"
   },
   {
     "id": "review-ko-02",
@@ -159,11 +165,17 @@
     "depends_on": [
       "write-ko-02"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
-    "reason": null
+    "outcome": {
+      "paths": [
+        "reviews/ko-02.md"
+      ],
+      "cost": 0.015286026,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
+    "reason": "review requires revision"
   },
   {
     "id": "translate-en-02",
@@ -171,10 +183,16 @@
     "depends_on": [
       "review-ko-02"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-02.md"
+      ],
+      "cost": 0.003164076,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -183,10 +201,16 @@
     "depends_on": [
       "translate-en-02"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-02.md"
+      ],
+      "cost": 0.008222226,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -195,11 +219,17 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
-    "reason": null
+    "outcome": {
+      "paths": [
+        "articles/ko-03.md"
+      ],
+      "cost": 0.007310076,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
+    "reason": "review requires revision"
   },
   {
     "id": "review-ko-03",
@@ -207,11 +237,17 @@
     "depends_on": [
       "write-ko-03"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
-    "reason": null
+    "outcome": {
+      "paths": [
+        "reviews/ko-03.md"
+      ],
+      "cost": 0.012116976,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
+    "reason": "review requires revision"
   },
   {
     "id": "translate-en-03",
@@ -219,10 +255,16 @@
     "depends_on": [
       "review-ko-03"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-03.md"
+      ],
+      "cost": 0.012127026,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -231,10 +273,16 @@
     "depends_on": [
       "translate-en-03"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-03.md"
+      ],
+      "cost": 0.008482026,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -243,10 +291,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-04.md"
+      ],
+      "cost": 0.007612626,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -255,10 +309,16 @@
     "depends_on": [
       "write-ko-04"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-04.md"
+      ],
+      "cost": 0.014585976,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -267,10 +327,16 @@
     "depends_on": [
       "review-ko-04"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-04.md"
+      ],
+      "cost": 0.006281976,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -279,10 +345,16 @@
     "depends_on": [
       "translate-en-04"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-04.md"
+      ],
+      "cost": 0.008509326,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -291,11 +363,17 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
-    "reason": null
+    "outcome": {
+      "paths": [
+        "articles/ko-05.md"
+      ],
+      "cost": 0.007637376,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
+    "reason": "review requires revision"
   },
   {
     "id": "review-ko-05",
@@ -303,11 +381,17 @@
     "depends_on": [
       "write-ko-05"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
-    "reason": null
+    "outcome": {
+      "paths": [
+        "reviews/ko-05.md"
+      ],
+      "cost": 0.015220176,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
+    "reason": "review requires revision"
   },
   {
     "id": "translate-en-05",
@@ -315,10 +399,16 @@
     "depends_on": [
       "review-ko-05"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-05.md"
+      ],
+      "cost": 0.003269076,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -327,10 +417,16 @@
     "depends_on": [
       "translate-en-05"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-05.md"
+      ],
+      "cost": 0.009010176,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -339,10 +435,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-06.md"
+      ],
+      "cost": 0.007545576,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -351,10 +453,16 @@
     "depends_on": [
       "write-ko-06"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-06.md"
+      ],
+      "cost": 0.0060297,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -363,10 +471,16 @@
     "depends_on": [
       "review-ko-06"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-06.md"
+      ],
+      "cost": 0.007448226,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -375,10 +489,16 @@
     "depends_on": [
       "translate-en-06"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-06.md"
+      ],
+      "cost": 0.004064676,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -387,10 +507,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-07.md"
+      ],
+      "cost": 0.007672326,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -399,10 +525,16 @@
     "depends_on": [
       "write-ko-07"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-07.md"
+      ],
+      "cost": 0.0091509,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -411,10 +543,16 @@
     "depends_on": [
       "review-ko-07"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-07.md"
+      ],
+      "cost": 0.00338925,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -423,10 +561,16 @@
     "depends_on": [
       "translate-en-07"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-07.md"
+      ],
+      "cost": 0.007747626,
+      "model": "opencode-go/deepseek-v4-flash"
+    },
     "reason": null
   },
   {
@@ -442,9 +586,9 @@
       "review-en-07"
     ],
     "status": "pending",
-    "attempts": 0,
+    "attempts": 1,
     "lease_until": null,
     "outcome": null,
-    "reason": null
+    "reason": "all models failed: opencode-go/deepseek-v4-flash: opencode timed out after 5400s"
   }
 ]
