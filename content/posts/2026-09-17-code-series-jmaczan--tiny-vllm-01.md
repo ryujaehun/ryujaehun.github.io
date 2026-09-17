@@ -1,5 +1,5 @@
 ---
-title: "1. 제품 경계와 실행 진입점"
+title: "1. CUDA 1,500줄로 만든 추론 엔진, 전체 지도"
 date: "2026-09-17"
 draft: false
 slug: "code-series-jmaczan--tiny-vllm-01"
@@ -11,220 +11,211 @@ chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
 ---
-이 글의 모든 경로와 줄 번호는 고정 revision
-`e25bf1994efa90bc98b721ba7c527402f86fbeaf` 의 트리를 가리킨다. 표기는
-`파일:시작-끝` 형식이며, 실행 결과가 아니라 소스 인용이다. 이 시리즈는
-NVIDIA GPU 와 CUDA 툴체인이 없는 환경에서 작성되어 어떤 빌드도 실행도 하지
-않았다. 따라서 아래의 모든 주장은 실행 검증이 아니라 소스 인용으로만
-뒷받침되며, 커널 실행 시간·처리량·메모리 사용량은 측정하지 않는다.
 
-## 이 장의 질문
+[jmaczan/tiny-vllm](https://github.com/jmaczan/tiny-vllm)은 Llama 3.2 1B Instruct 를 GPU 에서 돌리는 추론 엔진을 C++ 와 CUDA 로 처음부터 짠 저장소다. PyTorch 도, Hugging Face 도, 심지어 토크나이저도 쓰지 않는다. safetensors 파일을 직접 열어 가중치를 GPU 로 올리고, 어텐션과 RMSNorm 과 softmax 를 전부 자기 커널로 계산한다.
 
-이 저장소에서 제품으로 빌드되는 것은 정확히 무엇이고, 한 번의 실행은 어디서
-시작하는가. 코드 범위는 여섯 파일이다: `CMakeLists.txt`, `build.sh`, `run.sh`,
-`test.sh`, `full_test.sh`, `src/cuda_to_hip.h`. 최소 근거는 코드 인용 4건,
-테스트 0건, 실행 0건이다. 테스트가 없으므로 이 장의 검증은 소스 인용으로만
-이뤄진다. 첫 편이므로 선행 편에 의존하지 않는다.
+놀라운 건 규모다. 제품 코드가 **파일 두 개, 1,572줄**이다.
 
-이 장은 번역 단위와 이중 백엔드 용어의 소유 편이다. 가중치 적재와 버퍼
-크기·별칭은 2편이, prefill 의 커널 순서와 병렬 리덕션은 3편이, cuBLAS 의
-전치·레이아웃은 4편이, decode 계열 커널 변형은 5편이, `pagedAttentionKernel`
-과 `WARP_FULL_MASK` 의 소비는 6편이, 슬롯·큐의 수명주기는 7편이 맡는다. 이
-장은 그 경계를 그을 뿐 각 주제의 내부로 들어가지 않는다.
-
-## 제품으로 빌드되는 두 번역 단위
-
-`CMakeLists.txt` 는 실행 파일 하나를 정의한다.
-`add_executable(tiny-vllm src/main.cpp src/kernels.cu)` 가 그 대상과 번역
-단위를 규정한다([`CMakeLists.txt:49-52`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L49-L52)). 즉 제품 바이너리 `tiny-vllm` 은
-`src/main.cpp` 와 `src/kernels.cu` 두 파일만 컴파일해 만들어진다.
-
-두 번역 단위의 분담은 소스에서 확인된다. `src/main.cpp` 는 호스트 쪽
-진입점과 오케스트레이션을 담는다: `main`([`src/main.cpp:555-556`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L555-L556)), 가중치 적재
-`loadWeights`([`src/main.cpp:79-147`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L79-L147)), 프롬프트를 흘리는
-`prefill`([`src/main.cpp:150-553`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L150-L553)), 그리고 decode 루프를 포함한 `main`
-본문([`src/main.cpp:555-1044`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L555-L1044))이다. `src/kernels.cu` 는 디바이스 커널을
-담는다. `__global__` 정의가 정확히 11개 있고, prefill 계열 7개
-([`src/kernels.cu:32`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/kernels.cu#L32), `55`, `173`, `224`, `257`, `311`, `331`)와 decode 계열
-4개([`src/kernels.cu:347`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/kernels.cu#L347), `371`, `408`, `461`)로 나뉜다.
-
-헤더는 번역 단위로 세지 않는다. `CMakeLists.txt` 는 include 경로로 `src` 와
-`include` 를 추가한다([`CMakeLists.txt:62-63`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L62-L63)). `src/main.cpp` 는 그 경로를
-통해 세 헤더를 끌어온다: `cuda_to_hip.h`([`src/main.cpp:4`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L4)),
-`json.hpp`([`src/main.cpp:7`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L7)), `kernels.cuh`([`src/main.cpp:8`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L8)). 이 중
-`json.hpp` 는 제품 소스가 아니라 include 경로로 들어오는 제3자 단일
-헤더(`JSON for Modern C++` 3.12.0, MIT, Niels Lohmann)다. 그 버전과 라이선스는
-헤더 자체에 박혀 있고([`include/json.hpp:6-7`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/include/json.hpp#L6-L7), [`include/json.hpp:68-70`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/include/json.hpp#L68-L70)), 제품
-코드에서의 사용은 safetensors 헤더 파싱 한 곳뿐이다: 별칭 선언
-([`src/main.cpp:10`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L10)), JSON 파싱([`src/main.cpp:104`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L104)), 텐서 순회
-([`src/main.cpp:106`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L106)). 이 파일은 분석 대상 소스 바이트의 약 92% 를 차지하지만
-컴파일되는 번역 단위가 아니므로 제품 규모에서 제외한다.
-
-다음 표는 무엇이 제품 번역 단위이고 무엇이 그 의존인지 정리한다.
-
-<!-- visual: product-translation-units supports: [product-translation-units] -->
-| 경로 | 제품에서의 지위 | 근거 |
-| --- | --- | --- |
-| `src/main.cpp` | 제품 번역 단위. 호스트 진입점과 오케스트레이션을 담는다 | [`CMakeLists.txt:49-52`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L49-L52), [`src/main.cpp:555-1044`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L555-L1044) |
-| `src/kernels.cu` | 제품 번역 단위. `__global__` 커널 11개를 정의한다 | [`CMakeLists.txt:49-52`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L49-L52), [`src/kernels.cu:32-523`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/kernels.cu#L32-L523) |
-| `include/json.hpp` | 제품 번역 단위가 아님. `include` 경로로 들어오는 단일 헤더 의존 | [`CMakeLists.txt:62-63`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L62-L63), [`src/main.cpp:7`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L7) |
-
-표가 답하는 필수 주장은 `product-translation-units` 다. 두 요소를 모두 이
-표가 답한다.
-
-- 제품 바이너리는 `src/main.cpp` 와 `src/kernels.cu` 두 번역 단위로만
-  만들어진다([`CMakeLists.txt:49-52`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L49-L52)).
-- `include/json.hpp` 는 제품 코드가 아니라 include 경로로 들어오는 단일
-  헤더 의존이다([`CMakeLists.txt:62-63`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L62-L63), [`src/main.cpp:7`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L7)).
-
-## 같은 소스, 두 백엔드
-
-`CMakeLists.txt` 는 `option(USE_HIP "Build with HIP for AMD GPUs" OFF)` 로
-기본값이 꺼진 옵션을 둔다([`CMakeLists.txt:3`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L3)). 이 옵션 하나가 언어·툴체인·링크
-대상을 통째로 가른다.
-
-- 언어. `USE_HIP` 면 `project(tiny-vllm LANGUAGES CXX HIP)`
-  ([`CMakeLists.txt:13`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L13)), 아니면 `LANGUAGES CXX CUDA` 다([`CMakeLists.txt:15`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L15)).
-- 컴파일러. HIP 이 아니면 `nvcc` 경로를 지정한다([`CMakeLists.txt:5-8`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L5-L8)).
-- CUDA 표준·아키텍처. HIP 이 아닐 때만 `CMAKE_CUDA_STANDARD 17` 과
-  `CMAKE_CUDA_ARCHITECTURES 120` 을 정한다([`CMakeLists.txt:21-25`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L21-L25)).
-- 컴파일 플래그. 백엔드별로 Release/DEBUG 플래그를 따로 둔다
-  ([`CMakeLists.txt:32-38`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L32-L38)).
-- 의존 패키지. HIP 이면 `hipblas`·`hip`([`CMakeLists.txt:42-44`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L42-L44)), 아니면
-  `CUDAToolkit` 이다([`CMakeLists.txt:46`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L46)).
-- 번역 단위 언어. HIP 이면 `main.cpp`·`kernels.cu` 를 HIP 으로 컴파일하고
-  `USE_HIP` 매크로를 정의한다([`CMakeLists.txt:54-60`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L54-L60)).
-- 링크. HIP 이면 `hip::host`·`roc::hipblas`([`CMakeLists.txt:65-69`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L65-L69)), 아니면
-  `CUDA::cublas`·`CUDA::cudart` 다([`CMakeLists.txt:71-74`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L71-L74)).
-
-소스가 두 백엔드를 모두 견디는 이유는 `src/cuda_to_hip.h` 다. 이 헤더는
-`#if defined(USE_HIP) || defined(__HIP_PLATFORM_AMD__)` 한 조건으로
-갈린다([`src/cuda_to_hip.h:6`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/cuda_to_hip.h#L6)). HIP 쪽에서는
-`hip_runtime.h`·`hip_bf16.h`·`hipblas.h` 를 끌어오고
-([`src/cuda_to_hip.h:8-10`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/cuda_to_hip.h#L8-L10)), bfloat16 타입을 `__nv_bfloat16` 에서
-`__hip_bfloat16` 으로 매핑하며([`src/cuda_to_hip.h:13-14`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/cuda_to_hip.h#L13-L14)), `cudaMalloc`·
-`cudaMemcpy` 같은 런타임 이름과 `cublasCreate`·`cublasGemmEx` 같은 BLAS
-이름을 매크로로 바꾼다([`src/cuda_to_hip.h:17-31`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/cuda_to_hip.h#L17-L31), [`src/cuda_to_hip.h:33-46`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/cuda_to_hip.h#L33-L46)).
-CUDA 쪽에서는 표준 헤더를 그대로 쓴다([`src/cuda_to_hip.h:52-59`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/cuda_to_hip.h#L52-L59)).
-[`src/main.cpp:4`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L4) 와 [`src/kernels.cu:1`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/kernels.cu#L1) 이 이 헤더를 include 하는 지점이다.
-`src/kernels.cuh` 도 bfloat16 별칭을 자체적으로 한 번 더 둔다
-([`src/kernels.cuh:3-9`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/kernels.cuh#L3-L9)).
-
-여기서 갈리는 것은 이름뿐 아니라 warp shuffle 마스크의 폭이다. HIP 은 64비트
-마스크를 요구하므로 `WARP_FULL_MASK` 를 `0xffffffffffffffffULL` 로, CUDA
-에서는 32비트 `0xffffffff` 로 정의한다([`src/cuda_to_hip.h:48-50`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/cuda_to_hip.h#L48-L50),
-[`src/cuda_to_hip.h:58-59`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/cuda_to_hip.h#L58-L59)). 이 상수를 실제로 소비하는 곳은
-`pagedAttentionKernel` 내부의 shuffle 다섯 줄이다
-([`src/kernels.cu:489-493`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/kernels.cu#L489-L493)). 그 커널의 동작은 6편이 소유한다.
-
-다음 다이어그램은 같은 소스가 어느 분기를 거쳐 두 백엔드로 가는지 보인다.
-
-<!-- visual: dual-backend-branch supports: [dual-backend-branch] -->
-```mermaid
-flowchart TD
-    SRC["src/main.cpp · src/kernels.cu"] --> OPT{"CMakeLists.txt:3 option USE_HIP"}
-    OPT -->|"OFF (기본값)"| CUDA["LANGUAGES CXX CUDA<br/>CMakeLists.txt:15"]
-    OPT -->|"ON"| HIP["LANGUAGES CXX HIP<br/>CMakeLists.txt:13"]
-    CUDA --> CUDAHDR["cuda_runtime.h · cuda_bf16.h · cublas_v2.h<br/>src/cuda_to_hip.h:52-59"]
-    CUDA --> CUDALINK["CUDA::cublas · CUDA::cudart<br/>CMakeLists.txt:71-74"]
-    HIP --> HIPLANG["LANGUAGE HIP · USE_HIP 정의<br/>CMakeLists.txt:54-60"]
-    HIP --> HIPHDR["hip_runtime.h · hip_bf16.h · hipblas.h<br/>src/cuda_to_hip.h:8-10"]
-    HIP --> HIPLINK["hip::host · roc::hipblas<br/>CMakeLists.txt:65-69"]
-    CUDAHDR --> SAME["동일 소스의 cuda* · cublas* 이름"]
-    HIPHDR --> SAME
+```
+src/main.cpp     1,044줄   호스트 쪽 전부 (가중치 적재, prefill, decode 루프, 배치 관리)
+src/kernels.cu     528줄   GPU 커널 11개
 ```
 
-다이어그램의 필수 주장은 `dual-backend-branch` 다. `USE_HIP` 옵션이 같은
-CUDA 소스를 hipcc/hipBLAS 경로로 돌리고, `src/cuda_to_hip.h` 가 bfloat16 타입
-차이를 흡수하는 shim 이라는 두 요소를 이 그림이 답한다.
+vLLM 본체가 십수만 줄인 걸 생각하면, 이건 "추론 엔진을 이루는 아이디어들의 최소 증명"에 가깝다. 그래서 읽을 가치가 있다. 논문에서 이름만 보던 것들이 여기서는 100줄 안에 들어와 있다.
 
-## 대표 실행 경로
+이 시리즈는 그 1,572줄을 일곱 편에 나눠 읽는다. 이번 편은 지도다. **무엇이 구현되어 있고, 한 번의 추론이 어떤 길을 지나며, 이 코드가 왜 이렇게 생겼는지**를 본다.
 
-저장소가 스스로 규정한 실행 경로는 셸 스크립트 네 개다. `full_test.sh` 는
-하드코딩된 토큰 ID 열을 표준 입력으로 `./test.sh` 에 넘긴다([`full_test.sh:1`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/full_test.sh#L1)).
-그 열은 Llama-3 채팅 템플릿 형태의 토큰 ID 42개다. `test.sh` 는 두 줄로, 먼저
-`./build.sh` 를 부르고 곧바로 `./run.sh` 를 부른다([`test.sh:1-2`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/test.sh#L1-L2)). `build.sh`
-는 `build/` 를 지우고 다시 만들고 `cmake .. -G Ninja && ninja` 로
-빌드한다([`build.sh:1-3`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/build.sh#L1-L3)). `run.sh` 는 `./build/tiny-vllm` 을
-실행한다([`run.sh:1`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/run.sh#L1)).
+> 이 시리즈의 모든 인용은 커밋 [`e25bf19`](https://github.com/jmaczan/tiny-vllm/tree/e25bf1994efa90bc98b721ba7c527402f86fbeaf) 기준이다. 필자에게 NVIDIA GPU 가 없어 **빌드도 실행도 하지 않았다.** 따라서 성능 수치는 이 시리즈에 일절 없고, 모든 설명은 소스를 읽어 얻은 것이다.
 
-따라서 대표 경로는 매번 클린 빌드를 거친다. 산출물은 `build/tiny-vllm` 이고,
-실행은 작업 디렉터리에서 상대 경로로 이뤄진다. `full_test.sh` 가 넘긴 표준
-입력이 실제로 모델에 도달하는지는 아래 "입력은 어디서 오는가"에서 따로 본다.
+## 무엇이 들어 있나
 
-## main 은 어디서 시작하는가
+저장소가 스스로 밝힌 구현 목록은 이렇다. 왼쪽은 원 아이디어의 출처, 오른쪽은 이 저장소에서 그게 사는 자리다.
 
-C++ 진입점은 `main` 이다([`src/main.cpp:555-556`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L555-L556)). 첫 행위는 cuBLAS 핸들
-생성이고 실패하면 `return 1` 한다([`src/main.cpp:557-563`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L557-L563)). 곧바로 `loadWeights`
-로 가중치를 올리고([`src/main.cpp:566-569`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L566-L569)), RoPE 주파수 테이블을 초기화한
-뒤([`src/main.cpp:572`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L572)), paged KV cache 할당자를 세운다([`src/main.cpp:574-581`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L574-L581)).
-이어 요청 큐([`src/main.cpp:583-594`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L583-L594))와 슬롯·배치 상태([`src/main.cpp:597-610`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L597-L610))를
-준비하고, 연산 버퍼를 잡는다([`src/main.cpp:617-693`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L617-L693)). 초기 prefill 루프가 빈
-슬롯을 큐의 프롬프트로 채우고([`src/main.cpp:695-708`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L695-L708)), 그 뒤 `while (true)`
-decode 루프가 돈다([`src/main.cpp:720-1039`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L720-L1039)). 이 루프의 유일한 break 는 큐가
-빈 상태에서 활성 슬롯이 모두 사라졌을 때다([`src/main.cpp:738-746`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L738-L746)). break
-뒤에는 `Ok bye!` 를 출력하고 핸들을 정리한 뒤 `return 0`
-한다([`src/main.cpp:1040-1044`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L1040-L1044)).
+| 아이디어 | 원 출처 | tiny-vllm 에서 | 다룰 편 |
+| --- | --- | --- | --- |
+| Transformer 추론 | [Attention Is All You Need](https://arxiv.org/pdf/1706.03762) | `prefill()` + decode 루프 | 3, 5편 |
+| RMSNorm | [Zhang & Sennrich, 2019](https://arxiv.org/abs/1910.07467) | `rmsNormKernel` | 3편 |
+| RoPE (Llama 3 스케일링) | [시각적 해설 — Fleetwood](https://fleetwood.dev/posts/you-could-have-designed-SOTA-positional-encoding) | `ropeKernel_llama3` | 3편 |
+| GQA | [Ainslie et al., 2023](https://arxiv.org/pdf/2305.13245) | `GQA_Q_TO_K_RATIO = 4` | 6편 |
+| cuBLAS 전치 트릭 | [row/column-major](https://en.wikipedia.org/wiki/Row-_and_column-major_order) | `cublasGemmEx` 호출 규약 | 4편 |
+| 병렬 리덕션 | [NVIDIA 기술 문서 (PDF)](https://developer.download.nvidia.com/assets/cuda/files/reduction.pdf) | `__shfl_down_sync` 트리 | 3, 6편 |
+| online softmax | [CSE599M 강의노트 (PDF)](https://courses.cs.washington.edu/courses/cse599m/23sp/notes/flashattn.pdf) | `pagedAttentionKernel` | 6편 |
+| **PagedAttention** | [Kwon et al., SOSP 2023](https://arxiv.org/pdf/2309.06180) | `block_table` + 16토큰 페이지 | 6편 |
+| continuous batching | — | 슬롯 테이블 + 큐 | 7편 |
 
-호스트 함수는 네 개뿐이다. `checkGPUStatus`([`src/main.cpp:40-62`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L40-L62)),
-`loadWeights`([`src/main.cpp:79-147`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L79-L147)), `prefill`([`src/main.cpp:150-553`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L150-L553)),
-`main`([`src/main.cpp:555-1044`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L555-L1044))이다. 모델 forward 전체와 paged KV cache 관리가
-`prefill` 과 `main` 안에 들어 있으므로, 이 시리즈의 편 분할은 디렉터리가
-아니라 런타임 경로를 따른다. 이 장은 그 경로의 입구까지만 본다.
+마지막 두 줄이 이 저장소의 존재 이유다. PagedAttention 은 vLLM 을 유명하게 만든 아이디어 — **KV cache 를 연속된 큰 덩어리가 아니라 운영체제의 페이지처럼 작은 블록으로 쪼개 관리**해서 메모리 낭비를 없애는 것 — 이고, 여기서는 `BLOCK_SIZE = 16` 토큰짜리 페이지와 `block_table` 인덱스 배열로 100줄 남짓에 구현되어 있다.
 
-## 입력은 어디서 오는가
+## 한 번의 추론이 지나는 길
 
-`main` 의 시그니처는 `int main(int argc, char *argv[])` 다
-([`src/main.cpp:555`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L555)). 그러나 본문 어디에서도 `argc`·`argv` 를 읽지 않고, 표준
-입력(`std::cin`·`scanf`·`getline`)도 읽지 않는다. `full_test.sh` 가 표준
-입력으로 넘긴 토큰 ID 열은 제품에 도달하지 않는다.
+`main()` 부터 따라가 보자. 골격만 남기면 이렇다.
 
-실제 프롬프트는 코드에 박혀 있다. `main` 은 채팅 템플릿 형태의 토큰 ID 벡터
-네 개를 `queue` 에 push 한다([`src/main.cpp:583-594`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L583-L594)). 주석이 각 프롬프트를
-"What is 2+2?"(길이 17), "Name a color."(길이 14), "Say hello."(길이 13),
-"Capital of France?"(길이 14)로 표시한다([`src/main.cpp:583`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L583),
-[`src/main.cpp:587`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L587), [`src/main.cpp:590`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L590), [`src/main.cpp:593`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L593)). 경로도 인자가
-아니라 문자열로 박혀 있다: `loadWeights` 는 작업 디렉터리의 `model.safetensors`
-를 연다([`src/main.cpp:87`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L87)).
+```cpp
+int main(int argc, char *argv[])
+{
+    cublasHandle_t cublas_handle;
+    cublasStatus_t status = cublasCreate(&cublas_handle);   // ① 행렬곱 라이브러리
+    if (status != CUBLAS_STATUS_SUCCESS) { ... return 1; }
 
-## 이 장이 다루지 않는 것
+    Weights weights{};
+    if (loadWeights(weights) != 0) { return 1; }            // ② safetensors → GPU
 
-- 가중치 적재와 GPU 버퍼 크기·별칭: 2편.
-- prefill 의 커널 호출 순서와 병렬 리덕션: 3편.
-- cuBLAS 전치 플래그와 열-행 우선 레이아웃: 4편.
-- decode 계열 커널 변형: 5편.
-- `WARP_FULL_MASK` 의 소비(`pagedAttentionKernel`): 6편. 이 장은
-  `src/cuda_to_hip.h` 가 상수를 정의하는 지점까지만 다룬다.
-- 슬롯·큐의 수명주기와 종료 조건: 7편.
-- 실제 빌드·실행과 수치 검증: 이 장은 수행하지 않는다.
+    init_rope_frequencies(HEAD_DIM, MAX_SEQ_LEN, 500000.0f, // ③ 위치 인코딩 테이블
+                          32.0f, 1.0f, 4.0f, 8192);
 
-## 이 장의 한계
+    __nv_bfloat16 *kv_cache;                                // ④ KV cache 2GB 통째로
+    cudaMalloc(&kv_cache, KV_CACHE_SIZE_BYTES);
+    std::vector<int> free_blocks(NUM_BLOCKS);
+    std::iota(free_blocks.begin(), free_blocks.end(), 0);
+    std::vector<int> block_table(MAX_SEQUENCES * N_LAYERS * MAX_BLOCKS_PER_SEQ, -1);
+```
+— [`src/main.cpp:555-581`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L555-L581)
 
-- 이 시리즈는 NVIDIA GPU 와 CUDA 툴체인이 없는 환경에서 작성되어 어떤
-  빌드·실행도 하지 않았다. `full_test.sh` 경로와 `main` 초기화 순서는 모두
-  소스 인용이며, 실행으로 확인되지 않았다.
-- 이 장의 최소 근거는 코드 인용 4건, 테스트 0건, 실행 0건이다. 커널 실행
-  시간·처리량·메모리 사용량은 측정하지 않으며, 이 장에는 측정값으로 읽힐 수
-  있는 성능 수치가 없다.
-- 셸 스크립트는 본문만 인용했고 실행하지 않았다. `build.sh` 가 요구하는
-  `cmake`·`ninja`·CUDA/HIP 툴체인은 이 환경에 없다.
-- `src/cuda_to_hip.h` 의 HIP 분기는 컴파일되지 않았다. 매크로 매핑이 실제
-  hipBLAS·HIP 런타임에서 성립하는지는 검증 대상이 아니다.
-- `full_test.sh` 의 표준 입력이 `main` 에서 무시된다는 사실은 소스 검색에
-  근거한 정적 주장이다. 표준 입력을 읽는 다른 경로가 있는지는 실행으로
-  확인하지 않았다.
-- `include/json.hpp` 는 분석 대상 소스 바이트의 대부분을 차지하지만 제3자
-  vendored 헤더라 이 시리즈의 분석 범위에서 제외한다.
+④ 가 PagedAttention 의 준비 과정이다. 2GB 를 한 번에 잡아 두고(`cudaMalloc` 은 느리니 딱 한 번만 한다), 그걸 16토큰짜리 블록으로 쪼개 번호를 매기고(`free_blocks` = 0,1,2,…), 어떤 시퀀스의 몇 번째 토큰 묶음이 어느 블록에 있는지를 `block_table` 이 기억한다. 초깃값이 `-1` 인 건 "아직 배정 안 됨" 표시다.
 
-## 출처
+그 다음이 이 코드의 성격을 가장 잘 보여주는 부분이다.
 
-- [`CMakeLists.txt:1-75`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L1-L75) — 언어·백엔드 분기, 번역 단위, include 경로, 링크.
-- [`build.sh:1-3`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/build.sh#L1-L3), [`run.sh:1`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/run.sh#L1), [`test.sh:1-2`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/test.sh#L1-L2), [`full_test.sh:1`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/full_test.sh#L1) — 실행 경로.
-- [`src/cuda_to_hip.h:1-61`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/cuda_to_hip.h#L1-L61) — bfloat16·런타임·BLAS shim 과 `WARP_FULL_MASK`.
-- [`src/kernels.cuh:1-28`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/kernels.cuh#L1-L28) — 커널 선언과 bfloat16 별칭.
-- [`src/main.cpp:1-10`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L1-L10) — include 블록.
-- [`src/main.cpp:40-62`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L40-L62), `79-147`, `150-553`, `555-1044` — 호스트 함수 네 개.
-- [`src/main.cpp:583-594`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L583-L594) — 하드코딩 프롬프트 큐.
-- [`src/main.cpp:720-746`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L720-L746), `1040-1044` — decode 루프의 break 와 정상 종료.
-- [`src/kernels.cu:32-523`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/kernels.cu#L32-L523) — `__global__` 커널 11개.
-- [`include/json.hpp:6-7`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/include/json.hpp#L6-L7), `68-70` — vendored 헤더의 SPDX 라이선스와 버전.
+```cpp
+    // PROMPT 0 (What is 2+2?) - length 17
+    std::queue<std::vector<int>> queue;
+    queue.push({128000, 128006, 882, 128007, 271, 3923, 374, 220, 17, 10, 17, 30,
+                128009, 128006, 78191, 128007, 271});
+
+    // PROMPT 1 (Name a color.) - length 14
+    queue.push({128000, 128006, 882, 128007, 271, 678, 264, 1933, 13, ...});
+```
+— [`src/main.cpp:583-594`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L583-L594)
+
+**프롬프트가 토큰 ID 로 소스에 박혀 있다.** 토크나이저가 없기 때문이다. 저장소가 확인해 주는 건 두 개뿐이지만(`END_OF_TEXT_TOKEN_ID = 128001`, `EOT_ID_TOKEN_ID = 128009`), 나머지도 [Llama 3 채팅 템플릿](https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct)의 특수 토큰이다 — `128000` 이 `<|begin_of_text|>`, `128006`/`128007` 이 역할 헤더의 시작과 끝, `271` 이 줄바꿈 두 개. 사람이 손으로 토큰화해서 적어 넣은 것이다.
+
+이어서 버퍼를 전부 미리 잡고, 빈 슬롯을 큐의 프롬프트로 채운 뒤, 무한 루프가 돈다.
+
+```cpp
+while (true) // exit condition irrelevant for now, since it's an inference
+             // server that's supposed to run foreveeer!!!
+{
+    ...
+    if (num_active_slots == 0) {
+        if (queue.empty()) { break; }
+        continue;
+    }
+```
+— [`src/main.cpp:720-746`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L720-L746)
+
+주석은 "서버니까 영원히 돈다"고 하지만 바로 아래에 `break` 가 있다. 큐가 비고 활성 슬롯이 없으면 끝난다. 즉 이건 **서버가 아니라 4개 프롬프트를 처리하고 종료하는 배치 프로그램**이다. 주석과 코드가 다른 이 지점이, 이 저장소가 "만들어 가는 중"임을 그대로 보여준다.
+
+전체 흐름을 그리면 이렇다.
+
+```mermaid
+flowchart TD
+    A["main()"] --> B["loadWeights()<br/>safetensors → GPU"]
+    B --> C["RoPE 주파수 테이블"]
+    C --> D["KV cache 2GB 할당<br/>16토큰 블록으로 분할"]
+    D --> E["프롬프트 4개를 큐에 push<br/>(토큰 ID 하드코딩)"]
+    E --> F["연산 버퍼 미리 할당"]
+    F --> G{"빈 슬롯 있고<br/>큐에 프롬프트 있나?"}
+    G -->|예| H["prefill()<br/>프롬프트 전체를 한 번에"]
+    H --> G
+    G -->|아니오| I["decode 1스텝<br/>슬롯마다 토큰 1개씩"]
+    I --> J{"활성 슬롯 0 이고<br/>큐도 비었나?"}
+    J -->|아니오| G
+    J -->|예| K["Ok bye! → return 0"]
+```
+
+`prefill` 과 decode 가 나뉘는 이유는 연산의 모양이 다르기 때문이다. prefill 은 프롬프트 17개 토큰을 **한꺼번에** 밀어 넣으니 행렬 × 행렬 곱이고, decode 는 매 스텝 토큰 **하나씩**이니 벡터 × 행렬 곱이다. 같은 수식이지만 GPU 에서의 최적 구현이 달라서, 이 저장소도 커널을 따로 둔다 — `softmaxKernel` 과 `softmaxKernelDecode`, `ropeKernel_llama3` 와 `ropeKernelDecode` 처럼 이름이 짝을 이룬다.
+
+## 인자 51개짜리 함수
+
+이 코드에서 가장 먼저 눈에 띄는 건 `prefill()` 의 시그니처다.
+
+```cpp
+void prefill(std::vector<int> &prompt, std::queue<std::vector<int>> &queue,
+             int &prompt_len, std::vector<bool> &is_slot_free, int slot,
+             int *gpu_input_tokens, nv_bfloat16 *input_embeddings,
+             Weights &weights, nv_bfloat16 *hidden_state, nv_bfloat16 *rms_norms,
+             nv_bfloat16 *&q_proj, nv_bfloat16 *buf_2048_1,
+             cublasHandle_t cublas_handle, float &q_proj_alpha, float &q_proj_beta,
+             /* … 36개 더 … */
+             std::vector<int> &free_blocks, __nv_bfloat16 *kv_cache)
+```
+— [`src/main.cpp:150`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L150)
+
+**매개변수 51개.** 한 줄에 다 있다. 호출부도 당연히 한 줄이다.
+
+정상적인 코드 리뷰라면 반려될 물건이지만, 여기엔 이유가 있다. GPU 메모리 할당(`cudaMalloc`)은 비싸서 매 요청마다 하면 안 된다. 그래서 이 저장소는 **모든 버퍼를 `main()` 초입에서 한 번 잡고, 필요한 곳까지 인자로 들고 다닌다.** 구조체로 묶거나 클래스로 감쌀 수도 있었지만, 저장소가 교재를 겸하는 만큼 "이 시점에 GPU 메모리에 무엇이 살아 있는가"를 독자가 한눈에 보게 하려는 선택으로 읽힌다. `buf_2048_1`, `buf_2048_2` 같은 이름은 그 버퍼를 여러 용도로 **재사용**한다는 뜻이다. 실제로 `prefill` 안에서 같은 버퍼가 먼저 Q 투영 결과였다가
+
+```cpp
+q_proj = buf_2048_1;        // src/main.cpp:177
+...
+attn_scores_v = buf_2048_1; // src/main.cpp:343
+```
+
+나중에는 어텐션 점수 × V 의 결과가 된다. 이름이 붙은 포인터가 여러 개지만 GPU 위의 실체는 하나다. 어떤 버퍼가 어느 단계에서 무엇이 되는지는 2편에서 표로 정리한다.
+
+같은 태도가 상수에도 보인다.
+
+```cpp
+constexpr int N_LAYERS = 16;              // TODO: hardcoded for llama 3.2 1B, just like any other value for now
+constexpr int BATCH_SIZE = 2;             // TODO: not even close to being good, it's just here to have batching
+constexpr int MAX_NEW_TOKENS_GENERATED = 20;  // TODO: parameterize it with program arguments
+constexpr int BLOCK_SIZE = 16;            // TODO: tunable as well, defined the size of a single page in pagedattn
+```
+— [`src/main.cpp:12-35`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L12-L35)
+
+모델 설정이 전부 컴파일 타임 상수고, 저자도 그걸 안다(`TODO` 가 나란히 달려 있다). `BATCH_SIZE = 2` 는 continuous batching 을 "있다"고 말할 수 있는 최소값이다. 이 시리즈는 이걸 결함으로 지적하기보다, **무엇이 본질이고 무엇이 미뤄 둔 것인지 가르는 선**으로 읽는다.
+
+## 빌드: 파일 두 개, 백엔드 둘
+
+빌드 정의는 짧다.
+
+```cmake
+add_executable(tiny-vllm
+    src/main.cpp
+    src/kernels.cu
+)
+```
+— [`CMakeLists.txt:49-52`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/CMakeLists.txt#L49-L52)
+
+이게 전부다. 저장소에서 가장 큰 파일은 `include/json.hpp`(소스 바이트의 92%)지만 이건 [nlohmann/json](https://github.com/nlohmann/json) 을 통째로 넣어 둔 것이고, safetensors 헤더의 JSON 을 파싱하는 데 딱 한 번 쓰인다. 남의 코드이므로 이 시리즈는 읽지 않는다.
+
+한 가지 더. 같은 소스가 NVIDIA 와 AMD 양쪽에서 빌드된다. 방법은 소박하다 — CUDA 이름을 HIP 이름으로 바꿔치는 헤더 하나다.
+
+```cpp
+#if defined(USE_HIP) || defined(__HIP_PLATFORM_AMD__)
+#include <hip/hip_runtime.h>
+// bfloat16 type mappings
+#define __nv_bfloat16 __hip_bfloat16
+// CUDA runtime -> HIP runtime
+#define cudaMalloc              hipMalloc
+#define cudaFree                hipFree
+#define cudaMemcpy              hipMemcpy
+```
+— [`src/cuda_to_hip.h:6-19`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/cuda_to_hip.h#L6-L19)
+
+본문은 CUDA 로 쓰고, AMD 로 갈 때만 매크로가 이름을 갈아 끼운다. 대부분은 이름만 바뀌지만 하나는 의미가 바뀐다. `WARP_FULL_MASK` — NVIDIA 는 warp 가 32스레드라 `0xffffffff`, AMD 는 64스레드라 `0xffffffffffffffffULL` 이다. 이 상수는 `pagedAttentionKernel` 안에서 스레드끼리 값을 주고받는 데 쓰이는데, 그 다섯 줄이 이 엔진에서 가장 밀도 높은 코드다. 6편에서 본다.
+
+## 이 시리즈의 지도
+
+| 편 | 다루는 것 | 핵심 질문 |
+| --- | --- | --- |
+| 1 (이 글) | 전체 구조 | 무엇을 만들었고 어디서 시작하는가 |
+| 2 | 가중치 적재와 버퍼 | safetensors 를 어떻게 읽고 GPU 에 뭘 미리 잡는가 |
+| 3 | prefill 경로 | 토큰이 임베딩부터 다음 토큰까지 어떤 커널을 지나는가 |
+| 4 | cuBLAS 전치 트릭 | 왜 행렬을 뒤집어서 넘기는가 |
+| 5 | decode 경로 | 왜 커널을 따로 만들었는가 |
+| 6 | **PagedAttention** | 블록 테이블로 어텐션을 어떻게 계산하는가 |
+| 7 | continuous batching | 슬롯과 큐로 여러 요청을 어떻게 겹치는가 |
+
+## 더 읽을거리
+
+개념 쪽이 얕다고 느껴진다면, 이 저장소의 [README](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/README.md) 자체가 94KB 짜리 강의 자료다. 부동소수점부터 PagedAttention 까지 차례로 유도한다. 이 시리즈는 그 강의를 반복하지 않고 **완성된 코드를 읽는 쪽**에 선다.
+
+- [PagedAttention 논문 (Kwon et al., SOSP 2023)](https://arxiv.org/pdf/2309.06180) — 6편의 배경
+- [FlashAttention / online softmax 강의노트](https://courses.cs.washington.edu/courses/cse599m/23sp/notes/flashattn.pdf) — 6편의 배경
+- [CUDA 병렬 리덕션 (NVIDIA)](https://developer.download.nvidia.com/assets/cuda/files/reduction.pdf) — 3편과 6편의 `__shfl_down_sync`
+- [RoPE 시각적 해설 (Fleetwood)](https://fleetwood.dev/posts/you-could-have-designed-SOTA-positional-encoding) — 3편의 위치 인코딩
+- [cublasGemmEx 레퍼런스](https://docs.nvidia.com/cuda/cublas/index.html#cublasgemmex) — 4편의 전치 트릭
+- [Llama 3.2 1B Instruct 모델 카드](https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct) — 상수들의 출처
+
+## 이 글의 한계
+
+빌드도 실행도 하지 않았다. 위의 모든 설명은 커밋 `e25bf19` 의 소스를 읽어 얻은 것이고, 실행 시간·메모리 사용량 같은 측정값은 이 시리즈 어디에도 없다. HIP 분기는 컴파일조차 되지 않았으므로 매크로 치환이 실제 AMD 툴체인에서 성립하는지는 확인하지 않았다.
