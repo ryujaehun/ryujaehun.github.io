@@ -11,5 +11,83 @@
       "https://jaehun.me/en/posts/code-series-jmaczan--tiny-vllm-01/"
     ],
     "message_sha256": "c16fa82ad4063dbb75aab4439effea7042fe08d07cb0a6a3eba4a6eb9cb7abc9"
+  },
+  "code-series:jmaczan--tiny-vllm:02:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-17T20:09:31.286860+09:00",
+    "post_commit": "7f87b3a03fee0e080c55e2989d145e3d06ac814e",
+    "urls": [
+      "https://jaehun.me/posts/code-series-jmaczan--tiny-vllm-02/",
+      "https://jaehun.me/en/posts/code-series-jmaczan--tiny-vllm-02/"
+    ],
+    "message_sha256": "f5a412fda4005148295efb928e03f7528b09ba03474f164e862b53737ac850be"
+  },
+  "code-series:jmaczan--tiny-vllm:03:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-17T20:09:31.286860+09:00",
+    "post_commit": "7f87b3a03fee0e080c55e2989d145e3d06ac814e",
+    "urls": [
+      "https://jaehun.me/posts/code-series-jmaczan--tiny-vllm-03/",
+      "https://jaehun.me/en/posts/code-series-jmaczan--tiny-vllm-03/"
+    ],
+    "message_sha256": "ea59506f4c80d27375c68c2930b8a7bdfdeb0a1e6ddf1553ae579f2d3fb5dfa4"
+  },
+  "code-series:jmaczan--tiny-vllm:04:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-17T20:09:31.286860+09:00",
+    "post_commit": "7f87b3a03fee0e080c55e2989d145e3d06ac814e",
+    "urls": [
+      "https://jaehun.me/posts/code-series-jmaczan--tiny-vllm-04/",
+      "https://jaehun.me/en/posts/code-series-jmaczan--tiny-vllm-04/"
+    ],
+    "message_sha256": "b9a82343272498e8178547f60289eec51a7e9f8d58c85d12ec949dffa7e55e3a"
+  },
+  "code-series:jmaczan--tiny-vllm:05:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-17T20:09:31.286860+09:00",
+    "post_commit": "7f87b3a03fee0e080c55e2989d145e3d06ac814e",
+    "urls": [
+      "https://jaehun.me/posts/code-series-jmaczan--tiny-vllm-05/",
+      "https://jaehun.me/en/posts/code-series-jmaczan--tiny-vllm-05/"
+    ],
+    "message_sha256": "2b88a45631d64212dc7320033e2a15c6b2b68b1a62d303fcff3e1d97f16da8fe"
+  },
+  "code-series:jmaczan--tiny-vllm:06:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-17T20:09:31.286860+09:00",
+    "post_commit": "7f87b3a03fee0e080c55e2989d145e3d06ac814e",
+    "urls": [
+      "https://jaehun.me/posts/code-series-jmaczan--tiny-vllm-06/",
+      "https://jaehun.me/en/posts/code-series-jmaczan--tiny-vllm-06/"
+    ],
+    "message_sha256": "a54005365e9cba0d5032d9f1be63ee067819fc068286a74d8c5b49560d5e1059"
+  },
+  "code-series:jmaczan--tiny-vllm:07:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-17T20:09:31.286860+09:00",
+    "post_commit": "7f87b3a03fee0e080c55e2989d145e3d06ac814e",
+    "urls": [
+      "https://jaehun.me/posts/code-series-jmaczan--tiny-vllm-07/",
+      "https://jaehun.me/en/posts/code-series-jmaczan--tiny-vllm-07/"
+    ],
+    "message_sha256": "d31fba4cf46d6f203da30a94a4c00ce939ba813438674f86cc6fb02969346dc1"
   }
 }
