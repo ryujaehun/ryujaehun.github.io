@@ -1,0 +1,215 @@
+title: 'Mini-SGLang: LLM 서빙 프레임워크의 스케줄러 읽기'
+open_questions: []
+chapters:
+- id: process-topology
+  order: 1
+  title: 요청 하나가 지나는 프로세스와 경계
+  questions:
+  - 온라인 서빙 요청 하나는 어떤 프로세스들을 지나며, 각 경계에서 무엇이 오가는가?
+  code_scopes:
+  - python/minisgl/server/launch.py
+  - python/minisgl/server/api_server.py
+  - python/minisgl/tokenizer/server.py
+  - python/minisgl/message/backend.py
+  - python/minisgl/message/tokenizer.py
+  - python/minisgl/message/utils.py
+  - python/minisgl/scheduler/io.py
+  - tests/misc/test_serialize.py
+  depends_on: []
+  required_evidence:
+    code: 5
+    tests: 1
+    runtime: 0
+  visuals:
+  - id: request-process-flow
+    kind: mermaid
+    required_claims:
+    - request-process-flow
+  - id: process-roles
+    kind: table
+    required_claims:
+    - process-roles
+- id: request-state-ledger
+  order: 2
+  title: Req와 Batch, 요청 하나의 상태 장부
+  questions:
+  - 요청 하나의 진행 상태를 어떤 필드로 표현하고, 그 필드를 누가 언제 갱신하는가?
+  code_scopes:
+  - python/minisgl/core.py
+  - python/minisgl/scheduler/utils.py
+  - python/minisgl/scheduler/table.py
+  - python/minisgl/scheduler/decode.py
+  depends_on:
+  - process-topology
+  required_evidence:
+    code: 4
+    tests: 0
+    runtime: 0
+  visuals:
+  - id: req-length-fields
+    kind: table
+    required_claims:
+    - req-length-fields
+  - id: req-lifecycle
+    kind: mermaid
+    required_claims:
+    - req-lifecycle
+- id: prefill-scheduling
+  order: 3
+  title: prefill 배치를 짜는 예산과 chunked prefill
+  questions:
+  - 대기 중인 요청 중 무엇을 이번 prefill 배치에 넣을지 어떤 예산으로 정하고, 예산을 넘는 긴 프롬프트는 어떻게 쪼개는가?
+  code_scopes:
+  - python/minisgl/scheduler/prefill.py
+  - python/minisgl/scheduler/config.py
+  - python/minisgl/scheduler/decode.py
+  - python/minisgl/scheduler/scheduler.py
+  depends_on:
+  - request-state-ledger
+  required_evidence:
+    code: 4
+    tests: 0
+    runtime: 0
+  visuals:
+  - id: prefill-budget-checks
+    kind: table
+    required_claims:
+    - prefill-budget-checks
+  - id: chunked-req-split
+    kind: mermaid
+    required_claims:
+    - chunked-req-split
+- id: page-table-and-allocation
+  order: 4
+  title: 페이지 할당과 raw location을 담는 page table
+  questions:
+  - KV cache 공간을 페이지 단위로 잡으면서 page table에는 왜 페이지 번호가 아니라 토큰 위치를 적는가?
+  code_scopes:
+  - python/minisgl/scheduler/cache.py
+  - python/minisgl/engine/engine.py
+  - python/minisgl/kvcache/mha_pool.py
+  - python/minisgl/kernel/store.py
+  - python/minisgl/core.py
+  - tests/core/test_cache_allocate.py
+  depends_on:
+  - prefill-scheduling
+  required_evidence:
+    code: 5
+    tests: 1
+    runtime: 0
+  visuals:
+  - id: page-table-layout
+    kind: mermaid
+    required_claims:
+    - page-table-layout
+  - id: kv-buffer-shape
+    kind: table
+    required_claims:
+    - kv-buffer-shape
+- id: radix-prefix-cache
+  order: 5
+  title: 접두사를 재사용하는 radix cache와 eviction
+  questions:
+  - 여러 요청이 같은 접두사를 공유할 때 어떤 자료구조로 KV를 재사용하고, 공간이 모자라면 무엇을 먼저 버리는가?
+  code_scopes:
+  - python/minisgl/kvcache/radix_cache.py
+  - python/minisgl/kvcache/base.py
+  - python/minisgl/kvcache/naive_cache.py
+  - python/minisgl/kernel/radix.py
+  - python/minisgl/scheduler/cache.py
+  - tests/core/test_cache_allocate.py
+  depends_on:
+  - page-table-and-allocation
+  required_evidence:
+    code: 5
+    tests: 2
+    runtime: 0
+  visuals:
+  - id: radix-tree-split
+    kind: mermaid
+    required_claims:
+    - radix-tree-split
+  - id: lock-evict-sizes
+    kind: table
+    required_claims:
+    - lock-evict-sizes
+- id: overlap-scheduling
+  order: 6
+  title: 두 스트림으로 CPU 스케줄링을 감추기
+  questions:
+  - 이번 배치를 GPU가 도는 동안 CPU는 무엇을 하며, 다음 배치의 입력 토큰은 어디서 오는가?
+  code_scopes:
+  - python/minisgl/scheduler/scheduler.py
+  - python/minisgl/engine/engine.py
+  - python/minisgl/env.py
+  depends_on:
+  - radix-prefix-cache
+  required_evidence:
+    code: 5
+    tests: 0
+    runtime: 0
+  visuals:
+  - id: overlap-timeline
+    kind: mermaid
+    required_claims:
+    - overlap-timeline
+  - id: normal-vs-overlap
+    kind: table
+    required_claims:
+    - normal-vs-overlap
+- id: attention-metadata-and-cuda-graph
+  order: 7
+  title: 장부가 커널 인자로 바뀌는 지점과 CUDA graph
+  questions:
+  - 스케줄러가 만든 장부는 어떤 텐서로 변환되어 어텐션 커널에 들어가고, CUDA graph 재생은 그 텐서를 어떻게 고정하는가?
+  code_scopes:
+  - python/minisgl/attention/base.py
+  - python/minisgl/attention/fa.py
+  - python/minisgl/attention/__init__.py
+  - python/minisgl/engine/graph.py
+  - python/minisgl/layers/attention.py
+  - pyproject.toml
+  depends_on:
+  - overlap-scheduling
+  required_evidence:
+    code: 5
+    tests: 0
+    runtime: 0
+  visuals:
+  - id: metadata-conversion
+    kind: table
+    required_claims:
+    - metadata-conversion
+  - id: graph-padding
+    kind: mermaid
+    required_claims:
+    - graph-padding
+- id: tensor-parallel-ledger
+  order: 8
+  title: 여러 rank가 같은 장부를 공유하는 법
+  questions:
+  - TP rank들은 각자 스케줄러를 돌리면서 어떻게 같은 결정에 도달하고, 가중치는 어떤 규칙으로 나뉘는가?
+  code_scopes:
+  - python/minisgl/distributed/impl.py
+  - python/minisgl/distributed/info.py
+  - python/minisgl/layers/linear.py
+  - python/minisgl/layers/embedding.py
+  - python/minisgl/layers/base.py
+  - python/minisgl/models/weight.py
+  - python/minisgl/scheduler/io.py
+  - tests/kernel/test_comm.py
+  depends_on:
+  - attention-metadata-and-cuda-graph
+  required_evidence:
+    code: 5
+    tests: 1
+    runtime: 0
+  visuals:
+  - id: tp-shard-map
+    kind: table
+    required_claims:
+    - tp-shard-map
+  - id: rank-sync-protocol
+    kind: mermaid
+    required_claims:
+    - rank-sync-protocol
