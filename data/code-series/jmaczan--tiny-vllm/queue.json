@@ -585,10 +585,16 @@
       "review-en-06",
       "review-en-07"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 1,
     "lease_until": null,
-    "outcome": null,
-    "reason": "all models failed: opencode-go/deepseek-v4-flash: opencode timed out after 5400s"
+    "outcome": {
+      "paths": [
+        "reviews/series.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (manual)"
+    },
+    "reason": "automated stage timed out three times; review performed by Claude, see reviews/series.md"
   }
 ]
