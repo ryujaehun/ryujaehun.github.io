@@ -4,7 +4,7 @@
     "kind": "recon",
     "depends_on": [],
     "status": "pending",
-    "attempts": 1,
+    "attempts": 2,
     "lease_until": null,
     "outcome": null,
     "reason": "all models failed: opencode-go/deepseek-v4-flash: opencode timed out after 1800s"
