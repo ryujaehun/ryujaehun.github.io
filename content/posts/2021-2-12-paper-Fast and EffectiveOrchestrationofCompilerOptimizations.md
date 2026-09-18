@@ -37,8 +37,8 @@ compile-time optimizations 은 전반적으로 프로그램 성능을 향상시�
   - It uses a statistical method to identify the performance effect of the optimization options. The options with positive effects are turned on, while the ones with negative effects are turned off in the final version, in an iterative fashion 
 ## Results
 
-![](/assets/images/fe1.png)
-![](/assets/images/fe2.png)
+![SPEC CPU2000 부동소수점 벤치마크(Pentium IV)에서 BE, IE, OSE, SS, CE 다섯 조합 알고리즘의 정규화된 튜닝 시간을 비교한 막대그래프. CE 가 전반적으로 가장 짧다](/assets/images/fe1.png)
+![같은 벤치마크에서 각 조합 알고리즘이 -O3 대비 낸 성능 향상률 막대그래프. art 에서 약 60%, sixtrack 에서 약 17~19% 로 크고 기하평균은 약 12% 다](/assets/images/fe2.png)
 ## references
 
 https://arxiv.org/abs/1802.04799

@@ -30,7 +30,7 @@ ButtonPress event, serial 40, synthetic NO, window 0x7800001,root 0x1c9, subw 0x
 
 위 처럼나올껀데 버튼의 상태값과 버튼의 값이 중요하다.
 아래는 버튼 값이다. 우리는 버튼클릭만을 이용할 것이기에 0x10만 사용하면 된다.
-![](/assets/images/mx-anywhere-2s.png)
+![Logitech MX Anywhere 2S 를 위에서 본 사진. 휠 좌우 기울임 1·7·6·3, 휠 아래 모드 버튼 2, 왼쪽 옆면 앞뒤 버튼 9·8 로 버튼 번호가 표시되어 있다](/assets/images/mx-anywhere-2s.png)
 
 ~/.xbindkeysrc 을 편집한다. 아래는 글쓴이의 코드이다.
 ```

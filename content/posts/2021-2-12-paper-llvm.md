@@ -43,7 +43,7 @@ Lifelong Program Analysis개념을 도입하여 Front-end를 제외한 부분에
 - Avoids same code for multiple instructions (overloaded opcodes)
 - Exceptions mechanism based on two instructions invoke and unwind
 ## LLVM Compiler Architecture
-![](/assets/images/llvm1.png)
+![Figure 3: LLVM 시스템 구조도. 여러 컴파일러 프론트엔드가 LLVM 비트코드 .o 파일을 내고, 링커의 IPO/IPA 와 Native CodeGen 을 거쳐 실행 파일이 되며, 실행 중 수집한 프로파일이 런타임 최적화기와 오프라인 재최적화기로 흘러간다](/assets/images/llvm1.png)
 __This strategy provides the 5 benefits__
 - Some limitations
   - Language specific optimizations must be performed on frontend
@@ -68,16 +68,16 @@ __This strategy provides the 5 benefits__
   - Idle-time reoptimizer
 
 ## Results:How do high-level features map onto LLVM?
-![](/assets/images/llvm2.png)
+![Table 1: 타입이 증명되는 로드·스토어 비율 표. SPEC 벤치마크 11개에서 평균 74.3%, 179.art 와 181.mcf 는 100%, 254.gap 은 29.8% 다](/assets/images/llvm2.png)
 The table shows that many of these programs (164, 176,
 179, 181, 183, 186, & 256) are surprisingly type-safe, despite
 the fact that the programming language does not enforce
 type-safety.
-![](/assets/images/llvm3.png)
+![Figure 4: LLVM, X86, Sparc 의 실행 파일 크기 막대그래프. 벤치마크 11개 평균에서 LLVM 이 X86 보다 크고 Sparc 과 비슷하다](/assets/images/llvm3.png)
 The figure shows that LLVM code is about the same size
 as native executables for SPARC, and is roughly 25% larger
 on average for x86
-![](/assets/images/llvm4.png)
+![Figure 5: 프로시저 간 최적화 수행 시간 표(초). DGE, DAE, inline, DSA 는 대부분 1초 미만인 반면 GCC 컴파일 자체는 0.69~24.15초가 걸린다](/assets/images/llvm4.png)
 DGE (aggressive10 Dead
 global variable and function Elimination), DAE (an aggressive Dead Argument Elimination), inline (a function integration pass), DSA (Data Structure Analysis), and GCC
 (time to compile the programs with the gcc 3.3 compiler at –
