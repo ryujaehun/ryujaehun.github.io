@@ -78,10 +78,15 @@
   {{- end -}}
 {{- end -}}
 
-{{/* -------------------------------------- 페이지네이션: 몇 쪽인지 밝힌다 */}}
+{{/* -------------------------------------- 페이지네이션: 몇 쪽인지 밝힌다
+
+  쪽 번호를 붙인 뒤에 자르면 번호가 먼저 잘려 나가 목록 페이지들이 다시
+  같은 설명을 갖는다(실측: /en/categories/code-series/ 3 쪽이 그랬다).
+  본문을 먼저 줄이고 그 뒤에 번호를 붙인다. */}}
 {{- if and $out (in (slice "section" "taxonomy" "term") .Kind) -}}
   {{- with .Paginator -}}
     {{- if gt .PageNumber 1 -}}
+      {{- $out = $out | truncate 135 "…" -}}
       {{- if eq $.Language.Lang "ko" -}}
         {{- $out = printf "%s (%d쪽 / 전체 %d쪽)" $out .PageNumber .TotalPages -}}
       {{- else -}}
@@ -95,4 +100,4 @@
   {{- $out = site.Params.description | default (printf "%s - %s" (.Title | plainify) site.Title) -}}
 {{- end -}}
 
-{{- return ($out | plainify | strings.TrimSpace | truncate 155 "…") -}}
+{{- return ($out | plainify | strings.TrimSpace | truncate 170 "…") -}}

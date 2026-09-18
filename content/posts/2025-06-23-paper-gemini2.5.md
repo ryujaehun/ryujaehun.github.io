@@ -5,7 +5,6 @@ categories:
 date: "2025-06-23"
 tags:
 - Gemini 2.5
-- null
 title: 'Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality, Long
   Context, and Next Generation Agentic Capabilities'
 ---
