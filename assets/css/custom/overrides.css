@@ -361,3 +361,18 @@ a.text-primary:focus-visible {
 :root:not(.dark) {
   --chroma-bp: #606871; /* 4.34 -> 5.09 (배경 #f6f3ea 기준) */
 }
+
+/* --------------------------------------------------------------------------
+   10) 헤딩 앵커 아이콘을 CSS 마스크로
+
+   `layouts/_markup/render-heading.html` 설명 참고. 인라인 SVG 를 빼고
+   여기서 그린다. 색은 마스크 위에 `currentColor` 를 깔아 칠하므로
+   테마의 `.heading-anchor` hover 규칙이 그대로 먹는다.
+   -------------------------------------------------------------------------- */
+.heading-anchor {
+  width: 1rem;
+  height: 1rem;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+}

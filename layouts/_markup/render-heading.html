@@ -1,0 +1,19 @@
+{{/*
+  테마 `_markup/render-heading.html` 의 오버라이드.
+
+  원본은 헤딩마다 인라인 SVG 아이콘을 넣는다. 논문 글은 헤딩이 100 개를
+  넘어가는데, 앵커 하나가 요소 5 개(a, svg, g, path, path)를 쓴다.
+  실측한 한 편에서 전체 2,815 요소 중 560 개(19%)와 HTML 42 KB 가
+  여기서 나왔다. Lighthouse 에서 이 글의 주 스레드 작업 1.3 초 중 가장
+  큰 몫이 Style & Layout 647 ms 였다.
+
+  아이콘을 CSS 마스크로 옮겨 앵커를 요소 하나로 줄인다. 색은 마스크
+  위에 `currentColor` 를 깔아 칠하므로 테마의 hover 색 규칙이 그대로
+  먹는다. 마스크를 지원하지 않는 브라우저에서는 아이콘만 보이지 않고
+  링크는 동작한다.
+*/}}
+{{- $tag := printf "h%d" .Level -}}
+{{- printf `<%s id="%s">` $tag .Anchor | safeHTML -}}
+{{- .Text | safeHTML -}}
+<a href="#{{ .Anchor }}" class="heading-anchor" aria-label="{{ T `nav.anchor` }}"></a>
+{{- printf `</%s>` $tag | safeHTML -}}
