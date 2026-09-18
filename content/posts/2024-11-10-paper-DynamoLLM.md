@@ -15,7 +15,7 @@ title: DynamoLLM Designing LLM Inference Clusters for Performance and Energy Eff
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-# Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
 ### **논문 분석: "DynamoLLM: Designing LLM Inference Clusters for Performance and Energy Efficiency"**
 
@@ -163,7 +163,7 @@ DynamoLLM은 **에너지 효율성과 운영 비용 절감**을 동시에 달성
 향후 연구에서는 **다양한 하드웨어 플랫폼에 대한 확장성**을 높이고, **자동화된 프로파일링 및 예측 정확성 개선**을 통해 더 높은 성과를 기대할 수 있을 것입니다. DynamoLLM은 **대규모 AI 모델을 운영하는 기업**이나 **클라우드 서비스 제공자**에게 실질적인 이점을 제공할 수 있는 중요한 시스템으로 자리잡을 가능성이 큽니다.
 
 
-# Q : 에너지-성능 프로파일링 하는 방법에 대해서 예시를 추가해서 아주 자세하게 설명해줘
+## Q : 에너지-성능 프로파일링 하는 방법에 대해서 예시를 추가해서 아주 자세하게 설명해줘
 
  
 

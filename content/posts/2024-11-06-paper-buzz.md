@@ -15,7 +15,7 @@ title: BUZZ Beehive-structured Sparse KV Cache with Segmented Heavy Hitters for 
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-# Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
 ### 논문의 강점 및 독창성
 
@@ -63,7 +63,7 @@ BUZZ는 중간 내용(토큰 101~200)을 작은 섹션으로 나눠서 중요 �
 
 이처럼 BUZZ는 대형 언어 모델의 긴 문맥 처리에서 메모리를 크게 절감하면서도 높은 성능을 유지하는 독창적인 KV 캐싱 기법을 제공합니다.
 
-# Q : 이 방법이 32K이상이 되는 long sequence에서 결과의 질에 대하여 얼마만큼의 영향을 미칠까? 그리고 7B정도 되는 llama2와 비슷한 아키텍처라고 할때 얼마만큼의 memory gain과 throughput gain을 얻을 수 있을까?
+## Q : 이 방법이 32K이상이 되는 long sequence에서 결과의 질에 대하여 얼마만큼의 영향을 미칠까? 그리고 7B정도 되는 llama2와 비슷한 아키텍처라고 할때 얼마만큼의 memory gain과 throughput gain을 얻을 수 있을까?
 
  
 

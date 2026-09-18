@@ -15,7 +15,7 @@ title: RAG4ITOps A Supervised Fine-Tunable and Comprehensive RAG Framework for I
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-# Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
  
 
@@ -51,7 +51,7 @@ RAG4ITOps는 우수한 성능을 보이지만, 다음과 같은 한계점이 있
 
 이 논문은 IT 운영 및 유지보수 분야에서 높은 효율성을 제공하는 RAG 기반 QA 시스템을 제시하였지만, 범용성을 위해 추가적인 연구가 필요합니다.
 
-# Q : Homogeneous In-Batch Negative Sampling (HIS) 및 Auxiliary Hard Negative Sampling (AHNS) 전략 에 대해서 예시를 추가해서 아주 자세하게 설명해줘
+## Q : Homogeneous In-Batch Negative Sampling (HIS) 및 Auxiliary Hard Negative Sampling (AHNS) 전략 에 대해서 예시를 추가해서 아주 자세하게 설명해줘
 
  
 
@@ -98,7 +98,7 @@ HIS와 AHNS의 조합은 임베딩 모델이 **도메인 내 의미적 차이를
 
 이 두 전략은 RAG4ITOps에서 IT 도메인 전용 QA 시스템을 보다 효율적이고 정확하게 구축할 수 있도록 해줍니다.
 
-# Q : 이 논문의 결과가 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
+## Q : 이 논문의 결과가 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
 
 **"RAG4ITOps: A Supervised Fine-Tunable and Comprehensive RAG Framework for IT Operations and Maintenance"** 논문은 IT 운영 및 유지보수 분야의 질의응답(QA) 시스템에서 특출난 성능을 보여줍니다. RAG4ITOps는 기존의 Retrieval-Augmented Generation (RAG) 시스템 대비 특히 **도메인 맞춤형 정보의 정확한 검색 및 응답 생성**에서 뛰어난 성능을 발휘합니다. 이러한 결과가 가능했던 이유와 논문에서 제시한 기법들을 분석하고, 이에 대한 저의 견해를 설명하겠습니다.
 
@@ -132,7 +132,7 @@ RAG4ITOps는 모델 자체를 재훈련할 필요 없이 **벡터 데이터베�
 
 저의 생각으로는 RAG4ITOps의 성과는 **특화된 IT 도메인에 최적화된 정보 검색과 응답 생성 시스템**을 구축한 결과라고 봅니다. 특히 HIS와 AHNS를 결합한 대조 학습은 IT 도메인처럼 복잡하고 다양성이 큰 분야에서 매우 효과적인 접근이라고 판단됩니다. 다만, 이 시스템이 다른 도메인에서도 비슷한 성과를 보이기 위해서는 **다양한 도메인에 맞는 데이터 파이프라인 구축과 맞춤형 학습 전략이 필요**할 것입니다. RAG4ITOps의 개념은 다른 전문 도메인에서도 응용될 수 있는 잠재력이 크지만, 각 도메인에 맞춘 데이터 전처리와 학습 방식이 필수적이라고 생각합니다.
 
-# Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
+## Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
 
  
 

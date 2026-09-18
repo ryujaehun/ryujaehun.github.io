@@ -6,7 +6,7 @@ tags: null
 title: docker 로 gitlab만들기
 ---
 
-# 도커 이미지 다운 및 실행 
+## 도커 이미지 다운 및 실행 
 
 ```
 docker run --detach \
@@ -24,7 +24,7 @@ ip가 있을시에 gitlab.example.com 가 hostname이 된다. http접속을 위�
 
 localhost로 접속하여 설정을 진행한다
 
-# SMTP 설정(GMail기준)
+## SMTP 설정(GMail기준)
 gmail의 smtp 설정을 한후 아래 명령어로 gitlab.rb에 들어간후 수정한다.
 
 ```
@@ -41,40 +41,40 @@ gitlab_rails['smtp_enable_starttls_auto'] = true
 gitlab_rails['smtp_tls'] = false
 gitlab_rails['smtp_openssl_verify_mode'] = 'peer'
 ```
-# HTTPS 적용
+## HTTPS 적용
 
-## letsencrypt 설치
+### letsencrypt 설치
 ```
 sudo apt-get install letsencrypt
 ```
-## docker exec -it gitlab vim /etc/gitlab/gitlab.rb 에서 아래구문 추가
+### docker exec -it gitlab vim /etc/gitlab/gitlab.rb 에서 아래구문 추가
 ```
 nginx['custom_gitlab_server_config'] = "location ^~ /.well-known { root /var/www/letsencrypt; }"
 ```
-## 설정 적용
+### 설정 적용
 ```
 docker exec -it gitlab gitlab-ctl reconfigure
 ```
-## 인증서 발급
+### 인증서 발급
 ```
 sudo letsencrypt certonly -a webroot -w /var/www/letsencrypt -d gitlab.example.com
 ```
-## docker exec -it gitlab vim /etc/gitlab/gitlab.rb 에서 아래구문 추가
+### docker exec -it gitlab vim /etc/gitlab/gitlab.rb 에서 아래구문 추가
 ```
 nginx['redirect_http_to_https']=true
 nginx['ssl_certificate'] = "/etc/letsencrypt/live/#{node['fqdn']}/fullchain.pem"
 nginx['ssl_certificate_key'] = "/etc/letsencrypt/live/#{node['fqdn']}/privkey.pem"
 ```
-## 설정 적용
+### 설정 적용
 ```
 docker exec -it gitlab gitlab-ctl reconfigure
 ```
-## SSL 인증서 자동갱신 설정
+### SSL 인증서 자동갱신 설정
 ```
 crontab -e
 10 5 * * 1 /usr/bin/letsencrypt renew >> /var/log/le-renew.log
 15 5 * * 1 /usr/bin/gitlab-ctl restart nginx
 ```
-# references
+## references
 - https://lovemewithoutall.github.io/it/start-docker/
 - https://blog.lael.be/post/5476

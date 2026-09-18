@@ -14,7 +14,7 @@ title: Meta Large Language Model Compiler Foundation Models of Compiler Optimiza
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-# Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
  
 
@@ -45,7 +45,7 @@ title: Meta Large Language Model Compiler Foundation Models of Compiler Optimiza
 이 논문은 컴파일러 최적화 작업을 위한 새로운 LLM 모델의 가능성을 열어주며, 다양한 컴파일러 최적화 응용 분야에서 활용될 수 있습니다.
 
 
-# Q : 해당 논문은 LLM을 가지고 optimize pass의 phase ordering문제와 flag의 선택의 문제를 해결하여 컴파일 성능을 향상시키는거니?
+## Q : 해당 논문은 LLM을 가지고 optimize pass의 phase ordering문제와 flag의 선택의 문제를 해결하여 컴파일 성능을 향상시키는거니?
 
  
 

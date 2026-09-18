@@ -15,9 +15,9 @@ title: SpecExec Massively Parallel Speculative Decoding for Interactive LLM Infe
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-# Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
-# Answer
+## Answer
 논문 *"SpecExec: Massively Parallel Speculative Decoding for Interactive LLM Inference on Consumer Devices"*의 주요 강점과 독창적인 점, 핵심 알고리즘 예시, 한계점 등을 한국어로 설명드리겠습니다.
 
 ### 강점과 독창적인 지점
@@ -63,9 +63,9 @@ SpecExec의 핵심 알고리즘은 드래프트 모델이 가장 가능성 있�
 SpecExec는 일반 소비자용 장치에서 LLM을 효율적으로 실행할 수 있도록 하는 혁신적인 스펙타클 실행 기반 시스템으로, 기존보다 훨씬 높은 성능을 제공합니다. 그러나 드래프트 모델의 예측 성공률과 메모리 요구량이라는 한계점이 있으며, 이를 해결하기 위한 추가 연구가 필요합니다.
 
 
-# Q : 캐시 트리에 들어있는 candidate token중에서 실제로 검증을 통하여 선택되는 가정을 자세하게 설명해줄 수있니? 그리고 context에 따라 candidate token 중 어떠한것도 유효하지 않은 token이면 어떻게 처리되니?
+## Q : 캐시 트리에 들어있는 candidate token중에서 실제로 검증을 통하여 선택되는 가정을 자세하게 설명해줄 수있니? 그리고 context에 따라 candidate token 중 어떠한것도 유효하지 않은 token이면 어떻게 처리되니?
 
-# Answer : 
+## Answer : 
 
 SpecExec 시스템에서 캐시 트리에 있는 후보 토큰(candidate token)은 두 단계로 처리됩니다. 첫 번째는 **드래프트 단계**에서 고확률 토큰을 미리 예측해 캐시 트리에 저장하는 것이고, 두 번째는 **검증 단계**에서 타겟 모델이 이 토큰들을 검증해 실제로 선택될 토큰을 결정하는 것입니다. 
 
@@ -88,7 +88,7 @@ SpecExec는 드래프트 모델이 예측한 가장 가능성 높은 토큰을 �
 이 방법을 통해 SpecExec는 예측 실패에 대응하고, 다음 예측에 필요한 정보를 확보하여 계속해서 효율적인 추론을 진행할 수 있습니다.
 
 
-# Q : 각 token에 대하여 타겟모델에 대한 추가적인 연산이 필요한데 이러한 오버헤드와 추론을 하는 오버헤드 간 비교를 수치를 예시로 들어 해주겠니?
+## Q : 각 token에 대하여 타겟모델에 대한 추가적인 연산이 필요한데 이러한 오버헤드와 추론을 하는 오버헤드 간 비교를 수치를 예시로 들어 해주겠니?
 
  
 

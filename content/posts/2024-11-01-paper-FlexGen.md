@@ -17,9 +17,9 @@ title: FlexGen High-Throughput Generative Inference of Large Language Models wit
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-# Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
-# Answer : 
+## Answer : 
 
 논문 <strong>"FlexGen: High-Throughput Generative Inference of Large Language Models with a Single GPU"</strong>는 단일 GPU와 같은 제한된 하드웨어 자원으로 대형 언어 모델(LLM)의 추론 성능을 극대화하는 혁신적인 접근법을 제시합니다. 주요 강점과 독창적인 아이디어, 핵심 알고리즘 설명 및 논문의 한계점을 요약해 드리겠습니다.
 
@@ -64,9 +64,9 @@ FlexGen 알고리즘은 LLM 추론 과정에서 **프리필(prefill)** 단계와
 요약하면, **FlexGen**은 제한된 하드웨어 환경에서 LLM 추론을 수행하기 위한 매우 효과적인 시스템으로, 혁신적인 오프로드 및 압축 기법을 통해 단일 GPU 설정에서도 뛰어난 성능을 제공합니다. 하지만 이 시스템은 주로 배치 중심의 대량 작업에 적합하며, 실시간 응답이 중요한 애플리케이션에는 다소 제약이 있습니다.
 
 
-# Q : 블록 스케줄링(block scheduling) 에 대한 자세한 설명을 비롯하여 선형계획법을 어떠한 방식으로 사용하여 메모리 효율을 높이는지를 자세하게 예시를 들어서 설명해줘
+## Q : 블록 스케줄링(block scheduling) 에 대한 자세한 설명을 비롯하여 선형계획법을 어떠한 방식으로 사용하여 메모리 효율을 높이는지를 자세하게 예시를 들어서 설명해줘
 
-# Answer :
+## Answer :
 ### 블록 스케줄링(Block Scheduling)
 
 FlexGen의 <strong>블록 스케줄링(block scheduling)</strong>은 GPU 메모리가 부족한 상황에서 대용량 배치(batch) 처리를 최적화하는 핵심 전략입니다. 블록 스케줄링을 통해 모델의 가중치(weights)를 GPU에 효율적으로 적재하고 재사용할 수 있어, 불필요한 데이터 이동을 줄이고 처리량(throughput)을 극대화합니다.
@@ -130,9 +130,9 @@ $$
 
 **블록 스케줄링과 선형 계획법**을 결합하여 FlexGen은 메모리와 I/O 자원을 효율적으로 배치하고 재사용하여, 대규모 모델을 단일 GPU에서 고속으로 실행할 수 있도록 최적화합니다. 이를 통해 FlexGen은 기존 시스템 대비 훨씬 큰 배치 크기를 지원하며, 처리량을 극대화할 수 있습니다.
 
-# Q : 논문에서 어떠한 기준으로 quantization을 수행하는지 자세하게 설명해줄 수 있니?
+## Q : 논문에서 어떠한 기준으로 quantization을 수행하는지 자세하게 설명해줄 수 있니?
 
-# Answer : 
+## Answer : 
 FlexGen 논문에서 사용하는 **양자화(Quantization)** 방법은 주로 모델의 가중치(weights)와 키-값(KV) 캐시를 4비트로 압축하여 메모리 사용을 줄이고 I/O 비용을 낮추는 데 초점을 맞추고 있습니다. 이 방식은 정확도 저하를 최소화하면서도 메모리 효율을 극대화하기 위해 **그룹 단위 비대칭 양자화(group-wise asymmetric quantization)** 방법을 사용합니다.
 
 ### Quantization 수행 기준 및 과정
@@ -175,7 +175,7 @@ FlexGen 논문에서 사용하는 **양자화(Quantization)** 방법은 주로 �
 
 FlexGen에서 사용한 양자화 방식은 4비트 그룹 단위 비대칭 양자화로, 메모리 사용량을 줄이면서도 정확도 손실을 최소화하도록 설계되었습니다. 이 방식을 통해 FlexGen은 메모리 효율을 극대화하고, 제한된 하드웨어 자원에서 대형 모델의 추론 성능을 효과적으로 최적화합니다.
 
-# Q : zero offload와 같은 논문과 이 논문을 비교해 줄 수 있을까?
+## Q : zero offload와 같은 논문과 이 논문을 비교해 줄 수 있을까?
 
 물론입니다. FlexGen 논문과 **DeepSpeed**, **Zero-Offload**의 주요 기법을 비교하여 각 접근법이 대형 언어 모델(LLM) 추론에서 어떤 차이점과 강점을 가지는지 자세히 설명드리겠습니다. FlexGen, DeepSpeed, Zero-Offload 모두 **대형 모델을 효율적으로 처리**하기 위한 최적화 기법이지만, 각 기술은 목표와 사용 환경에서 차이가 있습니다.
 

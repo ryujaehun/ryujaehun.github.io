@@ -9,7 +9,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 [논문 링크](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)
 
-# Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘
+## Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘
 
 
 
@@ -17,7 +17,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **논문의 주요 내용**
+#### **논문의 주요 내용**
 1. **목적**:
    - 대규모 비지도 학습(Generative Pre-Training, GPT)을 통해 자연어 이해를 향상시키고, 이후 특정 과제에서의 지도 학습(Supervised Fine-Tuning)으로 성능을 극대화하는 프레임워크를 제안했습니다.
    - 모델 아키텍처는 Transformer를 사용하며, 다양한 NLP 과제에서 일관된 성능 향상을 보여줍니다.
@@ -37,7 +37,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **논문의 강점**
+#### **논문의 강점**
 1. **범용성**:
    - 단일 모델이 다수의 NLP 과제를 처리할 수 있도록 설계되어, 과제별 아키텍처 수정 없이도 높은 성능을 발휘.
    
@@ -53,7 +53,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **독창적인 지점**
+#### **독창적인 지점**
 1. **단일 모델 아키텍처**:
    - 다양한 NLP 과제를 하나의 아키텍처로 처리.
    - 기존의 task-specific 모델(예: BERT 이전)과 차별화된 접근법.
@@ -64,9 +64,9 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **핵심 알고리즘 설명 (예제 포함)**
+#### **핵심 알고리즘 설명 (예제 포함)**
 
-#### 1. **사전 학습(Generative Pre-Training)**:
+##### 1. **사전 학습(Generative Pre-Training)**:
    - 입력: 비지도 데이터 \( U = \{u_1, u_2, ..., u_n\} \)
    - 목표:
      \[
@@ -76,7 +76,7 @@ title: Improving Language Understanding by Generative Pre-Training
    - **과정**:
      - 모델은 Transformer의 다중 레이어 구조를 사용하여, 이전 단어들의 문맥에 기반한 다음 단어 확률을 계산.
 
-#### 2. **미세 조정(Supervised Fine-Tuning)**:
+##### 2. **미세 조정(Supervised Fine-Tuning)**:
    - 입력: 과제 데이터셋 \( C = \{(x, y)\} \)
    - 목표:
      \[
@@ -86,7 +86,7 @@ title: Improving Language Understanding by Generative Pre-Training
      - 비지도 학습으로 학습된 파라미터를 초기화 값으로 사용.
      - 새로 추가된 과제별 선형 계층 \( W_y \)로 입력 데이터를 태스크에 맞게 매핑.
 
-#### 예제:
+##### 예제:
    - **텍스트 분류**:
      입력 문장: "This movie is fantastic!"
      - 사전 학습된 모델이 문장의 컨텍스트를 분석해 임베딩 생성.
@@ -94,7 +94,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **한계점**
+#### **한계점**
 1. **데이터 의존성**:
    - 비지도 학습에 사용된 데이터셋의 품질과 다양성에 크게 의존. 예컨대, 특정 도메인의 데이터를 포함하지 않으면 성능이 저하될 수 있음.
 
@@ -111,7 +111,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 이 논문은 NLP 연구에 큰 영향을 미친 선구적인 연구로, GPT 시리즈의 기반을 제공합니다. 그러나 계산 효율성 문제와 데이터 의존성은 여전히 해결해야 할 과제로 남아 있습니다.
 
-# Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘
+## Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘
 
 
 
@@ -119,17 +119,17 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-## 1. **Generative Pre-Training (GPT)**
+### 1. **Generative Pre-Training (GPT)**
 
-### **목적**
+#### **목적**
 비지도 학습 단계에서 언어 모델을 통해 긴 문맥적 정보와 일반적인 언어 구조를 학습하는 것입니다.
 
-### **알고리즘 상세**
-#### 입력
+#### **알고리즘 상세**
+##### 입력
 - 비지도 데이터 \( U = \{u_1, u_2, \dots, u_n\} \)
 - 각 \( u_i \)는 단어 또는 토큰을 나타냄.
 
-#### 최적화 목표
+##### 최적화 목표
 - **언어 모델링**을 위한 조건부 확률을 최대화:
   \[
   \mathcal{L}_1(U) = \sum_{i} \log P(u_i | u_{i-k}, \dots, u_{i-1}; \Theta)
@@ -138,12 +138,12 @@ title: Improving Language Understanding by Generative Pre-Training
   - \( k \): 문맥 창(window)의 크기 (이전 \( k \)개의 단어를 고려).
   - \( \Theta \): 학습해야 할 모델 파라미터.
 
-#### 모델 구조
+##### 모델 구조
 - **Transformer Decoder**:
   - 입력된 토큰 시퀀스에서 다중 헤드 self-attention을 통해 문맥적 의존성을 학습.
   - 각 토큰의 임베딩과 위치 정보를 활용해 다음 토큰의 확률 분포를 예측.
 
-#### 학습 과정
+##### 학습 과정
 1. 입력 문장을 토큰화:
    - 예: 문장 "The cat sat on the mat" → \([u_1, u_2, \dots, u_n]\)로 변환.
    - 토큰화 결과: \( u_1 = \text{"The"}, u_2 = \text{"cat"}, \dots \).
@@ -160,29 +160,29 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-## 2. **Supervised Fine-Tuning**
+### 2. **Supervised Fine-Tuning**
 
-### **목적**
+#### **목적**
 사전 학습된 모델을 특정 과제에 맞게 조정하여 높은 성능을 달성.
 
-### **알고리즘 상세**
-#### 입력
+#### **알고리즘 상세**
+##### 입력
 - 지도 데이터셋 \( C = \{(x, y)\} \)
   - \( x \): 입력 텍스트.
   - \( y \): 정답 레이블.
 
-#### 최적화 목표
+##### 최적화 목표
 - 각 입력 \( x \)에 대해 정답 레이블 \( y \)의 조건부 확률을 최대화:
   \[
   \mathcal{L}_2(C) = \sum_{(x, y)} \log P(y | x; \Theta)
   \]
   - \( \Theta \): 사전 학습된 모델의 파라미터를 초기값으로 사용.
 
-#### 입력 변환
+##### 입력 변환
 - 입력 데이터를 Transformer가 처리할 수 있도록 변환.
 - 예: 질문-답변 과제의 경우, 입력 \( [문맥; 질문; 답변 후보] \) 형식으로 변환.
 
-#### 모델 구조
+##### 모델 구조
 1. 사전 학습된 Transformer를 초기화로 사용.
 2. 새로운 태스크-specific 출력 레이어 추가:
    \[
@@ -193,14 +193,14 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **예시: 질문-답변 과제**
+#### **예시: 질문-답변 과제**
 
-#### 데이터
+##### 데이터
 - 문맥(Context): "The cat is on the mat."
 - 질문(Question): "Where is the cat?"
 - 답변 후보(Answers): \(["on the mat", "under the table"]\)
 
-#### 과정
+##### 과정
 1. 입력 변환:
    - \( [\text{"The cat is on the mat"}; \text{"Where is the cat?"}; \text{"on the mat"}] \)
    - \( [\text{"The cat is on the mat"}; \text{"Where is the cat?"}; \text{"under the table"}] \)
@@ -214,7 +214,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **정리**
+#### **정리**
 1. **사전 학습 단계 (GPT)**:
    - 대규모 비지도 데이터를 활용하여 일반적인 언어 구조를 학습.
    - Transformer의 self-attention으로 긴 문맥 정보를 학습.
@@ -231,7 +231,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 이 알고리즘은 다양한 NLP 과제에서 강력한 성능을 발휘하며, Transformer의 self-attention과 언어 모델링을 결합하여 긴 문맥을 다룰 수 있다는 점이 핵심입니다.
 
-# Q : 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될지 예시를 들어서 아주 자세하게 설명해줘
+## Q : 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될지 예시를 들어서 아주 자세하게 설명해줘
 
 
 
@@ -239,7 +239,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **필요한 데이터셋**
+#### **필요한 데이터셋**
 1. **비지도 학습용 데이터**:
    - 사전 학습(Pre-training) 단계에서 사용됩니다.
    - 요구 조건:
@@ -268,9 +268,9 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **학습 단계**
+#### **학습 단계**
 
-#### 1. **비지도 학습 (Pre-training)**
+##### 1. **비지도 학습 (Pre-training)**
 
 **목표**: 언어 모델이 긴 문맥적 의존성을 학습하도록 사전 학습.
 
@@ -307,7 +307,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-#### 2. **지도 학습 (Fine-tuning)**
+##### 2. **지도 학습 (Fine-tuning)**
 
 **목표**: 특정 태스크(예: 질문-답변, 텍스트 분류)에 대해 모델을 미세 조정.
 
@@ -344,7 +344,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **최종 학습 과정**
+#### **최종 학습 과정**
 
 1. **데이터 준비**:
    - BooksCorpus 데이터로 비지도 학습.
@@ -360,7 +360,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **정리**
+#### **정리**
 - **필요 데이터**:
   - 대규모 연속 텍스트(BooksCorpus).
   - 레이블링된 데이터셋(GLUE 벤치마크).
@@ -372,17 +372,17 @@ title: Improving Language Understanding by Generative Pre-Training
 
 이 과정은 모델이 일반적인 언어 구조를 학습한 후 특정 태스크에 적합하도록 전이학습을 수행합니다.
 
-# Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
+## Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
 
 
 
-### **논문 결과 및 특징 분석**
+#### **논문 결과 및 특징 분석**
 
 이 논문은 GPT(Generative Pre-Training)를 활용해 NLP의 다양한 과제에서 최첨단(SOTA) 성능을 달성했습니다. 주요 결과와 다른 방법론과의 비교, 이러한 성과를 도출한 이유, 그리고 추가적인 해석은 아래와 같습니다.
 
 ---
 
-### **논문 결과 요약**
+#### **논문 결과 요약**
 1. **성능 비교**:
    - 다양한 데이터셋에서 기존 방법론 대비 뛰어난 성과를 보임.
    - 대표적인 결과:
@@ -401,7 +401,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **특출난 점**
+#### **특출난 점**
 1. **범용성**:
    - 단일 모델 아키텍처(Transformer)를 기반으로 다양한 과제를 처리.
    - 이전의 task-specific 모델(BiLSTM, CNN 기반)과 달리, 구조 변경 없이 거의 모든 NLP 과제에서 적용 가능.
@@ -416,24 +416,24 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **결과를 도출하게 한 핵심 방법**
-#### 1. **Generative Pre-Training (GPT)**
+#### **결과를 도출하게 한 핵심 방법**
+##### 1. **Generative Pre-Training (GPT)**
    - 대규모 비지도 학습 데이터로 사전 학습하여 언어적 구조와 일반적인 지식을 모델에 내재화.
    - Transformer 아키텍처를 활용해 긴 문맥 처리 능력을 획득.
    - 단순히 단어 수준이 아닌 문맥적이고 문장 단위의 언어 표현 학습.
 
-#### 2. **Fine-Tuning**:
+##### 2. **Fine-Tuning**:
    - 지도 학습을 통해 각 과제에 특화된 학습 진행.
    - Task-specific input transformation으로 입력 데이터를 통합적인 형태로 변환.
    - Auxiliary loss(언어 모델링 손실)와 태스크 손실을 결합해 일반화와 빠른 수렴 유도.
 
-#### 3. **Transformer 아키텍처**:
+##### 3. **Transformer 아키텍처**:
    - 기존 LSTM, GRU 기반 접근법 대비 self-attention 메커니즘으로 더 깊은 문맥적 이해를 가능하게 함.
    - 병렬 연산이 가능해 대규모 데이터에서도 학습이 효율적.
 
 ---
 
-### **논문에서 제시하는 이유**
+#### **논문에서 제시하는 이유**
 1. **사전 학습의 효과**:
    - 비지도 학습 단계에서 대규모 데이터로 모델이 기본적인 언어 지식을 학습하기 때문에, 특정 과제에서 성능 향상이 큼.
    - 학습된 일반적 표현은 다양한 NLP 과제에 쉽게 전이 가능.
@@ -448,7 +448,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **내 생각 및 추가 해석**
+#### **내 생각 및 추가 해석**
 1. **Transformer와 GPT의 조합이 강력한 이유**:
    - Transformer의 self-attention은 문맥적 의존성과 구조적 패턴을 매우 효과적으로 학습.
    - GPT는 이 구조를 활용해 비지도 학습 단계에서 텍스트의 일반적 특징을 학습함으로써, Fine-tuning에서 최소한의 조정만으로도 뛰어난 성과를 냄.
@@ -467,20 +467,20 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **결론**
+#### **결론**
 이 논문은 GPT의 사전 학습 + 미세 조정 접근법으로 범용성과 성능 두 가지를 모두 잡았습니다. 주요한 성과는 Transformer의 강력한 문맥 처리 능력, 사전 학습의 일반화된 지식 학습, 그리고 태스크에 구애받지 않는 입력 변환 방식 덕분입니다. 이 접근법은 이후 BERT와 GPT 시리즈의 발전으로 이어지는 핵심적인 기여를 했습니다.
 
 
-# Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘
+## Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘
 
 
 
-### **논문의 입력 데이터와 추론 과정**
+#### **논문의 입력 데이터와 추론 과정**
 
-#### **1. 입력 데이터**
+##### **1. 입력 데이터**
 논문에서는 <strong>비지도 사전 학습(Pre-training)</strong>과 <strong>지도 미세 조정(Fine-tuning)</strong>에서 입력 데이터를 다르게 처리합니다.
 
-##### **a. 비지도 학습 단계**:
+###### **a. 비지도 학습 단계**:
 - 입력 데이터는 연속된 텍스트 문서입니다.
 - 예를 들어, 문장:
   ```
@@ -496,7 +496,7 @@ title: Improving Language Understanding by Generative Pre-Training
   - 입력: ["The", "cat", "sat", "on"]
   - 출력: ["the"]
 
-##### **b. 지도 학습 단계**:
+###### **b. 지도 학습 단계**:
 - 태스크별로 구조화된 데이터를 사용합니다.
   - 예: 질문-답변 과제
     - 문맥(Context): "The cat sat on the mat."
@@ -513,9 +513,9 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-#### **2. 추론 과정**
+##### **2. 추론 과정**
 
-##### **a. 비지도 학습 단계**:
+###### **a. 비지도 학습 단계**:
 1. 모델은 토큰 시퀀스를 입력으로 받아, 다음 토큰의 확률 분포를 계산합니다.
 2. Self-Attention 메커니즘을 통해 모든 이전 토큰 간의 관계를 계산하고, 다음 토큰의 확률을 생성.
 3. 예:
@@ -526,7 +526,7 @@ title: Improving Language Understanding by Generative Pre-Training
      {"the": 0.8, "a": 0.1, "mat": 0.1}
      ```
 
-##### **b. 지도 학습 단계**:
+###### **b. 지도 학습 단계**:
 1. 모델은 미세 조정된 가중치를 활용하여 특정 과제에서 레이블 예측.
 2. 예: 질문-답변 과제
    - 입력: ["The cat sat on the mat.", "Where is the cat?", "on the mat"]
@@ -538,9 +538,9 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **모델 아키텍처의 구성**
+#### **모델 아키텍처의 구성**
 
-#### **1. Transformer 기반 GPT**
+##### **1. Transformer 기반 GPT**
 - **구성**:
   - **입력 임베딩**: 토큰과 위치 정보를 합쳐 임베딩으로 변환.
   - **Self-Attention 레이어**:
@@ -557,7 +557,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-#### **2. 모델 연산**
+##### **2. 모델 연산**
 - **Self-Attention 연산**:
   - 계산 복잡도:
     \[
@@ -576,9 +576,9 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **모델의 메모리 및 컴퓨팅 요구량**
+#### **모델의 메모리 및 컴퓨팅 요구량**
 
-#### **1. 메모리 요구량**
+##### **1. 메모리 요구량**
 - **입력 시퀀스 길이와 메모리**:
   - Self-Attention 연산은 입력 길이 \( n \)에 따라 \( O(n^2) \) 메모리를 소모.
   - 예를 들어, 시퀀스 길이 \( n=512 \), 임베딩 차원 \( d=768 \)일 때:
@@ -589,7 +589,7 @@ title: Improving Language Understanding by Generative Pre-Training
   - GPT 모델(12 레이어, 768 차원)의 총 파라미터 수: 약 110M.
   - 대부분의 파라미터는 임베딩 및 가중치 행렬에 사용됨.
 
-#### **2. 컴퓨팅 요구량**
+##### **2. 컴퓨팅 요구량**
 - **FLOPs (부동소수점 연산 수)**:
   - Self-Attention 연산: \( O(n^2 \cdot d) \)
   - Feed-Forward 연산: \( O(n \cdot d^2) \)
@@ -598,7 +598,7 @@ title: Improving Language Understanding by Generative Pre-Training
       - Self-Attention: 약 \( 10^9 \) FLOPs.
       - Feed-Forward: 약 \( 2 \times 10^9 \) FLOPs.
 
-#### **3. 계산 비용 최적화**
+##### **3. 계산 비용 최적화**
 - **메모리 최적화**:
   - Gradient checkpointing: 메모리를 절약하기 위해 중간 계산 결과를 저장하지 않고 재계산.
 - **컴퓨팅 최적화**:
@@ -606,7 +606,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **결론**
+#### **결론**
 1. **입력 데이터와 추론 과정**:
    - 입력 데이터는 간단한 텍스트 형식이며, 태스크에 따라 특정 구조로 변환.
    - 추론은 Self-Attention과 Feed-Forward 네트워크를 통해 다음 토큰 또는 특정 태스크의 출력을 생성.
@@ -619,7 +619,7 @@ title: Improving Language Understanding by Generative Pre-Training
    - 메모리 사용량이 높고 계산 비용이 크지만, 범용성과 높은 성능으로 이를 상쇄.
    - Transformer 기반 구조는 긴 문맥을 처리하는 데 매우 적합하며, 다양한 NLP 태스크에서 우수한 성과를 보임.
 
-# Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
+## Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
 
 
 
@@ -627,11 +627,11 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **1. 계산 비용과 메모리 요구량 문제**
-#### **한계**
+#### **1. 계산 비용과 메모리 요구량 문제**
+##### **한계**
 - Transformer의 Self-Attention은 \(O(n^2)\)의 계산 복잡도와 메모리 요구량을 가지며, 긴 입력 시퀀스를 처리할 때 효율성이 떨어짐.
 
-#### **극복을 위한 연구 흐름**
+##### **극복을 위한 연구 흐름**
 1. **효율적인 Attention 메커니즘 개발**:
    - **Sparse Attention**:
      - 입력 토큰의 일부만 집중적으로 처리하여 계산 비용을 줄임.
@@ -654,12 +654,12 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **2. 데이터 의존성 문제**
-#### **한계**
+#### **2. 데이터 의존성 문제**
+##### **한계**
 - 사전 학습 단계에서 대규모 데이터셋에 대한 의존성이 높음.
 - 특정 도메인 데이터가 부족할 경우 성능이 저하될 가능성.
 
-#### **극복을 위한 연구 흐름**
+##### **극복을 위한 연구 흐름**
 1. **Self-Supervised Learning 발전**:
    - 더 많은 비지도 학습 목표(objective)를 도입하여 데이터 효율성 향상.
    - 예:
@@ -678,11 +678,11 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **3. 작은 데이터셋에서의 성능 제한**
-#### **한계**
+#### **3. 작은 데이터셋에서의 성능 제한**
+##### **한계**
 - RTE 등 소규모 데이터셋에서 GPT의 성능이 기존 모델보다 낮은 경우가 있음.
 
-#### **극복을 위한 연구 흐름**
+##### **극복을 위한 연구 흐름**
 1. **Multi-task Learning**:
    - 여러 태스크를 동시에 학습하여 작은 데이터셋에서의 일반화 능력을 향상.
    - 예: **MT-DNN** (Liu et al., 2019): Multi-task 학습을 통해 성능 향상.
@@ -699,11 +699,11 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **4. 긴 문맥 처리 문제**
-#### **한계**
+#### **4. 긴 문맥 처리 문제**
+##### **한계**
 - 긴 문서를 처리할 때 Self-Attention의 계산량과 메모리 요구량이 급증.
 
-#### **극복을 위한 연구 흐름**
+##### **극복을 위한 연구 흐름**
 1. **Hierarchical Models**:
    - 문장을 클러스터로 묶어 문단 수준의 정보를 단계적으로 처리.
    - 예: **Hierarchical Attention Networks (HAN)**.
@@ -715,11 +715,11 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **5. 사전 학습 목적 및 입력 구조화**
-#### **한계**
+#### **5. 사전 학습 목적 및 입력 구조화**
+##### **한계**
 - 단순한 언어 모델링(다음 단어 예측)은 모든 NLP 과제에 적합하지 않을 수 있음.
 
-#### **극복을 위한 연구 흐름**
+##### **극복을 위한 연구 흐름**
 1. **Task-specific Pre-training Objectives**:
    - 예:
      - **Span-based Objectives**: 문장의 일부를 예측.
@@ -731,7 +731,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 ---
 
-### **결론**
+#### **결론**
 - **한계**:
   - 높은 계산 및 메모리 비용.
   - 데이터 의존성.

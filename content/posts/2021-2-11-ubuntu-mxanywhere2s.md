@@ -11,7 +11,7 @@ Logitech 마우스는 options 라는 소프트웨어를 기본적으로 제공�
 
 아래 방법을 사용하여 xautomation xbindkeys 을 설치 후 마우스의 키세팅을 알아본다.(버튼은 글쓴이가 다 알아놨으니 걱정하지 않아도 된다.)
 
-## 설치
+### 설치
 
 1. 배시창을 연다
 1. apt -y install xautomation xbindkeys 의존성을 포함하여 설치를 한다.
@@ -52,5 +52,5 @@ ButtonPress event, serial 40, synthetic NO, window 0x7800001,root 0x1c9, subw 0x
 
 시작프로그램에 /usr/bin/xbindkeys를 추가한다.
 
-# Reference
+## Reference
 - https://blog.onee3.org/2016/09/how-to-get-logitech-mx-anywhere-2-to-work-with-ubuntu/

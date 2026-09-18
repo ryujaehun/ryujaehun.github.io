@@ -6,14 +6,14 @@ tags: null
 title: virtualenv로 파이썬 환경 격리하기
 ---
 
-# About
+## About
 가끔 파이썬 환경을 격리 할 필요가 있다. 이런 상황에서 virtualenv는 큰 도움이 된다.
 
-# Install
+## Install
 ```
 sudo pip install virtualenv
 ```
-# Usage
+## Usage
 
 __가상환경 생성__
 ```

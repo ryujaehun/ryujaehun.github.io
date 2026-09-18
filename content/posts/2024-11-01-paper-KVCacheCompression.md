@@ -16,9 +16,9 @@ title: KV Cache Compression, But What Must We Give in Return? A Comprehensive Be
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-# Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
-# Answer
+## Answer
 
 ### 강점과 독창적인 지점
 
@@ -48,12 +48,12 @@ title: KV Cache Compression, But What Must We Give in Return? A Comprehensive Be
 
 따라서 이 논문은 장문 처리 능력을 종합적으로 평가하면서도, 특정 상황에서는 한계가 있을 수 있다는 점을 인지해야 합니다.
 
-# Q :위 논문을 바탕으로 다음질문을 대답해줘
+## Q :위 논문을 바탕으로 다음질문을 대답해줘
 1. 이 논문에서 어떻게 다양한 장문 처리 방법들을 여러 가지 기준에서 평가하고 있니?
 2. kv cache를 어떻게 압축하고 있는지 자세한 방법을 설명해 줘
 3. kv cache 압축이 프리필의 성능에 영향을 주는 이유와 얼마만큼의 정확도에 영향을 주고 얼마만큼의 compute/memory관점에서 이득을 주는지 계산해 줘
 
-# Answer: 
+## Answer: 
 
 논문 내용을 기반으로 각 질문에 답변하겠습니다.
 

@@ -5,11 +5,11 @@ date: "2021-02-12"
 tags: null
 title: LLVM (clang) build and install (ubuntu 18.04)
 ---
-# clone llvm repo
+## clone llvm repo
 ```
 git clone -b llvmorg-10.0.0 https://github.com/llvm/llvm-project.git llvm10
 ```
-# configure
+## configure
 Ninja를 사용하면 컴파일 시간을 많이 단축할 수 있다.
 ```
 cd llvm9
