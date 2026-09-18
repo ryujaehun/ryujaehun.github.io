@@ -6,6 +6,9 @@ slug: "code-series-jmaczan--tiny-vllm-07"
 categories:
   - code-series
 series_id: "jmaczan--tiny-vllm"
+series:
+  - "jmaczan--tiny-vllm"
+series_order: 7
 chapter_order: 7
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"

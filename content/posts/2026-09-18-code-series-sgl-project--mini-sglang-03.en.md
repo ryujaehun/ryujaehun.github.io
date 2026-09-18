@@ -6,6 +6,9 @@ slug: "code-series-sgl-project--mini-sglang-03"
 categories:
   - code-series
 series_id: "sgl-project--mini-sglang"
+series:
+  - "sgl-project--mini-sglang"
+series_order: 3
 chapter_order: 3
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"

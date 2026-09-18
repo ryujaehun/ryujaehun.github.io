@@ -63,11 +63,19 @@
   {{- $term := .Title | plainify -}}
   {{- $ko := eq .Language.Lang "ko" -}}
   {{- if eq .Kind "term" -}}
-    {{- $kind := cond (eq .Data.Singular "tag") (cond $ko "태그" "tag") (cond $ko "카테고리" "category") -}}
-    {{- if $ko -}}
-      {{- $out = printf "%s %s가 붙은 글 %d편. %s 관련 정리와 논문 리뷰를 모았습니다." $term $kind $n $term -}}
+    {{- if eq .Data.Singular "series" -}}
+      {{- if $ko -}}
+        {{- $out = printf "%s — %d편으로 이어지는 연재입니다." $term $n -}}
+      {{- else -}}
+        {{- $out = printf "%s — a series in %d parts." $term $n -}}
+      {{- end -}}
     {{- else -}}
-      {{- $out = printf "%d posts filed under the %s %s. Notes and paper reviews about %s." $n $term $kind $term -}}
+      {{- $kind := cond (eq .Data.Singular "tag") (cond $ko "태그" "tag") (cond $ko "카테고리" "category") -}}
+      {{- if $ko -}}
+        {{- $out = printf "%s %s가 붙은 글 %d편. %s 관련 정리와 논문 리뷰를 모았습니다." $term $kind $n $term -}}
+      {{- else -}}
+        {{- $out = printf "%d posts filed under the %s %s. Notes and paper reviews about %s." $n $term $kind $term -}}
+      {{- end -}}
     {{- end -}}
   {{- else if eq .Kind "taxonomy" -}}
     {{- if $ko -}}
