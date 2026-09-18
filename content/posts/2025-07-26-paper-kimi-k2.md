@@ -340,7 +340,7 @@ flowchart LR
 
 $$
 \small
-L_{\text{RL}}(θ)=\mathbb{E}_{x\sim\mathcal{D}}\Bigl[\frac1K\sum_{i=1}^{K}\bigl(r(x,y_i)-\bar r(x)-τ\log\tfrac{π_θ(y_i|x)}{π_{\text{old}}(y_i|x)}\bigr)^2\Bigr]:contentReference[oaicite:23]{index=23}
+L_{\text{RL}}(θ)=\mathbb{E}_{x\sim\mathcal{D}}\Bigl[\frac1K\sum_{i=1}^{K}\bigl(r(x,y_i)-\bar r(x)-τ\log\tfrac{π_θ(y_i|x)}{π_{\text{old}}(y_i|x)}\bigr)^2\Bigr]
 $$
 
 4. **Critic 재훈련** : verifiable signal 로 지속 교정 → *폐루프* 정렬

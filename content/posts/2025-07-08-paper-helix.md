@@ -763,11 +763,11 @@ Llama 3 70B와 같은 모델은 일반적으로 8개의 KV 헤드(Key/Value Head
 2. 추론 처리량은 동일 지연 예산에서 **약 4 × 증가**하며, KV 캐시 트래픽이 병목인 환경일수록 Helix 효과가 커진다.
 3. 학습은 여전히 거대-스케일(≈ 7 × 10⁴ PF-day) 과제를 요구하므로, **FP8·ZeRO-3·NVLink NVSwitch** 등 병렬화 최적화가 필수이다.
 
-[1]: https://llm-tracker.info/DeepSeek-V3-Architecture?utm_source=chatgpt.com "DeepSeek-V3 Architecture - llm-tracker"
-[2]: https://github.com/huggingface/blog/issues/2345?utm_source=chatgpt.com "Llama3.1 inference memory requirements · Issue #2345 - GitHub"
-[3]: https://www.perplexity.ai/hub/blog/turbocharging-llama-2-70b-with-nvidia-h100?utm_source=chatgpt.com "Turbocharging Llama 2 70B with NVIDIA H100 - Perplexity"
-[4]: https://catalog.ngc.nvidia.com/orgs/nvidia/teams/dgxc-benchmarking/resources/llama31-70b-dgxc-benchmarking-a?utm_source=chatgpt.com "Llama 3.1 70B 24.11.1 (DGXC Benchmarking) - NVIDIA NGC"
-[5]: https://www.factorialfunds.com/blog/thoughts-on-llama-3?utm_source=chatgpt.com "Thoughts on Llama 3 - Factorial Funds"
+[1]: https://llm-tracker.info/DeepSeek-V3-Architecture "DeepSeek-V3 Architecture - llm-tracker"
+[2]: https://github.com/huggingface/blog/issues/2345 "Llama3.1 inference memory requirements · Issue #2345 - GitHub"
+[3]: https://www.perplexity.ai/hub/blog/turbocharging-llama-2-70b-with-nvidia-h100 "Turbocharging Llama 2 70B with NVIDIA H100 - Perplexity"
+[4]: https://catalog.ngc.nvidia.com/orgs/nvidia/teams/dgxc-benchmarking/resources/llama31-70b-dgxc-benchmarking-a "Llama 3.1 70B 24.11.1 (DGXC Benchmarking) - NVIDIA NGC"
+[5]: https://www.factorialfunds.com/blog/thoughts-on-llama-3 "Thoughts on Llama 3 - Factorial Funds"
 
 
 ## 프롬프트모델 평가 및 지표
