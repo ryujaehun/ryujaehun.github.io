@@ -1,0 +1,55 @@
+{{/*
+  홈에서 주제 허브로 가는 길.
+
+  왜: 홈은 이 사이트에서 가장 강한 페이지인데 내보내는 링크가 최근 글
+  다섯 개뿐이었다. 주제별로 쌓인 글 수백 편에 닿으려면 상단 메뉴의
+  "카테고리" / "태그" 를 거쳐 100 개가 넘는 목록에서 골라야 한다.
+
+  목록은 `params.home.topics` 에서 온다(언어별). 제목·설명·글 수는
+  대상 페이지에서 직접 읽으므로, 허브의 `_index.md` 를 고치면 여기도
+  따라 바뀐다. 한 곳만 보면 된다.
+
+  없는 경로를 적어도 빌드가 깨지지 않게 조용히 건너뛴다.
+*/}}
+
+{{- $topics := slice -}}
+{{- range site.Params.home.topics -}}
+  {{- with site.GetPage . -}}
+    {{- $topics = $topics | append . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if $topics }}
+  <section class="mb-12">
+    <div class="mb-6 flex items-center gap-3">
+      {{ partial "features/icon.html" (dict "name" "categories" "size" "md" "ariaLabel" "") }}
+      <h2 class="text-foreground text-2xl font-bold">
+        {{ if eq site.Language.Lang "ko" }}주제별로 둘러보기{{ else }}Browse by topic{{ end }}
+      </h2>
+    </div>
+
+    <div class="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+      {{- range $topics }}
+        <article class="group">
+          <a href="{{ .RelPermalink }}" class="block h-full">
+            <div
+              class="bg-card border-border hover:bg-primary/5 hover:border-primary/20 focus:ring-primary/20 flex h-full flex-col gap-2 rounded-xl border p-5 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg focus:ring-2 focus:outline-none"
+            >
+              <div class="flex items-baseline justify-between gap-3">
+                <h3 class="text-foreground group-hover:text-primary font-bold transition-colors duration-200">
+                  {{ .Title }}
+                </h3>
+                <span class="text-muted-foreground shrink-0 text-sm">
+                  {{ if eq site.Language.Lang "ko" }}{{ len .Pages }}편{{ else }}{{ len .Pages }}{{ end }}
+                </span>
+              </div>
+              {{- with .Description }}
+                <p class="text-muted-foreground line-clamp-2 text-sm">{{ . }}</p>
+              {{- end }}
+            </div>
+          </a>
+        </article>
+      {{- end }}
+    </div>
+  </section>
+{{- end }}

@@ -383,7 +383,7 @@ cardinality 를 40 까지 조이면 색인이 비어 오히려 나빠진다.
 
 | 페이지 | 글 수 |
 |---|---:|
-| `/categories/abseil/` | 83 |
+| `/categories/abseil/` | 82 |
 | `/categories/llm-inference/` | 16 (+ 오타 주소 alias) |
 | `/categories/code-series/` | 15 |
 | `/tags/distributed-computing/` | 59 |
@@ -391,6 +391,20 @@ cardinality 를 40 까지 조이면 색인이 비어 오히려 나빠진다.
 | `/tags/kv-cache/` | 17 |
 | `/series/sgl-project--mini-sglang/` | 8 |
 | `/series/jmaczan--tiny-vllm/` | 7 |
+
+### 4.4 홈에서 주제로 가는 길
+
+홈은 이 사이트에서 가장 강한 페이지인데 내보내는 링크가 최근 글
+다섯 개뿐이었다. 주제별로 쌓인 글 수백 편에 닿으려면 상단 메뉴의
+"카테고리" / "태그" 를 거쳐 100 개가 넘는 목록에서 골라야 했다.
+
+홈에 "주제별로 둘러보기" 섹션을 넣어 4.3 의 허브로 바로 잇는다. 테마
+파일을 복제하지 않고 `home.contentOrder` 확장점에 파셜 하나를 더한
+것이라 테마를 올려도 영향이 없다. 목록은 `params.home.topics` 에서
+오고(언어별), 제목·설명·글 수는 대상 페이지에서 직접 읽으므로 허브의
+`_index.md` 를 고치면 홈도 따라 바뀐다.
+
+실측: 홈 Lighthouse perf 96 / a11y 100 / seo 100 / BP 100, 변화 없음.
 
 ---
 
