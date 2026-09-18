@@ -243,3 +243,77 @@ article h4 a,
     min-width: 5rem;
   }
 }
+
+/* --------------------------------------------------------------------------
+   6) 링크 글자색 대비비 (WCAG 2.1 AA, 4.5:1)
+
+   테마는 링크 글자색으로 `--color-primary` 를 그대로 쓴다(`.prose a` 의
+   `--tw-prose-links`, 그리고 `a.text-primary`). 그런데 `--color-primary` 는
+   버튼 배경이기도 해서 밝게 잡혀 있고, 글자로 쓰면 대비가 모자란다.
+   Lighthouse 가 라이선스 박스 링크에서 4.38:1 로 잡아냈고, 계산해 보니
+   라이트 모드 다섯 스킴이 전부 미달이었다(범블비는 1.45:1 로 사실상
+   읽을 수 없다).
+
+   `--color-primary` 자체는 건드리지 않는다. 버튼·배지·강조선 색이
+   바뀌기 때문이다. 대신 링크 글자 전용으로 `--color-link` 를 두고,
+   색상(C·H)은 그대로 명도(L)만 옮겨 4.5:1 을 넘긴다.
+   배경은 background / card / muted 셋 모두를 기준으로 확인했다.
+   -------------------------------------------------------------------------- */
+:root {
+  --color-link: var(--color-primary);
+}
+
+[data-theme="claude"]:not(.dark) {
+  --color-link: oklch(0.533 0.14 39.04); /* 3.14 -> 4.52 */
+}
+[data-theme="bumblebee"]:not(.dark) {
+  --color-link: oklch(0.545 0.199 91.936); /* 1.45 -> 4.51 */
+}
+[data-theme="dracula"]:not(.dark) {
+  --color-link: oklch(0.516 0.15 346.812); /* 2.13 -> 4.52 */
+}
+[data-theme="dracula"].dark {
+  --color-link: oklch(0.812 0.183 346.812); /* 3.98 -> 4.51 */
+}
+[data-theme="amethyst"]:not(.dark) {
+  --color-link: oklch(0.496 0.0767 299.7335); /* 3.64 -> 4.51 */
+}
+[data-theme="slate"]:not(.dark) {
+  --color-link: oklch(0.561 0.2041 277.1173); /* 4.06 -> 4.5 */
+}
+[data-theme="twitter"]:not(.dark) {
+  --color-link: oklch(0.505 0.1606 244.9955); /* 2.33 -> 4.5 */
+}
+
+.prose {
+  --tw-prose-links: var(--color-link);
+}
+
+a.text-primary {
+  color: var(--color-link);
+}
+
+/* 테마의 `hover:text-primary/80` 이 (0,2,0) 이라 그냥 두면 hover 에서
+   대비가 다시 떨어진다. 같은 자리에서 링크색 기준으로 흐린다. */
+a.text-primary:hover,
+a.text-primary:focus-visible {
+  color: color-mix(in oklab, var(--color-link) 80%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   7) 닫힌 검색 모달이 탭 순서에 남는 문제
+
+   테마는 모달을 `opacity-0 pointer-events-none` 로만 숨기고
+   `aria-hidden="true"` 를 붙인다. 둘 다 탭 순서에서 빼 주지는 못해서,
+   키보드로 Tab 을 누르면 보이지 않는 검색 입력창과 버튼에 포커스가
+   들어간다. axe 의 `aria-hidden-focus` 가 이걸 잡는다.
+
+   `visibility: hidden` 은 자손을 탭 순서와 접근성 트리에서 함께 뺀다.
+   열 때(aria-hidden="false")는 이 규칙이 적용되지 않아 바로 보인다.
+   닫을 때는 페이드 아웃(300ms)이 끝난 뒤 숨도록 지연을 준다.
+   -------------------------------------------------------------------------- */
+#search-modal[aria-hidden="true"] {
+  visibility: hidden;
+  transition-property: opacity, transform, visibility;
+  transition-delay: 0s, 0s, 300ms;
+}

@@ -18,7 +18,7 @@ title: LaRS Latent Reasoning Skills for Chain-of-Thought Reasoning
 
  
 
-#### **논문 분석: 강점, 독창적인 지점, 핵심 알고리즘 설명 및 한계점**
+### **논문 분석: 강점, 독창적인 지점, 핵심 알고리즘 설명 및 한계점**
 
 이 논문은 <strong>Latent Reasoning Skills (LaRS)</strong>라는 새로운 접근법을 제안하여, **Chain-of-Thought (CoT)** 추론을 위한 **효율적인 데모 선택 방법**을 개발했습니다. 특히, LaRS는 **기존의 CoT 기반 접근법의 한계**를 극복하기 위해 설계되었으며, **비지도 학습**을 활용해 <strong>라티스 기반의 추론 기술(latent reasoning skills)</strong>을 자동으로 학습합니다.
 
@@ -89,7 +89,7 @@ LaRS는 **비지도 학습을 활용한 CoT 데모 선택 방법**으로, 기존
 
  
 
-#### **LaRS 논문에서 사용하는 방법을 학습하기 위한 데이터셋과 학습 과정**
+### **LaRS 논문에서 사용하는 방법을 학습하기 위한 데이터셋과 학습 과정**
 
 <strong>LaRS (Latent Reasoning Skills)</strong>는 **비지도 학습**을 활용하여 <strong>추론 스킬(latent reasoning skills)</strong>을 학습하고, 이를 바탕으로 Chain-of-Thought (CoT) 데모를 효율적으로 선택하는 알고리즘입니다. 이를 구현하고 학습하기 위해서는 적절한 **데이터셋**이 필요하며, **Conditional Variational Autoencoder (CVAE)** 기반 모델을 학습하는 단계가 포함됩니다.
 
@@ -207,7 +207,7 @@ LaRS 시스템은 **Chain-of-Thought (CoT)** 추론을 위한 **효율적인 데
 
  
 
-#### **LaRS 논문의 성과와 기존 방법론 대비 특출난 점**
+### **LaRS 논문의 성과와 기존 방법론 대비 특출난 점**
 
 **LaRS (Latent Reasoning Skills)** 논문은 **Chain-of-Thought (CoT) 추론을 효율적으로 개선**하기 위해 **비지도 학습 기반의 자동화된 데모 선택** 방법을 제안했습니다. 기존의 CoT 기반 접근법과 비교했을 때, LaRS는 **더 적은 비용으로 더 높은 정확도를 달성**하며, 특히 **추론 속도와 자원 활용 측면에서 혁신적인 성과**를 보여줍니다.
 
@@ -301,7 +301,7 @@ LaRS는 **CoT 추론을 위한 자동화된 데모 선택 방법**을 제안하�
 
  
 
-#### **LaRS 논문에서 제시된 방법을 실제로 구현하기 위한 추가 작업과 공수 분석**
+### **LaRS 논문에서 제시된 방법을 실제로 구현하기 위한 추가 작업과 공수 분석**
 
 LaRS (Latent Reasoning Skills) 시스템을 실제 환경에서 적용하기 위해서는 기존 모델에 몇 가지 **추가적인 구현 작업**이 필요합니다. 특히, **Conditional Variational Autoencoder (CVAE)** 기반의 Latent Reasoning Skill 학습과 **Reasoning Policy**를 통해 **Chain-of-Thought (CoT) 데모 선택**을 자동화하는 기능을 추가해야 합니다. 이를 위해 **필요한 구현 사항과 공수 계산**을 아래와 같이 설명하겠습니다.
 
@@ -446,7 +446,7 @@ LaRS 시스템을 기존 CoT 모델에 통합하기 위해서는 **데이터 전
 
 
 
-#### **LaRS 논문의 입력 데이터, 추론 과정 및 모델 아키텍처 분석**
+### **LaRS 논문의 입력 데이터, 추론 과정 및 모델 아키텍처 분석**
 
 LaRS (Latent Reasoning Skills) 시스템은 **Chain-of-Thought (CoT) 추론**을 위한 **효율적인 데모 선택**을 목표로 하는 알고리즘입니다. **비지도 학습**을 통해 <strong>질문에 적합한 추론 스킬(latent reasoning skills)</strong>을 학습하고, **최적의 CoT 예제**를 자동으로 선택하여 LLM의 추론 성능을 향상시키는 접근법을 사용합니다.
 
@@ -564,7 +564,7 @@ LaRS는 **비지도 학습 기반의 자동화된 CoT 데모 선택 시스템**�
 
  
 
-#### **LaRS 논문의 한계와 이를 극복하기 위한 연구 흐름**
+### **LaRS 논문의 한계와 이를 극복하기 위한 연구 흐름**
 
 **LaRS (Latent Reasoning Skills)** 시스템은 Chain-of-Thought (CoT) 추론을 위한 효율적인 데모 선택을 자동화하는 혁신적인 접근법을 제시했습니다. 그러나, 이 논문에서도 언급된 몇 가지 한계가 존재하며, 이를 극복하기 위한 다양한 연구 방향이 필요합니다. 
 
