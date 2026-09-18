@@ -11,44 +11,44 @@
     {
       "chapter_id": "02",
       "order": 2,
-      "date": "2026-09-24",
-      "ko_path": "content/posts/2026-09-24-code-series-jmaczan--tiny-vllm-02.md",
-      "en_path": "content/posts/2026-09-24-code-series-jmaczan--tiny-vllm-02.en.md"
+      "date": "2026-09-17",
+      "ko_path": "content/posts/2026-09-17-code-series-jmaczan--tiny-vllm-02.md",
+      "en_path": "content/posts/2026-09-17-code-series-jmaczan--tiny-vllm-02.en.md"
     },
     {
       "chapter_id": "03",
       "order": 3,
-      "date": "2026-09-25",
-      "ko_path": "content/posts/2026-09-25-code-series-jmaczan--tiny-vllm-03.md",
-      "en_path": "content/posts/2026-09-25-code-series-jmaczan--tiny-vllm-03.en.md"
+      "date": "2026-09-17",
+      "ko_path": "content/posts/2026-09-17-code-series-jmaczan--tiny-vllm-03.md",
+      "en_path": "content/posts/2026-09-17-code-series-jmaczan--tiny-vllm-03.en.md"
     },
     {
       "chapter_id": "04",
       "order": 4,
-      "date": "2026-09-26",
-      "ko_path": "content/posts/2026-09-26-code-series-jmaczan--tiny-vllm-04.md",
-      "en_path": "content/posts/2026-09-26-code-series-jmaczan--tiny-vllm-04.en.md"
+      "date": "2026-09-17",
+      "ko_path": "content/posts/2026-09-17-code-series-jmaczan--tiny-vllm-04.md",
+      "en_path": "content/posts/2026-09-17-code-series-jmaczan--tiny-vllm-04.en.md"
     },
     {
       "chapter_id": "05",
       "order": 5,
-      "date": "2026-09-27",
-      "ko_path": "content/posts/2026-09-27-code-series-jmaczan--tiny-vllm-05.md",
-      "en_path": "content/posts/2026-09-27-code-series-jmaczan--tiny-vllm-05.en.md"
+      "date": "2026-09-17",
+      "ko_path": "content/posts/2026-09-17-code-series-jmaczan--tiny-vllm-05.md",
+      "en_path": "content/posts/2026-09-17-code-series-jmaczan--tiny-vllm-05.en.md"
     },
     {
       "chapter_id": "06",
       "order": 6,
-      "date": "2026-09-28",
-      "ko_path": "content/posts/2026-09-28-code-series-jmaczan--tiny-vllm-06.md",
-      "en_path": "content/posts/2026-09-28-code-series-jmaczan--tiny-vllm-06.en.md"
+      "date": "2026-09-17",
+      "ko_path": "content/posts/2026-09-17-code-series-jmaczan--tiny-vllm-06.md",
+      "en_path": "content/posts/2026-09-17-code-series-jmaczan--tiny-vllm-06.en.md"
     },
     {
       "chapter_id": "07",
       "order": 7,
-      "date": "2026-09-29",
-      "ko_path": "content/posts/2026-09-29-code-series-jmaczan--tiny-vllm-07.md",
-      "en_path": "content/posts/2026-09-29-code-series-jmaczan--tiny-vllm-07.en.md"
+      "date": "2026-09-17",
+      "ko_path": "content/posts/2026-09-17-code-series-jmaczan--tiny-vllm-07.md",
+      "en_path": "content/posts/2026-09-17-code-series-jmaczan--tiny-vllm-07.en.md"
     }
   ]
 }
