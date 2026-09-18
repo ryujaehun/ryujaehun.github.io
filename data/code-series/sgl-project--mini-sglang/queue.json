@@ -363,10 +363,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-05.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -375,10 +381,16 @@
     "depends_on": [
       "write-ko-05"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-05.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -387,10 +399,16 @@
     "depends_on": [
       "review-ko-05"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-05.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -399,10 +417,16 @@
     "depends_on": [
       "translate-en-05"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-05.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -411,10 +435,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-06.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -423,10 +453,16 @@
     "depends_on": [
       "write-ko-06"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-06.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -435,10 +471,16 @@
     "depends_on": [
       "review-ko-06"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-06.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -447,10 +489,16 @@
     "depends_on": [
       "translate-en-06"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-06.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -459,10 +507,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-07.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -471,10 +525,16 @@
     "depends_on": [
       "write-ko-07"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-07.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -483,10 +543,16 @@
     "depends_on": [
       "review-ko-07"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-07.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -495,10 +561,16 @@
     "depends_on": [
       "translate-en-07"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-07.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -507,10 +579,16 @@
     "depends_on": [
       "brief"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-08.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -519,10 +597,16 @@
     "depends_on": [
       "write-ko-08"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-08.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -531,10 +615,16 @@
     "depends_on": [
       "review-ko-08"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "articles/en-08.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -543,10 +633,16 @@
     "depends_on": [
       "translate-en-08"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-08.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   },
   {
@@ -562,10 +658,16 @@
       "review-en-07",
       "review-en-08"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "reviews/series.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
     "reason": null
   }
 ]
