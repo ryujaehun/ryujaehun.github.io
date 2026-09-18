@@ -113,6 +113,43 @@ taxonomies: # 콘텐츠 분류 체계입니다. (카테고리, 태그)
   category: categories
   tag: tags
 
+# 관련 글 인덱스
+# -----------------------------------------------------------------------------
+# 설정하지 않으면 Hugo 기본값(keywords + date)을 쓴다. 이 블로그는 front
+# matter 에 keywords 를 쓰지 않아서 사실상 date 만 남고, 실측으로 532 편 중
+# 158 편에 관련 글이 하나도 붙지 않았다. 태그와 카테고리로 색인한다.
+#
+# cardinalityThreshold: 전체 글의 N% 를 넘게 달린 말은 색인에서 뺀다.
+# `paper-review`(76%), `with-gpt`(61%), `Machine Learning`(35%),
+# `Natural Language Processing`(33%) 은 거의 모든 글에 붙어 있어 관련성
+# 신호가 되지 못한다. 이걸 빼야 `KV Cache`, `Long Context` 같은 실제
+# 주제어가 점수를 가른다.
+#
+# includeNewer: 오래된 글에서 최신 글로도 이어 준다. 아카이브가 큰
+# 블로그에서 기본값(false)이면 옛 글이 막다른 길이 된다.
+#
+# 값은 실측으로 골랐다 (관련 글이 하나도 없는 글 / 셋 다 붙은 글):
+#   설정 없음(기본)          158 / 349
+#   threshold 20, card 없음    2 / 524   <- 흔한 말이 다 남아 사실상 날짜순
+#   threshold 20, card 40    180 / 338   <- 너무 많이 쳐내 색인이 빈다
+#   threshold 20, card 60     14 / 510   <- 채택
+#   threshold 60, card 없음   35 / 493
+# card 60 이면 paper-review(76%) 와 with-gpt(61%) 만 빠지고
+# Machine Learning(35%), NLP(33%) 는 남는다.
+related:
+  threshold: 20
+  includeNewer: true
+  toLower: true
+  indices:
+    - name: tags
+      weight: 100
+      cardinalityThreshold: 60
+    - name: categories
+      weight: 40
+      cardinalityThreshold: 60
+    - name: date
+      weight: 10
+
 # 4. 테마 파라미터 및 UI 설정
 # -----------------------------------------------------------------------------
 params:

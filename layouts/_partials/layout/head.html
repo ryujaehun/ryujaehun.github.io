@@ -64,14 +64,12 @@
 />
 <meta name="language" content="{{ site.Params.language | default site.Language.Locale }}" />
 
-<meta
-  name="robots"
-  content="{{- with .Params.robots -}}
-    {{ . }}
-  {{- else -}}
-    index, follow
-  {{- end -}}"
-/>
+{{/* 얇은 분류 페이지는 색인에서 뺀다. 판단 근거는 seo/thin-term.html 참고 */}}
+{{- $robots := .Params.robots -}}
+{{- if not $robots -}}
+  {{- $robots = cond (partial "seo/thin-term.html" .) "noindex, follow" "index, follow" -}}
+{{- end -}}
+<meta name="robots" content="{{ $robots }}" />
 <link rel="canonical" href="{{ .Permalink }}" />
 
 {{ with site.Params.favicon.svg }}
