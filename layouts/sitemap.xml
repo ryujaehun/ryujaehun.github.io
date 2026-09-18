@@ -8,6 +8,10 @@
 
   나머지(lastmod, changefreq, priority, hreflang 대체 링크)는 내장본
   그대로다. 테마를 올릴 때 내장본과 diff 해서 따라가면 된다.
+
+  hreflang 값은 `.Language.Locale` 을 쓴다. 내장본의
+  `.Language.LanguageCode` 는 Hugo 0.158 에서 폐기됐고, HTML 의
+  hreflang(custom-head.html)도 Locale 을 쓰고 있어 값이 어긋나면 안 된다.
 */ -}}
 {{ printf "<?xml version=%q encoding=%q?>" "1.0" "utf-8" | safeHTML }}
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -27,7 +31,7 @@
     {{- end }}
     {{- if .IsTranslated }}
       {{- range .AllTranslations }}
-    <xhtml:link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}"/>
+    <xhtml:link rel="alternate" hreflang="{{ .Language.Locale }}" href="{{ .Permalink }}"/>
       {{- end }}
     {{- end }}
   </url>

@@ -39,3 +39,22 @@
     {{- end }}
   {{- end }}
 {{- end }}
+
+{{/*
+  연재 내비의 "연재 전체 보기" 링크에 이름을 붙인다.
+
+  테마 post-meta.html 의 `#series-link-btn` 은 아이콘만 들어 있고 글자가
+  없어서 화면 낭독기가 읽을 이름이 없다(axe `link-name`). 그 파셜은
+  229 줄이라 속성 하나 때문에 통째로 복제하기에는 값이 맞지 않는다.
+  라벨만 얹는다. 낭독기는 JS 를 실행한 뒤의 DOM 을 읽으므로 동작한다.
+  script 안에서는 Go 템플릿이 문자열에 알아서 따옴표를 붙이므로
+  jsonify 를 쓰면 따옴표가 두 겹이 된다.
+*/}}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var a = document.getElementById("series-link-btn");
+    if (a && !a.getAttribute("aria-label")) {
+      a.setAttribute("aria-label", {{ cond (eq .Language.Lang "ko") "연재 전체 보기" "See the whole series" }});
+    }
+  }, { once: true });
+</script>

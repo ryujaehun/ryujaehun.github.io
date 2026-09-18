@@ -317,3 +317,47 @@ a.text-primary:focus-visible {
   transition-property: opacity, transform, visibility;
   transition-delay: 0s, 0s, 300ms;
 }
+
+/* --------------------------------------------------------------------------
+   8) 연재(series) 내비게이션의 대비비
+
+   테마의 연재 UI 를 켜면서 두 곳이 AA 에 걸렸다(실측, claude 라이트).
+
+   - 장 번호 `span.font-mono` 가 `opacity-50` 이라 #b1b0a9 on #faf8f1 로
+     2.05:1 이었다. 색 자체(--color-muted-foreground)는 이미 4.5 를 넘게
+     맞춰 뒀으므로 투명도만 걷으면 된다. 흐릿하게 보이는 역할은 muted
+     색이 이미 하고 있다.
+   - 진행 배지 `bg-primary/10 text-primary` 가 10px 굵은 글씨로
+     #b85330 on #e2d6cc = 3.41:1 이었다. primary 를 더 어둡게 만들면
+     버튼 색까지 따라 바뀌므로, 이 배지만 본문색을 쓴다. 배경의 옅은
+     primary 틴트는 그대로라 강조는 남는다.
+   -------------------------------------------------------------------------- */
+#series-container .font-mono {
+  opacity: 1;
+}
+
+/* 현재 장 칸은 `bg-primary/15` 틴트 위에 `text-primary` 라 12~14px 에서
+   3.75~4.28:1 이었다. 이 칸만 본문색을 쓴다. 틴트 배경과 체크 아이콘,
+   `aria-current="page"` 가 남아 있어 "지금 이 글" 표시는 그대로다. */
+#series-container ol a[aria-current="page"],
+#series-container ol a[aria-current="page"] span {
+  color: var(--color-foreground);
+}
+
+#series-tabs .series-tab-btn > span:last-child {
+  color: var(--color-foreground);
+}
+
+/* --------------------------------------------------------------------------
+   9) 코드 하이라이팅의 대비비
+
+   chroma 의 GitHub-light 팔레트에서 `--chroma-bp`(파이썬 `self` 같은
+   내장 의사 이름)가 코드 배경 위에서 4.34:1 이었다. 파이썬 예제가 많은
+   블로그라 한 페이지에서만 26 곳이 걸렸다.
+
+   나머지 토큰은 전부 4.5 를 넘는다. `--chroma-ln`(줄 번호)은 이 블로그가
+   `lineNos: false` 라 쓰이지 않고, `--chroma-w`(공백)는 글리프가 없다.
+   -------------------------------------------------------------------------- */
+:root:not(.dark) {
+  --chroma-bp: #606871; /* 4.34 -> 5.09 (배경 #f6f3ea 기준) */
+}
