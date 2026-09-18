@@ -8,13 +8,13 @@ tags:
 title: Meta Large Language Model Compiler Foundation Models of Compiler Optimization
 ---
 
-
 논문 : https://arxiv.org/abs/2407.02524
-
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## 핵심 내용과 강점, 알고리즘, 한계
+
+> 물어본 것: 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
  
 
@@ -43,7 +43,6 @@ title: Meta Large Language Model Compiler Foundation Models of Compiler Optimiza
 2. **정확성 문제**: 최적화 작업에서 예측된 코드가 항상 올바른 것은 아니며, 이는 추가적인 검증 작업이 필요하게 만듭니다. 모델이 생성한 코드 최적화 결과는 실제 컴파일러의 결과와 다를 수 있어, 신뢰성을 확보하기 위한 검증 절차가 필요합니다.
 
 이 논문은 컴파일러 최적화 작업을 위한 새로운 LLM 모델의 가능성을 열어주며, 다양한 컴파일러 최적화 응용 분야에서 활용될 수 있습니다.
-
 
 ## Q : 해당 논문은 LLM을 가지고 optimize pass의 phase ordering문제와 flag의 선택의 문제를 해결하여 컴파일 성능을 향상시키는거니?
 

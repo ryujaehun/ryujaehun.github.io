@@ -9,13 +9,13 @@ title: BUZZ Beehive-structured Sparse KV Cache with Segmented Heavy Hitters for 
   LLM Inference
 ---
 
-
 논문 : https://arxiv.org/abs/2410.23079
-
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## 핵심 내용과 강점, 알고리즘, 한계
+
+> 물어본 것: 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
 ### 논문의 강점 및 독창성
 

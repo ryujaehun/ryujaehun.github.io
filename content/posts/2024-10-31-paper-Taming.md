@@ -15,8 +15,9 @@ title: Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## 핵심 내용과 강점, 알고리즘, 한계
 
+> 물어본 것: 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
 논문 <strong>"Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve"</strong>는 대형 언어 모델(LLM) 추론에서 발생하는 처리량-지연 시간 간의 트레이드오프 문제를 해결하기 위해 Sarathi-Serve라는 혁신적인 접근 방식을 제안합니다. 이 논문은 Sarathi-Serve의 강점, 독창성, 핵심 알고리즘, 예시와 한계점을 중심으로 설명드립니다.
 
@@ -48,7 +49,6 @@ Sarathi-Serve는 다음 두 가지 주요 요소로 구성됩니다:
 
 ### 결론
 Sarathi-Serve는 LLM 추론에서 처리량-지연 시간 문제를 해결하기 위해 고안된 혁신적인 시스템으로, 효과적인 스케줄러 설계를 통해 높은 확장성과 성능을 제공합니다. 이를 통해 프리필을 청크 단위로 나누고 디코드가 중단되지 않도록 하는 기술을 도입해 처리량과 지연 시간 모두에서 탁월한 성능을 보입니다.
-
 
 ## Q : 알고리즘 1과 2에 대해서 예시를 포함해서 자세하게 설명해 줘
 
@@ -111,7 +111,6 @@ A와 B가 먼저 도착하고, 이어서 C와 D 요청이 들어왔다고 가정
 
 ## Q : 알고리즘 3 에 대해서도 설명해줘
 
-## Answer: 
 알고리즘 3은 Sarathi-Serve에서 제안된 *stall-free batching* 기법을 사용하여 높은 처리량과 낮은 지연 시간을 동시에 달성하는 방식입니다. 이 알고리즘은 Sarathi-Serve의 핵심 개념인 <strong>청크 프리필(chunked-prefill)</strong>과 <strong>정지 없는 배치(stall-free batching)</strong>을 활용하여, 디코드 단계가 방해받지 않으면서 새로운 프리필 요청을 효율적으로 추가합니다.
 
 ### 알고리즘 3: 정지 없는 배치 (Stall-Free Batching with Sarathi-Serve)
@@ -151,10 +150,8 @@ Sarathi-Serve의 이 정지 없는 배치 방식은 다음과 같은 장점을 �
 ### 결론
 알고리즘 3은 프리필 요청을 청크 단위로 나누어, 디코드 작업을 중단하지 않고 효율적으로 처리하는 기법입니다. 이를 통해 Sarathi-Serve는 LLM 추론에서 발생하는 처리량-지연 시간 간의 트레이드오프를 해결하여, 높은 효율성을 보장합니다.
 
-
 ## Q:  이 논문이 pipeline parallelism 과 관련이 있을까? 관련성이 있으면 해당 내용에 대해서 설명해줘
 
-## Answer : 
 네, 이 논문은 <strong>파이프라인 병렬 처리(Pipeline Parallelism)</strong>와 관련이 있습니다. Sarathi-Serve가 파이프라인 병렬 처리를 어떻게 활용하고 최적화하는지에 대해 논문에서는 다루고 있습니다. 파이프라인 병렬 처리는 Sarathi-Serve의 핵심 구성 요소 중 하나로, 특히 대규모 모델 추론에서 높은 처리량과 효율성을 달성하는 데 기여합니다.
 
 ### 파이프라인 병렬 처리의 개념
@@ -201,8 +198,6 @@ Sarathi-Serve는 prefill을 `sequence size = 1`로 나누기보다는, **decode�
 
 ## Q : 디코더는 seq=1 로 돌아야하는거 아니야?
 
-## Answer :
-
 맞습니다. **디코드(decode) 단계**는 <strong>자동 회귀 방식(autoregressive)</strong>으로 작동하므로, 각 토큰을 순차적으로 생성해야 하며 **sequence size = 1**로 동작합니다. 디코딩 과정에서는 이전에 생성된 토큰을 기반으로 다음 토큰을 하나씩 예측하여 생성해야 하므로, 한 번에 하나의 토큰을 처리하는 방식이 필수적입니다. 
 
 ### 디코드 단계에서의 시퀀스 크기 = 1의 이유
@@ -225,7 +220,6 @@ Sarathi-Serve의 핵심은 **디코드와 프리필을 함께 실행**하여 GPU
 
 ## Q : 최적의 청크는 decoder는 손해는 보지만 encoder의 크기에 맞춘다는걸까?
 
-## Answer :
 Sarathi-Serve에서 **최적의 청크 크기**는 **디코더가 최적 성능을 발휘하면서도 프리필(prefill) 단계가 효율적으로 실행될 수 있도록** 설정됩니다. 따라서 Sarathi-Serve의 청크 크기 설정은 **디코더 단계의 지연 시간에 큰 손해를 주지 않으면서도 인코더(prefill) 단계가 높은 처리량을 유지할 수 있는 균형을 찾는 것**이 목표입니다.
 
 ### Sarathi-Serve에서 최적의 청크 크기를 결정하는 원리

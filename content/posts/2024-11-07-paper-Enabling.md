@@ -8,13 +8,13 @@ title: Enabling Tensor Language Model to Assist in Generating High-Performance T
   Programs for Deep Learning
 ---
 
-
 논문 : https://www.usenix.org/system/files/osdi24-zhai.pdf
-
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## 핵심 내용과 강점, 알고리즘, 한계
+
+> 물어본 것: 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
  
 

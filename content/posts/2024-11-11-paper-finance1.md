@@ -8,12 +8,13 @@ tags: null
 title: Foundations of Factor Investing
 ---
 
-
 논문 : https://www.msci.com/documents/1296102/1336482/Foundations_of_Factor_Investing.pdf
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## 핵심 내용과 강점, 알고리즘, 한계
+
+> 물어본 것: 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
  
 
@@ -61,9 +62,9 @@ title: Foundations of Factor Investing
 Speed up your research with Sider! Our AI-powered sidebar features 10+ one-click tools including a more advanced Search Agent, ChatPDF, context-aware utilities and more to help you work smarter and faster.
  [Level up your research game here](https://bit.ly/4aSnMXa)
 
+ ## 실험 결과와 다른 방법론과의 차이
 
- ## Q : 이 논문의 결과가 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
-
+> 물어본 것: 이 논문의 결과가 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
 
  
 
@@ -110,7 +111,9 @@ Speed up your research with Sider! Our AI-powered sidebar features 10+ one-click
 Speed up your research with Sider! Our AI-powered sidebar features 10+ one-click tools including a more advanced Search Agent, ChatPDF, context-aware utilities and more to help you work smarter and faster.
  [Level up your research game here](https://bit.ly/4aSnMXa)
 
- ## Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
+ ## 한계를 넘으려는 연구 흐름
+
+> 물어본 것: 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
 
  
 

@@ -10,13 +10,13 @@ title: ALPINE Unveiling the Planning Capability of Autoregressive Learning in La
   Models
 ---
 
-
 논문 : https://arxiv.org/abs/2405.09220
-
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## 핵심 내용과 강점, 알고리즘, 한계
+
+> 물어본 것: 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
  
 
@@ -126,7 +126,6 @@ title: ALPINE Unveiling the Planning Capability of Autoregressive Learning in La
 
 ### **결론**
 이 논문의 접근 방식은 다양한 복잡한 문제를 해결하는 데 유용하게 활용될 수 있으며, 특히 **네트워크 기반의 최적화 문제**나 **목표 지향적 계획 문제**에 강력한 성능을 보일 수 있습니다. 이를 통해 현재의 전통적인 알고리즘이 갖는 한계를 극복하고, **더 높은 유연성과 적응력을 가진 AI 시스템**을 구축하는 데 기여할 수 있습니다.
-
 
 ## Q : 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될까? 
 

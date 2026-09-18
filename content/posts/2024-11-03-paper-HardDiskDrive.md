@@ -11,12 +11,10 @@ title: 'Hard Disk Drive Failure Analysis and Prediction: An Industry View'
 
 논문 : https://research.facebook.com/file/3641873812712342/Hard-Disk-Drive-Failure-Analysis-and-Prediction---An-Industry-View.pdf 
 
-
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
 ## Q : SMART 지표중 feature를 위와 같이 선택한 이유가 있을까? 그리고 UCB와 같이 강화학습으로 접근할 수 는 없었을까? 그리고 가장 궁금한 점이 xgb를 사용한 이유인데 혹시 feature engineering에 대한 부담을 줄이기 위해서일까?
 
-## Answer : 
 ### SMART 지표 선택 이유
 
 SMART 지표 선택은 HDD 고장 예측에서 중요합니다. 이 논문에서는 **전력 투입 시간(`power-on-hours`)**, **읽기/쓰기 작업량**, **온도** 등을 주요 지표로 선택했으며, 이는 Meta의 데이터센터 환경에서 HDD의 수명과 고장 확률에 직접적으로 영향을 미치는 요인들입니다. 선택 이유는 다음과 같습니다:

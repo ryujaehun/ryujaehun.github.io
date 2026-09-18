@@ -9,12 +9,13 @@ title: Scientific Beta Multi-Beta Multi-Strategy Indices Implementing Multi-Fact
   Equity Portfolios with Smart Factor Indices
 ---
 
-
 논문 : https://conferences.pionline.com/uploads/conference_admin/ERI_Scientific_Beta_Publication_Scientific_Beta_Multi-Beta_Multi-Strategy_Indices_Equity_Portfolios.pdf
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## 핵심 내용과 강점, 알고리즘, 한계
+
+> 물어본 것: 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
  
 
@@ -55,7 +56,9 @@ title: Scientific Beta Multi-Beta Multi-Strategy Indices Implementing Multi-Fact
 
 이 논문은 다중 팩터 투자 전략을 통해 **시장 변동성에 대비한 안정적 수익률을 달성할 수 있는 방법**을 제시하고 있습니다. 특히, 동일 위험 기여 전략과 스마트 베타 인덱스를 활용하여 투자 성과를 극대화하는 접근법은 기존의 단일 팩터 전략보다 더 나은 성과를 보여줍니다. 그러나 팩터의 주기성, 거래 비용, 데이터 의존성 등 다양한 한계점을 고려해야 하며, 이를 극복하기 위해 동적 팩터 타이밍과 머신러닝을 활용한 예측 모델 등을 도입하는 연구가 필요합니다.
 
-## Q : 이 논문의 결과가 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
+## 실험 결과와 다른 방법론과의 차이
+
+> 물어본 것: 이 논문의 결과가 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
 
  
 
@@ -222,8 +225,9 @@ print(f"Equal Risk Contribution Portfolio Return: {erc_return:.4f}, Volatility: 
 - ERC와 EW 전략은 각각의 장단점이 있습니다. 단순한 전략이 필요한 경우 EW를 사용하고, 리스크 분산을 극대화하고자 할 때는 ERC를 사용하는 것이 바람직합니다.
 - 파이썬을 활용한 최적화 구현은 실제 투자 전략에 적용할 수 있는 강력한 도구가 될 수 있습니다.
 
-## Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
+## 한계를 넘으려는 연구 흐름
 
+> 물어본 것: 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
 
  
 

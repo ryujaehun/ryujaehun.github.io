@@ -18,9 +18,10 @@ title: Keyformer KV Cache Reduction through Key Tokens Selection for Efficient G
 
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## 핵심 내용과 강점, 알고리즘, 한계
 
-## Answer : 
+> 물어본 것: 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+
 ### 논문의 주요 내용, 강점, 독창성, 알고리즘 및 한계점
 
 논문 <strong>"Keyformer: KV Cache reduction through key tokens selection for Efficient Generative Inference"</strong>는 대규모 언어 모델의 생성 추론 효율성을 개선하기 위해 **핵심 토큰을 선택하여 KV Cache(키-값 캐시)를 줄이는 Keyformer 기법**을 제안하고 있습니다.
@@ -57,8 +58,6 @@ Keyformer는 대규모 언어 모델의 효율적인 생성 추론을 위해 주
 
 ## Q : Figure 6. The overview of Keyformer 부분을 조금 더 자세하게 설명해줘 그리고 전체적으로는 attention을 attention하는 구조라고 생각되는데 잘 이해한게 맞을까?
 
-## Answer : 
-
 ### Figure 6: Keyformer 개요 - 상세 설명
 
 Figure 6은 Keyformer 알고리즘의 전체적인 구조를 보여주는 그림으로, 각 단계별로 Keyformer가 **KV Cache를 효율적으로 관리하여 메모리 사용량을 줄이면서 성능을 높이는 방식**을 설명합니다. 이를 단계별로 자세히 설명하겠습니다:
@@ -84,7 +83,6 @@ Figure 6은 Keyformer 알고리즘의 전체적인 구조를 보여주는 그림
 맞습니다. Keyformer는 기존 Attention Mechanism의 구조를 개선하여, 각 토큰이 가지는 중요도에 따라 선택적으로 주의를 집중하는 방식으로 작동합니다. 이를 <strong>"attention을 attention하는 구조"</strong>로 볼 수 있습니다. 특히, 모든 토큰이 아닌 중요한 토큰에만 집중함으로써 **주의 메커니즘 자체의 효율성을 높이는 역할**을 합니다. 
 
 Keyformer는 각 토큰이 얼마나 많은 attention을 받는지를 기반으로 중요도를 계산하고, **이 중요한 토큰들에 대한 캐싱을 최적화**함으로써 **필요 없는 메모리 접근을 줄여 추론 효율성을 극대화**하는 접근 방식입니다.
-
 
 ## Q : section 3 KEYFORMER: INTUITION AND DESIGN 의 전체적인 흐름과 Gumbel Logit Adjustment같은 방법을 사용하는 이유를 예시를 추가해서 자세하게 설명해줘
 
@@ -137,8 +135,6 @@ Keyformer는 **긴 문맥을 처리하는 언어 모델의 효율성을 높이�
 
 ### 요약
 Keyformer는 **주의 메커니즘 내에서 중요한 정보를 갖는 핵심 토큰에 집중**하여 효율적으로 메모리를 사용할 수 있도록 설계되었습니다. Gumbel Logit Adjustment는 **중요한 토큰을 효과적으로 선택**하는 데 필요한 확률 분포를 제공하며, 이를 통해 전체적인 추론 성능을 높이는 데 기여합니다.
-
-
 
 ## Q: 알고리즘 1 섹션을 자세하게 코드와 예시를 추가해서 설명해주겠니?
 
@@ -243,10 +239,7 @@ for t in range(T):               # 각 디코딩 단계에서
 
 Keyformer 알고리즘은 Gumbel 분포를 사용하여 각 토큰의 중요도를 평가하고, 가장 중요한 토큰과 최신 토큰을 유지하는 방식으로 **KV Cache의 크기를 줄이는 동시에 모델의 성능을 유지**합니다.
 
-
 ## Q : keyformer의 압축율은 어떻게 결정될 수 있을까? 그리고 압축으로 인하여 정확도가 논문에서 설명한것과 달리 떨어지는 모델 구조 및 벤치마크가 있을까? 
-
-## Answer 
 
 ### Keyformer의 압축률 결정 요인
 

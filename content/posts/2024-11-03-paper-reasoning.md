@@ -11,12 +11,11 @@ title: Reasoning over Public and Private Data in Retrieval-Based Systems
 
 논문 : https://research.facebook.com/file/960671338467090/Reasoning-over-Public-and-Private-Data-in-Retrieval-Based-Systems.pdf
 
-
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## 핵심 내용과 강점, 알고리즘, 한계
 
-## Answer
+> 물어본 것: 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
 이 논문에서는 공개 데이터와 비공개 데이터를 동시에 활용할 수 있는 검색 기반 시스템을 개발하기 위해 "SPLIT ITERATIVE RETRIEVAL (SPIRAL)" 문제를 제안하고, 이를 연구하기 위한 벤치마크 데이터셋인 "CONCURRENTQA"를 제공합니다.
 

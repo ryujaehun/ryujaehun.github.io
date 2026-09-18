@@ -11,12 +11,11 @@ title: Breaking the Curse of Quality Saturation with User-Centric Ranking
 
 논문 : https://research.facebook.com/file/640730811107621/Breaking-the-Curse-of-Quality-Saturation-with-User-Centric-Ranking.pdf
 
-
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## 핵심 내용과 강점, 알고리즘, 한계
 
-## Answer
+> 물어본 것: 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
 ### 논문의 강점과 독창성
 

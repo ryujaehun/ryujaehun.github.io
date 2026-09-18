@@ -13,12 +13,11 @@ title: KV Cache Compression, But What Must We Give in Return? A Comprehensive Be
 
 개인의견 : 다양한 경량화 방법의 효과를 long context를 다루는 LLM에서 어떤효과를 주는지 분석을 통하여 인사이트를 주고있다.
 
-
 아래글은 Scholar GPT와 대화를 나눈 내용입니다.
 
-## Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
+## 핵심 내용과 강점, 알고리즘, 한계
 
-## Answer
+> 물어본 것: 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
 ### 강점과 독창적인 지점
 
@@ -52,8 +51,6 @@ title: KV Cache Compression, But What Must We Give in Return? A Comprehensive Be
 1. 이 논문에서 어떻게 다양한 장문 처리 방법들을 여러 가지 기준에서 평가하고 있니?
 2. kv cache를 어떻게 압축하고 있는지 자세한 방법을 설명해 줘
 3. kv cache 압축이 프리필의 성능에 영향을 주는 이유와 얼마만큼의 정확도에 영향을 주고 얼마만큼의 compute/memory관점에서 이득을 주는지 계산해 줘
-
-## Answer: 
 
 논문 내용을 기반으로 각 질문에 답변하겠습니다.
 

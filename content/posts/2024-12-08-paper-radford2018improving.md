@@ -9,9 +9,9 @@ title: Improving Language Understanding by Generative Pre-Training
 
 [논문 링크](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)
 
-## Q : 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘
+## 강점과 독창성, 핵심 알고리즘, 그리고 한계
 
-
+> 물어본 것: 이 논문을 아주 자세하게 읽고 논문의 강점과 독창적인 지점을 설명해주고 핵심 알고리즘을 예시 입력을 들어서 전체적인 과정을 설명해줘 추가적으로 논문의 한계점에 대해서도 알려줘
 
 논문 <strong>"Improving Language Understanding by Generative Pre-Training"</strong>의 주요 내용을 자세히 정리하고, 강점과 독창성, 알고리즘의 예제 과정을 설명한 뒤, 한계점도 다루겠습니다.
 
@@ -111,9 +111,9 @@ title: Improving Language Understanding by Generative Pre-Training
 
 이 논문은 NLP 연구에 큰 영향을 미친 선구적인 연구로, GPT 시리즈의 기반을 제공합니다. 그러나 계산 효율성 문제와 데이터 의존성은 여전히 해결해야 할 과제로 남아 있습니다.
 
-## Q : 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘
+## 핵심 알고리즘을 예시로 따라가기
 
-
+> 물어본 것: 논문의 핵심알고리즘을 예시를 들어 아주 자세하게 설명해주고 정리해 줘
 
 논문의 핵심 알고리즘은 <strong>Generative Pre-Training (GPT)</strong>과 이를 기반으로 한 **Supervised Fine-Tuning**으로 구성됩니다. 이를 예제를 들어 상세히 설명하겠습니다.
 
@@ -231,9 +231,9 @@ title: Improving Language Understanding by Generative Pre-Training
 
 이 알고리즘은 다양한 NLP 과제에서 강력한 성능을 발휘하며, Transformer의 self-attention과 언어 모델링을 결합하여 긴 문맥을 다룰 수 있다는 점이 핵심입니다.
 
-## Q : 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될지 예시를 들어서 아주 자세하게 설명해줘
+## 학습에 필요한 데이터셋과 학습 절차
 
-
+> 물어본 것: 이 논문에서 사용하는 방법을 학습하기 위하여 어떤 데이터셋이 필요할까? 그리고 어떻게 학습을 진행하면 될지 예시를 들어서 아주 자세하게 설명해줘
 
 논문 <strong>"Improving Language Understanding by Generative Pre-Training"</strong>에서 사용하는 방법을 학습하기 위해 필요한 데이터셋과 학습 과정을 아래에 자세히 설명하겠습니다.
 
@@ -372,9 +372,9 @@ title: Improving Language Understanding by Generative Pre-Training
 
 이 과정은 모델이 일반적인 언어 구조를 학습한 후 특정 태스크에 적합하도록 전이학습을 수행합니다.
 
-## Q : 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
+## 실험 결과와 다른 방법론과의 차이
 
-
+> 물어본 것: 이 논문에서 제시한 결과를 자세하게 보고 다른 방법론에 비하여 특출난 점과 논문에서 제기하는 어떠한 방법이 이러한 결과를 도출하게 되었는지 논문에서 제시하는 이유와 너의 생각을 알려줘
 
 ### **논문 결과 및 특징 분석**
 
@@ -470,10 +470,9 @@ title: Improving Language Understanding by Generative Pre-Training
 ### **결론**
 이 논문은 GPT의 사전 학습 + 미세 조정 접근법으로 범용성과 성능 두 가지를 모두 잡았습니다. 주요한 성과는 Transformer의 강력한 문맥 처리 능력, 사전 학습의 일반화된 지식 학습, 그리고 태스크에 구애받지 않는 입력 변환 방식 덕분입니다. 이 접근법은 이후 BERT와 GPT 시리즈의 발전으로 이어지는 핵심적인 기여를 했습니다.
 
+## 입력 데이터와 추론 과정, 모델 구조와 자원 요구량
 
-## Q : 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘
-
-
+> 물어본 것: 이 논문의 입력데이터와 추론 과정에 대해서 예시를 들어 아주 자세하게 설명해 주겠니? 추가적으로 모델아키텍처의 구성 및 모델을 구성하는 연산과 메모리 요구량 컴퓨팅 요구량 대해서도 설명해줘
 
 ### **논문의 입력 데이터와 추론 과정**
 
@@ -619,9 +618,9 @@ title: Improving Language Understanding by Generative Pre-Training
    - 메모리 사용량이 높고 계산 비용이 크지만, 범용성과 높은 성능으로 이를 상쇄.
    - Transformer 기반 구조는 긴 문맥을 처리하는 데 매우 적합하며, 다양한 NLP 태스크에서 우수한 성과를 보임.
 
-## Q : 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
+## 한계를 넘으려는 연구 흐름
 
-
+> 물어본 것: 이 논문의 한계를 극복하기 위한 방법으로 어떤 연구흐름이 있는지 정리해서 자세하게 설명해 줘
 
 논문 <strong>"Improving Language Understanding by Generative Pre-Training"</strong>의 한계는 계산 비용, 메모리 요구량, 데이터 의존성, 작은 데이터셋에서의 성능 제한 등으로 요약됩니다. 이를 극복하기 위한 연구 흐름은 여러 방향으로 발전하고 있으며, 아래에 이를 자세히 정리합니다.
 
