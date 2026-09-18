@@ -1,0 +1,106 @@
+{
+  "code-series:sgl-project--mini-sglang:01:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-18T22:33:05.371973+09:00",
+    "post_commit": "1479bf871ec901629b09fb9b8cea746d88af53e0",
+    "urls": [
+      "https://jaehun.me/posts/code-series-sgl-project--mini-sglang-01/",
+      "https://jaehun.me/en/posts/code-series-sgl-project--mini-sglang-01/"
+    ],
+    "message_sha256": "a551114227509ac6a5c6b75222b10aef555ce956c362c08500a33b704382eb69"
+  },
+  "code-series:sgl-project--mini-sglang:02:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-18T22:33:05.371973+09:00",
+    "post_commit": "1479bf871ec901629b09fb9b8cea746d88af53e0",
+    "urls": [
+      "https://jaehun.me/posts/code-series-sgl-project--mini-sglang-02/",
+      "https://jaehun.me/en/posts/code-series-sgl-project--mini-sglang-02/"
+    ],
+    "message_sha256": "80bec786b7d6ca869e1c397ec1f65f9f802b252ab68fef092a80fae057da48a3"
+  },
+  "code-series:sgl-project--mini-sglang:03:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-18T22:33:05.371973+09:00",
+    "post_commit": "1479bf871ec901629b09fb9b8cea746d88af53e0",
+    "urls": [
+      "https://jaehun.me/posts/code-series-sgl-project--mini-sglang-03/",
+      "https://jaehun.me/en/posts/code-series-sgl-project--mini-sglang-03/"
+    ],
+    "message_sha256": "4e37e77f2af9deceadfd43ce12fb5339576b8c43a1fdac2285bff0259db1e878"
+  },
+  "code-series:sgl-project--mini-sglang:04:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-18T22:33:05.371973+09:00",
+    "post_commit": "1479bf871ec901629b09fb9b8cea746d88af53e0",
+    "urls": [
+      "https://jaehun.me/posts/code-series-sgl-project--mini-sglang-04/",
+      "https://jaehun.me/en/posts/code-series-sgl-project--mini-sglang-04/"
+    ],
+    "message_sha256": "c0da9412f9b04715564573004694181b6d7111fea6f7fe60b21b88fb77297bd6"
+  },
+  "code-series:sgl-project--mini-sglang:05:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-18T22:33:05.371973+09:00",
+    "post_commit": "1479bf871ec901629b09fb9b8cea746d88af53e0",
+    "urls": [
+      "https://jaehun.me/posts/code-series-sgl-project--mini-sglang-05/",
+      "https://jaehun.me/en/posts/code-series-sgl-project--mini-sglang-05/"
+    ],
+    "message_sha256": "5d3af2e899ae5ca4ae85508ab3b38e5ec9fa3e25ec20eceafd99b6bfc1b14544"
+  },
+  "code-series:sgl-project--mini-sglang:06:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-18T22:33:05.371973+09:00",
+    "post_commit": "1479bf871ec901629b09fb9b8cea746d88af53e0",
+    "urls": [
+      "https://jaehun.me/posts/code-series-sgl-project--mini-sglang-06/",
+      "https://jaehun.me/en/posts/code-series-sgl-project--mini-sglang-06/"
+    ],
+    "message_sha256": "d40f69c0108d2c02db687a85a08ea534cedb6341a181b337358d756efd8884a3"
+  },
+  "code-series:sgl-project--mini-sglang:07:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-18T22:33:05.371973+09:00",
+    "post_commit": "1479bf871ec901629b09fb9b8cea746d88af53e0",
+    "urls": [
+      "https://jaehun.me/posts/code-series-sgl-project--mini-sglang-07/",
+      "https://jaehun.me/en/posts/code-series-sgl-project--mini-sglang-07/"
+    ],
+    "message_sha256": "f9b8da7e0684d3fb39e41757268b1ca450962dfabf4f0e30965867115a0e333c"
+  },
+  "code-series:sgl-project--mini-sglang:08:ko-en": {
+    "status": "sent",
+    "attempts": 1,
+    "error_category": null,
+    "error": null,
+    "sent_at": "2026-09-18T22:33:05.371973+09:00",
+    "post_commit": "1479bf871ec901629b09fb9b8cea746d88af53e0",
+    "urls": [
+      "https://jaehun.me/posts/code-series-sgl-project--mini-sglang-08/",
+      "https://jaehun.me/en/posts/code-series-sgl-project--mini-sglang-08/"
+    ],
+    "message_sha256": "dce8ec8b711cd49179cb4fba847ed6ce3eaf4047c428d56a52ef60c92921bbdc"
+  }
+}
