@@ -858,5 +858,71 @@
   "score": 0.4831,
   "status": "materialized",
   "title": "How Lossless Is Lossless Speculative Decoding? The Role of Numerical Precision in Orthrus"
+ },
+ "2609.17652": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 1
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-18-paper-2609.17652.md",
+  "failures": 0,
+  "first_seen": "2026-09-18",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "cache",
+    "decoding"
+   ],
+   "core": [
+    "kv cache"
+   ],
+   "systems": [
+    "gpu memory",
+    "sparsity"
+   ]
+  },
+  "materialized_at": "2026-09-18",
+  "score": 0.5048,
+  "slug": "paper-2609-17652",
+  "status": "materialized",
+  "title": "Fathom: Per-Query Read Depth for Sparse Decoding over Offloaded KV Caches"
+ },
+ "2609.18063": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.18063/fig1-architecture.webp",
+    "/assets/images/papers/2609.18063/fig2-quality.webp",
+    "/assets/images/papers/2609.18063/fig3-anticip.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 4
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-18-paper-2609.18063.md",
+  "failures": 0,
+  "first_seen": "2026-09-18",
+  "matched": {
+   "adjacent": [
+    "mixture-of-experts",
+    "moe"
+   ],
+   "systems": [
+    "int4",
+    "offloading",
+    "quantization",
+    "sparsity"
+   ]
+  },
+  "materialized_at": "2026-09-18",
+  "score": 0.5239,
+  "slug": "paper-2609-18063",
+  "status": "materialized",
+  "title": "The Other Half of the Memory Wall: Serving 35B MoEs from SSD with Trained Routing Prediction"
  }
 }
