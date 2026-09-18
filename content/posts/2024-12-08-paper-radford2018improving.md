@@ -13,7 +13,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 
 
-논문 **"Improving Language Understanding by Generative Pre-Training"**의 주요 내용을 자세히 정리하고, 강점과 독창성, 알고리즘의 예제 과정을 설명한 뒤, 한계점도 다루겠습니다.
+논문 <strong>"Improving Language Understanding by Generative Pre-Training"</strong>의 주요 내용을 자세히 정리하고, 강점과 독창성, 알고리즘의 예제 과정을 설명한 뒤, 한계점도 다루겠습니다.
 
 ---
 
@@ -115,7 +115,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 
 
-논문의 핵심 알고리즘은 **Generative Pre-Training (GPT)**과 이를 기반으로 한 **Supervised Fine-Tuning**으로 구성됩니다. 이를 예제를 들어 상세히 설명하겠습니다.
+논문의 핵심 알고리즘은 <strong>Generative Pre-Training (GPT)</strong>과 이를 기반으로 한 **Supervised Fine-Tuning**으로 구성됩니다. 이를 예제를 들어 상세히 설명하겠습니다.
 
 ---
 
@@ -235,7 +235,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 
 
-논문 **"Improving Language Understanding by Generative Pre-Training"**에서 사용하는 방법을 학습하기 위해 필요한 데이터셋과 학습 과정을 아래에 자세히 설명하겠습니다.
+논문 <strong>"Improving Language Understanding by Generative Pre-Training"</strong>에서 사용하는 방법을 학습하기 위해 필요한 데이터셋과 학습 과정을 아래에 자세히 설명하겠습니다.
 
 ---
 
@@ -478,7 +478,7 @@ title: Improving Language Understanding by Generative Pre-Training
 ### **논문의 입력 데이터와 추론 과정**
 
 #### **1. 입력 데이터**
-논문에서는 **비지도 사전 학습(Pre-training)**과 **지도 미세 조정(Fine-tuning)**에서 입력 데이터를 다르게 처리합니다.
+논문에서는 <strong>비지도 사전 학습(Pre-training)</strong>과 <strong>지도 미세 조정(Fine-tuning)</strong>에서 입력 데이터를 다르게 처리합니다.
 
 ##### **a. 비지도 학습 단계**:
 - 입력 데이터는 연속된 텍스트 문서입니다.
@@ -623,7 +623,7 @@ title: Improving Language Understanding by Generative Pre-Training
 
 
 
-논문 **"Improving Language Understanding by Generative Pre-Training"**의 한계는 계산 비용, 메모리 요구량, 데이터 의존성, 작은 데이터셋에서의 성능 제한 등으로 요약됩니다. 이를 극복하기 위한 연구 흐름은 여러 방향으로 발전하고 있으며, 아래에 이를 자세히 정리합니다.
+논문 <strong>"Improving Language Understanding by Generative Pre-Training"</strong>의 한계는 계산 비용, 메모리 요구량, 데이터 의존성, 작은 데이터셋에서의 성능 제한 등으로 요약됩니다. 이를 극복하기 위한 연구 흐름은 여러 방향으로 발전하고 있으며, 아래에 이를 자세히 정리합니다.
 
 ---
 

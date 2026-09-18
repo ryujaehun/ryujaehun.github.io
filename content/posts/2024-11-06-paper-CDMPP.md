@@ -21,7 +21,7 @@ title: CDMPP:ADevice-Model Agnostic Framework for Latency Prediction of Tensor P
 
 1. **장치 및 모델 독립적 지연 예측**: 이 논문은 다양한 장치와 DNN 모델에 대해 지연 시간을 예측할 수 있는 **CDMPP (Cross-Device and Cross-Model Performance Prediction)** 프레임워크를 제안합니다. 기존 방법들이 특정 장치나 모델에 대한 성능 예측에 국한된 반면, CDMPP는 다양한 DNN 모델과 장치에서 작동하도록 설계된 점에서 독창적입니다.
 
-2. **Compact AST 및 순서 기반 위치 인코딩**: CDMPP는 텐서 프로그램의 내부 구조를 효과적으로 캡처하는 **Compact Abstract Syntax Trees (ASTs)**와 **순서 기반 위치 인코딩**을 도입하여 효율적인 학습을 가능하게 합니다. 이를 통해 모델은 다중 장치와 모델에서 성능을 예측하는 데 필요한 데이터 표현을 보다 간결하게 학습할 수 있습니다.
+2. **Compact AST 및 순서 기반 위치 인코딩**: CDMPP는 텐서 프로그램의 내부 구조를 효과적으로 캡처하는 <strong>Compact Abstract Syntax Trees (ASTs)</strong>와 **순서 기반 위치 인코딩**을 도입하여 효율적인 학습을 가능하게 합니다. 이를 통해 모델은 다중 장치와 모델에서 성능을 예측하는 데 필요한 데이터 표현을 보다 간결하게 학습할 수 있습니다.
 
 3. **도메인 불변 표현 학습**: CDMPP는 도메인 간 차이를 최소화하기 위해 도메인 불변 표현(domain-invariant representations)을 학습하는데, 이를 통해 다양한 DNN 모델과 장치 간 분포 이동을 극복하고 일반화 성능을 향상시킵니다. 이를 위한 **CMD 기반 정규화 항**을 추가하여, 다수의 장치와 모델에 걸쳐 효율적인 예측을 가능하게 합니다.
 

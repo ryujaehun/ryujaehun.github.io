@@ -20,7 +20,7 @@ title: LaRS Latent Reasoning Skills for Chain-of-Thought Reasoning
 
 ### **논문 분석: 강점, 독창적인 지점, 핵심 알고리즘 설명 및 한계점**
 
-이 논문은 **Latent Reasoning Skills (LaRS)**라는 새로운 접근법을 제안하여, **Chain-of-Thought (CoT)** 추론을 위한 **효율적인 데모 선택 방법**을 개발했습니다. 특히, LaRS는 **기존의 CoT 기반 접근법의 한계**를 극복하기 위해 설계되었으며, **비지도 학습**을 활용해 **라티스 기반의 추론 기술(latent reasoning skills)**을 자동으로 학습합니다.
+이 논문은 <strong>Latent Reasoning Skills (LaRS)</strong>라는 새로운 접근법을 제안하여, **Chain-of-Thought (CoT)** 추론을 위한 **효율적인 데모 선택 방법**을 개발했습니다. 특히, LaRS는 **기존의 CoT 기반 접근법의 한계**를 극복하기 위해 설계되었으며, **비지도 학습**을 활용해 <strong>라티스 기반의 추론 기술(latent reasoning skills)</strong>을 자동으로 학습합니다.
 
 ---
 
@@ -31,7 +31,7 @@ title: LaRS Latent Reasoning Skills for Chain-of-Thought Reasoning
 - LaRS는 **비지도 학습을 활용한 자동화된 데모 선택 방식**을 통해, 사람의 개입 없이도 **효율적이고 빠르게 CoT 예제를 선택**합니다.
   
 ### **(2) CVAE를 활용한 추론 스킬 모델 학습**
-- LaRS는 **Conditional Variational Autoencoder (CVAE)**를 사용하여 **추론 스킬(latent reasoning skills)**을 학습합니다. 이 모델은 **질문과 정답 예시에서 추론 스킬을 추출**하고, 새로운 질문에 필요한 스킬을 자동으로 선택합니다.
+- LaRS는 <strong>Conditional Variational Autoencoder (CVAE)</strong>를 사용하여 <strong>추론 스킬(latent reasoning skills)</strong>을 학습합니다. 이 모델은 **질문과 정답 예시에서 추론 스킬을 추출**하고, 새로운 질문에 필요한 스킬을 자동으로 선택합니다.
 - 기존의 Skill-KNN 방식보다 **더 빠르고 효율적인 성능**을 보여주며, 특히 **LLM의 추가적인 추론 비용을 절감**할 수 있습니다.
 
 ### **(3) 데이터 효율성과 확장성**
@@ -45,14 +45,14 @@ title: LaRS Latent Reasoning Skills for Chain-of-Thought Reasoning
 LaRS는 **비지도 학습을 통해 추론 스킬을 학습하고**, 이를 바탕으로 **효율적인 CoT 데모 선택**을 수행합니다.
 
 #### **(1) Latent Skill 학습**
-- LaRS는 **CVAE**를 사용하여 예제 은행에서 질문(Q)과 그에 대한 추론(R)을 분석하여 **라티스 공간(latent space)**에서 **추론 스킬(z)**을 학습합니다.
+- LaRS는 **CVAE**를 사용하여 예제 은행에서 질문(Q)과 그에 대한 추론(R)을 분석하여 <strong>라티스 공간(latent space)</strong>에서 <strong>추론 스킬(z)</strong>을 학습합니다.
   - **Encoder**: \( q_{\omega}(z|Q, R) \) - 질문과 추론 예시를 입력으로 받아 **추론 스킬 z를 인코딩**합니다.
   - **Decoder**: \( p_{\psi}(R|z, Q) \) - 추론 스킬과 질문을 바탕으로 **추론을 복원**합니다.
   - **Reasoning Policy**: \( \pi_{\phi}(z|Q) \) - 질문에 필요한 **추론 스킬을 예측**합니다.
 
 #### **(2) 데모 선택 과정**
-1. 새로운 질문 \( Q_{\text{test}} \)가 주어지면, **Reasoning Policy**를 통해 해당 질문에 맞는 **추론 스킬 \( z_{\text{test}} \)**를 예측합니다.
-2. 예제 은행의 각 질문-추론 쌍에 대해 **Encoder**를 사용하여 **추론 스킬 \( z_{\text{post}} \)**를 계산합니다.
+1. 새로운 질문 \( Q_{\text{test}} \)가 주어지면, **Reasoning Policy**를 통해 해당 질문에 맞는 <strong>추론 스킬 \( z_{\text{test}} \)</strong>를 예측합니다.
+2. 예제 은행의 각 질문-추론 쌍에 대해 **Encoder**를 사용하여 <strong>추론 스킬 \( z_{\text{post}} \)</strong>를 계산합니다.
 3. \( z_{\text{test}} \)와 \( z_{\text{post}} \) 간의 **코사인 유사도**를 기반으로 상위 k개의 예제를 선택하여 CoT 프롬프트를 생성합니다.
 
 #### **예시 입력**
@@ -70,10 +70,10 @@ LaRS는 **비지도 학습을 통해 추론 스킬을 학습하고**, 이를 바
 
 ### **한계점 2: 예제 순서의 중요성 미고려**
 - CoT 프롬프트에서 예제의 순서는 **모델 성능에 영향을 미칠 수 있지만**, 현재 LaRS는 예제의 순서를 고려하지 않습니다.
-- **개선 방안**: **강화 학습(reinforcement learning)**을 통해 최적의 예제 순서를 학습하거나, **정렬 알고리즘**을 추가하여 성능을 높일 수 있습니다.
+- **개선 방안**: <strong>강화 학습(reinforcement learning)</strong>을 통해 최적의 예제 순서를 학습하거나, **정렬 알고리즘**을 추가하여 성능을 높일 수 있습니다.
 
 ### **한계점 3: 모델 아키텍처의 제한**
-- 현재 CVAE 구조는 **MLP(다층 퍼셉트론)**로 구현되었으나, **더 복잡한 구조**를 사용하면 성능을 향상시킬 수 있습니다.
+- 현재 CVAE 구조는 <strong>MLP(다층 퍼셉트론)</strong>로 구현되었으나, **더 복잡한 구조**를 사용하면 성능을 향상시킬 수 있습니다.
 - **개선 방안**: Transformer 기반의 **디코더 구조**를 도입하여 더 복잡한 추론 과정을 반영할 수 있습니다.
 
 ---
@@ -91,7 +91,7 @@ LaRS는 **비지도 학습을 활용한 CoT 데모 선택 방법**으로, 기존
 
 ### **LaRS 논문에서 사용하는 방법을 학습하기 위한 데이터셋과 학습 과정**
 
-**LaRS (Latent Reasoning Skills)**는 **비지도 학습**을 활용하여 **추론 스킬(latent reasoning skills)**을 학습하고, 이를 바탕으로 Chain-of-Thought (CoT) 데모를 효율적으로 선택하는 알고리즘입니다. 이를 구현하고 학습하기 위해서는 적절한 **데이터셋**이 필요하며, **Conditional Variational Autoencoder (CVAE)** 기반 모델을 학습하는 단계가 포함됩니다.
+<strong>LaRS (Latent Reasoning Skills)</strong>는 **비지도 학습**을 활용하여 <strong>추론 스킬(latent reasoning skills)</strong>을 학습하고, 이를 바탕으로 Chain-of-Thought (CoT) 데모를 효율적으로 선택하는 알고리즘입니다. 이를 구현하고 학습하기 위해서는 적절한 **데이터셋**이 필요하며, **Conditional Variational Autoencoder (CVAE)** 기반 모델을 학습하는 단계가 포함됩니다.
 
 아래에서는 이 논문에서 제안한 방법을 학습하기 위해 필요한 데이터셋과, 학습을 진행하는 방법에 대해 **예시를 포함하여 매우 자세하게 설명**하겠습니다.
 
@@ -122,7 +122,7 @@ LaRS는 **Chain-of-Thought (CoT) 예제**를 활용하여, **질문과 그에 �
 
 ## **2. 학습 과정 (예시 포함)**
 
-LaRS는 **CVAE (Conditional Variational Autoencoder)**를 기반으로 **질문과 그에 따른 추론 스킬을 학습**합니다. 이를 위해 **비지도 학습**을 사용하여 **라티스 공간(latent space)**에서 **추론 스킬(z)**을 추출하고, 새로운 질문에 대해 필요한 데모를 선택합니다.
+LaRS는 <strong>CVAE (Conditional Variational Autoencoder)</strong>를 기반으로 **질문과 그에 따른 추론 스킬을 학습**합니다. 이를 위해 **비지도 학습**을 사용하여 <strong>라티스 공간(latent space)</strong>에서 <strong>추론 스킬(z)</strong>을 추출하고, 새로운 질문에 대해 필요한 데모를 선택합니다.
 
 ### **2.1 학습 단계 요약**
 1. **데이터 전처리 및 임베딩 생성**
@@ -133,7 +133,7 @@ LaRS는 **CVAE (Conditional Variational Autoencoder)**를 기반으로 **질문�
 ### **2.2 단계별 학습 과정 상세 설명**
 
 #### **Step 1: 데이터 전처리 및 임베딩 생성**
-- **질문(Q)**, **정답(A)**, **추론 과정(R)**을 포함한 데이터를 준비합니다.
+- **질문(Q)**, **정답(A)**, <strong>추론 과정(R)</strong>을 포함한 데이터를 준비합니다.
 - 각 질문과 추론 과정을 **임베딩 벡터로 변환**합니다.
   - 예를 들어, BERT 또는 GPT와 같은 **사전 학습된 언어 모델**을 사용하여 텍스트를 벡터화합니다.
 - 데이터 예시:
@@ -145,24 +145,24 @@ LaRS는 **CVAE (Conditional Variational Autoencoder)**를 기반으로 **질문�
     3. 두 사람이 만나는 시간을 비교합니다.
 
 #### **Step 2: CVAE 모델을 사용한 Latent Reasoning Skill 학습**
-- **Conditional Variational Autoencoder (CVAE)**를 사용하여 질문과 추론 과정을 입력으로 받아, **라티스 공간(latent space)**에서 **추론 스킬(z)**을 학습합니다.
+- <strong>Conditional Variational Autoencoder (CVAE)</strong>를 사용하여 질문과 추론 과정을 입력으로 받아, <strong>라티스 공간(latent space)</strong>에서 <strong>추론 스킬(z)</strong>을 학습합니다.
   - **Encoder**: \( q_{\omega}(z|Q, R) \)
-    - 질문 \( Q \)와 추론 과정 \( R \)을 입력으로 받아 **latent variable \( z \)**를 생성.
+    - 질문 \( Q \)와 추론 과정 \( R \)을 입력으로 받아 <strong>latent variable \( z \)</strong>를 생성.
   - **Decoder**: \( p_{\psi}(R|z, Q) \)
     - \( z \)와 질문 \( Q \)를 입력으로 받아 **추론 과정을 복원**.
   - **Reasoning Policy**: \( \pi_{\phi}(z|Q) \)
-    - 질문 \( Q \)를 입력으로 받아 **추론 스킬 \( z \)**를 예측.
+    - 질문 \( Q \)를 입력으로 받아 <strong>추론 스킬 \( z \)</strong>를 예측.
   
 - **손실 함수**:
-  - **Evidence Lower Bound (ELBO)**를 최대화하여 학습:
+  - <strong>Evidence Lower Bound (ELBO)</strong>를 최대화하여 학습:
     \[
     \mathcal{L}(Q, R) = \mathbb{E}_{q_{\omega}(z|Q, R)} [\log p_{\psi}(R|z, Q)] - D_{KL}(q_{\omega}(z|Q, R) || p(z))
     \]
   - 첫 번째 항은 **재구성 손실(reconstruction loss)**, 두 번째 항은 **KL 다이버전스**로 구성됩니다.
 
 #### **Step 3: Reasoning Policy를 통한 추론 스킬 예측**
-- 새로운 질문이 주어졌을 때, **Reasoning Policy**를 통해 해당 질문에 필요한 **추론 스킬 \( z_{\text{test}} \)**를 예측합니다.
-- 예제 은행에서 각 질문-추론 쌍에 대해 **Encoder**를 사용하여 **추론 스킬 \( z_{\text{post}} \)**를 미리 계산해 둡니다.
+- 새로운 질문이 주어졌을 때, **Reasoning Policy**를 통해 해당 질문에 필요한 <strong>추론 스킬 \( z_{\text{test}} \)</strong>를 예측합니다.
+- 예제 은행에서 각 질문-추론 쌍에 대해 **Encoder**를 사용하여 <strong>추론 스킬 \( z_{\text{post}} \)</strong>를 미리 계산해 둡니다.
 - **코사인 유사도**를 기반으로 \( z_{\text{test}} \)와 유사한 스킬을 가진 예제를 선택하여 CoT 프롬프트를 생성합니다.
 
 #### **Step 4: CoT 데모 선택 및 모델 평가**
@@ -188,7 +188,7 @@ LaRS는 **CVAE (Conditional Variational Autoencoder)**를 기반으로 **질문�
    - **BERT 임베딩**을 사용하여 질문과 추론 과정을 벡터화.
 
 2. **CVAE 모델 학습**:
-   - Encoder에서 질문과 추론 과정을 입력받아 **latent skill \( z \)**를 학습.
+   - Encoder에서 질문과 추론 과정을 입력받아 <strong>latent skill \( z \)</strong>를 학습.
    - Decoder에서 \( z \)와 질문을 사용하여 추론 과정을 복원.
 
 3. **Reasoning Policy를 통한 추론 스킬 예측**:
@@ -237,7 +237,7 @@ LaRS 시스템은 **Chain-of-Thought (CoT)** 추론을 위한 **효율적인 데
 - 다양한 문제 유형에서 **추론 스킬을 적응적으로 선택하지 못해 성능이 제한**됩니다.
 
 #### **LaRS의 혁신적인 접근**
-- LaRS는 **Conditional Variational Autoencoder (CVAE)**를 사용하여 **라티스 공간(latent space)**에서 **추론 스킬을 학습**합니다.
+- LaRS는 <strong>Conditional Variational Autoencoder (CVAE)</strong>를 사용하여 <strong>라티스 공간(latent space)</strong>에서 **추론 스킬을 학습**합니다.
   - CVAE를 통해 **질문과 정답 예시에서 추론 스킬을 자동으로 추출**하고, 이를 새로운 문제에 적용합니다.
 - 기존 Skill-KNN 방식 대비 **추론 성능이 10% 이상 개선**되었으며, 특히 **추론에 필요한 연산 비용을 줄이는 데 기여**했습니다.
 - **저의 견해**: CVAE 기반 접근은 **다양한 문제 유형에 적응**할 수 있는 스킬을 자동으로 학습하여, 새로운 문제 유형에서도 **높은 일반화 성능을 보장**합니다. 이는 특히 **다양한 도메인에서 LLM을 활용하는 기업 환경**에서 유용할 것입니다.
@@ -325,7 +325,7 @@ LaRS를 기존 CoT 시스템에 통합하기 위해 필요한 주요 작업은 �
 
 **추가 구현 사항**:
 - LaRS에서 사용하는 **질문, 정답, 추론 과정** 데이터를 임베딩 벡터로 변환하기 위해, **BERT** 또는 **GPT** 기반의 사전 학습된 언어 모델을 활용.
-- 데이터셋에서 **질문(Q)**, **정답(A)**, **추론 과정(R)**을 추출하여 **토큰화 및 벡터화**를 수행.
+- 데이터셋에서 **질문(Q)**, **정답(A)**, <strong>추론 과정(R)</strong>을 추출하여 **토큰화 및 벡터화**를 수행.
 
 **필요 공수**:
 - 데이터 전처리 코드 작성: 약 **1주**
@@ -339,10 +339,10 @@ LaRS를 기존 CoT 시스템에 통합하기 위해 필요한 주요 작업은 �
 #### **작업 2: CVAE 모델 학습 및 추론 모듈 구현**
 
 **추가 구현 사항**:
-- **Conditional Variational Autoencoder (CVAE)**를 활용하여 **추론 스킬을 학습**하기 위한 모델 구현.
+- <strong>Conditional Variational Autoencoder (CVAE)</strong>를 활용하여 **추론 스킬을 학습**하기 위한 모델 구현.
   - **Encoder**: \( q_{\omega}(z|Q, R) \)
   - **Decoder**: \( p_{\psi}(R|z, Q) \)
-- **Evidence Lower Bound (ELBO)**를 최대화하는 **손실 함수** 설계 및 모델 학습 파이프라인 구축.
+- <strong>Evidence Lower Bound (ELBO)</strong>를 최대화하는 **손실 함수** 설계 및 모델 학습 파이프라인 구축.
 
 **필요 공수**:
 - CVAE 모델 구조 설계 및 구현: 약 **3주**
@@ -358,7 +358,7 @@ LaRS를 기존 CoT 시스템에 통합하기 위해 필요한 주요 작업은 �
 
 **추가 구현 사항**:
 - 새로운 질문이 주어졌을 때, 해당 질문에 필요한 **추론 스킬을 예측**하기 위한 **Reasoning Policy**를 개발.
-- **코사인 유사도 기반의 예제 선택 알고리즘**을 설계하여, **라티스 공간(latent space)**에서 가장 유사한 스킬을 가진 예제를 찾음.
+- **코사인 유사도 기반의 예제 선택 알고리즘**을 설계하여, <strong>라티스 공간(latent space)</strong>에서 가장 유사한 스킬을 가진 예제를 찾음.
 
 **필요 공수**:
 - Reasoning Policy 모듈 설계 및 구현: 약 **2주**
@@ -426,7 +426,7 @@ LaRS를 기존 CoT 시스템에 통합하기 위해 필요한 주요 작업은 �
 - **Transformers 라이브러리**: BERT, GPT 등의 사전 학습된 모델 활용.
 
 #### **(2) 하드웨어 요구 사항**
-- **고성능 GPU (예: NVIDIA A100)**를 사용하여 CVAE 학습 속도를 가속화.
+- <strong>고성능 GPU (예: NVIDIA A100)</strong>를 사용하여 CVAE 학습 속도를 가속화.
 - 대규모 예제 은행을 처리하기 위해 **병렬 처리 및 분산 학습 환경** 구축.
 
 #### **(3) 성능 모니터링 및 평가 도구**
@@ -448,7 +448,7 @@ LaRS 시스템을 기존 CoT 모델에 통합하기 위해서는 **데이터 전
 
 ### **LaRS 논문의 입력 데이터, 추론 과정 및 모델 아키텍처 분석**
 
-LaRS (Latent Reasoning Skills) 시스템은 **Chain-of-Thought (CoT) 추론**을 위한 **효율적인 데모 선택**을 목표로 하는 알고리즘입니다. **비지도 학습**을 통해 **질문에 적합한 추론 스킬(latent reasoning skills)**을 학습하고, **최적의 CoT 예제**를 자동으로 선택하여 LLM의 추론 성능을 향상시키는 접근법을 사용합니다.
+LaRS (Latent Reasoning Skills) 시스템은 **Chain-of-Thought (CoT) 추론**을 위한 **효율적인 데모 선택**을 목표로 하는 알고리즘입니다. **비지도 학습**을 통해 <strong>질문에 적합한 추론 스킬(latent reasoning skills)</strong>을 학습하고, **최적의 CoT 예제**를 자동으로 선택하여 LLM의 추론 성능을 향상시키는 접근법을 사용합니다.
 
 아래에서는 **입력 데이터, 추론 과정 및 모델 아키텍처**에 대해 예시와 함께 매우 자세하게 설명하겠습니다.
 
@@ -476,7 +476,7 @@ LaRS 시스템은 **다양한 질문, 정답, 추론 과정**을 포함한 데�
 
 ## **2. 추론 과정 (Inference Process)**
 
-LaRS 시스템은 **Conditional Variational Autoencoder (CVAE)**를 활용하여 **질문과 추론 과정에서 Latent Reasoning Skill (z)을 학습**합니다. 새로운 질문이 주어졌을 때, 학습된 라티스 공간에서 **가장 유사한 추론 스킬을 가진 예제**를 선택하여 Chain-of-Thought (CoT) 프롬프트를 생성합니다.
+LaRS 시스템은 <strong>Conditional Variational Autoencoder (CVAE)</strong>를 활용하여 **질문과 추론 과정에서 Latent Reasoning Skill (z)을 학습**합니다. 새로운 질문이 주어졌을 때, 학습된 라티스 공간에서 **가장 유사한 추론 스킬을 가진 예제**를 선택하여 Chain-of-Thought (CoT) 프롬프트를 생성합니다.
 
 ### **2.1 LaRS 추론 과정 단계별 설명**
 
@@ -486,9 +486,9 @@ LaRS 시스템은 **Conditional Variational Autoencoder (CVAE)**를 활용하여
   - **임베딩 결과**: [0.45, 0.38, 0.72, ...] (벡터 형식)
 
 #### **Step 2: Latent Reasoning Skill 학습 (CVAE 모델)**
-- LaRS는 **CVAE**를 사용하여 입력 질문과 추론 과정을 기반으로 **Latent Variable (z)**을 학습합니다.
+- LaRS는 **CVAE**를 사용하여 입력 질문과 추론 과정을 기반으로 <strong>Latent Variable (z)</strong>을 학습합니다.
   - **Encoder**: \( q_{\omega}(z|Q, R) \)
-    - 질문(Q)과 추론 과정(R)을 입력으로 받아 **라티스 공간(latent space)**에서 **추론 스킬(z)**을 생성.
+    - 질문(Q)과 추론 과정(R)을 입력으로 받아 <strong>라티스 공간(latent space)</strong>에서 <strong>추론 스킬(z)</strong>을 생성.
   - **Decoder**: \( p_{\psi}(R|z, Q) \)
     - \( z \)와 질문(Q)을 사용하여 **추론 과정을 복원**.
 - 예시:
@@ -496,12 +496,12 @@ LaRS 시스템은 **Conditional Variational Autoencoder (CVAE)**를 활용하여
   - **추론 스킬(z)** 생성: [0.12, -0.34, 0.56, ...]
 
 #### **Step 3: Reasoning Policy를 활용한 추론 스킬 예측**
-- 새로운 질문이 주어졌을 때, **Reasoning Policy** \( \pi_{\phi}(z|Q) \)를 사용하여 **가장 적합한 추론 스킬(z)**을 예측합니다.
+- 새로운 질문이 주어졌을 때, **Reasoning Policy** \( \pi_{\phi}(z|Q) \)를 사용하여 <strong>가장 적합한 추론 스킬(z)</strong>을 예측합니다.
   - 예시 입력: "A는 시속 6km로 30km를 걸어가는데 걸리는 시간은?"
   - **예측된 추론 스킬**: [0.10, -0.30, 0.50, ...]
 
 #### **Step 4: CoT 예제 선택 및 프롬프트 생성**
-- 예제 은행에서 각 질문-추론 쌍에 대해 미리 **Encoder를 사용하여 추론 스킬(z)**을 계산해 둡니다.
+- 예제 은행에서 각 질문-추론 쌍에 대해 미리 <strong>Encoder를 사용하여 추론 스킬(z)</strong>을 계산해 둡니다.
 - 새로운 질문에 대한 **추론 스킬과 예제 은행의 스킬 간의 코사인 유사도**를 기반으로 **상위 k개의 예제를 선택**합니다.
   - 유사도 계산 결과:
     - 예제 1: 유사도 0.95
@@ -528,7 +528,7 @@ LaRS 시스템은 **Conditional Variational Autoencoder (CVAE)**를 활용하여
 LaRS 시스템의 모델 아키텍처는 다음과 같은 주요 구성 요소로 이루어져 있습니다:
 
 1. **Conditional Variational Autoencoder (CVAE)**
-   - **Encoder**: 입력된 질문(Q)과 추론 과정(R)을 **Latent Variable (z)**로 인코딩합니다.
+   - **Encoder**: 입력된 질문(Q)과 추론 과정(R)을 <strong>Latent Variable (z)</strong>로 인코딩합니다.
    - **Decoder**: 생성된 z와 질문(Q)을 입력으로 받아 **추론 과정을 복원**합니다.
    - **손실 함수 (ELBO)**:
      \[
@@ -537,7 +537,7 @@ LaRS 시스템의 모델 아키텍처는 다음과 같은 주요 구성 요소�
      - 재구성 손실 + KL 다이버전스 손실.
 
 2. **Reasoning Policy**
-   - 새로운 질문에 대해 **추론 스킬(z)**을 예측하는 모듈입니다.
+   - 새로운 질문에 대해 <strong>추론 스킬(z)</strong>을 예측하는 모듈입니다.
    - **코사인 유사도**를 사용하여 예제 은행에서 유사한 예제를 선택합니다.
 
 3. **CoT 프롬프트 생성 모듈**
@@ -575,8 +575,8 @@ LaRS는 **비지도 학습 기반의 자동화된 CoT 데모 선택 시스템**�
 ## **1. 한계점 1: 단일 스킬 가정의 제한성**
 
 ### **한계 설명**
-- LaRS 시스템은 **단일 추론 스킬(z)**을 예측하여 해당 스킬에 맞는 데모를 선택하는 방식으로 작동합니다. 그러나 실제 문제는 **다단계 추론(multi-step reasoning)**을 요구하며, 하나의 스킬만으로 문제를 해결하기 어려운 경우가 많습니다.
-- 예를 들어, 수학 문제나 논리 문제는 **여러 가지 스킬(예: 산술, 논리적 추론, 비교 분석 등)**을 조합해야만 해결할 수 있습니다. 하지만 LaRS는 복합적인 문제 해결 과정에서의 유연성이 부족합니다.
+- LaRS 시스템은 <strong>단일 추론 스킬(z)</strong>을 예측하여 해당 스킬에 맞는 데모를 선택하는 방식으로 작동합니다. 그러나 실제 문제는 <strong>다단계 추론(multi-step reasoning)</strong>을 요구하며, 하나의 스킬만으로 문제를 해결하기 어려운 경우가 많습니다.
+- 예를 들어, 수학 문제나 논리 문제는 <strong>여러 가지 스킬(예: 산술, 논리적 추론, 비교 분석 등)</strong>을 조합해야만 해결할 수 있습니다. 하지만 LaRS는 복합적인 문제 해결 과정에서의 유연성이 부족합니다.
 
 ### **연구 흐름 1: 다중 스킬 학습 (Multi-Skill Learning) 및 메타 학습**
 - **다중 스킬 학습**을 도입하여, **복합적인 문제를 해결**할 수 있는 모델을 개발하는 연구가 필요합니다.
@@ -596,7 +596,7 @@ LaRS는 **비지도 학습 기반의 자동화된 CoT 데모 선택 시스템**�
 - 기존 연구에서는 **올바른 예제 순서를 구성**함으로써 LLM의 성능을 개선할 수 있음을 시사하지만, LaRS는 이 부분을 고려하지 않습니다.
 
 ### **연구 흐름 2: 강화 학습 기반 예제 순서 최적화**
-- **강화 학습(Reinforcement Learning, RL)**을 활용하여 **최적의 예제 순서**를 학습하는 연구가 필요합니다.
+- <strong>강화 학습(Reinforcement Learning, RL)</strong>을 활용하여 **최적의 예제 순서**를 학습하는 연구가 필요합니다.
 - **Proximal Policy Optimization (PPO)** 또는 **Deep Q-Learning**을 활용하여, **프롬프트 내 예제 순서를 동적으로 조정**할 수 있습니다.
 - **경험 재생(Experience Replay)** 기법을 사용하여, 다양한 순서의 조합을 테스트하고 성능을 최적화할 수 있습니다.
 
@@ -613,8 +613,8 @@ LaRS는 **비지도 학습 기반의 자동화된 CoT 데모 선택 시스템**�
 - 실제 운영 환경에서는 **실시간 추론 및 응답 시간**이 중요한 요소입니다.
 
 ### **연구 흐름 3: 분산 학습 및 모델 압축 기법 활용**
-- **분산 학습(Distributed Learning)**을 통해, 대규모 데이터셋을 효율적으로 처리하고 **학습 속도를 가속화**할 수 있습니다.
-- **모델 압축 기법(Pruning, Quantization)**을 활용하여, CVAE 모델을 **경량화하고 추론 속도를 개선**할 수 있습니다.
+- <strong>분산 학습(Distributed Learning)</strong>을 통해, 대규모 데이터셋을 효율적으로 처리하고 **학습 속도를 가속화**할 수 있습니다.
+- <strong>모델 압축 기법(Pruning, Quantization)</strong>을 활용하여, CVAE 모델을 **경량화하고 추론 속도를 개선**할 수 있습니다.
 - **Federated Learning (연합 학습)** 접근법을 도입하여, **분산된 데이터 환경에서도 효율적으로 학습**할 수 있습니다.
 
 **예상 효과**:
@@ -627,7 +627,7 @@ LaRS는 **비지도 학습 기반의 자동화된 CoT 데모 선택 시스템**�
 
 ### **한계 설명**
 - LaRS 시스템은 CoT 추론의 성능을 개선하는 데 중점을 두지만, **모델이 선택한 예제나 추론 과정에 대한 해석 가능성(Explainability)이 부족**합니다.
-- 이는 특히 **규제된 산업(예: 의료, 금융)**에서 LLM을 적용할 때 문제가 될 수 있습니다. 사용자는 모델이 왜 특정 예제를 선택했는지, 또는 왜 특정 추론 경로를 택했는지를 이해해야 합니다.
+- 이는 특히 <strong>규제된 산업(예: 의료, 금융)</strong>에서 LLM을 적용할 때 문제가 될 수 있습니다. 사용자는 모델이 왜 특정 예제를 선택했는지, 또는 왜 특정 추론 경로를 택했는지를 이해해야 합니다.
 
 ### **연구 흐름 4: Explainable AI (XAI) 및 해석 가능한 모델 개발**
 - **SHAP (SHapley Additive exPlanations)**, **LIME (Local Interpretable Model-Agnostic Explanations)** 등의 해석 가능성 기법을 활용하여, LaRS의 **추론 과정 및 예제 선택 과정을 시각화**할 수 있습니다.

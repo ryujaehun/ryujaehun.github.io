@@ -18,7 +18,7 @@ title: Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve
 # Q : 논문의 핵심 내용과 강점, 알고리즘 설명, 그리고 한계점
 
 
-논문 **"Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve"**는 대형 언어 모델(LLM) 추론에서 발생하는 처리량-지연 시간 간의 트레이드오프 문제를 해결하기 위해 Sarathi-Serve라는 혁신적인 접근 방식을 제안합니다. 이 논문은 Sarathi-Serve의 강점, 독창성, 핵심 알고리즘, 예시와 한계점을 중심으로 설명드립니다.
+논문 <strong>"Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve"</strong>는 대형 언어 모델(LLM) 추론에서 발생하는 처리량-지연 시간 간의 트레이드오프 문제를 해결하기 위해 Sarathi-Serve라는 혁신적인 접근 방식을 제안합니다. 이 논문은 Sarathi-Serve의 강점, 독창성, 핵심 알고리즘, 예시와 한계점을 중심으로 설명드립니다.
 
 ### 강점과 독창성
 1. **처리량-지연 시간 최적화**: Sarathi-Serve는 LLM 추론에서 처리량과 지연 시간 간의 균형을 맞추기 위한 기술을 도입하여, 기존 시스템에서 흔히 발생하는 성능 상의 손실을 최소화합니다. 이를 통해 처리량을 높이면서도 지연 시간은 낮추는 *chunked-prefills*와 *stall-free batching* 방식을 제시한 점에서 독창적입니다.
@@ -112,7 +112,7 @@ A와 B가 먼저 도착하고, 이어서 C와 D 요청이 들어왔다고 가정
 # Q : 알고리즘 3 에 대해서도 설명해줘
 
 # Answer: 
-알고리즘 3은 Sarathi-Serve에서 제안된 *stall-free batching* 기법을 사용하여 높은 처리량과 낮은 지연 시간을 동시에 달성하는 방식입니다. 이 알고리즘은 Sarathi-Serve의 핵심 개념인 **청크 프리필(chunked-prefill)**과 **정지 없는 배치(stall-free batching)**을 활용하여, 디코드 단계가 방해받지 않으면서 새로운 프리필 요청을 효율적으로 추가합니다.
+알고리즘 3은 Sarathi-Serve에서 제안된 *stall-free batching* 기법을 사용하여 높은 처리량과 낮은 지연 시간을 동시에 달성하는 방식입니다. 이 알고리즘은 Sarathi-Serve의 핵심 개념인 <strong>청크 프리필(chunked-prefill)</strong>과 <strong>정지 없는 배치(stall-free batching)</strong>을 활용하여, 디코드 단계가 방해받지 않으면서 새로운 프리필 요청을 효율적으로 추가합니다.
 
 ### 알고리즘 3: 정지 없는 배치 (Stall-Free Batching with Sarathi-Serve)
 이 알고리즘은 기존 디코드 요청을 중단하지 않으면서 새로운 프리필 요청을 추가할 수 있도록 설계되었습니다. 이를 통해 프리필과 디코드 단계를 효율적으로 결합하여, 프리필 요청이 디코드 작업에 미치는 영향을 최소화합니다.
@@ -155,7 +155,7 @@ Sarathi-Serve의 이 정지 없는 배치 방식은 다음과 같은 장점을 �
 # Q:  이 논문이 pipeline parallelism 과 관련이 있을까? 관련성이 있으면 해당 내용에 대해서 설명해줘
 
 # Answer : 
-네, 이 논문은 **파이프라인 병렬 처리(Pipeline Parallelism)**와 관련이 있습니다. Sarathi-Serve가 파이프라인 병렬 처리를 어떻게 활용하고 최적화하는지에 대해 논문에서는 다루고 있습니다. 파이프라인 병렬 처리는 Sarathi-Serve의 핵심 구성 요소 중 하나로, 특히 대규모 모델 추론에서 높은 처리량과 효율성을 달성하는 데 기여합니다.
+네, 이 논문은 <strong>파이프라인 병렬 처리(Pipeline Parallelism)</strong>와 관련이 있습니다. Sarathi-Serve가 파이프라인 병렬 처리를 어떻게 활용하고 최적화하는지에 대해 논문에서는 다루고 있습니다. 파이프라인 병렬 처리는 Sarathi-Serve의 핵심 구성 요소 중 하나로, 특히 대규모 모델 추론에서 높은 처리량과 효율성을 달성하는 데 기여합니다.
 
 ### 파이프라인 병렬 처리의 개념
 파이프라인 병렬 처리는 대형 모델을 여러 GPU에 걸쳐 나누어 각 GPU가 특정 레이어 또는 작업을 담당하도록 하는 방식입니다. 각 GPU가 작업을 처리하는 동안 다른 GPU는 다음 작업을 준비하는 식으로 *파이프라인*처럼 구성되어, 연속적인 데이터 흐름을 통해 GPU 자원을 최대한 활용할 수 있습니다.
@@ -185,7 +185,7 @@ Sarathi-Serve에서는 **decode 단계와 함께 prefill을 동시에 처리**�
 Sarathi-Serve에서 prefill 단계의 청크 크기는 `sequence size = 1`보다는 더 큽니다. 청크 크기를 지나치게 작게(예: sequence size = 1) 설정하면, 각 청크 실행 시 GPU에 반복적인 메모리 접근이 필요해져 오버헤드가 증가할 수 있습니다. 따라서 청크 크기는 적절한 수준으로 조절하여 **decode 작업에 지장을 주지 않으면서도 GPU의 처리 성능을 최대한 활용**할 수 있도록 합니다.
 
 ### 실제 Sarathi-Serve의 청크 프리필 전략
-1. **청크 크기 조절**: Sarathi-Serve는 시스템의 GPU 성능과 처리량 요구에 맞춰 prefill 단계의 청크 크기를 결정합니다. 예를 들어, GPU에서 효율적인 병렬 처리가 가능한 **최소한의 크기**로 청크를 구성하지만, 이 청크가 `sequence size = 1`이 되도록 설정하지는 않습니다. 일반적으로 GPU의 **연산 집약도(arithmetic intensity)**와 **메모리 대역폭**을 고려해 적절한 청크 크기를 선택합니다.
+1. **청크 크기 조절**: Sarathi-Serve는 시스템의 GPU 성능과 처리량 요구에 맞춰 prefill 단계의 청크 크기를 결정합니다. 예를 들어, GPU에서 효율적인 병렬 처리가 가능한 **최소한의 크기**로 청크를 구성하지만, 이 청크가 `sequence size = 1`이 되도록 설정하지는 않습니다. 일반적으로 GPU의 <strong>연산 집약도(arithmetic intensity)</strong>와 **메모리 대역폭**을 고려해 적절한 청크 크기를 선택합니다.
 
 2. **decode와의 병행 실행**: Sarathi-Serve는 청크 단위로 prefill을 나누어 decode 작업과 병행으로 수행할 수 있습니다. 이를 통해, decode 작업의 진행을 방해하지 않으면서도 prefill 작업을 GPU의 유휴 시간을 활용하여 처리합니다.
 
@@ -203,10 +203,10 @@ Sarathi-Serve는 prefill을 `sequence size = 1`로 나누기보다는, **decode�
 
 # Answer :
 
-맞습니다. **디코드(decode) 단계**는 **자동 회귀 방식(autoregressive)**으로 작동하므로, 각 토큰을 순차적으로 생성해야 하며 **sequence size = 1**로 동작합니다. 디코딩 과정에서는 이전에 생성된 토큰을 기반으로 다음 토큰을 하나씩 예측하여 생성해야 하므로, 한 번에 하나의 토큰을 처리하는 방식이 필수적입니다. 
+맞습니다. **디코드(decode) 단계**는 <strong>자동 회귀 방식(autoregressive)</strong>으로 작동하므로, 각 토큰을 순차적으로 생성해야 하며 **sequence size = 1**로 동작합니다. 디코딩 과정에서는 이전에 생성된 토큰을 기반으로 다음 토큰을 하나씩 예측하여 생성해야 하므로, 한 번에 하나의 토큰을 처리하는 방식이 필수적입니다. 
 
 ### 디코드 단계에서의 시퀀스 크기 = 1의 이유
-디코드 단계에서는 이전 토큰을 모델에 입력으로 제공하고 다음 토큰을 예측해야 하므로, 매번 새로운 토큰을 생성할 때마다 **단일 토큰(sequence size = 1)**을 입력으로 받습니다. 이 방식은 다음과 같은 이유로 인해 필수적입니다:
+디코드 단계에서는 이전 토큰을 모델에 입력으로 제공하고 다음 토큰을 예측해야 하므로, 매번 새로운 토큰을 생성할 때마다 <strong>단일 토큰(sequence size = 1)</strong>을 입력으로 받습니다. 이 방식은 다음과 같은 이유로 인해 필수적입니다:
 
 1. **순차적 생성**: 디코드 단계는 이전에 생성된 토큰의 정보를 활용하여 다음 토큰을 생성하는 방식이므로, 각 단계에서 한 번에 하나의 토큰만을 예측할 수 있습니다.
    

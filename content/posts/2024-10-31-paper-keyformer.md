@@ -23,7 +23,7 @@ title: Keyformer KV Cache Reduction through Key Tokens Selection for Efficient G
 # Answer : 
 ### 논문의 주요 내용, 강점, 독창성, 알고리즘 및 한계점
 
-논문 **"Keyformer: KV Cache reduction through key tokens selection for Efficient Generative Inference"**는 대규모 언어 모델의 생성 추론 효율성을 개선하기 위해 **핵심 토큰을 선택하여 KV Cache(키-값 캐시)를 줄이는 Keyformer 기법**을 제안하고 있습니다.
+논문 <strong>"Keyformer: KV Cache reduction through key tokens selection for Efficient Generative Inference"</strong>는 대규모 언어 모델의 생성 추론 효율성을 개선하기 위해 **핵심 토큰을 선택하여 KV Cache(키-값 캐시)를 줄이는 Keyformer 기법**을 제안하고 있습니다.
 
 #### 강점 및 독창성
 
@@ -65,11 +65,11 @@ Figure 6은 Keyformer 알고리즘의 전체적인 구조를 보여주는 그림
 
 1. **초기 디코딩 단계 (Decoding Step 1)**
    - Keyformer의 첫 번째 디코딩 단계에서는 **n개의 모든 토큰**을 대상으로 Key 및 Value를 계산하여 KV Cache에 저장합니다. 이 단계는 텍스트 생성의 첫 번째 토큰을 예측하기 위한 준비 단계입니다.
-   - 이때, Keyformer는 KV Cache에서 **최근 윈도우(recent window)**와 **핵심 토큰(key tokens)**만 유지하고 나머지 토큰은 제거하여 KV Cache의 크기를 줄이기 위한 구조를 준비합니다.
+   - 이때, Keyformer는 KV Cache에서 <strong>최근 윈도우(recent window)</strong>와 <strong>핵심 토큰(key tokens)</strong>만 유지하고 나머지 토큰은 제거하여 KV Cache의 크기를 줄이기 위한 구조를 준비합니다.
 
 2. **Gumbel Noise 추가와 핵심 토큰 선택**
    - Keyformer는 특정 토큰이 중요할 가능성을 높이기 위해 Gumbel 분포를 활용하여 노이즈(분포값)를 추가합니다. 이렇게 함으로써, **특정 중요 토큰들이 다른 토큰들보다 선택될 확률을 높이게 됩니다**.
-   - Keyformer의 **Score Function (fθ)**는 이 Gumbel 기반의 정규화된 값을 사용하여 토큰의 중요도를 평가하고, **상위 (k-w) 개의 핵심 토큰**을 선정합니다. 이 과정은 선택된 최근 윈도우의 \(w\)개의 토큰과 결합하여 다음 단계에서 사용될 **축소된 KV Cache**를 구성합니다.
+   - Keyformer의 <strong>Score Function (fθ)</strong>는 이 Gumbel 기반의 정규화된 값을 사용하여 토큰의 중요도를 평가하고, **상위 (k-w) 개의 핵심 토큰**을 선정합니다. 이 과정은 선택된 최근 윈도우의 \(w\)개의 토큰과 결합하여 다음 단계에서 사용될 **축소된 KV Cache**를 구성합니다.
 
 3. **토큰 생성 단계에서의 축소된 KV Cache 활용 (Decoding Step 2)**
    - 다음 디코딩 단계에서는 첫 번째 단계에서 만들어진 **축소된 KV Cache**를 사용합니다. 첫 번째 생성된 토큰은 KV Cache에 있는 k개의 토큰에만 주의를 집중하여 효율성을 높입니다.
@@ -81,7 +81,7 @@ Figure 6은 Keyformer 알고리즘의 전체적인 구조를 보여주는 그림
 
 ### "Attention on Attention" 구조 - 이해가 맞는지
 
-맞습니다. Keyformer는 기존 Attention Mechanism의 구조를 개선하여, 각 토큰이 가지는 중요도에 따라 선택적으로 주의를 집중하는 방식으로 작동합니다. 이를 **"attention을 attention하는 구조"**로 볼 수 있습니다. 특히, 모든 토큰이 아닌 중요한 토큰에만 집중함으로써 **주의 메커니즘 자체의 효율성을 높이는 역할**을 합니다. 
+맞습니다. Keyformer는 기존 Attention Mechanism의 구조를 개선하여, 각 토큰이 가지는 중요도에 따라 선택적으로 주의를 집중하는 방식으로 작동합니다. 이를 <strong>"attention을 attention하는 구조"</strong>로 볼 수 있습니다. 특히, 모든 토큰이 아닌 중요한 토큰에만 집중함으로써 **주의 메커니즘 자체의 효율성을 높이는 역할**을 합니다. 
 
 Keyformer는 각 토큰이 얼마나 많은 attention을 받는지를 기반으로 중요도를 계산하고, **이 중요한 토큰들에 대한 캐싱을 최적화**함으로써 **필요 없는 메모리 접근을 줄여 추론 효율성을 극대화**하는 접근 방식입니다.
 
@@ -94,7 +94,7 @@ Keyformer는 각 토큰이 얼마나 많은 attention을 받는지를 기반으�
 
 ### 1. Keyformer 설계의 전체적인 흐름
 
-Keyformer는 **긴 문맥을 처리하는 언어 모델의 효율성을 높이기 위해 등장**했습니다. 기본 아이디어는 LLM에서 생성 추론 과정 중 모든 토큰이 동일한 중요도를 가지지 않는다는 점을 활용하는 것입니다. 예를 들어, 긴 문장에서 문맥을 이해하는 데 있어 중요한 정보만 담고 있는 특정 토큰에 주의(attention)가 집중되는 경향이 있습니다. 이를 **핵심 토큰(Key Tokens)**이라고 부르며, Keyformer는 이러한 토큰에만 집중적으로 주의를 두고 KV Cache에 저장하여 효율성을 극대화하려 합니다.
+Keyformer는 **긴 문맥을 처리하는 언어 모델의 효율성을 높이기 위해 등장**했습니다. 기본 아이디어는 LLM에서 생성 추론 과정 중 모든 토큰이 동일한 중요도를 가지지 않는다는 점을 활용하는 것입니다. 예를 들어, 긴 문장에서 문맥을 이해하는 데 있어 중요한 정보만 담고 있는 특정 토큰에 주의(attention)가 집중되는 경향이 있습니다. 이를 <strong>핵심 토큰(Key Tokens)</strong>이라고 부르며, Keyformer는 이러한 토큰에만 집중적으로 주의를 두고 KV Cache에 저장하여 효율성을 극대화하려 합니다.
 
 이를 위해, Keyformer는 **이전 단계에서 중요도가 높다고 판단된 핵심 토큰과 최근 생성된 토큰만을 KV Cache에 저장**하고, 나머지 덜 중요한 토큰은 제외하여 메모리 사용을 줄입니다. 이때, 어떤 토큰이 중요한지 결정하는 과정에서 **Gumbel Logit Adjustment** 같은 정규화 기법을 사용해 각 토큰의 중요도를 평가합니다.
 
@@ -111,7 +111,7 @@ Keyformer는 **긴 문맥을 처리하는 언어 모델의 효율성을 높이�
 다음은 Gumbel Logit Adjustment의 동작 원리를 간단한 예를 통해 설명합니다.
 
 - 예를 들어, "The quick brown fox jumps over the lazy dog"이라는 문장이 있다고 가정합시다.
-- 이 문장에서 중요한 정보는 **"fox"**, **"jumps"**, **"dog"**일 수 있습니다. Keyformer는 이 토큰들에 대한 주의 가중치를 높이기 위해 **Gumbel 분포를 사용하여 각 토큰의 중요도를 정규화**합니다.
+- 이 문장에서 중요한 정보는 **"fox"**, **"jumps"**, <strong>"dog"</strong>일 수 있습니다. Keyformer는 이 토큰들에 대한 주의 가중치를 높이기 위해 **Gumbel 분포를 사용하여 각 토큰의 중요도를 정규화**합니다.
 - 각 토큰이 가지는 주의 가중치를 기반으로 로짓 값을 계산할 때, Gumbel 분포를 사용해 노이즈를 추가하여, 중요도가 높은 토큰들이 최종적으로 높은 점수를 갖도록 합니다.
   
   이를 수식으로 나타내면 다음과 같습니다:
@@ -226,7 +226,7 @@ for t in range(T):               # 각 디코딩 단계에서
    - 핵심 토큰 후보 중 상위 3개를 선택하여 (예: "fox", "jumps", "quick") KV Cache에 포함합니다.
 
 4. **KV Cache 갱신**:
-   - 최종 KV Cache는 **"fox", "jumps", "quick", "lazy", "dog"**으로 갱신됩니다.
+   - 최종 KV Cache는 <strong>"fox", "jumps", "quick", "lazy", "dog"</strong>으로 갱신됩니다.
 
 #### 단계 3: 생성 단계 (디코딩 단계 t=1부터)
 

@@ -18,7 +18,7 @@ title: Sequoia Scalable, Robust, and Hardware-aware Speculative Decoding
 
 # Answer: 
 
-논문 **"Sequoia: Scalable, Robust, and Hardware-aware Speculative Decoding"**는 대형 언어 모델(LLM)에서 효율적인 추론(추론 속도 향상)을 위한 **추론 속도 개선 알고리즘인 Sequoia**를 제안합니다. 기존의 추론 속도 가속화 기법들이 규모 확장성, 하이퍼파라미터 변화에 대한 견고성, 다양한 하드웨어 환경에 맞춘 적응성에서 한계를 보이는 반면, Sequoia는 이를 개선하여 더 빠르고 효율적인 추론이 가능하도록 설계되었습니다. 다음은 논문의 강점, 독창적인 기여점, 핵심 알고리즘의 예시와 과정, 그리고 논문의 한계점에 대한 설명입니다.
+논문 <strong>"Sequoia: Scalable, Robust, and Hardware-aware Speculative Decoding"</strong>는 대형 언어 모델(LLM)에서 효율적인 추론(추론 속도 향상)을 위한 **추론 속도 개선 알고리즘인 Sequoia**를 제안합니다. 기존의 추론 속도 가속화 기법들이 규모 확장성, 하이퍼파라미터 변화에 대한 견고성, 다양한 하드웨어 환경에 맞춘 적응성에서 한계를 보이는 반면, Sequoia는 이를 개선하여 더 빠르고 효율적인 추론이 가능하도록 설계되었습니다. 다음은 논문의 강점, 독창적인 기여점, 핵심 알고리즘의 예시와 과정, 그리고 논문의 한계점에 대한 설명입니다.
 
 ### 강점과 독창적인 기여점
 

@@ -20,7 +20,7 @@ title: SpotServe Serving Generative Large Language Models on Preemptible Instanc
 
 # Answer
 
-논문 **"SpotServe: Serving Generative Large Language Models on Preemptible Instances"**는 대형 언어 모델(LLM)을 경제적인 프리엠티브 인스턴스에서 효율적으로 서빙할 수 있는 새로운 분산 시스템 SpotServe를 제안합니다. 이 논문의 주요 강점과 독창적인 지점, 핵심 알고리즘 예시, 그리고 한계점을 다음과 같이 설명드리겠습니다.
+논문 <strong>"SpotServe: Serving Generative Large Language Models on Preemptible Instances"</strong>는 대형 언어 모델(LLM)을 경제적인 프리엠티브 인스턴스에서 효율적으로 서빙할 수 있는 새로운 분산 시스템 SpotServe를 제안합니다. 이 논문의 주요 강점과 독창적인 지점, 핵심 알고리즘 예시, 그리고 한계점을 다음과 같이 설명드리겠습니다.
 
 ### 강점 및 독창적인 지점
 

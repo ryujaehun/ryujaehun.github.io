@@ -17,7 +17,7 @@ title: 'Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality,
 
 ## 한 줄 요약 (TL;DR)
 
-> **Sparse-MoE + Slice-Elastic TPU 학습 + Flash Distillation** 덕분에, Gemini 2.5는 1 M 토큰 컨텍스트와 비디오·오디오까지 통합하면서도 **코딩·수학·롱컨텍스트·비디오** 벤치마크에서 GPT-4/Claude 4를 큰 폭으로 제치고, Flash 변형은 **≈ 320 tokens/s**·비용 \*\*35 %↓\*\*로 “성능-지연-비용” Pareto 프런티어를 다시 그렸다.
+> **Sparse-MoE + Slice-Elastic TPU 학습 + Flash Distillation** 덕분에, Gemini 2.5는 1 M 토큰 컨텍스트와 비디오·오디오까지 통합하면서도 **코딩·수학·롱컨텍스트·비디오** 벤치마크에서 GPT-4/Claude 4를 큰 폭으로 제치고, Flash 변형은 **≈ 320 tokens/s**·비용 <strong>35 %↓</strong>로 “성능-지연-비용” Pareto 프런티어를 다시 그렸다.
 <!--more-->
 ---
 
@@ -99,7 +99,7 @@ title: 'Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality,
 
 ### 왜 중요한가
 
-> *성능·지연·비용* 세 축을 동시에 밀어붙여 \*\*“LLM 서비스에 필요한 현실적 한계”\*\*를 확장했다. 1 M 컨텍스트 기반 에이전트·장편 비디오 QA·대규모 코드베이스 리팩터링 같은 **새 워크플로**가 당장 실험 가능한 단계로 올라섰다.
+> *성능·지연·비용* 세 축을 동시에 밀어붙여 <strong>“LLM 서비스에 필요한 현실적 한계”</strong>를 확장했다. 1 M 컨텍스트 기반 에이전트·장편 비디오 QA·대규모 코드베이스 리팩터링 같은 **새 워크플로**가 당장 실험 가능한 단계로 올라섰다.
 
 ---
 
@@ -136,8 +136,8 @@ title: 'Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality,
 ## 한눈에 보는 결론 — 연구 공백 & 최신 기술 요약
 
 * **연구 공백 1 : “생각(Thinking)·멀티모달·100 만 토큰 롱컨텍스트·툴 사용”을 *한 모델*에 동시에 담은 사례가 없었다.** 기존 GPT-4, Claude 4, Gemini 1.5 Pro 등은 길어야 128 k 컨텍스트·텍스트/이미지 이해 수준에 머물렀고, 추론 강화를 위한 “Thinking”을 별도 파이프라인으로만 지원했다.
-* **연구 공백 2 : 고성능을 유지하며 *비용-지연* Pareto Frontier를 확장할 방법이 부족했다.** Flash-Lite\~Pro까지 단일 아키텍처로 **출력 250 \~ 300 tokens/s**, 가격도 1.5 세대 대비 \*\*평균 35 %↓\*\*로 줄인 사례가 없었다.
-* **연구 공백 3 : 1 M+ 컨텍스트에서 *안정적 MoE 학습*과 *안전성*을 동시에 달성한 선행 연구가 전무.** Gemini 2.5는 TPU v5p 8960-chip pod에서 새로운 slice-elasticity·SDC 정책으로 **훈련 손실 0.25 %만 리플레이**하며 안정성을 증명.
+* **연구 공백 2 : 고성능을 유지하며 *비용-지연* Pareto Frontier를 확장할 방법이 부족했다.<strong> Flash-Lite\~Pro까지 단일 아키텍처로 </strong>출력 250 \~ 300 tokens/s**, 가격도 1.5 세대 대비 <strong>평균 35 %↓</strong>로 줄인 사례가 없었다.
+* **연구 공백 3 : 1 M+ 컨텍스트에서 *안정적 MoE 학습*과 *안전성*을 동시에 달성한 선행 연구가 전무.<strong> Gemini 2.5는 TPU v5p 8960-chip pod에서 새로운 slice-elasticity·SDC 정책으로 </strong>훈련 손실 0.25 %만 리플레이**하며 안정성을 증명.
 
 ---
 
@@ -147,7 +147,7 @@ title: 'Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality,
 | ------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- | ---------------------------------------------- |
 | ① 멀티모달+롱컨텍스트 통합 부재       | GPT-4 / Claude 4: 128 k 컨텍스트, 이미지까지 지원. 비디오·오디오·툴 콜 X | **텍스트·이미지·오디오·3 h 비디오**를 **최대 1 M 토큰**까지 단일 입력으로 처리              | VideoMMU **83.6 %**, 1 h-VideoQA **81.0 %**    |
 | ② 추론 품질 vs 비용·지연 트레이드오프 | 1.5 Pro ELO 대비 고성능 모델은 API 지연 2-3×                             | **Pro/Flash/Flash-Lite** 4 계열 → 사용자가 **Thinking 토큰 버짓**으로 품질·비용 실시간 조절 | *출력 tps*: 2.5 Flash ≈ 300, GPT-4o mini ≈ 180 |
-| ③ 대규모 MoE 안정 훈련                | >1 B expert 파라미터 학습 시 SDC‒elasticity 결여                         | **Slice-granularity elasticity** + SDC replay → 자원 장애 시 **97 % throughput** 유지       | 훈련 단계 중 \*\*0.25 %\*\*만 리플레이         |
+| ③ 대규모 MoE 안정 훈련                | >1 B expert 파라미터 학습 시 SDC‒elasticity 결여                         | **Slice-granularity elasticity** + SDC replay → 자원 장애 시 **97 % throughput** 유지       | 훈련 단계 중 <strong>0.25 %</strong>만 리플레이         |
 | ④ 안전성·헬프풀니스 동시 개선 난제    | RLHF ↔ 과잉 Refusal trade-off                                            | RL\*F + Critic 체계 → 헬프풀 점수 **+14.8 %**, 정책 위반 **-0.9 %** (텍스트)                | 표 7 지표                                      |
 
 ---
@@ -203,7 +203,7 @@ title: 'Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality,
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ---- |
 | **1. Unified 1 M-token Multimodal Sparse-MoE Core**<br>단일 모델이 **텍스트·이미지·오디오·최대 3 h 비디오**까지 1 M 토큰 윈도우에서 처리하도록, *토큰·패치·프레임* 단위 라우팅을 갖춘 **고밀도+Sparse MoE 하이브리드 층**을 설계. 이전 128 k 한계를 근본적으로 돌파해 LOFT-1M에서 69.8 %를 최초로 기록하며, 비디오 평가 VideoMME 84 %로 기존 SoTA 대비 +12.3 pp. | **새로운 아키텍처 구성요소**                                        |      |
 | **2. Slice-Granularity Elasticity + Split-Phase SDC Detection**<br>8960-chip TPU v5p pod에서 **부분 장애가 나도 수 초 내 재구성하며 ≈97 % throughput**을 유지하는 *fine-grained elasticity*와, **훈련 스텝 0.25 %만 즉시 리플레이**하는 초경량 SDC 탐지·격리 프로토콜을 도입. 대규모 Sparse-MoE 학습의 안정성 · 가동률 문제를 해결.                              | **새로운 학습/인프라 기법**                                         |      |
-| **3. Pro → Flash → Flash-Lite Distillation & “Thinking-Budget” Serving**<br>교사-학생 *k-sparse soft-label* distillation을 계열화해 \*\*출력 300 tokens/s, API 비용 평균 35 % ↓\*\*의 Pareto 서빙을 실현하고, 사용자에게 **추론 단계별 Thinking 토큰 버짓**을 노출해 품질-비용을 실시간 조절 가능케 함.                                                          | **기존 방법론의 새로운 적용 (대규모 distillation + 동적 QoS 서빙)** |      |
+| **3. Pro → Flash → Flash-Lite Distillation & “Thinking-Budget” Serving**<br>교사-학생 *k-sparse soft-label* distillation을 계열화해 <strong>출력 300 tokens/s, API 비용 평균 35 % ↓</strong>의 Pareto 서빙을 실현하고, 사용자에게 **추론 단계별 Thinking 토큰 버짓**을 노출해 품질-비용을 실시간 조절 가능케 함.                                                          | **기존 방법론의 새로운 적용 (대규모 distillation + 동적 QoS 서빙)** |      |
 
 ---
 
@@ -222,7 +222,7 @@ title: 'Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality,
 "저자들의 관점에서, 자신들의 접근법이 이전 방법들보다 우월한 이유는 무엇인가? 그들이 자신들의 연구가 지닌 독창성과 강점을 뒷받침하기 위해 사용하는 핵심 논거를 인용하거나 알기 쉽게 설명해 줘."
 ```
 
-**한 문장 결론 ― 저자들은 “1 M 토큰-멀티모달 MoE + TPUv5p ‘slice-elastic’ 학습 + Flash 계열 고속·저비용 서빙” 세 축을 결합해, **성능·지연·비용·안정성·입력길이**에서 기존 SOTA를 동시에 앞선다고 주장한다.**
+<strong>한 문장 결론 ― 저자들은 “1 M 토큰-멀티모달 MoE + TPUv5p ‘slice-elastic’ 학습 + Flash 계열 고속·저비용 서빙” 세 축을 결합해, </strong>성능·지연·비용·안정성·입력길이**에서 기존 SOTA를 동시에 앞선다고 주장한다.**
 
 ---
 
@@ -354,7 +354,7 @@ T3: ")"
 1. **초대형 Sparse-MoE 훈련의 최대 병목 = ‘싱글포인트 다운타임’**
    *MoE*는 전문가 수(256 × 3.2 B params)가 어마어마해 **8960 칩 전부가 동시 가동**돼야 step sync가 가능하다. 한두 칩만 죽어도 전 팟이 멈추는 기존 방식으론 *수 분\~수 시간*이 증발.
 
-2. **Slice-Elasticity → “고장 → 복구”를 **분** 단위 → **초** 단위**로 단축\*\*
+2. <strong>Slice-Elasticity → “고장 → 복구”를 </strong>분<strong> 단위 → </strong>초<strong> 단위</strong>로 단축\*\*
 
    * 논문 실험에서 **장애 발생 다수/시간** 수준에도 **0.25 %** step만 리플레이, 전체 학습 시간의 **93.4 %가 순수 TPU 계산**으로 유지됨 .
    * 덕분에 1 M 토큰·멀티모달 MoE를 **예산 내 완주**할 수 있었고, LOFT-1M 69.8 %, VideoMME 84 % 같은 결과가 가능해졌다.
@@ -426,7 +426,7 @@ for each training step t:
    *코딩·수학·과학* 10개 이상 챌린지에서 **최초로 60 %+ 벽을 넘어섰다** (LiveCodeBench 69 %, AIME 88 %, GPQA 86 %) .
 
 2. **롱컨텍스트 & 멀티모달 SOTA**
-   1 M-token \*\*LOFT 69.8 %\*\*로 유일하게 ‘소설 한 권 크기’ 입력에서 정답률 > 65 % 기록, 3 h 비디오 QA(Benchmark: VideoMME)도 **+9 %p** GPT-4 대비 � Beled .
+   1 M-token <strong>LOFT 69.8 %</strong>로 유일하게 ‘소설 한 권 크기’ 입력에서 정답률 > 65 % 기록, 3 h 비디오 QA(Benchmark: VideoMME)도 **+9 %p** GPT-4 대비 � Beled .
 
 3. **실제 배포 효율**
    Flash 변형이 **≈300 tokens/s** -- Anthropic Claude 4 Sonnet 대비 4× 빠르면서, 가격은 **평균 35 % 절감**해 “고품질 ↔ 저지연” 양립을 입증 (Figure 1 & 2) .
@@ -457,7 +457,7 @@ for each training step t:
 ## 한눈에 보는 결론
 
 **Gemini 2.5 Pro/Flash 는 대부분의 핵심 벤치마크(코딩·수학·1 M 롱컨텍스트·멀티모달 비디오)에서 기존 Gemini 1.5 Pro·GPT-4/Claude 등 주요 SOTA를 10 \~ 70 %p 앞섰다.**
-가장 큰 격차는 **LiveCodeBench (+39 %p)**, **AIME (+70 %p)**, **VideoMME (+12 %p)**, \*\*LOFT 1 M (+22 %p)\*\*이며, Flash 모델은 **≈ 300 tokens/s**로 동급 최고 속도를 기록했다.
+가장 큰 격차는 **LiveCodeBench (+39 %p)**, **AIME (+70 %p)**, **VideoMME (+12 %p)**, <strong>LOFT 1 M (+22 %p)</strong>이며, Flash 모델은 **≈ 300 tokens/s**로 동급 최고 속도를 기록했다.
 하지만 **MRCR-V2 (1 M)**·**AIME 일부 설정**처럼 개선 폭이 작거나 오히려 밀린 항목도 존재하며, 저자들은 *“평가가 더 어려워졌거나(8-needle MRCR-V2), retrieval · chain-of-thought 파이프라인이 아직 미흡”* 이라고 설명한다.
 
 ---
@@ -631,7 +631,7 @@ for each training step t:
 ## 핵심 요약 — 토큰화·전처리 관련
 
 * **논문에는 토큰화 방식·어휘(vocab)·정규화 단계가 *직접* 기술돼 있지 않다.** 데이터셋(§2.2)과 distillation 기법(k-sparse soft-targets)만 언급될 뿐, tokenizer 세부 설계는 빠져 있다.
-* Google Gemini 1.5 / Gemma 계열 공개 모델이 모두 \*\*SentencePiece (Unigram) 기반 대규모 서브워드 어휘(≈ 200 k – 256 k)\*\*를 채택해 왔다는 점, 그리고 논문에서 “k-sparse *vocabulary* 분포”를 저장한다고 표현한 대목을 종합하면, 2.5 역시 **SentencePiece-계열 서브워드 토크나이저**를 그대로 사용했을 가능성이 가장 높다.
+* Google Gemini 1.5 / Gemma 계열 공개 모델이 모두 <strong>SentencePiece (Unigram) 기반 대규모 서브워드 어휘(≈ 200 k – 256 k)</strong>를 채택해 왔다는 점, 그리고 논문에서 “k-sparse *vocabulary* 분포”를 저장한다고 표현한 대목을 종합하면, 2.5 역시 **SentencePiece-계열 서브워드 토크나이저**를 그대로 사용했을 가능성이 가장 높다.
 * 서브워드 방식의 특성상 **OOV(어휘 밖 단어)는 더 작은 서브워드 조각으로 자동 분해되어 표현되므로 별도 OOV 토큰이 사실상 없다.**
 * 전처리 파이프라인은 관례적으로
 
@@ -892,9 +892,9 @@ Figure 2의 벤치마크(2025-06-15 ArtificialAnalysis.ai) 기준
 1. **TPU ecosystem 전제** — CUDA/MPI 대신 **Pathways+JAX**가 필수. on-prem GPU 환경으로는 동일 레벨의 1 M context 서빙이 사실상 불가.
 2. **KV 메모리 지배** — 1 M 토큰 윈도우에서는 매 request 당 30 GB 이상 VRAM 필요. Hydragen과 paged-KV 캐시를 반드시 적용해야 실서비스에 적합.
 3. **Throughput-latency 트레이드오프** — Flash 모델은 Pro 대비 2 × 이상 TPS, 단 복잡 추론 품질은 낮음. API 설계 시 “thinking budget” 토글로 QoS 다단계 구현 권장.
-4. **비용 평가** — 300 PF-days 규모의 학습 compute는 전-세대 Gemini 1.5 비교 약 +40 % 증가로 추정, 그러나 Figure 1에서 \*\*LMArena 점수 +120 ↑\*\*로 cost-performance는 개선 .
+4. **비용 평가** — 300 PF-days 규모의 학습 compute는 전-세대 Gemini 1.5 비교 약 +40 % 증가로 추정, 그러나 Figure 1에서 <strong>LMArena 점수 +120 ↑</strong>로 cost-performance는 개선 .
 
-이상은 논문에 나타난 수치와 공개 하드웨어 스펙을 기반으로 한 엔지니어링 관점의 리소스 프로파일입니다. 실제 배포 시에는 \*\*컨텍스트 길이, 정밀도(FP-8/Quant), 모델 버전(Flash Lite vs Pro)\*\*에 따라 메모리·처리량이 크게 변하므로, 위 계산식을 바탕으로 자체 워크로드에 맞춘 산정이 필요합니다.
+이상은 논문에 나타난 수치와 공개 하드웨어 스펙을 기반으로 한 엔지니어링 관점의 리소스 프로파일입니다. 실제 배포 시에는 <strong>컨텍스트 길이, 정밀도(FP-8/Quant), 모델 버전(Flash Lite vs Pro)</strong>에 따라 메모리·처리량이 크게 변하므로, 위 계산식을 바탕으로 자체 워크로드에 맞춘 산정이 필요합니다.
 
 
 

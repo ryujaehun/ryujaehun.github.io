@@ -21,7 +21,7 @@ title: CacheBlend Fast Large Language Model Serving for RAG with Cached Knowledg
 
 ### 논문의 강점과 독창성
 
-논문 **"CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion"**는 **대형 언어 모델(LLM)의 추론 속도를 획기적으로 개선**하기 위해 **CacheBlend라는 새로운 KV Cache 재활용 방법**을 제안합니다. 특히, 이 방식은 다중 텍스트 청크가 포함된 입력에 대해 효율적인 KV Cache 처리를 통해 **생성 품질을 유지하면서도 최초 토큰 생성 지연(TTFT)을 줄이는 것**이 목표입니다.
+논문 <strong>"CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion"</strong>는 **대형 언어 모델(LLM)의 추론 속도를 획기적으로 개선**하기 위해 **CacheBlend라는 새로운 KV Cache 재활용 방법**을 제안합니다. 특히, 이 방식은 다중 텍스트 청크가 포함된 입력에 대해 효율적인 KV Cache 처리를 통해 **생성 품질을 유지하면서도 최초 토큰 생성 지연(TTFT)을 줄이는 것**이 목표입니다.
 
 #### 주요 강점과 독창성
 1. **고속 KV 캐시 융합**: CacheBlend는 KV Cache를 특정 토큰의 KV만 선택적으로 재계산하면서 융합하여, 기존 방법보다 **훨씬 빠르게 작동**합니다. 이를 통해 LLM의 입력 프리필(prefill) 속도가 향상됩니다.
@@ -66,7 +66,7 @@ CacheBlend와 PromptCache는 **KV 캐시를 재활용하여 LLM 추론 속도를
 
 2. **캐시의 유연성과 적용 범위**
    - **CacheBlend**: CacheBlend는 **프리픽스(접두사) 위치에 상관없이 다양한 입력 청크의 KV 캐시를 융합**할 수 있습니다. 즉, CacheBlend는 입력 청크 간 융합을 통해 서로 다른 위치의 KV 캐시를 동시에 활용하는 유연성을 갖추고 있습니다. 이를 통해 LLM이 긴 텍스트와 다양한 청크 조합을 다룰 때 **고품질의 결과**를 빠르게 생성합니다.
-   - **PromptCache**: PromptCache는 모듈화된 프롬프트를 사전 정의하는 **프롬프트 마크업 언어(PML)**를 통해 모듈이 위치한 프리픽스 위치에서 재사용이 용이하도록 설계되었습니다. 주로 **템플릿이나 반복적인 프롬프트**를 사용하는 환경에서 성능이 극대화되지만, CacheBlend와 달리 입력 청크의 위치와 상관없이 재활용할 수 있는 유연성은 상대적으로 제한적입니다.
+   - **PromptCache**: PromptCache는 모듈화된 프롬프트를 사전 정의하는 <strong>프롬프트 마크업 언어(PML)</strong>를 통해 모듈이 위치한 프리픽스 위치에서 재사용이 용이하도록 설계되었습니다. 주로 **템플릿이나 반복적인 프롬프트**를 사용하는 환경에서 성능이 극대화되지만, CacheBlend와 달리 입력 청크의 위치와 상관없이 재활용할 수 있는 유연성은 상대적으로 제한적입니다.
 
 3. **처리 지연 감소 방식**
    - **CacheBlend**: CacheBlend는 **파이프라인 처리**를 통해 일부 토큰의 선택적 재계산과 캐시 로드를 병렬로 수행합니다. 예를 들어, KV 캐시 로드와 재계산이 동시에 진행되어 지연 시간을 줄이고, 속도와 효율을 극대화합니다.
@@ -91,7 +91,7 @@ CacheBlend가 사용자 질의와 관련된 특정 KV Cache를 우선적으로 �
 ### CacheBlend의 질의 기반 선택적 KV 로드 과정
 
 1. **질의의 키워드 추출**:
-   - CacheBlend는 먼저 사용자 질의에서 중요한 **키워드**나 **주제어**를 추출합니다. 예를 들어, 사용자가 "인공지능의 발전과 미래"라는 질문을 했다면, **"인공지능"**, **"발전"**, **"미래"**와 같은 키워드가 추출될 수 있습니다.
+   - CacheBlend는 먼저 사용자 질의에서 중요한 **키워드**나 **주제어**를 추출합니다. 예를 들어, 사용자가 "인공지능의 발전과 미래"라는 질문을 했다면, **"인공지능"**, **"발전"**, <strong>"미래"</strong>와 같은 키워드가 추출될 수 있습니다.
    - 이를 위해 TF-IDF(term frequency-inverse document frequency) 또는 **BERT와 같은 임베딩 기반의 문장 표현 모델**을 사용하여 질의의 의미적 주제를 이해하고 주요 키워드를 뽑아냅니다.
 
 2. **청크(Chunk)와 질의 간의 연관성 평가**:

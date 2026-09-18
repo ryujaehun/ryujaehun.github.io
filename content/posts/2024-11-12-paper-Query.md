@@ -28,7 +28,7 @@ title: Query-Efficient Correlation Clustering with Noisy Oracle
 ## **1. 강점 및 독창적인 지점**
 
 ### **(1) 실세계 문제 해결을 위한 접근법**
-- 이 논문은 **실제 환경에서 발생하는 노이즈**를 고려한 **Correlation Clustering 문제**를 해결합니다. 기존 연구는 이진 형태의 유사도만을 사용했지만, 이 논문은 **연속적인 유사도 값([0, 1] 범위)**을 허용하며, 더 현실적인 시나리오를 반영합니다.
+- 이 논문은 **실제 환경에서 발생하는 노이즈**를 고려한 **Correlation Clustering 문제**를 해결합니다. 기존 연구는 이진 형태의 유사도만을 사용했지만, 이 논문은 <strong>연속적인 유사도 값([0, 1] 범위)</strong>을 허용하며, 더 현실적인 시나리오를 반영합니다.
 - 예를 들어, **생물학적 데이터**에서 단백질 간의 상호작용 강도를 측정하거나, **데이터 통합 문제**에서 객체 간의 매칭 가능성을 평가할 때 연속적인 유사도가 중요합니다.
 
 ### **(2) 쿼리 효율성을 개선한 온라인 학습 알고리즘**
@@ -106,11 +106,11 @@ title: Query-Efficient Correlation Clustering with Noisy Oracle
 ### **1. 노이즈가 있는 환경에서의 효율적인 클러스터링**
 
 #### **기존 방법론의 한계**
-- 대부분의 기존 **Correlation Clustering 알고리즘**은 **이진 유사도 값(0 또는 1)**만을 사용하거나, **노이즈를 무시**하고 클러스터를 형성합니다.
+- 대부분의 기존 **Correlation Clustering 알고리즘**은 <strong>이진 유사도 값(0 또는 1)</strong>만을 사용하거나, **노이즈를 무시**하고 클러스터를 형성합니다.
 - 이러한 접근 방식은 **실제 데이터를 다룰 때 문제**가 발생할 수 있습니다. 예를 들어, 데이터가 연속적인 유사도를 가지고 있거나 **노이즈가 포함된 상황**에서 기존의 이진 기반 접근법은 **정확도가 떨어지거나** 잘못된 클러스터를 형성할 가능성이 높습니다.
 
 #### **논문에서 제시된 개선점**
-- 이 논문에서는 **연속적인 유사도 값([0, 1] 범위)**을 허용하며, **노이즈가 포함된 환경에서도 정확하게 클러스터링**할 수 있도록 설계되었습니다.
+- 이 논문에서는 <strong>연속적인 유사도 값([0, 1] 범위)</strong>을 허용하며, **노이즈가 포함된 환경에서도 정확하게 클러스터링**할 수 있도록 설계되었습니다.
 - 특히, **다중 무장 밴딧(Combinatorial Multi-Armed Bandits, CMAB)** 문제의 순수 탐색(Pure Exploration) 프레임워크를 활용하여, **최소한의 쿼리만으로 클러스터링 정확도를 높였습니다**.
 
 **저의 견해**: 
@@ -125,7 +125,7 @@ title: Query-Efficient Correlation Clustering with Noisy Oracle
 - 특히, 클러스터링 정확도를 높이기 위해 **과도한 쿼리 비용**이 발생할 수 있으며, 이는 대규모 데이터셋에서는 비효율적입니다.
 
 #### **논문에서 제시된 개선점**
-- **KC-FC (Fixed Confidence)** 알고리즘은 **사전에 정의된 정확도(confidence level)**를 만족시키면서 최소한의 쿼리를 사용하여 클러스터를 형성합니다.
+- **KC-FC (Fixed Confidence)** 알고리즘은 <strong>사전에 정의된 정확도(confidence level)</strong>를 만족시키면서 최소한의 쿼리를 사용하여 클러스터를 형성합니다.
 - 반면, **KC-FB (Fixed Budget)** 알고리즘은 주어진 **쿼리 예산 내에서 최대한 높은 정확도의 클러스터링**을 목표로 합니다.
 - 이 두 알고리즘은 **Threshold Bandit**과 **KwikCluster** 알고리즘을 결합하여, **노이즈가 있는 상황에서도 빠르고 효율적인 클러스터링**을 수행할 수 있도록 설계되었습니다.
 
@@ -183,7 +183,7 @@ title: Query-Efficient Correlation Clustering with Noisy Oracle
 ## **1. 입력 데이터**
 
 ### **1.1 입력 데이터 형식**
-- 입력 데이터는 **노이즈가 포함된 유사도 행렬(Similarity Matrix)**으로 주어집니다. 이 유사도 행렬은 각 객체 쌍에 대해 **연속적인 유사도 값**을 가집니다.
+- 입력 데이터는 <strong>노이즈가 포함된 유사도 행렬(Similarity Matrix)</strong>으로 주어집니다. 이 유사도 행렬은 각 객체 쌍에 대해 **연속적인 유사도 값**을 가집니다.
 - 유사도 값은 [0, 1] 범위의 실수로, **0에 가까울수록 두 객체가 다르고, 1에 가까울수록 두 객체가 유사**하다는 의미입니다.
 
 ### **1.2 입력 데이터 예시**
@@ -209,7 +209,7 @@ title: Query-Efficient Correlation Clustering with Noisy Oracle
 
 ## **2. 추론 과정**
 
-논문에서 제안된 알고리즘은 **노이즈가 있는 유사도 행렬을 기반으로 효율적으로 클러스터를 형성**합니다. **KC-FC (Fixed Confidence)**와 **KC-FB (Fixed Budget)** 알고리즘을 통해, **최소한의 쿼리만으로 높은 정확도의 클러스터링**을 수행합니다.
+논문에서 제안된 알고리즘은 **노이즈가 있는 유사도 행렬을 기반으로 효율적으로 클러스터를 형성**합니다. <strong>KC-FC (Fixed Confidence)</strong>와 **KC-FB (Fixed Budget)** 알고리즘을 통해, **최소한의 쿼리만으로 높은 정확도의 클러스터링**을 수행합니다.
 
 ### **2.1 추론 과정 설명**
 
@@ -320,9 +320,9 @@ title: Query-Efficient Correlation Clustering with Noisy Oracle
 - 특히, 유사도가 임계값(threshold)에 가까운 경우, **클러스터 할당이 불확실**해질 수 있습니다.
 
 ### **연구 흐름 1: 강화 학습 기반 라우팅 및 전문가 선택**
-- **강화 학습(Reinforcement Learning, RL)**을 사용하여 **더 정교한 전문가 선택 기법**을 개발할 수 있습니다.
-- **Proximal Policy Optimization (PPO)**와 같은 강화 학습 알고리즘을 활용하여, 라우터가 **더 효율적으로 쿼리를 선택**하고 **전문가를 활성화**하도록 학습할 수 있습니다.
-- **베이지안 최적화(Bayesian Optimization)**를 통해, **임계값(threshold)을 동적으로 조정**하여 노이즈에 강건한 클러스터링을 수행할 수 있습니다.
+- <strong>강화 학습(Reinforcement Learning, RL)</strong>을 사용하여 **더 정교한 전문가 선택 기법**을 개발할 수 있습니다.
+- <strong>Proximal Policy Optimization (PPO)</strong>와 같은 강화 학습 알고리즘을 활용하여, 라우터가 **더 효율적으로 쿼리를 선택**하고 **전문가를 활성화**하도록 학습할 수 있습니다.
+- <strong>베이지안 최적화(Bayesian Optimization)</strong>를 통해, **임계값(threshold)을 동적으로 조정**하여 노이즈에 강건한 클러스터링을 수행할 수 있습니다.
 
 **예상 효과**:
 - **적응형(adaptive) 쿼리 선택**을 통해, 다양한 도메인에서 라우터의 성능을 개선할 수 있습니다.
@@ -337,7 +337,7 @@ title: Query-Efficient Correlation Clustering with Noisy Oracle
 - **가우시안 노이즈**와 같은 특정 노이즈 패턴을 다룰 때, 단순한 Threshold Bandit 접근법은 **유사도를 정확하게 추정하는 데 한계**가 있습니다.
 
 ### **연구 흐름 2: 가우시안 프로세스 및 베이지안 접근법 도입**
-- **가우시안 프로세스(Gaussian Processes)**를 사용하여, 유사도 추정의 **신뢰 구간(confidence interval)**을 확장할 수 있습니다.
+- <strong>가우시안 프로세스(Gaussian Processes)</strong>를 사용하여, 유사도 추정의 <strong>신뢰 구간(confidence interval)</strong>을 확장할 수 있습니다.
 - **베이지안 네트워크**를 통해, 연속적인 유사도 값을 더 정교하게 모델링하고, **불확실성을 정량화**할 수 있습니다.
 - **베이지안 최적화(Bayesian Optimization)** 기법을 활용하여, 유사도 추정에 대한 **사전 지식을 반영**할 수 있습니다.
 
@@ -354,7 +354,7 @@ title: Query-Efficient Correlation Clustering with Noisy Oracle
 - 특히, **Threshold Bandit 접근법을 활용한 쿼리 선택 과정**에서 많은 연산 자원이 필요합니다.
 
 ### **연구 흐름 3: 분산 시스템 및 병렬 처리 기법 활용**
-- **분산 시스템(distributed systems)**에서 **병렬 처리**를 활용하여, 대규모 데이터셋을 효율적으로 처리할 수 있습니다.
+- <strong>분산 시스템(distributed systems)</strong>에서 **병렬 처리**를 활용하여, 대규모 데이터셋을 효율적으로 처리할 수 있습니다.
 - **MapReduce 프레임워크**를 사용하여, 유사도 계산 및 클러스터링 작업을 **병렬화**할 수 있습니다.
 - **GPU 가속(CUDA)** 및 **텐서 연산 최적화**를 통해, **추론 속도를 대폭 개선**할 수 있습니다.
 
@@ -394,7 +394,7 @@ title: Query-Efficient Correlation Clustering with Noisy Oracle
 
 **예상 효과**:
 - 클러스터링 결과의 **신뢰성을 높이고**, 다양한 도메인에서의 활용도를 증대시킵니다.
-- 특히 **규제된 환경(예: 의료, 금융 등)**에서의 활용 가능성을 높입니다.
+- 특히 <strong>규제된 환경(예: 의료, 금융 등)</strong>에서의 활용 가능성을 높입니다.
 
 ---
 

@@ -19,7 +19,7 @@ title: Magicoder Empowering Code Generation with OSS-Instruct
 
 # Answer
 
-논문 **"Magicoder: Empowering Code Generation with OSS-INSTRUCT"**는 대형 언어 모델(LLM)을 위한 오픈소스 기반 코드 생성 모델 **Magicoder**를 제안하며, 이를 통해 LLM의 코드 생성 성능을 크게 향상시키는 방법을 소개합니다. 이 논문의 주요 강점, 독창적인 지점, 핵심 알고리즘의 예시, 그리고 한계점은 다음과 같습니다.
+논문 <strong>"Magicoder: Empowering Code Generation with OSS-INSTRUCT"</strong>는 대형 언어 모델(LLM)을 위한 오픈소스 기반 코드 생성 모델 **Magicoder**를 제안하며, 이를 통해 LLM의 코드 생성 성능을 크게 향상시키는 방법을 소개합니다. 이 논문의 주요 강점, 독창적인 지점, 핵심 알고리즘의 예시, 그리고 한계점은 다음과 같습니다.
 
 ### 강점 및 독창적인 지점
 

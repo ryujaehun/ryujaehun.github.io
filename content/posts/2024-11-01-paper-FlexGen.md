@@ -21,7 +21,7 @@ title: FlexGen High-Throughput Generative Inference of Large Language Models wit
 
 # Answer : 
 
-논문 **"FlexGen: High-Throughput Generative Inference of Large Language Models with a Single GPU"**는 단일 GPU와 같은 제한된 하드웨어 자원으로 대형 언어 모델(LLM)의 추론 성능을 극대화하는 혁신적인 접근법을 제시합니다. 주요 강점과 독창적인 아이디어, 핵심 알고리즘 설명 및 논문의 한계점을 요약해 드리겠습니다.
+논문 <strong>"FlexGen: High-Throughput Generative Inference of Large Language Models with a Single GPU"</strong>는 단일 GPU와 같은 제한된 하드웨어 자원으로 대형 언어 모델(LLM)의 추론 성능을 극대화하는 혁신적인 접근법을 제시합니다. 주요 강점과 독창적인 아이디어, 핵심 알고리즘 설명 및 논문의 한계점을 요약해 드리겠습니다.
 
 ### 강점과 독창성
 
@@ -69,7 +69,7 @@ FlexGen 알고리즘은 LLM 추론 과정에서 **프리필(prefill)** 단계와
 # Answer :
 ### 블록 스케줄링(Block Scheduling)
 
-FlexGen의 **블록 스케줄링(block scheduling)**은 GPU 메모리가 부족한 상황에서 대용량 배치(batch) 처리를 최적화하는 핵심 전략입니다. 블록 스케줄링을 통해 모델의 가중치(weights)를 GPU에 효율적으로 적재하고 재사용할 수 있어, 불필요한 데이터 이동을 줄이고 처리량(throughput)을 극대화합니다.
+FlexGen의 <strong>블록 스케줄링(block scheduling)</strong>은 GPU 메모리가 부족한 상황에서 대용량 배치(batch) 처리를 최적화하는 핵심 전략입니다. 블록 스케줄링을 통해 모델의 가중치(weights)를 GPU에 효율적으로 적재하고 재사용할 수 있어, 불필요한 데이터 이동을 줄이고 처리량(throughput)을 극대화합니다.
 
 #### 블록 스케줄링의 핵심 아이디어
 블록 스케줄링은 GPU, CPU, 디스크의 메모리 계층을 활용하여 입력 토큰의 생성 과정을 최적화합니다. FlexGen은 GPU에 메모리가 충분하지 않을 경우, 일부 가중치와 데이터를 CPU나 디스크에 분산시켜 저장합니다. 이를 통해 자원을 효율적으로 사용할 수 있습니다.
@@ -88,7 +88,7 @@ FlexGen의 **블록 스케줄링(block scheduling)**은 GPU 메모리가 부족�
 
 ### 선형 계획법을 통한 최적화
 
-FlexGen은 **선형 계획법(linear programming)**을 통해 각 계층의 텐서(가중치, 활성화 값, 캐시)를 어느 메모리 계층(GPU, CPU, 디스크)에 배치할지 결정하여 메모리 효율을 극대화합니다.
+FlexGen은 <strong>선형 계획법(linear programming)</strong>을 통해 각 계층의 텐서(가중치, 활성화 값, 캐시)를 어느 메모리 계층(GPU, CPU, 디스크)에 배치할지 결정하여 메모리 효율을 극대화합니다.
 
 #### 선형 계획법 적용 방식
 
@@ -191,7 +191,7 @@ FlexGen에서 사용한 양자화 방식은 4비트 그룹 단위 비대칭 양�
 
 - **FlexGen의 삼중 메모리 계층 활용**:
   - FlexGen은 GPU, CPU, 디스크로 구성된 **삼중 메모리 계층**을 활용합니다. 특히, GPU에 모델의 모든 파라미터를 적재하지 않고, 일부는 CPU 또는 디스크로 오프로드하여 메모리 사용을 줄입니다.
-  - **블록 스케줄링(block scheduling)**과 선형 계획법을 통해 GPU, CPU, 디스크의 메모리를 효율적으로 배치합니다. 이를 통해 메모리 제약이 있는 단일 GPU 환경에서도 대규모 배치 크기를 처리할 수 있습니다.
+  - <strong>블록 스케줄링(block scheduling)</strong>과 선형 계획법을 통해 GPU, CPU, 디스크의 메모리를 효율적으로 배치합니다. 이를 통해 메모리 제약이 있는 단일 GPU 환경에서도 대규모 배치 크기를 처리할 수 있습니다.
 
 - **DeepSpeed의 ZeRO 메모리 최적화**:
   - DeepSpeed는 ZeRO 최적화 기술을 통해 GPU 간의 모델 파라미터를 분산하여 메모리 사용량을 줄입니다. ZeRO는 모델 파라미터, 옵티마이저 상태, 그래디언트를 여러 GPU에 분산시켜 각 GPU가 필요로 하는 메모리 양을 줄이는 방식으로 작동합니다.
@@ -203,7 +203,7 @@ FlexGen에서 사용한 양자화 방식은 4비트 그룹 단위 비대칭 양�
 
 ### 3. 압축 및 양자화(Quantization)
 
-- **FlexGen**: FlexGen은 **4비트 그룹 단위 양자화(group-wise quantization)**를 사용하여 메모리 사용량을 줄입니다. 주로 가중치와 KV 캐시를 양자화하여 I/O 비용과 메모리 요구량을 줄이는데, 이는 대규모 배치 작업에서 특히 유용합니다. FlexGen의 양자화 방식은 데이터 손실을 최소화하면서 메모리와 처리 성능을 최적화합니다.
+- **FlexGen**: FlexGen은 <strong>4비트 그룹 단위 양자화(group-wise quantization)</strong>를 사용하여 메모리 사용량을 줄입니다. 주로 가중치와 KV 캐시를 양자화하여 I/O 비용과 메모리 요구량을 줄이는데, 이는 대규모 배치 작업에서 특히 유용합니다. FlexGen의 양자화 방식은 데이터 손실을 최소화하면서 메모리와 처리 성능을 최적화합니다.
 
 - **DeepSpeed 및 Zero-Offload**: 이 두 시스템은 **양자화를 주로 사용하지 않으며**, CPU와 GPU 간 데이터 전송 최적화 및 메모리 오프로드를 통해 메모리 사용량을 줄이는 방식에 초점을 맞춥니다. 대신, ZeRO의 메모리 최적화 기능을 통해 GPU와 CPU 메모리를 효율적으로 사용하여 모델 학습과 추론을 최적화합니다.
 

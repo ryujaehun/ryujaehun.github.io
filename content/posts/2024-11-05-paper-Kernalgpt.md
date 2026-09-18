@@ -19,7 +19,7 @@ title: KernelGPT Enhanced Kernel Fuzzing via Large Language Models
 
 # Answer
 
-**KernelGPT** 논문은 운영체제 커널에서의 결함 탐지를 위해 **대형 언어 모델(LLM)**을 활용한 자동화된 시스템 호출(specification) 생성 방법을 제안합니다. 기존의 커널 퍼징 도구 Syzkaller의 제약을 해결하기 위해 LLM을 활용하여 Syzkaller가 필요로 하는 system call의 사양을 자동으로 생성, 검증, 수정하는 방식을 도입했습니다. 이를 통해 기존의 수작업 기반 방식보다 더 높은 커버리지와 효율적인 퍼징을 달성할 수 있습니다.
+**KernelGPT** 논문은 운영체제 커널에서의 결함 탐지를 위해 <strong>대형 언어 모델(LLM)</strong>을 활용한 자동화된 시스템 호출(specification) 생성 방법을 제안합니다. 기존의 커널 퍼징 도구 Syzkaller의 제약을 해결하기 위해 LLM을 활용하여 Syzkaller가 필요로 하는 system call의 사양을 자동으로 생성, 검증, 수정하는 방식을 도입했습니다. 이를 통해 기존의 수작업 기반 방식보다 더 높은 커버리지와 효율적인 퍼징을 달성할 수 있습니다.
 
 ### 논문의 강점과 독창적인 지점
 

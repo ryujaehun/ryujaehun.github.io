@@ -19,7 +19,7 @@ title: RAG4ITOps A Supervised Fine-Tunable and Comprehensive RAG Framework for I
 
  
 
-이 논문 **"RAG4ITOps: A Supervised Fine-Tunable and Comprehensive RAG Framework for IT Operations and Maintenance"**는 IT 운영 및 유지보수를 위한 질의응답(QA) 시스템을 개선하기 위한 **Retrieval-Augmented Generation (RAG)** 프레임워크인 RAG4ITOps를 제안합니다. 다음은 논문의 강점, 독창성, 핵심 알고리즘 예시, 그리고 한계점에 대한 설명입니다.
+이 논문 <strong>"RAG4ITOps: A Supervised Fine-Tunable and Comprehensive RAG Framework for IT Operations and Maintenance"</strong>는 IT 운영 및 유지보수를 위한 질의응답(QA) 시스템을 개선하기 위한 **Retrieval-Augmented Generation (RAG)** 프레임워크인 RAG4ITOps를 제안합니다. 다음은 논문의 강점, 독창성, 핵심 알고리즘 예시, 그리고 한계점에 대한 설명입니다.
 
 ### 강점과 독창성
 RAG4ITOps의 주요 강점과 독창성은 다음과 같습니다:
@@ -55,7 +55,7 @@ RAG4ITOps는 우수한 성능을 보이지만, 다음과 같은 한계점이 있
 
  
 
-**Homogeneous In-Batch Negative Sampling (HIS)**와 **Auxiliary Hard Negative Sampling (AHNS)**는 RAG4ITOps에서 **도메인 전용 임베딩 모델의 성능을 향상시키기 위해 사용되는 대조 학습 기법**입니다. 이 두 전략은 학습 데이터에서 의미 있는 '부정 예시(negative samples)'를 효과적으로 구성하여, 모델이 문맥과 의미적 차이를 더 잘 학습할 수 있도록 돕습니다. 각 전략을 예시와 함께 자세히 설명드리겠습니다.
+<strong>Homogeneous In-Batch Negative Sampling (HIS)</strong>와 <strong>Auxiliary Hard Negative Sampling (AHNS)</strong>는 RAG4ITOps에서 **도메인 전용 임베딩 모델의 성능을 향상시키기 위해 사용되는 대조 학습 기법**입니다. 이 두 전략은 학습 데이터에서 의미 있는 '부정 예시(negative samples)'를 효과적으로 구성하여, 모델이 문맥과 의미적 차이를 더 잘 학습할 수 있도록 돕습니다. 각 전략을 예시와 함께 자세히 설명드리겠습니다.
 
 ### 1. Homogeneous In-Batch Negative Sampling (HIS)
 HIS는 **미니 배치 내에서 동일한 작업 유형의 데이터**만 포함하도록 하여, 의미적으로 일관된 부정 예시를 구성하는 방식입니다. 이 방법은 다른 작업이나 문맥의 데이터가 섞일 경우 발생할 수 있는 의미적 혼란을 방지하고, **같은 작업 내에서 더 정교한 대조 학습을 가능하게** 합니다.
@@ -69,7 +69,7 @@ IT 유지보수와 관련된 질문과 답변 데이터로 구성된 QA 시스�
 
 1. **HIS 전략 적용**:
    - **미니 배치 구성**: HIS는 미니 배치를 구성할 때, KA 작업과 TS 작업의 데이터를 섞지 않고, **동일한 작업에 속한 QA 쌍만 포함**하도록 배치를 나눕니다.
-   - 예를 들어, 하나의 미니 배치에는 **KA 질문들(서버 상태, 보안 로그 확인 등)**만 포함하고, 다른 미니 배치에는 **TS 질문들(오류 코드 분석, 네트워크 장애 해결법 등)**만 포함하도록 구성합니다.
+   - 예를 들어, 하나의 미니 배치에는 <strong>KA 질문들(서버 상태, 보안 로그 확인 등)</strong>만 포함하고, 다른 미니 배치에는 <strong>TS 질문들(오류 코드 분석, 네트워크 장애 해결법 등)</strong>만 포함하도록 구성합니다.
 
 2. **장점**:
    - HIS를 통해 KA 배치에서는 서버 상태와 같은 단순 정보 제공 질문을 기준으로 부정 예시를 구성하고, TS 배치에서는 복잡한 문제 해결 관련 질문들만 포함된 배치를 사용하게 됩니다. 이는 임베딩 모델이 각 작업 내에서 정확한 의미 구분을 학습할 수 있도록 돕습니다.

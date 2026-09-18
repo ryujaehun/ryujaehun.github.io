@@ -19,7 +19,7 @@ title: Efficient Generative LLM Inference Using Phase Splitting
 
 # Answer
 
-논문 **"Splitwise: Efficient Generative LLM Inference Using Phase Splitting"**는 대형 언어 모델(LLM)의 추론을 효율적으로 수행하기 위해서 **추론 단계를 분리하는 Splitwise**라는 기법을 제안합니다. 이 논문은 주로 대형 모델의 추론 요청 시 발생하는 비효율성을 개선하고자 합니다. Splitwise는 추론 과정의 **프롬프트 계산 단계**와 **토큰 생성 단계**를 분리하여 각 단계에 맞는 최적의 하드웨어 자원을 할당함으로써 성능과 비용을 동시에 개선하는 시스템입니다. 이 논문의 주요 강점, 독창적인 지점, 핵심 알고리즘의 예시, 그리고 한계점은 다음과 같습니다.
+논문 <strong>"Splitwise: Efficient Generative LLM Inference Using Phase Splitting"</strong>는 대형 언어 모델(LLM)의 추론을 효율적으로 수행하기 위해서 **추론 단계를 분리하는 Splitwise**라는 기법을 제안합니다. 이 논문은 주로 대형 모델의 추론 요청 시 발생하는 비효율성을 개선하고자 합니다. Splitwise는 추론 과정의 **프롬프트 계산 단계**와 **토큰 생성 단계**를 분리하여 각 단계에 맞는 최적의 하드웨어 자원을 할당함으로써 성능과 비용을 동시에 개선하는 시스템입니다. 이 논문의 주요 강점, 독창적인 지점, 핵심 알고리즘의 예시, 그리고 한계점은 다음과 같습니다.
 
 ### 강점 및 독창적인 지점
 

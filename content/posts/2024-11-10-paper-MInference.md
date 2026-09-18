@@ -31,7 +31,7 @@ title: MInference 1.0 Accelerating Pre-filling for Long-Context LLMs via Dynamic
    - 기존 연구에서는 **고정된 희소 Attention 기법**(예: Longformer, BigBird)이 사용되었으나, 이 논문에서는 **동적 희소 Attention** 방식을 도입하여, **문맥에 따라 변동하는 Attention 패턴**을 효율적으로 예측합니다. 이를 통해 **최적의 희소 패턴**을 실시간으로 구축하고, GPU 커널 최적화를 통해 **10배 이상의 속도 향상**을 달성했습니다.
 
 3. **훈련 없이 기존 모델에 적용 가능**:
-   - 제안된 MInference 방식은 **사전 훈련된 모델을 재훈련하지 않고도** 적용할 수 있어, **추가적인 학습 비용이 필요 없다는 점**에서 실용적입니다. 특히, 기존 LLM의 **사전 훈련 및 미세 조정(fine-tuning)**을 거치지 않고도 성능을 개선할 수 있습니다.
+   - 제안된 MInference 방식은 **사전 훈련된 모델을 재훈련하지 않고도** 적용할 수 있어, **추가적인 학습 비용이 필요 없다는 점**에서 실용적입니다. 특히, 기존 LLM의 <strong>사전 훈련 및 미세 조정(fine-tuning)</strong>을 거치지 않고도 성능을 개선할 수 있습니다.
 
 ---
 
@@ -62,7 +62,7 @@ title: MInference 1.0 Accelerating Pre-filling for Long-Context LLMs via Dynamic
 #### **추론 과정**
 
 1. **Offline Attention 패턴 분석**:
-   - 먼저, 각 Attention 헤드에 대해 **최적의 희소 패턴(A-shape, Vertical-Slash, Block-Sparse)**을 미리 식별합니다.
+   - 먼저, 각 Attention 헤드에 대해 <strong>최적의 희소 패턴(A-shape, Vertical-Slash, Block-Sparse)</strong>을 미리 식별합니다.
    - 이를 위해 **Kernel-Aware Search Algorithm**을 사용하여 GPU의 연산 비용을 최소화하는 패턴을 선택합니다.
 
 2. **동적 희소 인덱스 구축 (Dynamic Sparse Index Building)**:
@@ -104,7 +104,7 @@ title: MInference 1.0 Accelerating Pre-filling for Long-Context LLMs via Dynamic
 
 ### **1. 논문의 특출난 성과 요약**
 
-이 논문 **"MInference 1.0: Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse Attention"**에서 제안한 접근 방식은 기존의 긴 문맥(Long Context)을 처리하는 대형 언어 모델(LLM) 접근법에 비해 **현저한 속도 개선과 메모리 절약**을 이뤄냈습니다. 특히, 긴 입력을 다루는 경우에도 **추론 시간과 계산 비용을 획기적으로 줄인 점**이 주요 성과입니다.
+이 논문 <strong>"MInference 1.0: Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse Attention"</strong>에서 제안한 접근 방식은 기존의 긴 문맥(Long Context)을 처리하는 대형 언어 모델(LLM) 접근법에 비해 **현저한 속도 개선과 메모리 절약**을 이뤄냈습니다. 특히, 긴 입력을 다루는 경우에도 **추론 시간과 계산 비용을 획기적으로 줄인 점**이 주요 성과입니다.
 
 #### **주요 성과**
 - **1백만(1M) 토큰 이상의 긴 문맥을 처리할 때** 기존의 LLM 접근법보다 **10배 이상 빠른 처리 속도**를 달성했습니다.
@@ -174,7 +174,7 @@ title: MInference 1.0 Accelerating Pre-filling for Long-Context LLMs via Dynamic
 
 ### **동적 희소 Attention을 생성하고 활용하는 방법 설명**
 
-논문에서 제안한 **동적 희소 Attention 기법**은 **긴 문맥(Long Context)**을 다루는 대형 언어 모델(LLM)에서 **Attention 연산을 최적화**하여 **추론 속도와 메모리 사용량을 줄이는 것**이 핵심입니다. 이를 위해 **동적으로 최적의 희소 Attention 패턴을 생성하고 적용**합니다. 이 방법은 기존의 고정된 희소 Attention 패턴과 달리, **입력된 텍스트의 문맥에 따라 실시간으로 희소 패턴을 조정**합니다.
+논문에서 제안한 **동적 희소 Attention 기법**은 <strong>긴 문맥(Long Context)</strong>을 다루는 대형 언어 모델(LLM)에서 **Attention 연산을 최적화**하여 **추론 속도와 메모리 사용량을 줄이는 것**이 핵심입니다. 이를 위해 **동적으로 최적의 희소 Attention 패턴을 생성하고 적용**합니다. 이 방법은 기존의 고정된 희소 Attention 패턴과 달리, **입력된 텍스트의 문맥에 따라 실시간으로 희소 패턴을 조정**합니다.
 
 아래에서 **입력 예시를 기반으로 동적 희소 Attention이 생성되고 활용되는 과정**을 단계별로 설명하겠습니다.
 
@@ -194,7 +194,7 @@ title: MInference 1.0 Accelerating Pre-filling for Long-Context LLMs via Dynamic
 ### **2. 동적 희소 Attention 생성 과정**
 
 #### **Step 1: 초기 분석 - 문맥 파악**
-- **대형 언어 모델(LLM)**이 입력된 문서의 **초기 부분(예: 도입부)**과 사용자가 제공한 **키워드('고객 만족', '제품 리뷰', '서비스 개선')**를 분석합니다.
+- <strong>대형 언어 모델(LLM)</strong>이 입력된 문서의 <strong>초기 부분(예: 도입부)</strong>과 사용자가 제공한 <strong>키워드('고객 만족', '제품 리뷰', '서비스 개선')</strong>를 분석합니다.
 - 이 초기 분석을 통해 **텍스트 내에서 중요한 토큰의 위치**를 식별합니다.
 
 #### **Step 2: 희소 패턴 선택을 위한 사전 분석**
@@ -281,7 +281,7 @@ title: MInference 1.0 Accelerating Pre-filling for Long-Context LLMs via Dynamic
 
 ### **논문의 입력 데이터, 추론 과정, 그리고 모델 아키텍처 설명**
 
-논문 **"MInference 1.0: Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse Attention"**에서는 **긴 문맥(Long Context)**을 효율적으로 처리하기 위해 **동적 희소 Attention 기법**을 제안합니다. 이 방법은 기존의 대형 언어 모델(LLM)이 긴 입력 데이터를 분석할 때 발생하는 **연산 비용과 속도 문제**를 해결하기 위해 고안되었습니다. 아래에서는 이 논문의 **입력 데이터, 추론 과정, 그리고 모델 아키텍처**에 대해 예시를 통해 자세히 설명하겠습니다.
+논문 <strong>"MInference 1.0: Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse Attention"</strong>에서는 <strong>긴 문맥(Long Context)</strong>을 효율적으로 처리하기 위해 **동적 희소 Attention 기법**을 제안합니다. 이 방법은 기존의 대형 언어 모델(LLM)이 긴 입력 데이터를 분석할 때 발생하는 **연산 비용과 속도 문제**를 해결하기 위해 고안되었습니다. 아래에서는 이 논문의 **입력 데이터, 추론 과정, 그리고 모델 아키텍처**에 대해 예시를 통해 자세히 설명하겠습니다.
 
 ---
 
@@ -319,7 +319,7 @@ title: MInference 1.0 Accelerating Pre-filling for Long-Context LLMs via Dynamic
   - Block-Sparse 패턴: 특정 문단이나 클러스터에 집중된 Attention.
 
 #### **Step 3: 동적 희소 인덱스 생성**
-- 선택된 패턴에 따라, **희소 인덱스(Sparse Index)**를 동적으로 생성합니다.
+- 선택된 패턴에 따라, <strong>희소 인덱스(Sparse Index)</strong>를 동적으로 생성합니다.
   - 예를 들어, `"품질"`, `"가격"`, `"고객 서비스"`와 같은 키워드가 포함된 문장 주변에 집중된 Attention을 설정합니다.
   - 이를 통해 **문맥적으로 중요한 부분에만 집중**하여 연산량을 줄입니다.
   - **희소 인덱스 예시**:
@@ -416,7 +416,7 @@ title: MInference 1.0 Accelerating Pre-filling for Long-Context LLMs via Dynamic
 **아닙니다.** 동적 희소 Attention에서 "동적"이라는 의미는 **모든 입력 토큰에 대해 항상 Attention을 계산한다는 의미가 아닙니다**. 오히려, **입력된 시퀀스의 특정 부분만 선택적으로 집중**하는 방식으로 작동합니다. 이 논문에서 제안하는 방식은 다음과 같은 단계로 이루어집니다:
 
 - **패턴 선택**: 입력된 긴 시퀀스 전체에 대해 **희소 패턴(A-shape, Vertical-Slash, Block-Sparse)** 중 하나를 선택하여 적용합니다. 이 선택은 **사전에 정의된 규칙**에 따라 이루어지지만, 입력된 텍스트의 구조와 내용에 따라 최적의 패턴이 **동적으로** 결정됩니다.
-- **희소 인덱스 생성**: 특정 패턴이 선택되면, **희소 인덱스(Sparse Index)**를 생성하여 **전체 시퀀스 중 일부 토큰만 선택적으로 Attention을 계산**합니다. 이때 **모든 토큰에 대해 Attention을 구하는 것이 아니라**, 선택된 인덱스에만 집중하여 연산을 수행합니다.
+- **희소 인덱스 생성**: 특정 패턴이 선택되면, <strong>희소 인덱스(Sparse Index)</strong>를 생성하여 **전체 시퀀스 중 일부 토큰만 선택적으로 Attention을 계산**합니다. 이때 **모든 토큰에 대해 Attention을 구하는 것이 아니라**, 선택된 인덱스에만 집중하여 연산을 수행합니다.
   
 즉, **모든 입력에 대해 동적으로 Attention을 계산하지 않고**, **문맥에 따라 중요한 토큰만 선택적으로 Attention을 수행**합니다. 이는 긴 시퀀스를 효율적으로 처리하기 위해 필요한 접근 방식입니다.
 
@@ -429,7 +429,7 @@ title: MInference 1.0 Accelerating Pre-filling for Long-Context LLMs via Dynamic
 **네, 이 문제에 대한 논문에서의 접근 방식은 다음과 같습니다**:
 
 - **희소 Attention의 핵심**은 **입력 시퀀스에서 중요한 토큰들에만 집중하는 것**입니다. 만약 사용자가 입력한 **키워드가 매우 많아져서 거의 모든 부분이 중요**해지면, 이 경우 희소성이 떨어질 수 있습니다.
-- 이 논문에서는 이를 해결하기 위해 **세 가지 패턴(A-shape, Vertical-Slash, Block-Sparse)**을 사용하며, 특정 상황에 따라 **패턴을 조합하거나 선택적으로 적용**합니다.
+- 이 논문에서는 이를 해결하기 위해 <strong>세 가지 패턴(A-shape, Vertical-Slash, Block-Sparse)</strong>을 사용하며, 특정 상황에 따라 **패턴을 조합하거나 선택적으로 적용**합니다.
 
 #### **(1) 다수의 키워드가 포함된 경우, 다음과 같은 해결 방안을 사용합니다**:
 

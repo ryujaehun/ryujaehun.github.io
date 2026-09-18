@@ -28,7 +28,7 @@ title: ALPINE Unveiling the Planning Capability of Autoregressive Learning in La
 
 1. **이론적 분석과 실험 검증의 결합**:
    - Transformer 모델이 **경로 탐색 문제**를 해결할 수 있는 능력을 이론적으로 분석하고, 그 결과를 실제 실험을 통해 검증합니다.
-   - 특히, **경사 하강법(gradient descent)**을 통한 학습 과정에서 Transformer가 **인접 행렬(adjacency matrix)**과 제한된 형태의 **도달 가능 행렬(reachability matrix)**을 학습할 수 있음을 보여주었습니다.
+   - 특히, <strong>경사 하강법(gradient descent)</strong>을 통한 학습 과정에서 Transformer가 <strong>인접 행렬(adjacency matrix)</strong>과 제한된 형태의 <strong>도달 가능 행렬(reachability matrix)</strong>을 학습할 수 있음을 보여주었습니다.
 
 2. **계획 능력에 대한 새로운 시각**:
    - 기존 연구들이 주로 실험적 접근에 의존했던 것과 달리, 이 논문은 **Transformer의 내부 메커니즘**이 경로 탐색과 같은 고차원 문제를 해결할 수 있는지 이론적으로 설명합니다.
@@ -57,8 +57,8 @@ title: ALPINE Unveiling the Planning Capability of Autoregressive Learning in La
 
 2. **모델 내 예측**:
    - Transformer의 **attention 메커니즘**을 사용하여 현재 노드(`A`)와 타겟 노드(`D`) 간의 관계를 분석합니다.
-   - **인접 행렬 $A$**를 통해 현재 노드의 다음 가능한 노드(`B`)를 탐색합니다.
-   - **도달 가능 행렬 $R$**을 활용해, 다음 노드가 타겟에 도달 가능한지를 평가합니다.
+   - <strong>인접 행렬 $A$</strong>를 통해 현재 노드의 다음 가능한 노드(`B`)를 탐색합니다.
+   - <strong>도달 가능 행렬 $R$</strong>을 활용해, 다음 노드가 타겟에 도달 가능한지를 평가합니다.
 
 3. **경로 생성**:
    - `A -> B`, `B -> C`, `C -> D` 순으로 경로를 예측합니다.
@@ -74,8 +74,8 @@ title: ALPINE Unveiling the Planning Capability of Autoregressive Learning in La
 이 논문에서 밝혀진 한계점은 다음과 같습니다:
 
 1. **전이(transitivity) 학습의 한계**:
-   - Transformer 모델은 학습된 경로에서 **관찰되지 않은 도달 가능성(관찰되지 않은 노드 간의 간접적 연결)**을 학습하는 데 한계를 가집니다.
-   - 예를 들어, 두 개의 분리된 경로를 **연결(concatenate)**해야 도달 가능한 경로를 생성하는 경우 Transformer가 이를 학습하지 못하는 문제가 발생합니다.
+   - Transformer 모델은 학습된 경로에서 <strong>관찰되지 않은 도달 가능성(관찰되지 않은 노드 간의 간접적 연결)</strong>을 학습하는 데 한계를 가집니다.
+   - 예를 들어, 두 개의 분리된 경로를 <strong>연결(concatenate)</strong>해야 도달 가능한 경로를 생성하는 경우 Transformer가 이를 학습하지 못하는 문제가 발생합니다.
 
 2. **모델 복잡성 증가에 따른 성능 저하**:
    - 노드 수가 증가할수록 모델의 정확도가 급격히 저하되며, 특히 **큰 그래프**에서는 경로 예측의 정확도가 떨어집니다.
@@ -137,7 +137,7 @@ title: ALPINE Unveiling the Planning Capability of Autoregressive Learning in La
 논문에서 제안한 **Transformer 기반 경로 탐색 모델**을 학습하기 위해서는 **그래프 구조를 기반으로 한 경로 탐색 데이터셋**이 필요합니다. 이 모델이 효과적으로 작동하기 위해 다음과 같은 구성 요소를 포함하는 데이터셋이 필요합니다:
 
 1. **그래프 데이터(Graph Data)**:
-   - **노드(Node)**와 **엣지(Edge)**의 목록으로 구성된 그래프가 필요합니다.
+   - <strong>노드(Node)</strong>와 <strong>엣지(Edge)</strong>의 목록으로 구성된 그래프가 필요합니다.
    - 노드는 특정 상태나 장소를 나타내고, 엣지는 노드 간의 연결을 의미합니다.
    - 각 엣지는 방향성(directed)이 있으며, 특정 노드에서 다른 노드로 이동할 수 있는 경로를 나타냅니다.
 
@@ -151,7 +151,7 @@ title: ALPINE Unveiling the Planning Capability of Autoregressive Learning in La
      ```
 
 3. **도달 가능성 정보(Reachability Information)**:
-   - 모델이 노드 간의 도달 가능성을 학습하도록 돕기 위해 **인접 행렬(Adjacency Matrix)** 및 **도달 가능 행렬(Reachability Matrix)**이 필요합니다.
+   - 모델이 노드 간의 도달 가능성을 학습하도록 돕기 위해 **인접 행렬(Adjacency Matrix)** 및 <strong>도달 가능 행렬(Reachability Matrix)</strong>이 필요합니다.
    - 학습 시 Transformer 모델이 인접성과 도달 가능성을 기반으로 다음 노드를 예측하도록 합니다.
 
 4. **Blocksworld와 같은 벤치마크 데이터셋**:
@@ -187,9 +187,9 @@ title: ALPINE Unveiling the Planning Capability of Autoregressive Learning in La
    - 모델은 **인접 행렬 정보**를 사용해 현재 노드에서 이동 가능한 다음 노드를 예측하고, **도달 가능성 행렬**을 활용하여 타겟 노드로 도달 가능한 경로를 찾습니다.
 
 #### 3. **학습 과정 (Training Process)**
-   - **손실 함수(Loss Function)**: **크로스 엔트로피 손실(cross-entropy loss)**를 사용하여, 예측된 경로와 실제 경로 간의 차이를 최소화합니다.
+   - **손실 함수(Loss Function)**: <strong>크로스 엔트로피 손실(cross-entropy loss)</strong>를 사용하여, 예측된 경로와 실제 경로 간의 차이를 최소화합니다.
    - **학습 방법**: 
-     - **경사 하강법(Gradient Descent)**을 사용하여 모델의 파라미터를 최적화합니다.
+     - <strong>경사 하강법(Gradient Descent)</strong>을 사용하여 모델의 파라미터를 최적화합니다.
      - Transformer 모델의 **어텐션 메커니즘**을 활용해 소스 노드와 타겟 노드 간의 관계를 학습합니다.
    - **하이퍼파라미터 튜닝(Hyperparameter Tuning)**:
      - 레이어 수, 헤드 수, 임베딩 크기 등을 조정하여 모델 성능을 최적화합니다.

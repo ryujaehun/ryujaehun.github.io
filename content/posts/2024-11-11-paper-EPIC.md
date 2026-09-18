@@ -21,7 +21,7 @@ title: EPIC Efficient Position-Independent Context Caching for Serving Large Lan
 
  
 
-이 논문 **"Epic: Efficient Position-Independent Context Caching for Serving Large Language Models"**는 대형 언어 모델(LLM) 추론 속도를 높이기 위한 **위치 독립적 컨텍스트 캐싱(Position-Independent Context Caching, PIC)** 기법을 도입한 Epic 시스템을 소개하고 있습니다. 주요 내용과 강점, 독창성, 핵심 알고리즘을 예시와 함께 설명한 후, 논문의 한계점에 대해 설명하겠습니다.
+이 논문 <strong>"Epic: Efficient Position-Independent Context Caching for Serving Large Language Models"</strong>는 대형 언어 모델(LLM) 추론 속도를 높이기 위한 **위치 독립적 컨텍스트 캐싱(Position-Independent Context Caching, PIC)** 기법을 도입한 Epic 시스템을 소개하고 있습니다. 주요 내용과 강점, 독창성, 핵심 알고리즘을 예시와 함께 설명한 후, 논문의 한계점에 대해 설명하겠습니다.
 
 ### 강점과 독창성
 Epic의 주요 강점과 독창성은 다음과 같습니다:
@@ -60,7 +60,7 @@ Epic 시스템은 **위치 독립적 캐싱**을 통한 새로운 접근을 통�
 
  
 
-이 논문 **Epic**은 기존의 캐싱 기법과 비교했을 때 뛰어난 성능을 보여줍니다. 특히 **시간 효율성과 정확성**의 균형을 유지하면서, 요청 간의 **위치 독립적 컨텍스트 캐싱(Position-Independent Context Caching, PIC)**을 통해 다른 기존 방법론 대비 **최대 8배 빠른 Time-to-First-Token(TTFT)**과 **7배 높은 처리량**을 달성했습니다. Epic이 이러한 특출난 결과를 이룬 배경과 논문에서 제기한 기법을 중심으로 설명하겠습니다.
+이 논문 **Epic**은 기존의 캐싱 기법과 비교했을 때 뛰어난 성능을 보여줍니다. 특히 **시간 효율성과 정확성**의 균형을 유지하면서, 요청 간의 <strong>위치 독립적 컨텍스트 캐싱(Position-Independent Context Caching, PIC)</strong>을 통해 다른 기존 방법론 대비 <strong>최대 8배 빠른 Time-to-First-Token(TTFT)</strong>과 **7배 높은 처리량**을 달성했습니다. Epic이 이러한 특출난 결과를 이룬 배경과 논문에서 제기한 기법을 중심으로 설명하겠습니다.
 
 ### 1. 특출난 성과와 비교 우위
 Epic의 성과가 두드러지는 이유는 **기존 CacheBlend와 같은 SOTA(Position-Independent Caching) 방법론보다 높은 효율성과 유연성** 덕분입니다. Epic은 특히 **정확도 손실 없이 TTFT를 대폭 줄이는** 데 성공했습니다. CacheBlend와 비교했을 때, Epic의 **AttnLink 알고리즘과 KVSplit 방식**은 정밀도와 속도 모두에서 큰 이점을 제공합니다. 예를 들어, CacheBlend는 15%의 토큰을 재계산해야 하는 반면, Epic의 AttnLink는 각 청크 경계에서 극소수의 토큰만 재계산하여 처리량과 TTFT에서 월등한 효율성을 보입니다.
@@ -69,7 +69,7 @@ Epic의 성과가 두드러지는 이유는 **기존 CacheBlend와 같은 SOTA(P
 논문에서 제시된 주요 기법과 Epic의 성과를 도출하게 된 이유는 다음과 같습니다:
 
 #### (1) AttnLink 알고리즘
-AttnLink는 Epic의 성능 향상의 핵심입니다. **정적 주의 희소성(static attention sparsity)**을 활용하여 각 청크의 경계에 있는 소수의 토큰만 선택적으로 재계산합니다. 이 방법이 뛰어난 성과를 내는 이유는 다음과 같습니다:
+AttnLink는 Epic의 성능 향상의 핵심입니다. <strong>정적 주의 희소성(static attention sparsity)</strong>을 활용하여 각 청크의 경계에 있는 소수의 토큰만 선택적으로 재계산합니다. 이 방법이 뛰어난 성과를 내는 이유는 다음과 같습니다:
    - **재계산 효율성**: AttnLink는 CacheBlend보다 훨씬 적은 수의 토큰을 재계산하므로, 처리 시간과 메모리 사용량을 크게 절감할 수 있습니다. 이로 인해 전체 시스템의 TTFT가 최대 3배 향상됩니다.
    - **주의 집중 문제 해결**: 기존에는 청크 경계에서 주의 집중이 지나치게 이루어져 후속 토큰이 중요한 정보에 접근하지 못하는 문제가 있었습니다. AttnLink는 각 청크의 경계에서 소수의 토큰을 재계산하여 이러한 주의 분산 문제를 해결하며, 이는 정확도 손실을 최소화하는 데 기여합니다.
 

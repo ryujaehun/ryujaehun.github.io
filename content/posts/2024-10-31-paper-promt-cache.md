@@ -78,7 +78,7 @@ Prompt Cache에서 저장되는 값은 **기존의 KV Cache**와 유사한 방�
 ### 2. Input Length가 2048일 때, LLAMA2에서 캐싱 효율 수치 분석
 
 #### KV Cache와 Prompt Cache의 계산 복잡도 차이
-Transformer 모델에서 각 토큰에 대한 **attention 계산의 복잡도**는 시퀀스 길이에 따라 **O(n^2)**으로 증가합니다. 예를 들어, 시퀀스 길이가 \(n\)일 때 계산 복잡도는 **O(n^2 \times d)** (여기서 \(d\)는 hidden dimension)입니다. 따라서 시퀀스 길이가 길어질수록 attention 계산의 비용은 급격히 증가하게 됩니다.
+Transformer 모델에서 각 토큰에 대한 **attention 계산의 복잡도**는 시퀀스 길이에 따라 <strong>O(n^2)</strong>으로 증가합니다. 예를 들어, 시퀀스 길이가 \(n\)일 때 계산 복잡도는 **O(n^2 \times d)** (여기서 \(d\)는 hidden dimension)입니다. 따라서 시퀀스 길이가 길어질수록 attention 계산의 비용은 급격히 증가하게 됩니다.
 
 Prompt Cache는 특정 모듈을 캐싱하여, **전체 input 길이가 길어지더라도 사전 계산된 모듈에 대해서는 추가적인 attention 계산이 필요하지 않도록 합니다**. 이를 통해 **최초 입력 단계에서의 attention 연산을 선형으로 줄일 수 있어, 큰 시퀀스에서도 상당한 시간 절약 효과**를 기대할 수 있습니다.
 
