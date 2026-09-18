@@ -1,0 +1,104 @@
+{{/*
+  테마 `themes/hugo-narrow/layouts/_partials/layout/head.html` 의 오버라이드.
+
+  테마 원본과 다른 곳은 두 군데뿐이다. 나머지는 원본 그대로이므로 테마를
+  올릴 때 이 파일을 원본과 diff 해서 따라가면 된다.
+
+    1. <title>  : 페이지네이션 2쪽부터 쪽 번호를 붙인다. 원본은 목록
+                  페이지 전부가 같은 제목이라 103 개 URL 이 "게시글 |
+                  Jaehun's Blog" 하나로 겹쳐 있었다. home 은 뺐다 -
+                  홈 레이아웃은 페이저를 그리지 않는데 `.Paginator` 를
+                  건드리는 순간 Hugo 가 /page/2..90 을 없던 것까지
+                  만들어 낸다 (실측 +101 페이지).
+    2. <meta name="description">
+                : `partial "seo/description.html"` 로 위임한다. 이유는
+                  그 파일 주석 참고. 원본은 본문을 그대로 잘라 써서 논문
+                  글 391 편이 프롬프트 문구를 스니펫으로 내보냈다.
+
+  description 을 한 곳에서 정하게 만든 덕에 JSON-LD 도 같은 문자열을 쓴다.
+*/}}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+{{- $pageSuffix := "" -}}
+{{- if in (slice "section" "taxonomy" "term") .Kind -}}
+  {{- with .Paginator -}}
+    {{- if gt .PageNumber 1 -}}
+      {{- if eq $.Language.Lang "ko" -}}
+        {{- $pageSuffix = printf " (%d쪽)" .PageNumber -}}
+      {{- else -}}
+        {{- $pageSuffix = printf " (page %d)" .PageNumber -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<title>
+  {{- if and .IsHome (not $pageSuffix) -}}
+    {{ site.Title }}
+  {{- else if .Title -}}
+    {{ .Title }}{{ $pageSuffix }} |
+    {{ site.Title }}
+  {{- else -}}
+    {{ site.Title }}{{ $pageSuffix }}
+  {{- end -}}
+
+</title>
+
+<meta name="description" content="{{ partial "seo/description.html" . }}" />
+<meta
+  name="keywords"
+  content="{{- with .Params.tags -}}
+    {{ delimit . `, ` }}
+  {{- else -}}
+    {{- with site.Params.keywords -}}{{ delimit . `, ` }}{{- end -}}
+  {{- end -}}"
+/>
+<meta
+  name="author"
+  content="{{- with .Params.author -}}
+    {{ . }}
+  {{- else -}}
+    {{ site.Params.defaultAuthor }}
+  {{- end -}}"
+/>
+<meta name="language" content="{{ site.Params.language | default site.Language.Locale }}" />
+
+<meta
+  name="robots"
+  content="{{- with .Params.robots -}}
+    {{ . }}
+  {{- else -}}
+    index, follow
+  {{- end -}}"
+/>
+<link rel="canonical" href="{{ .Permalink }}" />
+
+{{ with site.Params.favicon.svg }}
+  <link rel="icon" type="image/svg+xml" href="{{ strings.TrimPrefix `/` . | relURL }}" />
+{{ else }}
+  <link rel="icon" type="image/svg+xml" href="{{ `favicon.svg` | relURL }}" />
+{{ end }}
+
+{{- if or .IsPage .IsHome .IsSection .IsNode -}}
+  {{- $_ := .Content -}}
+{{- end -}}
+
+{{- $searchConfig := partial "config/search.html" . -}}
+{{- $galleryConfig := partial "config/gallery.html" . -}}
+{{- .Scratch.Set "galleryEnabled" $galleryConfig.gallery -}}
+{{- .Scratch.Set "lightboxEnabled" $galleryConfig.lightbox -}}
+{{- .Scratch.Set "galleryConfig" $galleryConfig.galleryOptions -}}
+
+
+<link rel="manifest" href="{{ `site.webmanifest` | relURL }}" />
+{{ partial "layout/head/seo.html" . }}
+
+{{ partial "config/script.html" (dict "id" "search-config" "value" $searchConfig) }}
+{{ if or ($galleryConfig.gallery) ($galleryConfig.lightbox) }}
+  {{ partial "config/script.html" (dict "id" "gallery-config" "value" $galleryConfig) }}
+{{ end }}
+{{ partial "layout/head/css.html" . }}
+{{ partial "layout/head/js.html" . }}
+
+{{ partial "layout/head/custom-head.html" . }}

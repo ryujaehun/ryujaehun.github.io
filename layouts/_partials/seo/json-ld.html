@@ -1,0 +1,167 @@
+{{/*
+  schema.org 구조화 데이터 (JSON-LD).
+
+  왜 필요한가: 테마가 부르는 Hugo 내장 `schema.html` 은 itemscope 없는
+  `<meta itemprop>` 만 내보낸다. 감싸는 타입이 없으면 마이크로데이터로
+  성립하지 않아 검색엔진이 아무것도 읽어 가지 못한다. 실제로 렌더된
+  글에서 Article/BreadcrumbList/Person 중 어느 것도 잡히지 않았다.
+
+  하나의 @graph 로 묶어 노드끼리 @id 로 참조하게 한다. 그래야 글 →
+  저자 → 사이트가 같은 개체를 가리키는 것으로 인식된다.
+  https://developers.google.com/search/docs/appearance/structured-data
+*/}}
+
+{{- $home := site.Home.Permalink -}}
+{{- $siteID := printf "%s#website" $home -}}
+{{- $personID := printf "%s#person" $home -}}
+
+{{/* 저자: 언어별 params.author.name, 없으면 사이트 기본값 */}}
+{{- $authorName := or site.Params.author.name site.Params.defaultAuthor -}}
+
+{{/* sameAs: 소셜 링크 중 mailto: 는 제외한다 (schema.org sameAs 는 URL 만) */}}
+{{- $sameAs := slice -}}
+{{- range site.Params.author.social -}}
+  {{- if not (strings.HasPrefix .url "mailto:") -}}
+    {{- $sameAs = $sameAs | append .url -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $person := dict
+  "@type" "Person"
+  "@id" $personID
+  "name" $authorName
+  "url" (printf "%sabout/" $home)
+-}}
+{{- with site.Params.author.avatar -}}
+  {{- $person = merge $person (dict "image" (. | absURL)) -}}
+{{- end -}}
+{{- with $sameAs -}}
+  {{- $person = merge $person (dict "sameAs" .) -}}
+{{- end -}}
+
+{{- $website := dict
+  "@type" "WebSite"
+  "@id" $siteID
+  "url" $home
+  "name" site.Title
+  "inLanguage" site.Language.Locale
+  "publisher" (dict "@id" $personID)
+-}}
+{{- with site.Params.description -}}
+  {{- $website = merge $website (dict "description" .) -}}
+{{- end -}}
+
+{{- $graph := slice $website $person -}}
+
+{{/* -------------------------------------------------- 글 (BlogPosting) */}}
+{{- if and .IsPage (eq .Type "posts") -}}
+  {{- $desc := partial "seo/description.html" . -}}
+  {{- $img := site.Params.images -}}
+  {{- with .Params.cover -}}
+    {{- $img = slice (. | absURL) -}}
+  {{- else -}}
+    {{- $abs := slice -}}
+    {{- range site.Params.images -}}
+      {{- $abs = $abs | append (. | absURL) -}}
+    {{- end -}}
+    {{- $img = $abs -}}
+  {{- end -}}
+
+  {{- $post := dict
+    "@type" "BlogPosting"
+    "@id" (printf "%s#article" .Permalink)
+    "isPartOf" (dict "@id" $siteID)
+    "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink)
+    "url" .Permalink
+    "headline" (.Title | plainify | truncate 110 "")
+    "name" (.Title | plainify)
+    "inLanguage" .Language.Locale
+    "author" (dict "@id" $personID)
+    "publisher" (dict "@id" $personID)
+    "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")
+    "dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z07:00")
+    "wordCount" .WordCount
+  -}}
+  {{- with $desc -}}
+    {{- $post = merge $post (dict "description" .) -}}
+  {{- end -}}
+  {{- with $img -}}
+    {{- $post = merge $post (dict "image" .) -}}
+  {{- end -}}
+  {{- with .Params.categories -}}
+    {{- $post = merge $post (dict "articleSection" .) -}}
+  {{- end -}}
+  {{- with .Params.tags -}}
+    {{- $post = merge $post (dict "keywords" (delimit . ", ")) -}}
+  {{- end -}}
+  {{- with site.Params.post.license -}}
+    {{- if and .show .url -}}
+      {{- $post = merge $post (dict "license" .url) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $graph = $graph | append $post -}}
+{{- end -}}
+
+{{/* -------------------------------------------------- 소개 (ProfilePage) */}}
+{{- if and .IsPage (eq .File.ContentBaseName "about") -}}
+  {{- $graph = $graph | append (dict
+    "@type" "ProfilePage"
+    "@id" (printf "%s#profile" .Permalink)
+    "url" .Permalink
+    "name" (.Title | plainify)
+    "isPartOf" (dict "@id" $siteID)
+    "inLanguage" .Language.Locale
+    "mainEntity" (dict "@id" $personID)
+  ) -}}
+{{- end -}}
+
+{{/* --------------------------------- 목록·분류 페이지 (CollectionPage) */}}
+{{- if and (not .IsPage) (not .IsHome) -}}
+  {{- $coll := dict
+    "@type" "CollectionPage"
+    "@id" (printf "%s#collection" .Permalink)
+    "url" .Permalink
+    "name" (.Title | plainify)
+    "isPartOf" (dict "@id" $siteID)
+    "inLanguage" .Language.Locale
+  -}}
+  {{- $cdesc := partial "seo/description.html" . -}}
+  {{- with $cdesc -}}
+    {{- $coll = merge $coll (dict "description" .) -}}
+  {{- end -}}
+  {{- $graph = $graph | append $coll -}}
+{{- end -}}
+
+{{/* ------------------------------------------------- BreadcrumbList */}}
+{{- if and (not .IsHome) .Ancestors -}}
+  {{- $items := slice -}}
+  {{- $pos := 0 -}}
+  {{- range .Ancestors.Reverse -}}
+    {{- $pos = add $pos 1 -}}
+    {{- $items = $items | append (dict
+      "@type" "ListItem"
+      "position" $pos
+      "name" (.Title | plainify)
+      "item" .Permalink
+    ) -}}
+  {{- end -}}
+  {{- $pos = add $pos 1 -}}
+  {{- $items = $items | append (dict
+    "@type" "ListItem"
+    "position" $pos
+    "name" (.Title | plainify)
+    "item" .Permalink
+  ) -}}
+  {{- $graph = $graph | append (dict
+    "@type" "BreadcrumbList"
+    "@id" (printf "%s#breadcrumb" .Permalink)
+    "itemListElement" $items
+  ) -}}
+{{- end -}}
+
+{{/* safeJS 가 없으면 Go 템플릿이 script 안을 JS 문자열로 보고 통째로
+     따옴표에 싸 이스케이프한다. 실제로 JSON 이 아니라 JSON 문자열이
+     나가서 파서가 읽지 못했다. */}}
+<script type="application/ld+json">
+  {{- dict "@context" "https://schema.org" "@graph" $graph | jsonify | safeJS -}}
+</script>

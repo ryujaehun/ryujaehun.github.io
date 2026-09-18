@@ -1,0 +1,70 @@
+{{/*
+  테마 원본은 Hugo 내장 `opengraph.html` / `twitter_cards.html` /
+  `schema.html` 세 개를 그대로 부른다. 실측한 문제:
+
+    - 내장 opengraph·twitter 는 description 을 `.Description` 없으면
+      `.Summary` 에서 가져온다. 본문 첫머리가 프롬프트 문구인 논문 글
+      391 편이 SNS 카드까지 같은 문구로 나갔다.
+    - 내장 schema.html 은 itemscope 없는 `<meta itemprop>` 만 찍는다.
+      감싸는 타입이 없어 구조화 데이터로 성립하지 않는다. 그 자리에
+      JSON-LD 를 둔다.
+
+  description 은 `seo/description.html` 한 곳에서 결정해 head 의
+  meta, OG, Twitter, JSON-LD 가 전부 같은 문자열을 쓰게 한다.
+*/}}
+
+{{- $desc := partial "seo/description.html" . -}}
+{{- $title := cond .IsHome site.Title (.Title | plainify) -}}
+
+{{- $images := slice -}}
+{{- with .Params.cover -}}
+  {{- $images = slice (. | absURL) -}}
+{{- else -}}
+  {{- range site.Params.images -}}
+    {{- $images = $images | append (. | absURL) -}}
+  {{- end -}}
+{{- end -}}
+
+<meta property="og:site_name" content="{{ site.Title }}" />
+<meta property="og:url" content="{{ .Permalink }}" />
+<meta property="og:title" content="{{ $title }}" />
+<meta property="og:description" content="{{ $desc }}" />
+<meta property="og:locale" content="{{ replace .Language.Locale `-` `_` }}" />
+<meta property="og:type" content="{{ cond (and .IsPage (eq .Type `posts`)) `article` `website` }}" />
+{{- range $images }}
+<meta property="og:image" content="{{ . }}" />
+{{- end }}
+{{- range .Translations }}
+<meta property="og:locale:alternate" content="{{ replace .Language.Locale `-` `_` }}" />
+{{- end }}
+
+{{- if and .IsPage (eq .Type "posts") }}
+<meta property="article:published_time" content="{{ .Date.Format `2006-01-02T15:04:05Z07:00` }}" />
+<meta property="article:modified_time" content="{{ .Lastmod.Format `2006-01-02T15:04:05Z07:00` }}" />
+<meta property="article:author" content="{{ or site.Params.author.name site.Params.defaultAuthor }}" />
+  {{- with .Params.categories }}
+<meta property="article:section" content="{{ index . 0 }}" />
+  {{- end }}
+  {{- range .Params.tags }}
+<meta property="article:tag" content="{{ . }}" />
+  {{- end }}
+{{- end }}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{{ $title }}" />
+<meta name="twitter:description" content="{{ $desc }}" />
+{{- with index $images 0 }}
+<meta name="twitter:image" content="{{ . }}" />
+{{- end }}
+
+{{ partial "seo/json-ld.html" . }}
+
+{{/* RSS Feed */}}
+{{ with .OutputFormats.Get "rss" }}
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="{{ site.Title }}"
+    href="{{ .Permalink }}"
+  />
+{{ end }}

@@ -1,0 +1,98 @@
+{{/*
+  페이지 하나의 meta description 을 만들어 돌려준다. head.html 과
+  JSON-LD 가 같은 문자열을 쓰도록 한 곳에서 결정한다.
+
+  왜 필요한가: 테마 기본 동작은 description 이 없으면 `.Content` 를
+  그대로 잘라 쓴다. 실측 결과 두 가지가 망가져 있었다.
+    1. 논문 글 391 편의 스니펫이 본문이 아니라 프롬프트 문구로 시작했다.
+       ("논문 링크 Q : 이 논문을 아주 자세하게 읽고 ... 알려줘")
+    2. 태그·카테고리 514 페이지가 사이트 설명 한 줄을 그대로 돌려써
+       서로 완전히 같은 description 을 내보냈다.
+
+  우선순위: front matter description > summary > 본문에서 추출 >
+  분류 페이지 자동 문구 > 사이트 설명.
+*/}}
+
+{{- $out := "" -}}
+
+{{- with .Description -}}
+  {{- $out = . | plainify -}}
+{{- else -}}
+  {{- with .Params.summary -}}
+    {{- $out = . | plainify -}}
+  {{- end -}}
+{{- end -}}
+
+{{/* ---------------------------------------- 글: 본문에서 첫 문단 추출 */}}
+{{- if and (not $out) .IsPage -}}
+  {{- $raw := .RawContent -}}
+
+  {{/* 코드 펜스·HTML 주석·수식 블록은 설명으로 쓸 수 없다 */}}
+  {{- $raw = replaceRE "(?s)```.*?```" " " $raw -}}
+  {{- $raw = replaceRE "(?s)~~~.*?~~~" " " $raw -}}
+  {{- $raw = replaceRE "(?s)<!--.*?-->" " " $raw -}}
+  {{- $raw = replaceRE `(?s)\$\$.*?\$\$` " " $raw -}}
+
+  {{/* 프롬프트 문구가 헤딩으로 남아 있는 글이 많다. 통째로 버린다. */}}
+  {{- $raw = replaceRE `(?m)^\s{0,3}#{1,6}\s*Q\s*[:：].*$` " " $raw -}}
+  {{- $raw = replaceRE `(?m)^\s*Q\s*[:：].*$` " " $raw -}}
+  {{- $raw = replaceRE `(?m)^\s*(Answer|답변)\s*[:：]?\s*$` " " $raw -}}
+
+  {{/* 첫 줄의 논문 링크 / 출처 표기도 설명으로는 의미가 없다 */}}
+  {{- $raw = replaceRE `(?m)^\s*\[[^\]]*\]\(\s*https?://[^)]*\)\s*$` " " $raw -}}
+  {{- $raw = replaceRE `(?m)^\s*(논문|Paper|원문)\s*(링크)?\s*[:：].*$` " " $raw -}}
+  {{- $raw = replaceRE `(?m)^\s*아래\s*글은.*입니다\.?\s*$` " " $raw -}}
+
+  {{/* 이미지·링크는 텍스트만 남기고, 마크다운 기호는 털어낸다 */}}
+  {{- $raw = replaceRE `!\[[^\]]*\]\([^)]*\)` " " $raw -}}
+  {{- $raw = replaceRE `\[([^\]]*)\]\([^)]*\)` "$1" $raw -}}
+  {{- $raw = replaceRE `(?m)^\s*\|.*\|\s*$` " " $raw -}}
+  {{- $raw = replaceRE `(?m)^\s{0,3}#{1,6}\s*` " " $raw -}}
+  {{- $raw = replaceRE `(?m)^\s{0,3}>\s?` " " $raw -}}
+  {{- $raw = replaceRE `(?m)^\s{0,3}([-*+]|\d+\.)\s+` " " $raw -}}
+  {{- $raw = replaceRE `(?m)^\s*[-*_]{3,}\s*$` " " $raw -}}
+  {{- $raw = replaceRE "[`*_~]" "" $raw -}}
+  {{- $raw = replaceRE `\s+` " " $raw -}}
+
+  {{- $out = $raw | plainify | strings.TrimSpace -}}
+{{- end -}}
+
+{{/* ------------------------------ 분류 페이지: 용어와 글 수로 구별짓기 */}}
+{{- if and (not $out) (not .IsPage) (not .IsHome) -}}
+  {{- $n := len .Pages -}}
+  {{- $term := .Title | plainify -}}
+  {{- $ko := eq .Language.Lang "ko" -}}
+  {{- if eq .Kind "term" -}}
+    {{- $kind := cond (eq .Data.Singular "tag") (cond $ko "태그" "tag") (cond $ko "카테고리" "category") -}}
+    {{- if $ko -}}
+      {{- $out = printf "%s %s가 붙은 글 %d편. %s 관련 정리와 논문 리뷰를 모았습니다." $term $kind $n $term -}}
+    {{- else -}}
+      {{- $out = printf "%d posts filed under the %s %s. Notes and paper reviews about %s." $n $term $kind $term -}}
+    {{- end -}}
+  {{- else if eq .Kind "taxonomy" -}}
+    {{- if $ko -}}
+      {{- $out = printf "%s 전체 목록 %d개. 주제별로 글을 찾아볼 수 있습니다." $term (len .Data.Terms) -}}
+    {{- else -}}
+      {{- $out = printf "All %d %s on this blog, for browsing posts by topic." (len .Data.Terms) (lower $term) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{/* -------------------------------------- 페이지네이션: 몇 쪽인지 밝힌다 */}}
+{{- if and $out (in (slice "section" "taxonomy" "term") .Kind) -}}
+  {{- with .Paginator -}}
+    {{- if gt .PageNumber 1 -}}
+      {{- if eq $.Language.Lang "ko" -}}
+        {{- $out = printf "%s (%d쪽 / 전체 %d쪽)" $out .PageNumber .TotalPages -}}
+      {{- else -}}
+        {{- $out = printf "%s (page %d of %d)" $out .PageNumber .TotalPages -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if not $out -}}
+  {{- $out = site.Params.description | default (printf "%s - %s" (.Title | plainify) site.Title) -}}
+{{- end -}}
+
+{{- return ($out | plainify | strings.TrimSpace | truncate 155 "…") -}}
