@@ -1,9 +1,10 @@
 ---
 categories:
 - linux
-date: "2021-02-11"
-tags: null
-title: docker tag 검색하기
+date: '2021-02-11'
+description: '`docker search` 는 이미지만 찾아 주고 태그는 보여 주지 않습니다. 레지스트리 API 를 긁어 태그 목록을 뽑는 셸 함수를 ~/.zshrc 에 넣어 씁니다.'
+slug: docker-tag-검색하기
+title: docker 이미지의 태그 목록 검색하기
 ---
 
 도커에서 이미지를 검색할시는 아래처럼 도커의 내장명령어를 사용하면 된다 

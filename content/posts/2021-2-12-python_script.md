@@ -1,8 +1,9 @@
 ---
 categories:
 - python
-date: "2021-02-12"
-tags: null
+date: '2021-02-12'
+description: 스크립트를 쓸 때마다 다시 찾게 되는 파이썬 패턴들을 모아 둔 메모입니다.
+slug: 자주쓰는-파이썬-스크립트-패턴
 title: 자주쓰는 파이썬 스크립트 패턴
 ---
 

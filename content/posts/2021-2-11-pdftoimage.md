@@ -1,9 +1,10 @@
 ---
 categories:
 - linux
-date: "2021-02-11"
-tags: null
-title: Ubuntu pdf 를 이미지로 변환
+date: '2021-02-11'
+description: 변환 사이트에 올리기 곤란한 PDF 를 pdftoppm 으로 직접 변환합니다. 해상도(-r), 흑백(-gray), png/jpeg/tiff 출력 옵션을 정리했습니다.
+slug: ubuntu-pdf-를-이미지로-변환
+title: 우분투 터미널에서 PDF 를 이미지로 변환하기 (pdftoppm)
 ---
 ## About
 Pdf 를 이미지로 변환해야할 일이 종종 있어 구글에서 검색되는 사이트를 이용하곤 하지만 많은 양의 pdf 를 변환해야 하거나 개인정보가 있는 데이터를 서버에 올리기 꺼림직 한 경우가 있다 이럴때 터미널에서 직접 pdf 를 변환해보자.

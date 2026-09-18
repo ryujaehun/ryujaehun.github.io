@@ -1,8 +1,9 @@
 ---
 categories:
 - linux
-date: "2021-02-11"
-tags: null
+date: '2021-02-11'
+description: virtualenv 설치부터 가상환경 생성·활성화·비활성화까지, 파이썬 버전을 지정해 환경을 격리하는 기본 사용법입니다.
+slug: virtualenv로-파이썬-환경-격리하기
 title: virtualenv로 파이썬 환경 격리하기
 ---
 

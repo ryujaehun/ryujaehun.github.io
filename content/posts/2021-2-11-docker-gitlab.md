@@ -1,9 +1,10 @@
 ---
 categories:
 - linux
-date: "2021-02-11"
-tags: null
-title: docker 로 gitlab만들기
+date: '2021-02-11'
+description: docker 로 GitLab 컨테이너를 띄우고 외부 URL, 포트, 볼륨과 메일 설정을 잡는 방법입니다.
+slug: docker-로-gitlab만들기
+title: docker 로 GitLab 띄우기
 ---
 
 ## 도커 이미지 다운 및 실행 

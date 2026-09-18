@@ -1,8 +1,9 @@
 ---
 categories:
 - compiler
-date: "2021-02-12"
-tags: null
+date: '2021-02-12'
+description: Ubuntu 18.04 에서 LLVM 과 clang 을 소스에서 빌드해 설치하는 절차입니다.
+slug: llvm-clang-build-and-install-ubuntu-18.04
 title: LLVM (clang) build and install (ubuntu 18.04)
 ---
 ## clone llvm repo

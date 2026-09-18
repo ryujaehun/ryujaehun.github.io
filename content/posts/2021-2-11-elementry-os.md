@@ -1,9 +1,10 @@
 ---
 categories:
 - linux
-date: "2021-02-11"
-tags: null
-title: ElementryOS mouch pad Using it like a Mac Touch Gestures (Loki,Juno)
+date: '2021-02-11'
+description: libinput-gestures 를 설치하고 ~/.config/libinput-gestures.conf 에 3·4 손가락 스와이프를 매핑해, elementary OS 트랙패드를 맥처럼 쓰는 설정입니다.
+slug: elementryos-mouch-pad-using-it-like-a-mac-touch-gestures-lokijuno
+title: elementary OS 에서 맥처럼 트랙패드 제스처 쓰기 (Loki, Juno)
 ---
 
 ## Adding Gestures

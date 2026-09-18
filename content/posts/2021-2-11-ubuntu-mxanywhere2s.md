@@ -1,7 +1,9 @@
 ---
 categories:
 - linux
-date: "2021-02-11"
+date: '2021-02-11'
+description: 우분투에서 Logitech MX Anywhere 2S 의 제스처 버튼과 휠 동작을 인식시켜 쓰는 설정입니다.
+slug: logitech-mx-anywhere-2s-우분투에서-제스쳐-사용하기
 tags:
 - logitech
 title: Logitech MX anywhere 2s 우분투에서 제스쳐 사용하기
