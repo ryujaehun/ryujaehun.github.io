@@ -16,6 +16,14 @@
 {{- $desc := partial "seo/description.html" . -}}
 {{- $title := cond .IsHome site.Title (.Title | plainify) -}}
 
+{{/* og:locale 은 `ko_KR` 처럼 지역 코드를 대문자로 쓴다. 설정의
+     `ko-kr` 을 그대로 바꾸면 `ko_kr` 이 나간다. */}}
+{{- $ogLocale := replace .Language.Locale "-" "_" -}}
+{{- $parts := split .Language.Locale "-" -}}
+{{- if eq (len $parts) 2 -}}
+  {{- $ogLocale = printf "%s_%s" (lower (index $parts 0)) (upper (index $parts 1)) -}}
+{{- end -}}
+
 {{- $images := slice -}}
 {{- with .Params.cover -}}
   {{- $images = slice (. | absURL) -}}
@@ -29,13 +37,18 @@
 <meta property="og:url" content="{{ .Permalink }}" />
 <meta property="og:title" content="{{ $title }}" />
 <meta property="og:description" content="{{ $desc }}" />
-<meta property="og:locale" content="{{ replace .Language.Locale `-` `_` }}" />
+<meta property="og:locale" content="{{ $ogLocale }}" />
 <meta property="og:type" content="{{ cond (and .IsPage (eq .Type `posts`)) `article` `website` }}" />
 {{- range $images }}
 <meta property="og:image" content="{{ . }}" />
 {{- end }}
 {{- range .Translations }}
-<meta property="og:locale:alternate" content="{{ replace .Language.Locale `-` `_` }}" />
+  {{- $alt := replace .Language.Locale "-" "_" -}}
+  {{- $ap := split .Language.Locale "-" -}}
+  {{- if eq (len $ap) 2 -}}
+    {{- $alt = printf "%s_%s" (lower (index $ap 0)) (upper (index $ap 1)) -}}
+  {{- end }}
+<meta property="og:locale:alternate" content="{{ $alt }}" />
 {{- end }}
 
 {{- if and .IsPage (eq .Type "posts") }}
