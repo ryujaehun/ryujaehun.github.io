@@ -57,14 +57,164 @@
     "depends_on": [
       "evidence"
     ],
-    "status": "pending",
+    "status": "complete",
     "attempts": 0,
     "lease_until": null,
-    "outcome": null,
+    "outcome": {
+      "paths": [
+        "briefs.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (사람 세션)"
+    },
     "reason": null
   },
   {
-    "id": "write-ko",
+    "id": "write-ko-01",
+    "kind": "write-ko",
+    "depends_on": [
+      "brief"
+    ],
+    "status": "complete",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-01.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
+    "reason": null
+  },
+  {
+    "id": "review-ko-01",
+    "kind": "review-ko",
+    "depends_on": [
+      "write-ko-01"
+    ],
+    "status": "complete",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-01.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
+    "reason": null
+  },
+  {
+    "id": "translate-en-01",
+    "kind": "translate-en",
+    "depends_on": [
+      "review-ko-01"
+    ],
+    "status": "complete",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": {
+      "paths": [
+        "articles/en-01.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
+    "reason": null
+  },
+  {
+    "id": "review-en-01",
+    "kind": "review-en",
+    "depends_on": [
+      "translate-en-01"
+    ],
+    "status": "complete",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-01.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
+    "reason": null
+  },
+  {
+    "id": "write-ko-02",
+    "kind": "write-ko",
+    "depends_on": [
+      "brief"
+    ],
+    "status": "complete",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": {
+      "paths": [
+        "articles/ko-02.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
+    "reason": null
+  },
+  {
+    "id": "review-ko-02",
+    "kind": "review-ko",
+    "depends_on": [
+      "write-ko-02"
+    ],
+    "status": "complete",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": {
+      "paths": [
+        "reviews/ko-02.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
+    "reason": null
+  },
+  {
+    "id": "translate-en-02",
+    "kind": "translate-en",
+    "depends_on": [
+      "review-ko-02"
+    ],
+    "status": "complete",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": {
+      "paths": [
+        "articles/en-02.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
+    "reason": null
+  },
+  {
+    "id": "review-en-02",
+    "kind": "review-en",
+    "depends_on": [
+      "translate-en-02"
+    ],
+    "status": "complete",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": {
+      "paths": [
+        "reviews/en-02.md"
+      ],
+      "cost": 0.0,
+      "model": "claude-opus-5 (session)"
+    },
+    "reason": null
+  },
+  {
+    "id": "write-ko-03",
     "kind": "write-ko",
     "depends_on": [
       "brief"
@@ -76,10 +226,10 @@
     "reason": null
   },
   {
-    "id": "review-ko",
+    "id": "review-ko-03",
     "kind": "review-ko",
     "depends_on": [
-      "write-ko"
+      "write-ko-03"
     ],
     "status": "pending",
     "attempts": 0,
@@ -88,10 +238,10 @@
     "reason": null
   },
   {
-    "id": "translate-en",
+    "id": "translate-en-03",
     "kind": "translate-en",
     "depends_on": [
-      "review-ko"
+      "review-ko-03"
     ],
     "status": "pending",
     "attempts": 0,
@@ -100,10 +250,250 @@
     "reason": null
   },
   {
-    "id": "review-en",
+    "id": "review-en-03",
     "kind": "review-en",
     "depends_on": [
-      "translate-en"
+      "translate-en-03"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "write-ko-04",
+    "kind": "write-ko",
+    "depends_on": [
+      "brief"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "review-ko-04",
+    "kind": "review-ko",
+    "depends_on": [
+      "write-ko-04"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "translate-en-04",
+    "kind": "translate-en",
+    "depends_on": [
+      "review-ko-04"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "review-en-04",
+    "kind": "review-en",
+    "depends_on": [
+      "translate-en-04"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "write-ko-05",
+    "kind": "write-ko",
+    "depends_on": [
+      "brief"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "review-ko-05",
+    "kind": "review-ko",
+    "depends_on": [
+      "write-ko-05"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "translate-en-05",
+    "kind": "translate-en",
+    "depends_on": [
+      "review-ko-05"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "review-en-05",
+    "kind": "review-en",
+    "depends_on": [
+      "translate-en-05"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "write-ko-06",
+    "kind": "write-ko",
+    "depends_on": [
+      "brief"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "review-ko-06",
+    "kind": "review-ko",
+    "depends_on": [
+      "write-ko-06"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "translate-en-06",
+    "kind": "translate-en",
+    "depends_on": [
+      "review-ko-06"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "review-en-06",
+    "kind": "review-en",
+    "depends_on": [
+      "translate-en-06"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "write-ko-07",
+    "kind": "write-ko",
+    "depends_on": [
+      "brief"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "review-ko-07",
+    "kind": "review-ko",
+    "depends_on": [
+      "write-ko-07"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "translate-en-07",
+    "kind": "translate-en",
+    "depends_on": [
+      "review-ko-07"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "review-en-07",
+    "kind": "review-en",
+    "depends_on": [
+      "translate-en-07"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "write-ko-08",
+    "kind": "write-ko",
+    "depends_on": [
+      "brief"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "review-ko-08",
+    "kind": "review-ko",
+    "depends_on": [
+      "write-ko-08"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "translate-en-08",
+    "kind": "translate-en",
+    "depends_on": [
+      "review-ko-08"
+    ],
+    "status": "pending",
+    "attempts": 0,
+    "lease_until": null,
+    "outcome": null,
+    "reason": null
+  },
+  {
+    "id": "review-en-08",
+    "kind": "review-en",
+    "depends_on": [
+      "translate-en-08"
     ],
     "status": "pending",
     "attempts": 0,
@@ -115,7 +505,14 @@
     "id": "series-review",
     "kind": "series-review",
     "depends_on": [
-      "review-en"
+      "review-en-01",
+      "review-en-02",
+      "review-en-03",
+      "review-en-04",
+      "review-en-05",
+      "review-en-06",
+      "review-en-07",
+      "review-en-08"
     ],
     "status": "pending",
     "attempts": 0,
