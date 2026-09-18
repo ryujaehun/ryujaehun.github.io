@@ -1,0 +1,61 @@
+{
+  "timezone": "Asia/Seoul",
+  "items": [
+    {
+      "chapter_id": "01",
+      "order": 1,
+      "date": "2026-09-18",
+      "ko_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-01.md",
+      "en_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-01.en.md"
+    },
+    {
+      "chapter_id": "02",
+      "order": 2,
+      "date": "2026-09-18",
+      "ko_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-02.md",
+      "en_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-02.en.md"
+    },
+    {
+      "chapter_id": "03",
+      "order": 3,
+      "date": "2026-09-18",
+      "ko_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-03.md",
+      "en_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-03.en.md"
+    },
+    {
+      "chapter_id": "04",
+      "order": 4,
+      "date": "2026-09-18",
+      "ko_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-04.md",
+      "en_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-04.en.md"
+    },
+    {
+      "chapter_id": "05",
+      "order": 5,
+      "date": "2026-09-18",
+      "ko_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-05.md",
+      "en_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-05.en.md"
+    },
+    {
+      "chapter_id": "06",
+      "order": 6,
+      "date": "2026-09-18",
+      "ko_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-06.md",
+      "en_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-06.en.md"
+    },
+    {
+      "chapter_id": "07",
+      "order": 7,
+      "date": "2026-09-18",
+      "ko_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-07.md",
+      "en_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-07.en.md"
+    },
+    {
+      "chapter_id": "08",
+      "order": 8,
+      "date": "2026-09-18",
+      "ko_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-08.md",
+      "en_path": "content/posts/2026-09-18-code-series-sgl-project--mini-sglang-08.en.md"
+    }
+  ]
+}
