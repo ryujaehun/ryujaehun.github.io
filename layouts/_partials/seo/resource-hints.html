@@ -14,6 +14,12 @@
 
   preconnect 는 4 개를 넘기지 않는다 (연결 자체에도 비용이 있다).
   필요한 페이지에서만 붙인다.
+
+  처음에는 google-analytics 와 giscus 를 dns-prefetch 로 뒀는데, 배포 후
+  라이브에서 재어 보니 Lighthouse 가 둘을 여전히 preconnect 후보로
+  지목했다(각각 약 370ms / 300ms). dns-prefetch 는 이름만 풀고 TLS 는
+  열지 않아 절감이 거의 없다. preconnect 로 올린다. 이러면 평범한 글에서
+  3 개(gtm, ga, giscus), 수식·도표가 있는 글에서 4 개가 된다.
 */}}
 
 {{- $katexCSS := "https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" -}}
@@ -42,7 +48,7 @@
 
 {{- if site.Params.analytics.google.enabled }}
 <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
-<link rel="dns-prefetch" href="https://www.google-analytics.com" />
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin />
 {{- end }}
 {{- if or $hasMath $hasMermaid }}
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -57,5 +63,5 @@
 />
 {{- end }}
 {{- if and site.Params.comments.enabled (eq site.Params.comments.system "giscus") .IsPage }}
-<link rel="dns-prefetch" href="https://giscus.app" />
+<link rel="preconnect" href="https://giscus.app" crossorigin />
 {{- end }}

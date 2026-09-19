@@ -33,6 +33,8 @@ jaehun.me 의 구글 검색 노출과 글 품질을 놓고 감사 → 개선 →
 | static/ 용량 | 7.1 MB | 4.4 MB |
 | 논문 글 한 편의 DOM 요소 | 2,815 | 2,255 |
 | 빌드 경고 | 1 | 0 |
+| 라이브 Lighthouse 접근성 (논문 글) | 91 | **100** |
+| 라이브 Lighthouse 성능 (논문 글) | 79 | 79 (변화 없음, 6.3) |
 
 † 남은 76 개는 같은 글의 한국어/영어 쌍이다. hreflang 으로 묶여 있어
   중복으로 취급되지 않는다.
@@ -580,26 +582,44 @@ LCP 4.2 s 의 내역이 중요하다.
 | Load Time | 0% | 0 ms |
 | **Render Delay** | **81%** | **3,406 ms** |
 
-병목은 서버가 아니라 렌더다. Lighthouse 가 지목한 절감 대상은
+병목은 서버가 아니라 렌더다.
+
+배포 후 같은 URL 을 같은 도구로 다시 쟀다.
+
+| | 개선 전 | 개선 후 |
+|---|---:|---:|
+| Performance | 79 | 79 |
+| Accessibility | 91 | **100** |
+| SEO | 100 | 100 |
+| Best Practices | 100 | 100 |
+| LCP | 4.2 s | 4.1 s |
+| TBT | 220 ms | 240 ms |
+| DOM | 2,868 | 2,331 |
+| Render Delay | 3,406 ms | 3,340 ms |
+
+**성능은 사실상 그대로다.** 접근성만 올랐다. 왜 안 움직였는지는 6.3 에
+적었다. Lighthouse 가 지목한 절감 대상은
 google-analytics 420 ms, giscus 296 ms 였고, KaTeX·mermaid 는
 cdn.jsdelivr.net 에서 오는데 그 태그가 본문 끝에 있어 문서를 거의 다
 파싱해야 발견된다. 특히 `katex.min.css` 는 렌더를 막는 스타일시트다.
 
 ### 6.2 한 일
 
-필요한 페이지에서만 `preconnect` / `dns-prefetch` 를 붙이고 KaTeX CSS 는
-`preload` 했다 (preconnect 는 4 개를 넘기지 않는다).
+필요한 페이지에서만 `preconnect` 를 붙이고 KaTeX CSS 는 `preload` 했다.
 
 ```
-모든 페이지       googletagmanager (preconnect), google-analytics (dns-prefetch)
-수식/도표 있는 글  cdn.jsdelivr.net (preconnect) + katex.min.css (preload)
-글 페이지         giscus.app (dns-prefetch)
+모든 페이지       googletagmanager, google-analytics
+수식/도표 있는 글  cdn.jsdelivr.net + katex.min.css preload
+글 페이지         giscus.app
 ```
 
-**이 절감폭은 Lighthouse 추정치다.** 로컬 서버에서는 TTFB 가 거의 0 이라
-재현되지 않는다. 배포 후 라이브에서 다시 재야 한다 (아래 9.1).
+처음에는 google-analytics 와 giscus 를 `dns-prefetch` 로 뒀는데, 배포 후
+라이브에서 재어 보니 Lighthouse 가 둘을 **여전히 preconnect 후보로
+지목**했다(약 370ms / 300ms). dns-prefetch 는 이름만 풀고 TLS 는 열지
+않아 절감이 거의 없다. preconnect 로 올렸다. 평범한 글에서 3 개, 수식이
+있는 글에서 4 개로 권장 상한 안이다.
 
-### 6.3 DOM 을 줄였다 — 헤딩 앵커 아이콘
+### 6.3 DOM 을 줄였다 — 효과는 없었다
 
 라이브 실측에서 주 스레드 작업 1.3 초 중 가장 큰 몫이 **Style & Layout
 647 ms** 였다. 서드파티는 생각보다 작다 — giscus 는 11 ms / 3 KB 로
@@ -608,21 +628,25 @@ cdn.jsdelivr.net 에서 오는데 그 태그가 본문 끝에 있어 문서를 �
 DOM 구성을 세어 보니 논문 글 한 편의 2,815 요소 중 **560 개(19%)가
 헤딩 앵커 아이콘**이었다. 헤딩마다 인라인 SVG 가 들어가는데 앵커
 하나가 요소 5 개(a, svg, g, path, path)와 HTML 308 바이트를 쓴다.
-헤딩이 140 개인 글에서 42 KB 다.
+아이콘을 CSS 마스크로 옮겨 앵커를 요소 하나로 줄였다.
 
-아이콘을 CSS 마스크로 옮겨 앵커를 요소 하나로 줄였다. 색은 마스크
-위에 `currentColor` 를 깔아 칠하므로 테마의 hover 규칙이 그대로 먹는다.
-`_markup/render-heading.html` 은 7 줄짜리라 복제 비용도 거의 없다.
+**그런데 라이브에서 LCP 는 움직이지 않았다.**
 
-| | 전 | 후 |
+| | 개선 전 | 개선 후 |
 |---|---:|---:|
-| 요소 수 (논문 글 한 편) | 2,815 | 2,255 |
-| Lighthouse DOM size | 2,876 | 2,316 |
-| Performance (로컬) | 89 | 92 |
-| LCP (로컬) | 3.0 s | 2.8 s |
+| DOM 요소 (Lighthouse) | 2,868 | 2,331 |
+| Style & Layout | 647 ms | 641 ms |
+| LCP | 4.2 s | 4.1 s |
+| Performance | 79 | 79 |
 
-마스크가 실제로 그려지는지는 Chrome 헤드리스로 렌더해 확인했다
-(shorthand / longhand / background 세 방식 모두 동일).
+요소를 19% 걷어냈는데 Style & Layout 은 6 ms 줄었다. 이 페이지의 레이아웃
+비용은 요소 **개수**가 아니라 본문(긴 텍스트, 표, 코드 블록)이 만드는
+것이고, 앵커는 `opacity: 0` 인 작은 인라인 요소라 애초에 값이 싸다.
+전송량(246 KiB)도 그대로다 — HTML 42 KB 를 줄였지만 gzip 뒤에는 묻힌다.
+
+**DOM 요소 수를 줄이는 것 자체는 목표가 아니었다는 것이 결론이다.**
+변경 자체는 해롭지 않아(HTML 이 가벼워지고 마크업이 단순해진다) 되돌리지
+않았지만, LCP 를 위해 한 일로는 실패했다. 8.1 에 남은 후보를 적었다.
 
 ### 6.4 로컬 실측 (개선 후)
 
