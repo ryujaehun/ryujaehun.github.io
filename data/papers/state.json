@@ -945,5 +945,72 @@
   "slug": "paper-2609-18063",
   "status": "materialized",
   "title": "The Other Half of the Memory Wall: Serving 35B MoEs from SSD with Trained Routing Prediction"
+ },
+ "2609.18487": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 6
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-19-paper-2609.18487.md",
+  "failures": 0,
+  "first_seen": "2026-09-19",
+  "matched": {
+   "adjacent": [
+    "autoregressive"
+   ],
+   "systems": [
+    "compression",
+    "quantization"
+   ]
+  },
+  "materialized_at": "2026-09-19",
+  "score": 0.5002,
+  "slug": "paper-2609-18487",
+  "status": "materialized",
+  "title": "ActionPiece: Rethinking Action Tokenization for Autoregressive Vision-Language-Action Models"
+ },
+ "2609.19969": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 5
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-19-paper-2609.19969.md",
+  "failures": 0,
+  "first_seen": "2026-09-19",
+  "matched": {
+   "adjacent": [
+    "cache",
+    "long context",
+    "mixture-of-experts",
+    "moe"
+   ],
+   "core": [
+    "cache compression",
+    "kv cache",
+    "prefill",
+    "sparse attention"
+   ],
+   "systems": [
+    "fp4"
+   ],
+   "weak": [
+    "efficiency",
+    "efficient",
+    "optimization"
+   ]
+  },
+  "materialized_at": "2026-09-19",
+  "score": 0.6471,
+  "slug": "paper-2609-19969",
+  "status": "materialized",
+  "title": "DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression"
  }
 }
