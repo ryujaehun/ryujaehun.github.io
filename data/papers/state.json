@@ -859,6 +859,38 @@
   "status": "materialized",
   "title": "How Lossless Is Lossless Speculative Decoding? The Role of Numerical Precision in Orthrus"
  },
+ "2609.15810": {
+  "assets": {
+   "figures": [],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 1
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-20-paper-2609.15810.md",
+  "failures": 0,
+  "first_seen": "2026-09-20",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "kernel"
+   ],
+   "core": [
+    "flashattention"
+   ],
+   "systems": [
+    "attention kernel",
+    "fp8",
+    "quantization"
+   ]
+  },
+  "materialized_at": "2026-09-20",
+  "score": 0.4945,
+  "slug": "paper-2609-15810",
+  "status": "materialized",
+  "title": "VC-Attention: Value Smoothing and Softmax Casting for Low-bit Attention"
+ },
  "2609.17652": {
   "assets": {
    "figures": [],
