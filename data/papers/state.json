@@ -930,7 +930,7 @@
   },
   "materialized_at": "2026-09-18",
   "notification": {
-   "attempts": 70,
+   "attempts": 80,
    "error_category": "publication-missing",
    "notification_id": "paper:2609.17652:ko-en",
    "status": "notify-pending",
