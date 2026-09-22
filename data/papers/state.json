@@ -1056,5 +1056,44 @@
   "slug": "paper-2609-19969",
   "status": "materialized",
   "title": "DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression"
+ },
+ "2609.24639": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.24639/memory-balance.webp",
+    "/assets/images/papers/2609.24639/pareto-traces-closed.webp",
+    "/assets/images/papers/2609.24639/scn-pair.webp",
+    "/assets/images/papers/2609.24639/scn-shrink.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 3
+  },
+  "categories": [
+   "cs.DC",
+   "cs.PF",
+   "eess.SY"
+  ],
+  "draft_path": "content/posts/2026-09-22-paper-2609.24639v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-22",
+  "matched": {
+   "adjacent": [
+    "cache",
+    "throughput"
+   ],
+   "core": [
+    "disaggregated",
+    "disaggregation",
+    "inference serving",
+    "kv cache",
+    "prefill"
+   ]
+  },
+  "materialized_at": "2026-09-22",
+  "score": 0.5463,
+  "slug": "paper-2609-24639v1",
+  "status": "materialized",
+  "title": "Analytical Power-Aware Provisioning for Prefill-Decode Disaggregated AI Inference",
+  "version": "v1"
  }
 }
