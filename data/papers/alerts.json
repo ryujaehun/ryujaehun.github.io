@@ -1,0 +1,11 @@
+{
+ "no-candidates:2026-09-22": {
+  "failed_sources": [
+   "arxiv"
+  ],
+  "fetched": 74,
+  "scored": 74,
+  "sent_at": "2026-09-22T11:58:46.887029+00:00",
+  "status": "sent"
+ }
+}
