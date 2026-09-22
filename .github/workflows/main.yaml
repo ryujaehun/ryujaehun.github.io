@@ -6,6 +6,10 @@ on:
   push:
     branches:
       - main
+    # 파이프라인 상태·후보 큐만 바뀐 커밋은 렌더 결과를 바꾸지 않는다.
+    # 실제 글 커밋은 content/posts 도 함께 바꾸므로 정상적으로 배포된다.
+    paths-ignore:
+      - "data/papers/**"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
