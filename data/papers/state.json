@@ -1057,6 +1057,48 @@
   "status": "materialized",
   "title": "DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression"
  },
+ "2609.24197": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.24197/kv-injection.webp",
+    "/assets/images/papers/2609.24197/kv-reuse-motivation.webp",
+    "/assets/images/papers/2609.24197/hspec-overview.webp",
+    "/assets/images/papers/2609.24197/conc-kv-pareto.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 3
+  },
+  "categories": [
+   "cs.LG"
+  ],
+  "draft_path": "content/posts/2026-09-23-paper-2609.24197v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-23",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "cache",
+    "latency",
+    "throughput"
+   ],
+   "core": [
+    "kv cache",
+    "speculative decoding"
+   ],
+   "systems": [
+    "mamba"
+   ],
+   "weak": [
+    "large language model"
+   ]
+  },
+  "materialized_at": "2026-09-23",
+  "score": 0.5434,
+  "slug": "paper-2609-24197v1",
+  "status": "materialized",
+  "title": "H-Spec: Parallel Speculative Decoding Without a Drafter-Side KV Cache",
+  "version": "v1"
+ },
  "2609.24639": {
   "assets": {
    "figures": [
