@@ -1159,5 +1159,48 @@
   "status": "materialized",
   "title": "Analytical Power-Aware Provisioning for Prefill-Decode Disaggregated AI Inference",
   "version": "v1"
+ },
+ "2609.26796": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.26796/attention-layer.webp",
+    "/assets/images/papers/2609.26796/decoding-process.webp",
+    "/assets/images/papers/2609.26796/flash-dllm.webp",
+    "/assets/images/papers/2609.26796/flash-attention.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-24-paper-2609.26796.md",
+  "failures": 0,
+  "first_seen": "2026-09-24",
+  "matched": {
+   "adjacent": [
+    "autoregressive",
+    "cache",
+    "decoding",
+    "kernel",
+    "memory efficient"
+   ],
+   "core": [
+    "kv cache"
+   ],
+   "systems": [
+    "gpu memory"
+   ],
+   "weak": [
+    "acceleration",
+    "efficiency",
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-09-24",
+  "score": 0.5552,
+  "slug": "paper-2609-26796",
+  "status": "materialized",
+  "title": "Flash-dLLM: IO-Aware KV Caching and Parallel Decoding for Fast, Memory-Efficient Diffusion LLMs"
  }
 }
