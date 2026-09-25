@@ -1160,6 +1160,48 @@
   "title": "Analytical Power-Aware Provisioning for Prefill-Decode Disaggregated AI Inference",
   "version": "v1"
  },
+ "2609.24698": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.24698/tree-spec-bg.webp",
+    "/assets/images/papers/2609.24698/pipeline.webp",
+    "/assets/images/papers/2609.24698/fig-accept-len.webp",
+    "/assets/images/papers/2609.24698/fig-throughput-clean.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 1
+  },
+  "categories": [
+   "cs.CL",
+   "cs.AI"
+  ],
+  "draft_path": "content/posts/2026-09-25-paper-2609.24698v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-25",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "autoregressive",
+    "decoding",
+    "latency",
+    "throughput"
+   ],
+   "core": [
+    "efficient inference",
+    "llm inference",
+    "speculative decoding"
+   ],
+   "weak": [
+    "efficiency"
+   ]
+  },
+  "materialized_at": "2026-09-25",
+  "score": 0.5428,
+  "slug": "paper-2609-24698v1",
+  "status": "materialized",
+  "title": "Adapting Tree-Structured Speculative Decoding to DeepSeek-V4 for Efficient Inference",
+  "version": "v1"
+ },
  "2609.26796": {
   "assets": {
    "figures": [
