@@ -1213,6 +1213,47 @@
   "title": "Adapting Tree-Structured Speculative Decoding to DeepSeek-V4 for Efficient Inference",
   "version": "v1"
  },
+ "2609.24847": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.24847/roofline-motivation-draft2.webp",
+    "/assets/images/papers/2609.24847/archi-soc.webp",
+    "/assets/images/papers/2609.24847/figure3-trial.webp",
+    "/assets/images/papers/2609.24847/archi-dataflow.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 3
+  },
+  "categories": [
+   "cs.AR",
+   "cs.AI",
+   "cs.DC"
+  ],
+  "draft_path": "content/posts/2026-09-26-paper-2609.24847v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-26",
+  "matched": {
+   "adjacent": [
+    "autoregressive",
+    "decoding",
+    "kernel"
+   ],
+   "core": [
+    "llm inference",
+    "prefill",
+    "speculative decoding"
+   ],
+   "weak": [
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-09-26",
+  "score": 0.5304,
+  "slug": "paper-2609-24847v1",
+  "status": "materialized",
+  "title": "SPECTRA: Adaptive Execution of Speculative Decoding on a Runtime-Reconfigurable Tiled Architecture",
+  "version": "v1"
+ },
  "2609.26796": {
   "assets": {
    "figures": [
