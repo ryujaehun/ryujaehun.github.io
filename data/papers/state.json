@@ -1057,6 +1057,43 @@
   "status": "materialized",
   "title": "DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression"
  },
+ "2609.23900": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 8
+  },
+  "categories": [
+   "cs.LG"
+  ],
+  "draft_path": "content/posts/2026-09-27-paper-2609.23900v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-27",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "latency",
+    "throughput"
+   ],
+   "core": [
+    "flashattention",
+    "prefill",
+    "speculative decoding"
+   ],
+   "named_systems": [
+    "vllm"
+   ],
+   "systems": [
+    "fp8"
+   ]
+  },
+  "materialized_at": "2026-09-27",
+  "score": 0.5226,
+  "slug": "paper-2609-23900v1",
+  "status": "materialized",
+  "title": "GDN Tree-Scan: Served Tree Verification for Recurrent-Hybrid Language Models",
+  "version": "v1"
+ },
  "2609.24197": {
   "assets": {
    "figures": [
