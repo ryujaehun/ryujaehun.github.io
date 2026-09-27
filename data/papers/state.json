@@ -1088,6 +1088,16 @@
    ]
   },
   "materialized_at": "2026-09-27",
+  "notification": {
+   "attempts": 10,
+   "error_category": "publication-missing",
+   "notification_id": "paper:2609.23900v1:ko-en",
+   "status": "notify-pending",
+   "urls": [
+    "https://jaehun.me/posts/paper-2609-23900v1/",
+    "https://jaehun.me/en/posts/paper-2609-23900v1/"
+   ]
+  },
   "score": 0.5226,
   "slug": "paper-2609-23900v1",
   "status": "materialized",
