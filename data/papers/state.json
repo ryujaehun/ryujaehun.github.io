@@ -1312,6 +1312,37 @@
   "title": "SPECTRA: Adaptive Execution of Speculative Decoding on a Runtime-Reconfigurable Tiled Architecture",
   "version": "v1"
  },
+ "2609.24991": {
+  "categories": [
+   "cs.DC",
+   "cs.PF"
+  ],
+  "draft_path": "content/posts/2026-09-28-paper-2609.24991v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-28",
+  "matched": {
+   "core": [
+    "kv cache",
+    "prefix caching"
+   ],
+   "named_systems": [
+    "vllm"
+   ],
+   "systems": [
+    "multi-tenant"
+   ],
+   "weak": [
+    "llm",
+    "transformer"
+   ]
+  },
+  "materialized_at": "2026-09-28",
+  "score": 0.5226,
+  "slug": "paper-2609-24991v1",
+  "status": "materialized",
+  "title": "Who Pays for the KV Cache? Attributing Shared AI Inference Spend Across Kubernetes and LLM Provider Bills",
+  "version": "v1"
+ },
  "2609.26796": {
   "assets": {
    "figures": [
