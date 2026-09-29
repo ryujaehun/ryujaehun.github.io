@@ -1408,5 +1408,39 @@
   "slug": "paper-2609-26796",
   "status": "materialized",
   "title": "Flash-dLLM: IO-Aware KV Caching and Parallel Decoding for Fast, Memory-Efficient Diffusion LLMs"
+ },
+ "2609.31093": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 5
+  },
+  "categories": [
+   "cs.LG"
+  ],
+  "draft_path": "content/posts/2026-09-29-paper-2609.31093v1.md",
+  "failures": 0,
+  "first_seen": "2026-09-29",
+  "matched": {
+   "adjacent": [
+    "attention"
+   ],
+   "core": [
+    "sparse attention"
+   ],
+   "named_systems": [
+    "triton"
+   ],
+   "weak": [
+    "efficient",
+    "scaling"
+   ]
+  },
+  "materialized_at": "2026-09-29",
+  "score": 0.5945,
+  "slug": "paper-2609-31093v1",
+  "status": "materialized",
+  "title": "Block Sparse Attention with Log-Linear Complexity",
+  "version": "v1"
  }
 }
