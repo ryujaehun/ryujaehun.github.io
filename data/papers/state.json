@@ -1500,5 +1500,42 @@
   "slug": "paper-2609-32712",
   "status": "materialized",
   "title": "MassAlloc Attention: Let Attention Allocate Its Own Compute"
+ },
+ "2609.34606": {
+  "assets": {
+   "figures": [],
+   "license": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-30-paper-2609.34606.md",
+  "failures": 0,
+  "first_seen": "2026-09-30",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "autoregressive",
+    "cache",
+    "latency"
+   ],
+   "core": [
+    "kv cache",
+    "sparse attention"
+   ],
+   "systems": [
+    "gpu memory"
+   ],
+   "weak": [
+    "efficiency",
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-09-30",
+  "score": 0.6164,
+  "slug": "paper-2609-34606",
+  "status": "materialized",
+  "title": "WorldAttention: An Efficient Attention Architecture for Interactive Video World Models"
  }
 }
