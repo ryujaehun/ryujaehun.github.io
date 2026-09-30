@@ -1452,5 +1452,43 @@
   "status": "materialized",
   "title": "Block Sparse Attention with Log-Linear Complexity",
   "version": "v1"
+ },
+ "2609.32712": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.32712/teaser-flow.webp",
+    "/assets/images/papers/2609.32712/operator-fidelity.webp",
+    "/assets/images/papers/2609.32712/associative-recall.webp",
+    "/assets/images/papers/2609.32712/latency-memory.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-09-30-paper-2609.32712.md",
+  "failures": 0,
+  "first_seen": "2026-09-30",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "decoding",
+    "latency",
+    "long context"
+   ],
+   "systems": [
+    "fused attention",
+    "tensor parallelism"
+   ],
+   "weak": [
+    "scaling"
+   ]
+  },
+  "materialized_at": "2026-09-30",
+  "score": 0.6376,
+  "slug": "paper-2609-32712",
+  "status": "materialized",
+  "title": "MassAlloc Attention: Let Attention Allocate Its Own Compute"
  }
 }
