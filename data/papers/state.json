@@ -1550,5 +1550,43 @@
   "slug": "paper-2609-34606",
   "status": "materialized",
   "title": "WorldAttention: An Efficient Attention Architecture for Interactive Video World Models"
+ },
+ "2609.36322": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.36322/group-random-seed-replication.webp",
+    "/assets/images/papers/2609.36322/group-native-kv-head-count.webp",
+    "/assets/images/papers/2609.36322/group-compression-geometry.webp",
+    "/assets/images/papers/2609.36322/group-compression-operator.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-01-paper-2609.36322.md",
+  "failures": 0,
+  "first_seen": "2026-10-01",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "cache",
+    "long context"
+   ],
+   "core": [
+    "cache compression",
+    "kv cache",
+    "kv compression"
+   ],
+   "systems": [
+    "compression"
+   ]
+  },
+  "materialized_at": "2026-10-01",
+  "score": 0.6754,
+  "slug": "paper-2609-36322",
+  "status": "materialized",
+  "title": "Periodic Weak Spots: Phase Sensitivity from Chunked KV-Cache Compression"
  }
 }
