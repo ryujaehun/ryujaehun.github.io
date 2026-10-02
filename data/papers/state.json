@@ -1551,6 +1551,49 @@
   "status": "materialized",
   "title": "WorldAttention: An Efficient Attention Architecture for Interactive Video World Models"
  },
+ "2609.35263": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 8
+  },
+  "categories": [
+   "cs.DC",
+   "cs.AI"
+  ],
+  "draft_path": "content/posts/2026-10-02-paper-2609.35263v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-02",
+  "matched": {
+   "adjacent": [
+    "cache",
+    "throughput"
+   ],
+   "core": [
+    "prefill"
+   ],
+   "named_systems": [
+    "sglang",
+    "tensorrt",
+    "vllm"
+   ],
+   "systems": [
+    "overlapping",
+    "pipeline parallelism",
+    "scheduling"
+   ],
+   "weak": [
+    "efficient",
+    "llm"
+   ]
+  },
+  "materialized_at": "2026-10-02",
+  "score": 0.5466,
+  "slug": "paper-2609-35263v1",
+  "status": "materialized",
+  "title": "WavePP: High-Throughput Pipeline Parallel LLM Prefill under Prefix Reuse",
+  "version": "v1"
+ },
  "2609.36322": {
   "assets": {
    "figures": [
