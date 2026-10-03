@@ -1409,6 +1409,45 @@
   "status": "materialized",
   "title": "Flash-dLLM: IO-Aware KV Caching and Parallel Decoding for Fast, Memory-Efficient Diffusion LLMs"
  },
+ "2609.30854": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 8
+  },
+  "categories": [
+   "cs.DC",
+   "cs.LG",
+   "cs.PF"
+  ],
+  "draft_path": "content/posts/2026-10-03-paper-2609.30854v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-03",
+  "matched": {
+   "adjacent": [
+    "autoregressive",
+    "cache",
+    "long context",
+    "throughput"
+   ],
+   "core": [
+    "kv cache",
+    "kv compression",
+    "llm inference",
+    "prefix caching"
+   ],
+   "systems": [
+    "compression",
+    "quantization"
+   ]
+  },
+  "materialized_at": "2026-10-03",
+  "score": 0.5448,
+  "slug": "paper-2609-30854v1",
+  "status": "materialized",
+  "title": "The KV Cache Is the New Memory Wall",
+  "version": "v1"
+ },
  "2609.31093": {
   "assets": {
    "figures": [],
