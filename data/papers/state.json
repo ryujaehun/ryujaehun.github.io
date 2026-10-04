@@ -1627,6 +1627,17 @@
    ]
   },
   "materialized_at": "2026-10-04",
+  "notification": {
+   "attempts": 4,
+   "message_sha256": "c73dbdc91a4ee987da9e3cbcbff8aecc235788526937edaa807a55b112844e7d",
+   "notification_id": "paper:2609.35259:ko-en",
+   "sent_at": "2026-10-04T00:26:52.267035+00:00",
+   "status": "sent",
+   "urls": [
+    "https://jaehun.me/posts/paper-2609-35259/",
+    "https://jaehun.me/en/posts/paper-2609-35259/"
+   ]
+  },
   "score": 0.5525,
   "slug": "paper-2609-35259",
   "status": "materialized",
