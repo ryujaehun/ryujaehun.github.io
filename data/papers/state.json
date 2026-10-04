@@ -1601,6 +1601,37 @@
   "status": "materialized",
   "title": "WorldAttention: An Efficient Attention Architecture for Interactive Video World Models"
  },
+ "2609.35259": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.35259/02-full-kl-final-metrics.webp",
+    "/assets/images/papers/2609.35259/05-countdown-learning-rate-effects.webp",
+    "/assets/images/papers/2609.35259/13-contrastive-lambda-three-seed-main-solid.webp",
+    "/assets/images/papers/2609.35259/average-probability-vs-lambda.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 6
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-04-paper-2609.35259.md",
+  "failures": 0,
+  "first_seen": "2026-10-04",
+  "matched": {
+   "adjacent": [
+    "distillation"
+   ],
+   "systems": [
+    "sparsity"
+   ]
+  },
+  "materialized_at": "2026-10-04",
+  "score": 0.5525,
+  "slug": "paper-2609-35259",
+  "status": "materialized",
+  "title": "On-Policy or Off-Policy Learning? A Systematic Study of Distillation Dynamics"
+ },
  "2609.35263": {
   "assets": {
    "figures": [],
