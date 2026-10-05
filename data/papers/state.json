@@ -1504,6 +1504,43 @@
   "title": "Block Sparse Attention with Log-Linear Complexity",
   "version": "v1"
  },
+ "2609.32259": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2609.32259/newintro.webp",
+    "/assets/images/papers/2609.32259/intro-verified-diagnostics.webp",
+    "/assets/images/papers/2609.32259/overview.webp",
+    "/assets/images/papers/2609.32259/heterofold-hotpot-motivation-combined.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-05-paper-2609.32259.md",
+  "failures": 0,
+  "first_seen": "2026-10-05",
+  "matched": {
+   "adjacent": [
+    "cache",
+    "long context"
+   ],
+   "core": [
+    "kv cache",
+    "prefill"
+   ],
+   "weak": [
+    "efficient",
+    "llm"
+   ]
+  },
+  "materialized_at": "2026-10-05",
+  "score": 0.5691,
+  "slug": "paper-2609-32259",
+  "status": "materialized",
+  "title": "Prefill-Free Cross-Family KV Cache Transfer for Heterogeneous Multi-Agent LLMs"
+ },
  "2609.32712": {
   "assets": {
    "figures": [
