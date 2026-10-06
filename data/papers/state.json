@@ -1793,5 +1793,50 @@
   "slug": "paper-2609-36322",
   "status": "materialized",
   "title": "Periodic Weak Spots: Phase Sensitivity from Chunked KV-Cache Compression"
+ },
+ "2610.03027": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.03027/motivation-overview.webp",
+    "/assets/images/papers/2610.03027/method-overview.webp",
+    "/assets/images/papers/2610.03027/method-validation.webp",
+    "/assets/images/papers/2610.03027/discussion-efficiency-analysis.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   "cs.LG",
+   "cs.AI",
+   "cs.CL"
+  ],
+  "draft_path": "content/posts/2026-10-06-paper-2610.03027v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-06",
+  "matched": {
+   "adjacent": [
+    "cache",
+    "long context",
+    "throughput"
+   ],
+   "core": [
+    "cache compression",
+    "kv cache",
+    "llm inference"
+   ],
+   "named_systems": [
+    "sglang"
+   ],
+   "systems": [
+    "compression",
+    "quantization"
+   ]
+  },
+  "materialized_at": "2026-10-06",
+  "score": 0.5463,
+  "slug": "paper-2610-03027v1",
+  "status": "materialized",
+  "title": "Tailoring the Quantization Space for 1-Bit KV Cache Compression",
+  "version": "v1"
  }
 }
