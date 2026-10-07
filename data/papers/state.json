@@ -1794,6 +1794,45 @@
   "status": "materialized",
   "title": "Periodic Weak Spots: Phase Sensitivity from Chunked KV-Cache Compression"
  },
+ "2610.02953": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 8
+  },
+  "categories": [
+   "cs.LG"
+  ],
+  "draft_path": "content/posts/2026-10-07-paper-2610.02953v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-07",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "cache",
+    "decoding",
+    "latency",
+    "long context"
+   ],
+   "core": [
+    "cache compression",
+    "kv cache",
+    "llm serving"
+   ],
+   "systems": [
+    "compression"
+   ],
+   "weak": [
+    "efficiency"
+   ]
+  },
+  "materialized_at": "2026-10-07",
+  "score": 0.5448,
+  "slug": "paper-2610-02953v1",
+  "status": "materialized",
+  "title": "SlimKV: Joint Token-Feature KV Cache Compression with Reconstruction-Free Beacon Attention",
+  "version": "v1"
+ },
  "2610.03027": {
   "assets": {
    "figures": [
