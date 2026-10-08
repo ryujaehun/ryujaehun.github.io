@@ -1899,5 +1899,40 @@
   "status": "materialized",
   "title": "Tailoring the Quantization Space for 1-Bit KV Cache Compression",
   "version": "v1"
+ },
+ "2610.07767": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 4
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-08-paper-2610.07767.md",
+  "failures": 0,
+  "first_seen": "2026-10-08",
+  "matched": {
+   "adjacent": [
+    "mixture-of-experts",
+    "moe"
+   ],
+   "core": [
+    "kv cache"
+   ],
+   "systems": [
+    "fp4",
+    "low-precision",
+    "quantization"
+   ],
+   "weak": [
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-10-08",
+  "score": 0.66,
+  "slug": "paper-2610-07767",
+  "status": "materialized",
+  "title": "TRACE: Rollout-Guided Quantization-Aware Training for FP4 Reinforcement Learning of MoE Language Models"
  }
 }
