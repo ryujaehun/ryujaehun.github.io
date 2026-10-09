@@ -1945,5 +1945,36 @@
   "slug": "paper-2610-07767",
   "status": "materialized",
   "title": "TRACE: Rollout-Guided Quantization-Aware Training for FP4 Reinforcement Learning of MoE Language Models"
+ },
+ "2610.10114": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 8
+  },
+  "categories": [
+   "cs.CL"
+  ],
+  "draft_path": "content/posts/2026-10-09-paper-2610.10114v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-09",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "long context"
+   ],
+   "systems": [
+    "linear attention"
+   ],
+   "weak": [
+    "efficiency"
+   ]
+  },
+  "materialized_at": "2026-10-09",
+  "score": 0.5803,
+  "slug": "paper-2610-10114v1",
+  "status": "materialized",
+  "title": "Mechanics of Long-Context Hybrid Models Part 1.1: From Hybrid Attention to Hybrid Position",
+  "version": "v1"
  }
 }
