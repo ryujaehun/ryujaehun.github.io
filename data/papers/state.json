@@ -1987,5 +1987,46 @@
   "status": "materialized",
   "title": "Mechanics of Long-Context Hybrid Models Part 1.1: From Hybrid Attention to Hybrid Position",
   "version": "v1"
+ },
+ "2610.12242": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.12242/tradeoff.webp",
+    "/assets/images/papers/2610.12242/routing-levels.webp",
+    "/assets/images/papers/2610.12242/architecture.webp",
+    "/assets/images/papers/2610.12242/schedule.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   "cs.CL"
+  ],
+  "draft_path": "content/posts/2026-10-10-paper-2610.12242v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-10",
+  "matched": {
+   "adjacent": [
+    "batching",
+    "decoding",
+    "throughput"
+   ],
+   "core": [
+    "llm inference",
+    "llm serving"
+   ],
+   "weak": [
+    "efficiency",
+    "efficient",
+    "large language model",
+    "llm"
+   ]
+  },
+  "materialized_at": "2026-10-10",
+  "score": 0.7546,
+  "slug": "paper-2610-12242v1",
+  "status": "materialized",
+  "title": "TokenRouter: Efficient Serving System for Token-Level LLM Routing",
+  "version": "v1"
  }
 }
