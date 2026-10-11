@@ -1900,6 +1900,44 @@
   "title": "Tailoring the Quantization Space for 1-Bit KV Cache Compression",
   "version": "v1"
  },
+ "2610.06801": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.06801/other-visual.webp",
+    "/assets/images/papers/2610.06801/teaser.webp",
+    "/assets/images/papers/2610.06801/oracle-combined.webp",
+    "/assets/images/papers/2610.06801/sources-of-gap-visual.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-11-paper-2610.06801.md",
+  "failures": 0,
+  "first_seen": "2026-10-11",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "latency"
+   ],
+   "core": [
+    "sparse attention"
+   ],
+   "systems": [
+    "sparsity"
+   ],
+   "weak": [
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-10-11",
+  "score": 0.5724,
+  "slug": "paper-2610-06801",
+  "status": "materialized",
+  "title": "MC-Sparse: Deconstructing and Closing the Dense-Sparse Attention Gap in Diffusion Transformers"
+ },
  "2610.07767": {
   "assets": {
    "figures": [],
