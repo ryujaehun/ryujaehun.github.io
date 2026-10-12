@@ -2088,5 +2088,45 @@
   "status": "materialized",
   "title": "TokenRouter: Efficient Serving System for Token-Level LLM Routing",
   "version": "v1"
+ },
+ "2610.12327": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "tables": 6
+  },
+  "categories": [
+   "cs.LG",
+   "cs.CL"
+  ],
+  "draft_path": "content/posts/2026-10-12-paper-2610.12327v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-12",
+  "matched": {
+   "adjacent": [
+    "autoregressive",
+    "decoding",
+    "kernel",
+    "latency"
+   ],
+   "core": [
+    "llm inference",
+    "prefill"
+   ],
+   "systems": [
+    "pruning"
+   ],
+   "weak": [
+    "efficient",
+    "large language model",
+    "llm"
+   ]
+  },
+  "materialized_at": "2026-10-12",
+  "score": 0.5737,
+  "slug": "paper-2610-12327v1",
+  "status": "materialized",
+  "title": "SparseDecoding: Decoding-Aware Pruning for Accurate and Efficient LLM Inference",
+  "version": "v1"
  }
 }
