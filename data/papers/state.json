@@ -1949,6 +1949,40 @@
   "status": "materialized",
   "title": "MC-Sparse: Deconstructing and Closing the Dense-Sparse Attention Gap in Diffusion Transformers"
  },
+ "2610.06833": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.06833/m-entropy-ablation.webp",
+    "/assets/images/papers/2610.06833/prior-training-loss.webp",
+    "/assets/images/papers/2610.06833/fixed-pln-learned-distributions.webp",
+    "/assets/images/papers/2610.06833/pd-scaling-comparison.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 3
+  },
+  "categories": [
+   "cs.LG"
+  ],
+  "draft_path": "content/posts/2026-10-13-paper-2610.06833v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-13",
+  "matched": {
+   "adjacent": [
+    "cache",
+    "decoding"
+   ],
+   "core": [
+    "kv cache",
+    "prefill"
+   ]
+  },
+  "materialized_at": "2026-10-13",
+  "score": 0.5622,
+  "slug": "paper-2610-06833v1",
+  "status": "materialized",
+  "title": "Towards Looped Models Done Right, Part II: Rethinking at Fixed Points",
+  "version": "v1"
+ },
  "2610.07767": {
   "assets": {
    "figures": [],
