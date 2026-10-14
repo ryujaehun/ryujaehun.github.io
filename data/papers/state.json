@@ -2184,5 +2184,43 @@
   "status": "materialized",
   "title": "SparseDecoding: Decoding-Aware Pruning for Accurate and Efficient LLM Inference",
   "version": "v1"
+ },
+ "2610.12570": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.12570/coverage.webp",
+    "/assets/images/papers/2610.12570/q8b-conc-bars.webp",
+    "/assets/images/papers/2610.12570/concurrency-gain.webp",
+    "/assets/images/papers/2610.12570/q4b-conc-bars.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-14-paper-2610.12570.md",
+  "failures": 0,
+  "first_seen": "2026-10-14",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "autoregressive",
+    "decoding",
+    "throughput"
+   ],
+   "core": [
+    "speculative decoding"
+   ],
+   "weak": [
+    "acceleration",
+    "large language model"
+   ]
+  },
+  "materialized_at": "2026-10-14",
+  "score": 0.5599,
+  "slug": "paper-2610-12570",
+  "status": "materialized",
+  "title": "Contextual Correction of Parallel Draftsfor Speculative Decoding"
  }
 }
