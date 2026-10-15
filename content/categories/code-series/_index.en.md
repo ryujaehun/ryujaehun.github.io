@@ -1,5 +1,6 @@
 ---
 title: "code-series"
+linkTitle: "Inference Engine Code Reading"
 description: "Reading an open-source inference engine end to end, pinned to one commit. Each part follows the execution path through a specific region of the code and the reasoning behind its design."
 ---
 

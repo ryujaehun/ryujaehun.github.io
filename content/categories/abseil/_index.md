@@ -1,5 +1,6 @@
 ---
 title: "abseil"
+linkTitle: "C++ Abseil 팁"
 description: "Abseil Tip of the Week 를 한국어로 옮긴 글 모음입니다. string_view, unique_ptr, 임시 객체와 수명처럼 C++ 를 쓰면서 매번 다시 확인하게 되는 주제를 한 편에 하나씩 다룹니다."
 ---
 

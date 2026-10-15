@@ -1,0 +1,4 @@
+<details class="paper-tables">
+  <summary>{{ if eq .Page.Language.Lang "ko" }}논문 원문 표 전체 펼치기{{ else }}Expand all original paper tables{{ end }}</summary>
+  {{ .Inner | .Page.RenderString (dict "display" "block") }}
+</details>

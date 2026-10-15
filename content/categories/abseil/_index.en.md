@@ -1,5 +1,6 @@
 ---
 title: "abseil"
+linkTitle: "C++ Abseil Tips"
 description: "Korean renderings of Abseil's Tip of the Week — string_view, unique_ptr, temporaries and lifetimes, and the other C++ questions that keep coming back."
 ---
 

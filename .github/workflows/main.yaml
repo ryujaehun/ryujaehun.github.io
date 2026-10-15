@@ -86,6 +86,20 @@ jobs:
             grep "Duplicate target paths" hugo-build.log
             exit 1
           fi
+      - name: Setup Node.js for browser checks
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - name: Check recent posts in desktop and mobile Chrome
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory public > /tmp/blog-ui-server.log 2>&1 &
+          UI_SERVER_PID=$!
+          trap 'kill "$UI_SERVER_PID"' EXIT
+          for attempt in {1..30}; do
+            if curl -fsS http://127.0.0.1:8765/index.json > /dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/check-reading-ui.mjs http://127.0.0.1:8765
       - name: Cache Save
         id: cache-save
         uses: actions/cache/save@v6

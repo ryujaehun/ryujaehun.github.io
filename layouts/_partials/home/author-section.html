@@ -1,0 +1,18 @@
+{{- $author := .Params.author | default site.Params.author -}}
+{{- with $author }}
+<section class="home-intro" aria-labelledby="home-author">
+  {{- with .avatar }}
+  <img src="{{ strings.TrimPrefix "/" . | relURL }}" alt="" width="56" height="56" class="home-intro-avatar" />
+  {{- end }}
+  <div class="home-intro-copy">
+    <h1 id="home-author">{{ .name | default site.Title }}</h1>
+    <p>{{ if eq site.Language.Lang "ko" }}딥러닝 컴파일러 엔지니어의 LLM 추론 최적화·논문·코드 읽기 기록{{ else }}Notes on LLM inference, research papers, and code from a deep learning compiler engineer.{{ end }}</p>
+    <nav class="home-intro-links" aria-label="{{ if eq site.Language.Lang "ko" }}작성자 소개와 소셜 링크{{ else }}About the author and social links{{ end }}">
+      <a href="{{ "/about/" | relLangURL }}">{{ if eq site.Language.Lang "ko" }}소개{{ else }}About{{ end }}</a>
+      {{- range .social }}
+      <a href="{{ .url }}"{{ if hasPrefix .url "https://" }} target="_blank" rel="noopener noreferrer"{{ end }}>{{ .name }}</a>
+      {{- end }}
+    </nav>
+  </div>
+</section>
+{{- end }}

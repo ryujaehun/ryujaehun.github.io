@@ -218,10 +218,10 @@ params:
     pinned: false # side 모드에서 공간이 넉넉하면 목차를 항상 펼쳐 둡니다.
 
   home:
-    recentPostsCount: 5 # 홈페이지에 표시할 최근 글의 개수입니다.
+    recentPostsCount: 3 # 홈페이지에 표시할 최근 글의 개수입니다.
     # 홈에서 보여 줄 섹션 순서. `topics` 는 이 리포의
     # `layouts/_partials/home/topics.html` 이다.
-    contentOrder: ["author-section", "page-content", "topics", "recent-posts"]
+    contentOrder: ["author-section", "recent-posts", "topics", "page-content"]
   colorScheme: "claude" # 기본으로 적용할 테마 색상 스킴입니다.
   themes: # 사용 가능한 테마 색상 스킴 목록입니다.
     claude: { name: "Default", order: 1 }

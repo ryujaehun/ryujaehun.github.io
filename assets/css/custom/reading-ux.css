@@ -1,0 +1,22 @@
+/* Keep the home introduction short so readers can reach recent posts. */
+.home-intro { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 2rem; }
+.home-intro-avatar { width: 3.5rem; height: 3.5rem; flex-shrink: 0; border-radius: 50%; object-fit: cover; }
+.home-intro-copy { min-width: 0; }
+.home-intro h1 { margin: 0 0 .25rem; font-size: 1.5rem; font-weight: 700; }
+.home-intro p { margin: 0; color: var(--color-muted-foreground); line-height: 1.65; }
+.home-intro-links { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin-top: .5rem; font-size: .875rem; }
+.home-intro-links a { display: inline-flex; align-items: center; min-height: 2rem; text-decoration: underline; text-underline-offset: .2em; }
+.post-original-title { margin: -1rem 0 1.25rem; color: var(--color-muted-foreground); font-size: .95rem; line-height: 1.6; }
+.post-meta > .bg-card { border: 0; background: transparent; }
+.post-meta > .bg-card > .p-6 { padding: 0; }
+.post-meta .post-taxonomies { border-top: 1px solid var(--color-border); padding-top: .75rem; font-size: .875rem; }
+.post-taxonomies > summary, .paper-tables > summary { cursor: pointer; padding: .5rem 0; }
+.paper-tables { margin-block: 1.5rem; border-block: 1px solid var(--color-border); padding-block: .5rem; }
+.paper-tables > summary { font-weight: 600; }
+.home-intro-links a:focus-visible, .post-taxonomies > summary:focus-visible, .paper-tables > summary:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 4px; border-radius: .25rem; }
+@media (max-width: 480px) {
+  .home-intro { gap: .75rem; margin-bottom: 1.5rem; }
+  .home-intro-avatar { width: 2.75rem; height: 2.75rem; }
+  .home-intro h1 { font-size: 1.25rem; }
+  .home-intro p { font-size: .875rem; }
+}
