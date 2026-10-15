@@ -81,6 +81,11 @@ try {
         const firstCard = document.querySelector('main article.group');
         return {
           h1: document.querySelectorAll('main h1').length,
+          articleWidth: article?.getBoundingClientRect().width,
+          dockMode: document.getElementById('dock')?.dataset.dockMode,
+          dockInitiallyHidden: !document.getElementById('dock') || getComputedStyle(document.getElementById('dock')).visibility === 'hidden',
+          homeDock: !!home && !!document.getElementById('dock'),
+          cardTagCounts: [...document.querySelectorAll('.post-card-tags')].map(e => e.children.length),
           overflow: document.documentElement.scrollWidth > innerWidth + 1,
           mathErrors: [...document.querySelectorAll('.katex-error')].map(e => e.title),
           renderedMath: document.querySelectorAll('.katex').length,
@@ -92,6 +97,13 @@ try {
           appendixCollapsed: !document.querySelector('.paper-tables')?.open,
         };
       })()`);
+      assert(result.dockInitiallyHidden, `${path}: dock should not obscure initial content`);
+      if (result.articleWidth) {
+        assert(result.articleWidth <= 737, `${path}: readable default article width`);
+        assert.equal(result.dockMode, 'scroll', `${path}: dock appears only while scrolling up`);
+      }
+      assert(!result.homeDock, `${path}: home should not have an overlapping dock`);
+      assert(result.cardTagCounts.every(n => n <= 2), `${path}: at most two representative tags per card`);
       assert.equal(result.h1, 1, `${path}: one main heading`);
       assert(!result.overflow, `${path} at ${width}px: horizontal page overflow`);
       assert.deepEqual(result.mathErrors, [], `${path}: KaTeX errors`);
@@ -104,6 +116,36 @@ try {
         assert(await evaluate("document.querySelector('#series-link-btn')?.getAttribute('href') !== '#'"), `${path}: series navigation link`);
       }
       if (result.firstCardTop !== null) assert(result.firstCardTop < 844, `${path}: recent posts below first screen`);
+      if (path === '/' || path === '/en/') {
+        assert(await evaluate("!!document.querySelector('.home-search')"), `${path}: visible home search entry`);
+        await evaluate("document.querySelector('.home-search').click()");
+        assert(await evaluate("document.querySelector('#search-modal').getAttribute('aria-hidden') === 'false'"), `${path}: home search opens`);
+        await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+        await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+        assert(await evaluate("document.querySelector('#search-modal').getAttribute('aria-hidden') === 'true'"), `${path}: home search closes with Escape`);
+      }
+      if (path === recent[0] || path === series) {
+        await evaluate("window.scrollTo({ top: 650, behavior: 'instant' })");
+        await pause(100);
+        await evaluate("window.scrollTo({ top: 350, behavior: 'instant' })");
+        await pause(350);
+        assert(await evaluate("getComputedStyle(document.getElementById('dock')).visibility === 'visible'"), `${path}: tools available when scrolling up`);
+        await evaluate("window.scrollTo({ top: 650, behavior: 'instant' })");
+        await pause(100);
+        assert(await evaluate("getComputedStyle(document.getElementById('dock')).visibility === 'hidden'"), `${path}: tools hide when reading down`);
+        await evaluate("window.scrollTo({ top: 0, behavior: 'instant' })");
+        await pause(350);
+      }
+      if (path === recent[0] && width === 1440) {
+        const before = await evaluate("document.querySelector('article.prose').getBoundingClientRect().width");
+        await evaluate("const range = document.getElementById('content-width-range'); range.value = String(Number(range.value) + 1); range.dispatchEvent(new Event('input', { bubbles: true }))");
+        await pause(100);
+        const after = await evaluate("document.querySelector('article.prose').getBoundingClientRect().width");
+        assert(Math.abs(after - before - 16) < 1, `${path}: one slider step should resize text by one rem`);
+        await evaluate("document.getElementById('content-width-reset').click()");
+        await pause(100);
+        assert.equal(await evaluate("document.querySelector('article.prose').getBoundingClientRect().width"), before, `${path}: reset restores reading width`);
+      }
       // Native details must work from the keyboard, including tables rendered while hidden.
       if (await evaluate("!!document.querySelector('.paper-tables')")) {
         await evaluate("document.querySelector('.paper-tables > summary').focus()");
@@ -114,9 +156,9 @@ try {
         await evaluate("document.querySelector('.paper-tables').open = false; window.scrollTo(0, 0)");
       }
       await pause(100);
-      if (screenshots && (path === '/' || path === recent[3])) {
+      if (screenshots && (path === '/' || path === recent[0] || path === recent[3])) {
         const capture = await send('Page.captureScreenshot', { format: 'png' });
-        await writeFile(join(screenshots, `${path === '/' ? 'home' : 'post'}-${width}.png`), Buffer.from(capture.data, 'base64'));
+        await writeFile(join(screenshots, `${path === '/' ? 'home' : path === recent[0] ? 'paper' : 'post'}-${width}.png`), Buffer.from(capture.data, 'base64'));
       }
       console.log(`PASS ${width}px ${path} (${result.renderedMath} formulas${result.firstCardTop === null ? '' : `, first card y=${Math.round(result.firstCardTop)}`})`);
     }

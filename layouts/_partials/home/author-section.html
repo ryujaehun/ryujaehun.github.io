@@ -7,11 +7,15 @@
   <div class="home-intro-copy">
     <h1 id="home-author">{{ .name | default site.Title }}</h1>
     <p>{{ if eq site.Language.Lang "ko" }}딥러닝 컴파일러 엔지니어의 LLM 추론 최적화·논문·코드 읽기 기록{{ else }}Notes on LLM inference, research papers, and code from a deep learning compiler engineer.{{ end }}</p>
-    <nav class="home-intro-links" aria-label="{{ if eq site.Language.Lang "ko" }}작성자 소개와 소셜 링크{{ else }}About the author and social links{{ end }}">
+    <nav class="home-intro-links" aria-label="{{ if eq site.Language.Lang "ko" }}소개·소셜 링크·검색{{ else }}About, social links, and search{{ end }}">
       <a href="{{ "/about/" | relLangURL }}">{{ if eq site.Language.Lang "ko" }}소개{{ else }}About{{ end }}</a>
       {{- range .social }}
       <a href="{{ .url }}"{{ if hasPrefix .url "https://" }} target="_blank" rel="noopener noreferrer"{{ end }}>{{ .name }}</a>
       {{- end }}
+      <button type="button" class="home-search" onclick="document.dispatchEvent(new CustomEvent('search:open'))">
+        {{ partial "features/icon.html" (dict "name" "search" "size" "sm" "ariaLabel" "") }}
+        {{ if eq site.Language.Lang "ko" }}검색{{ else }}Search{{ end }}
+      </button>
     </nav>
   </div>
 </section>

@@ -20,3 +20,40 @@
   .home-intro h1 { font-size: 1.25rem; }
   .home-intro p { font-size: .875rem; }
 }
+
+/* Quiet controls and metadata leave the article as the main visual element. */
+.home-search { display: inline-flex; align-items: center; gap: .35rem; min-height: 2rem; cursor: pointer; text-decoration: underline; text-underline-offset: .2em; }
+.home-search:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 4px; border-radius: .25rem; }
+.post-card-meta { column-gap: 1rem; row-gap: .75rem; }
+.post-card-tags { display: flex; flex-wrap: wrap; gap: .4rem; flex-basis: 100%; }
+.post-card h3 { line-height: 1.45; text-wrap: pretty; word-break: keep-all; overflow-wrap: anywhere; }
+#dock { transition-property: opacity, translate; transition-duration: .18s; }
+#dock.opacity-0 { visibility: hidden; }
+#dock > nav { padding: .35rem .5rem; border-radius: .9rem; }
+#dock button { padding: .5rem .65rem; transform: none; translate: none; scale: 1; }
+#dock button:hover { transform: none; }
+#dock nav > div { margin-inline: .25rem; }
+
+/* Keep a 5rem reading inset on each side of the configured page width.
+   Slider changes then resize the page and text together without a first-use jump. */
+.reading-layout { max-width: calc(var(--content-width, var(--content-width-base, 56rem)) - 10rem); margin-inline: auto; }
+.reading-layout .post-meta h1 { font-size: clamp(1.75rem, 2.6vw, 2.125rem); line-height: 1.4; letter-spacing: -.025em; text-wrap: pretty; word-break: keep-all; overflow-wrap: anywhere; }
+.reading-layout > article.prose { font-size: 1.0625rem; line-height: 1.85; }
+.reading-layout > article.prose p { line-height: 1.85; margin-block: 1.25rem; }
+.reading-layout > article.prose h2 { margin-top: 2.75rem; margin-bottom: 1rem; padding-left: 0; font-size: 1.625rem; line-height: 1.45; }
+.reading-layout > article.prose h2::before { display: none; }
+.reading-layout > article.prose h3 { margin-top: 2rem; font-size: 1.25rem; line-height: 1.5; }
+.reading-layout > article.prose h4 { font-size: 1.125rem; line-height: 1.5; }
+.reading-layout > article.prose blockquote { padding: .75rem 1.25rem; border-left: 2px solid var(--color-border); border-radius: 0; background: transparent; font-style: normal; transform: none; translate: none; transition: none; }
+.reading-layout > article.prose blockquote::before { content: none; }
+.reading-layout > article.prose blockquote p { font-size: inherit; font-style: normal; }
+.reading-layout > article.prose blockquote > .prose { font-size: inherit; }
+.reading-layout > article.prose .paper-source { color: var(--color-muted-foreground); font-size: .875rem; }
+@media (max-width: 480px) {
+  .reading-layout > article.prose { font-size: 1rem; }
+  .reading-layout > article.prose h2 { font-size: 1.375rem; margin-top: 2.25rem; }
+  .post-card-tags { gap: .35rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #dock, #dock * { transition: none; }
+}
