@@ -1900,6 +1900,46 @@
   "title": "Tailoring the Quantization Space for 1-Bit KV Cache Compression",
   "version": "v1"
  },
+ "2610.05739": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.05739/indoor-005-seed47-homepage-compact.webp",
+    "/assets/images/papers/2610.05739/gdn-forgetting.webp",
+    "/assets/images/papers/2610.05739/hla-wm-method.webp",
+    "/assets/images/papers/2610.05739/gdn-temporal-state-memory-scaling.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "tables": 8
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-15-paper-2610.05739.md",
+  "failures": 0,
+  "first_seen": "2026-10-15",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "autoregressive",
+    "cache",
+    "throughput"
+   ],
+   "core": [
+    "kv cache"
+   ],
+   "systems": [
+    "linear attention"
+   ],
+   "weak": [
+    "efficiency"
+   ]
+  },
+  "materialized_at": "2026-10-15",
+  "score": 0.5493,
+  "slug": "paper-2610-05739",
+  "status": "materialized",
+  "title": "HLA-WM: Hybrid Linear Attention for Long-Horizon Video World Models"
+ },
  "2610.06801": {
   "assets": {
    "figures": [
