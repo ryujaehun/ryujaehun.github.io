@@ -236,7 +236,10 @@ translate:
 
 assets:
   # 논문 원문에서 표·그림을 뽑는 단계(summarize 앞에 돈다).
-  max_figures: 4          # 편당 그림 상한. 저장 용량이 실질적 제약이다.
+  max_figures: 8          # 원문 그림을 우선 사용하고 부족하면 PDF 발췌로 보완한다.
+  pdf_fallback: true
+  max_pdf_pages: 4        # 캡션이 있는 원문 페이지 발췌 상한
+  max_total_bytes: 2097152 # 그림 전체 2 MiB 상한 (WebP)
   max_tables: 8           # 편당 표 상한. 부록 표가 20개씩 있는 논문도 있다.
 
   # 그림을 다시 올릴 수 있는 라이선스. 좁게 잡은 이유:
