@@ -994,7 +994,9 @@
   "assets": {
    "figures": [],
    "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 6
+   "pdf_pages": 0,
+   "tables": 6,
+   "warnings": []
   },
   "categories": [
    null
@@ -1012,10 +1014,24 @@
    ]
   },
   "materialized_at": "2026-09-19",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
   "score": 0.5002,
   "slug": "paper-2609-18487",
-  "status": "materialized",
-  "title": "ActionPiece: Rethinking Action Tokenization for Autoregressive Vision-Language-Action Models"
+  "status": "summarized",
+  "summarized_at": "2026-10-16",
+  "summary_cost_usd": 0.067128776,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "ActionPiece: Rethinking Action Tokenization for Autoregressive Vision-Language-Action Models",
+  "translation": {
+   "completed_at": "2026-10-16",
+   "cost_usd": 0.008788308,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  }
  },
  "2609.19969": {
   "assets": {
