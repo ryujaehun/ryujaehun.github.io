@@ -1037,7 +1037,9 @@
   "assets": {
    "figures": [],
    "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 5
+   "pdf_pages": 0,
+   "tables": 5,
+   "warnings": []
   },
   "categories": [
    null
@@ -1068,10 +1070,24 @@
    ]
   },
   "materialized_at": "2026-09-19",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
   "score": 0.6471,
   "slug": "paper-2609-19969",
-  "status": "materialized",
-  "title": "DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression"
+  "status": "summarized",
+  "summarized_at": "2026-10-17",
+  "summary_cost_usd": 0.14384238,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression",
+  "translation": {
+   "completed_at": "2026-10-17",
+   "cost_usd": 0.010696176,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  }
  },
  "2609.23900": {
   "assets": {
