@@ -1093,14 +1093,17 @@
   "assets": {
    "figures": [],
    "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 8
+   "pdf_pages": 0,
+   "tables": 8,
+   "warnings": []
   },
   "categories": [
    "cs.LG"
   ],
   "draft_path": "content/posts/2026-09-27-paper-2609.23900v1.md",
-  "failures": 0,
+  "failures": 1,
   "first_seen": "2026-09-27",
+  "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode-go/deepseek-v4-pro: opencode 가 코드 1 로 끝났습니다: \nopencode/muse-spark-1.3-contributor-free: opencode 가 코드 1 로 끝났습니다: ",
   "matched": {
    "adjacent": [
     "attention",
@@ -1133,7 +1136,7 @@
   },
   "score": 0.5226,
   "slug": "paper-2609-23900v1",
-  "status": "materialized",
+  "status": "failed",
   "title": "GDN Tree-Scan: Served Tree Verification for Recurrent-Hybrid Language Models",
   "version": "v1"
  },
