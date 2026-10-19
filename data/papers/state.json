@@ -1619,13 +1619,16 @@
  "2609.32712": {
   "assets": {
    "figures": [
-    "/assets/images/papers/2609.32712/teaser-flow.webp",
-    "/assets/images/papers/2609.32712/operator-fidelity.webp",
-    "/assets/images/papers/2609.32712/associative-recall.webp",
-    "/assets/images/papers/2609.32712/latency-memory.webp"
+    "/assets/images/papers/2609.32712/teaser-flow-712a89d1.webp",
+    "/assets/images/papers/2609.32712/operator-fidelity-7c69c3a7.webp",
+    "/assets/images/papers/2609.32712/associative-recall-1311c868.webp",
+    "/assets/images/papers/2609.32712/latency-memory-3fbb04e7.webp",
+    "/assets/images/papers/2609.32712/scaling-laws-flops-db1001a0.webp"
    ],
    "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
+   "pdf_pages": 0,
+   "tables": 8,
+   "warnings": []
   },
   "categories": [
    null
@@ -1660,10 +1663,24 @@
     "https://jaehun.me/en/posts/paper-2609-32712/"
    ]
   },
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
   "score": 0.6376,
   "slug": "paper-2609-32712",
-  "status": "materialized",
-  "title": "MassAlloc Attention: Let Attention Allocate Its Own Compute"
+  "status": "summarized",
+  "summarized_at": "2026-10-19",
+  "summary_cost_usd": 0.0835164,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "MassAlloc Attention: Let Attention Allocate Its Own Compute",
+  "translation": {
+   "completed_at": "2026-10-19",
+   "cost_usd": 0.043313238000000004,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  }
  },
  "2609.34606": {
   "assets": {
