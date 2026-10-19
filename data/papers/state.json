@@ -1101,7 +1101,7 @@
    "cs.LG"
   ],
   "draft_path": "content/posts/2026-09-27-paper-2609.23900v1.md",
-  "failures": 3,
+  "failures": 0,
   "first_seen": "2026-09-27",
   "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode-go/deepseek-v4-pro: opencode 가 코드 1 로 끝났습니다: \nopencode/muse-spark-1.3-contributor-free: opencode 가 코드 1 로 끝났습니다: ",
   "matched": {

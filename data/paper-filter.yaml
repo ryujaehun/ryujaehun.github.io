@@ -222,17 +222,31 @@ summarize:
   # 1차가 실패하면(프로바이더 한도·장애) 여기로 넘어간다. 무료 모델이라
   # 그날 수집분을 통째로 버리는 것보다 낫다. 실제로 쓴 모델은 초안
   # 카테고리(with-…)에 남으니 나중에 구분된다.
-  fallback_model: opencode/glm-5.3-flash-free
+  fallback_models:
+    - opencode-go/gemini-4-argon-contributor # Go 구독 한도
+    - opencode/glm-5.3-flash-free
+    - opencode/deepseek-v4.1-flash-free
+    - opencode/mimo-v2.6-flash-free
+  # PDF 비지원 무료 모델에는 페이지 번호를 보존한 원문 텍스트를 첨부한다.
+  pdf_text_models:
+    - opencode/deepseek-v4.1-flash-free
+    - opencode/mimo-v2.6-flash-free
   variant: null           # opencode --variant 값. null 이면 생략한다.
   timeout_seconds: 900
+  fallback_timeout_seconds: 600
 
 translate:
   # 번역은 요약보다 쉬운 일이라 싼 모델로 충분하다. 실측 비용은 요약이
   # 편당 $0.008 남짓이었고 번역은 입력이 짧아 더 싸다.
   model: opencode-go/deepseek-v4.1-flash
-  fallback_model: opencode/glm-5.3-flash-free
+  fallback_models:
+    - opencode-go/gemini-4-argon-contributor # Go 구독 한도
+    - opencode/glm-5.3-flash-free
+    - opencode/deepseek-v4.1-flash-free
+    - opencode/mimo-v2.6-flash-free
   variant: null
   timeout_seconds: 900
+  fallback_timeout_seconds: 600
 
 assets:
   # 논문 원문에서 표·그림을 뽑는 단계(summarize 앞에 돈다).
