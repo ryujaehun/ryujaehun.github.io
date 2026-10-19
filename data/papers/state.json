@@ -1103,7 +1103,6 @@
   "draft_path": "content/posts/2026-09-27-paper-2609.23900v1.md",
   "failures": 0,
   "first_seen": "2026-09-27",
-  "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode-go/deepseek-v4-pro: opencode 가 코드 1 로 끝났습니다: \nopencode/muse-spark-1.3-contributor-free: opencode 가 코드 1 로 끝났습니다: ",
   "matched": {
    "adjacent": [
     "attention",
@@ -1134,10 +1133,24 @@
     "https://jaehun.me/en/posts/paper-2609-23900v1/"
    ]
   },
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
   "score": 0.5226,
   "slug": "paper-2609-23900v1",
-  "status": "failed",
+  "status": "summarized",
+  "summarized_at": "2026-10-19",
+  "summary_cost_usd": 0.078606176,
+  "summary_model": "opencode-go/deepseek-v4-pro",
   "title": "GDN Tree-Scan: Served Tree Verification for Recurrent-Hybrid Language Models",
+  "translation": {
+   "completed_at": "2026-10-19",
+   "cost_usd": 0.010768398,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  },
   "version": "v1"
  },
  "2609.24197": {
