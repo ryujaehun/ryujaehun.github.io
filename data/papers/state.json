@@ -2366,6 +2366,73 @@
   "status": "materialized",
   "title": "Contextual Correction of Parallel Draftsfor Speculative Decoding"
  },
+ "2610.21463": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.21463/fig1-overview-cf45ccc8.webp",
+    "/assets/images/papers/2610.21463/fig2-pareto-37b58824.webp",
+    "/assets/images/papers/2610.21463/fig5-phase-719ce858.webp",
+    "/assets/images/papers/2610.21463/fig3-ablation-94a6b520.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "pdf_pages": 0,
+   "tables": 8,
+   "warnings": []
+  },
+  "categories": [
+   "cs.CL",
+   "cs.AI",
+   "cs.LG"
+  ],
+  "draft_path": "content/posts/2026-10-20-paper-2610.21463v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-20",
+  "matched": {
+   "adjacent": [
+    "autoregressive",
+    "decoding",
+    "latency"
+   ],
+   "core": [
+    "prefill"
+   ],
+   "weak": [
+    "large language model"
+   ]
+  },
+  "materialized_at": "2026-10-20",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cost_usd": 0,
+     "model": "opencode/beam-free",
+     "output": "2610.21463-revision-1.md",
+     "round": 1
+    },
+    {
+     "cost_usd": 0,
+     "model": "opencode/beam-free",
+     "output": "2610.21463-revision-2.md",
+     "round": 2
+    }
+   ],
+   "source": "validated draft recovered after generation timeout",
+   "status": "passed"
+  },
+  "score": 0.5914,
+  "slug": "paper-2610-21463v1",
+  "status": "summarized",
+  "summarized_at": "2026-10-20",
+  "summary_cost_usd": 0,
+  "summary_model": "opencode/deepseek-v4.1-flash-free",
+  "title": "Trajectory-Level Speculation with Semantic Verification for Tool-Using Agents",
+  "version": "v1"
+ },
  "2610.23787": {
   "assets": {
    "figures": [
