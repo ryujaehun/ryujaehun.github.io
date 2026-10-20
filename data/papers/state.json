@@ -2365,5 +2365,60 @@
   "slug": "paper-2610-12570",
   "status": "materialized",
   "title": "Contextual Correction of Parallel Draftsfor Speculative Decoding"
+ },
+ "2610.23787": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.23787/agent-bb8b8580.webp",
+    "/assets/images/papers/2610.23787/background2-7e391277.webp",
+    "/assets/images/papers/2610.23787/overview2-beb8d083.webp",
+    "/assets/images/papers/2610.23787/training-fd7dc2b7.webp",
+    "/assets/images/papers/2610.23787/ablation-0d71c141.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "pdf_pages": 0,
+   "tables": 5,
+   "warnings": []
+  },
+  "categories": [
+   "cs.CL"
+  ],
+  "draft_path": "content/posts/2026-10-20-paper-2610.23787v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-20",
+  "matched": {
+   "adjacent": [
+    "decoding",
+    "long context"
+   ],
+   "core": [
+    "kv cache",
+    "speculative decoding"
+   ],
+   "weak": [
+    "large language model",
+    "llm"
+   ]
+  },
+  "materialized_at": "2026-10-20",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "score": 0.6542,
+  "slug": "paper-2610-23787v1",
+  "status": "summarized",
+  "summarized_at": "2026-10-20",
+  "summary_cost_usd": 0.117635408,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "DLite: History-free Speculative Decoding for Agentic AI",
+  "translation": {
+   "completed_at": "2026-10-20",
+   "cost_usd": 0.00913899,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  },
+  "version": "v1"
  }
 }
