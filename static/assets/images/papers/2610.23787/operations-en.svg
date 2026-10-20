@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 1070" role="img" aria-labelledby="title desc">
+<title id="title">DLite: history reuse and verification</title>
+<desc id="desc">Target cache stays; historical draft cache is removed. Illustrative candidates jumps over a dog: accept the first two and discard the rejected suffix.</desc>
+<g font-family="system-ui,sans-serif">
+<rect x="0" y="0" width="480" height="1070" rx="12" fill="#f4f7fb"/>
+<text x="22" y="35" font-size="23" fill="#243247" font-weight="700">Who handles the long history?</text>
+<text x="22" y="64" font-size="16" fill="#243247" font-weight="400">Illustration; words are not tokenizer units</text>
+<rect x="14" y="85" width="452" height="375" rx="10" fill="#fff"/>
+<rect x="14" y="478" width="452" height="225" rx="10" fill="#fff"/>
+<rect x="14" y="721" width="452" height="329" rx="10" fill="#fff"/>
+<text x="28" y="119" font-size="20" fill="#243247" font-weight="700">1  Reuse the target’s representations</text>
+<rect x="28" y="139" width="424" height="63" rx="7" fill="#e9eef6"/>
+<text x="42" y="165" font-size="18" fill="#243247" font-weight="400">History: chat + files + tool results</text>
+<text x="42" y="190" font-size="18" fill="#243247" font-weight="400">… the quick brown fox</text>
+<path d="M240 210 v22 m-6 -6 6 6 6 -6" fill="none" stroke="#54657a" stroke-width="2"/>
+<rect x="28" y="241" width="424" height="75" rx="7" fill="#dcecf1"/>
+<text x="42" y="269" font-size="19" fill="#243247" font-weight="700">Target: retains history and KV cache</text>
+<text x="42" y="299" font-size="17" fill="#243247" font-weight="400">Hidden states H + confirmed token fox</text>
+<path d="M240 324 v22 m-6 -6 6 6 6 -6" fill="none" stroke="#54657a" stroke-width="2"/>
+<rect x="28" y="355" width="424" height="65" rx="7" fill="#edf4e5"/>
+<text x="42" y="382" font-size="18" fill="#243247" font-weight="700">Drafter: use H and the current position</text>
+<text x="42" y="408" font-size="17" fill="#243247" font-weight="400">No separate historical draft KV cache</text>
+<text x="28" y="446" font-size="16" fill="#243247" font-weight="400">H carries history information; it is not forgotten.</text>
+<text x="28" y="513" font-size="20" fill="#243247" font-weight="700">2  Select candidates using earlier picks</text>
+<text x="28" y="545" font-size="17" fill="#243247" font-weight="400">Compute position representations together.</text>
+<text x="28" y="575" font-size="17" fill="#243247" font-weight="400">A small sequential head selects in order.</text>
+<rect x="29" y="598" width="98" height="43" rx="7" fill="#3666b0"/>
+<text x="40" y="626" font-size="20" fill="#fff" font-weight="700">jumps</text>
+<rect x="135" y="598" width="98" height="43" rx="7" fill="#3666b0"/>
+<text x="146" y="626" font-size="20" fill="#fff" font-weight="700">over</text>
+<rect x="241" y="598" width="98" height="43" rx="7" fill="#3666b0"/>
+<text x="252" y="626" font-size="20" fill="#fff" font-weight="700">a</text>
+<rect x="347" y="598" width="98" height="43" rx="7" fill="#3666b0"/>
+<text x="358" y="626" font-size="20" fill="#fff" font-weight="700">dog</text>
+<text x="28" y="679" font-size="16" fill="#243247" font-weight="400">Blue = candidates awaiting target verification</text>
+<text x="28" y="756" font-size="20" fill="#243247" font-weight="700">3  Verify and retain the accepted prefix</text>
+<text x="28" y="788" font-size="17" fill="#243247" font-weight="400">Assume this verification outcome:</text>
+<rect x="29" y="807" width="98" height="43" rx="7" fill="#087f8c"/>
+<text x="40" y="835" font-size="20" fill="#fff" font-weight="700">jumps</text>
+<rect x="135" y="807" width="98" height="43" rx="7" fill="#087f8c"/>
+<text x="146" y="835" font-size="20" fill="#fff" font-weight="700">over</text>
+<rect x="241" y="807" width="98" height="43" rx="7" fill="#bc4834"/>
+<text x="252" y="835" font-size="20" fill="#fff" font-weight="700">a</text>
+<rect x="347" y="807" width="98" height="43" rx="7" fill="#8190a3"/>
+<text x="358" y="835" font-size="20" fill="#fff" font-weight="700">dog</text>
+<text x="40" y="878" font-size="17" fill="#243247" font-weight="400">Accept</text>
+<text x="146" y="878" font-size="17" fill="#243247" font-weight="400">Accept</text>
+<text x="252" y="878" font-size="17" fill="#243247" font-weight="400">Reject</text>
+<text x="358" y="878" font-size="17" fill="#243247" font-weight="400">Discard</text>
+<text x="28" y="916" font-size="17" fill="#243247" font-weight="400">Continue via the verification procedure.</text>
+<rect x="29" y="934" width="98" height="43" rx="7" fill="#087f8c"/>
+<text x="40" y="962" font-size="20" fill="#fff" font-weight="700">jumps</text>
+<rect x="135" y="934" width="98" height="43" rx="7" fill="#087f8c"/>
+<text x="146" y="962" font-size="20" fill="#fff" font-weight="700">over</text>
+<rect x="241" y="934" width="98" height="43" rx="7" fill="#9c611b"/>
+<text x="252" y="962" font-size="20" fill="#fff" font-weight="700">the</text>
+<text x="28" y="1024" font-size="16" fill="#243247" font-weight="400">Brown = example next token after verification</text>
+</g></svg>
