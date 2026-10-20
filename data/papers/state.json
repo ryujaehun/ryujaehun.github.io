@@ -2513,6 +2513,12 @@
   "summary_cost_usd": 0,
   "summary_model": "opencode/deepseek-v4.1-flash-free",
   "title": "Trajectory-Level Speculation with Semantic Verification for Tool-Using Agents",
+  "translation": {
+   "completed_at": "2026-10-21",
+   "cost_usd": 0.022489133999999997,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  },
   "version": "v1"
  },
  "2610.23787": {
@@ -2579,6 +2585,70 @@
    "model": "opencode-go/deepseek-v4.1-flash",
    "status": "completed"
   },
+  "version": "v1"
+ },
+ "2610.26825": {
+  "assets": {
+   "figures": [],
+   "license": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+   "pdf_pages": 0,
+   "tables": 8,
+   "warnings": []
+  },
+  "categories": [
+   "cs.CL",
+   "cs.LG"
+  ],
+  "draft_path": "content/posts/2026-10-21-paper-2610.26825v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-21",
+  "matched": {
+   "core": [
+    "kv cache"
+   ],
+   "weak": [
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-10-21",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/glm-5.3-flash-free",
+     "output": "2610.26825-revision-1.md",
+     "round": 1
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/minimax-m3.1-flash-free",
+     "output": "2610.26825-revision-2.md",
+     "round": 2
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/deepseek-v4.1-flash-free",
+     "output": "2610.26825-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.6926,
+  "slug": "paper-2610-26825v1",
+  "status": "summarized",
+  "summarized_at": "2026-10-21",
+  "summary_cost_usd": 0.085168512,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "MemT-1.0: Towards Memory-Native Evolution",
   "version": "v1"
  }
 }
