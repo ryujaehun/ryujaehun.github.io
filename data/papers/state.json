@@ -2366,6 +2366,88 @@
   "status": "materialized",
   "title": "Contextual Correction of Parallel Draftsfor Speculative Decoding"
  },
+ "2610.17901": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "pdf_pages": 0,
+   "tables": 8,
+   "warnings": []
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-20-paper-2610.17901.md",
+  "failures": 0,
+  "first_seen": "2026-10-20",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "kernel",
+    "long context",
+    "moe",
+    "throughput"
+   ],
+   "core": [
+    "flashattention"
+   ],
+   "systems": [
+    "communication overlap",
+    "context parallelism",
+    "pruning",
+    "sparsity"
+   ],
+   "weak": [
+    "efficiency",
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-10-20",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/glm-5.3-flash-free",
+     "output": "2610.17901-revision-1.md",
+     "round": 1
+    },
+    {
+     "cost_usd": null,
+     "independent_of_writer": true,
+     "model": "opencode/minimax-m3.1-flash-free",
+     "output": "2610.17901-revision-2.md",
+     "round": 2
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/deepseek-v4.1-flash-free",
+     "output": "2610.17901-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.5792,
+  "slug": "paper-2610-17901",
+  "status": "summarized",
+  "summarized_at": "2026-10-20",
+  "summary_cost_usd": 0.108798052,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "FlashMask-3: Efficient and Expressive Mask-Aware Distributed Attention",
+  "translation": {
+   "completed_at": "2026-10-20",
+   "cost_usd": 0.3425284,
+   "model": "opencode-go/gemini-4-argon-contributor",
+   "status": "completed"
+  }
+ },
  "2610.21463": {
   "assets": {
    "figures": [

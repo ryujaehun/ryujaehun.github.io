@@ -221,10 +221,13 @@ summarize:
   # 무료 모델로 원문 대조 → 문장·구조 → DeepSeek 최종 원문 대조. 실패 시 게시하지 않는다.
   revision:
     rounds: 3
+    round_models:
+      - [opencode/glm-5.3-flash-free]
+      - [opencode/minimax-m3.1-flash-free]
+    # 1·2차의 기본 모델 실패 시 사용할 공통 대체 후보
     models:
-      - opencode/beam-free
       - opencode/mimo-v2.6-flash-free
-      - opencode/longcat-2.5-preview-free
+      - opencode/beam-free
     # 최종 차수는 지정 모델로만 완료한다. 초고가 DeepSeek인 경우 재점검으로 기록한다.
     final_models:
       - opencode/deepseek-v4.1-flash-free
