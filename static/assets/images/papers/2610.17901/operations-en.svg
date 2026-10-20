@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 1140" role="img" aria-labelledby="title desc">
+<title id="title">Three operations changed by FlashMask-3</title>
+<desc id="desc">Illustrative examples: encode document masks as boundaries, derive local boundaries, and balance work.</desc>
+<g font-family="system-ui, sans-serif">
+<rect x="0" y="0" width="480" height="1140" rx="12" fill="#f4f7fb"/>
+<text x="22" y="36" font-size="23" fill="#243247" font-weight="700">What FlashMask-3 changes</text>
+<text x="22" y="66" font-size="16" fill="#243247" font-weight="400">Illustrative examples, not measured results</text>
+<rect x="14" y="86" width="452" height="365" rx="10" fill="#fff"/>
+<rect x="14" y="469" width="452" height="284" rx="10" fill="#fff"/>
+<rect x="14" y="771" width="452" height="346" rx="10" fill="#fff"/>
+<text x="28" y="120" font-size="20" fill="#243247" font-weight="700">1  Store mask boundaries</text>
+<text x="28" y="150" font-size="17" fill="#243247" font-weight="400">Document A: tokens 0–3 / B: tokens 4–7</text>
+<text x="28" y="179" font-size="17" fill="#243247" font-weight="400">Example: attend within the same document</text>
+<text x="58" y="210" font-size="16" fill="#243247" font-weight="400">Attended tokens (keys)</text>
+<text x="65" y="235" font-size="15" fill="#243247" font-weight="400">0</text>
+<text x="91" y="235" font-size="15" fill="#243247" font-weight="400">1</text>
+<text x="117" y="235" font-size="15" fill="#243247" font-weight="400">2</text>
+<text x="143" y="235" font-size="15" fill="#243247" font-weight="400">3</text>
+<text x="169" y="235" font-size="15" fill="#243247" font-weight="400">4</text>
+<text x="195" y="235" font-size="15" fill="#243247" font-weight="400">5</text>
+<text x="221" y="235" font-size="15" fill="#243247" font-weight="400">6</text>
+<text x="247" y="235" font-size="15" fill="#243247" font-weight="400">7</text>
+<text x="32" y="259" font-size="15" fill="#243247" font-weight="400">0</text>
+<rect x="58" y="243" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="84" y="243" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="110" y="243" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="136" y="243" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="162" y="243" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="188" y="243" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="214" y="243" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="240" y="243" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<text x="32" y="281" font-size="15" fill="#243247" font-weight="400">1</text>
+<rect x="58" y="265" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="84" y="265" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="110" y="265" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="136" y="265" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="162" y="265" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="188" y="265" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="214" y="265" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="240" y="265" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<text x="32" y="303" font-size="15" fill="#243247" font-weight="400">2</text>
+<rect x="58" y="287" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="84" y="287" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="110" y="287" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="136" y="287" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="162" y="287" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="188" y="287" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="214" y="287" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="240" y="287" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<text x="32" y="325" font-size="15" fill="#243247" font-weight="400">3</text>
+<rect x="58" y="309" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="84" y="309" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="110" y="309" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="136" y="309" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="162" y="309" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="188" y="309" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="214" y="309" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="240" y="309" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<text x="32" y="347" font-size="15" fill="#243247" font-weight="400">4</text>
+<rect x="58" y="331" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="84" y="331" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="110" y="331" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="136" y="331" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="162" y="331" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="188" y="331" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="214" y="331" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="240" y="331" width="23" height="19" rx="2" fill="#087f8c"/>
+<text x="32" y="369" font-size="15" fill="#243247" font-weight="400">5</text>
+<rect x="58" y="353" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="84" y="353" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="110" y="353" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="136" y="353" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="162" y="353" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="188" y="353" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="214" y="353" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="240" y="353" width="23" height="19" rx="2" fill="#087f8c"/>
+<text x="32" y="391" font-size="15" fill="#243247" font-weight="400">6</text>
+<rect x="58" y="375" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="84" y="375" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="110" y="375" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="136" y="375" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="162" y="375" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="188" y="375" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="214" y="375" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="240" y="375" width="23" height="19" rx="2" fill="#087f8c"/>
+<text x="32" y="413" font-size="15" fill="#243247" font-weight="400">7</text>
+<rect x="58" y="397" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="84" y="397" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="110" y="397" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="136" y="397" width="23" height="19" rx="2" fill="#e1e6ee"/>
+<rect x="162" y="397" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="188" y="397" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="214" y="397" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="240" y="397" width="23" height="19" rx="2" fill="#087f8c"/>
+<rect x="294" y="242" width="14" height="14" rx="2" fill="#087f8c"/>
+<text x="315" y="255" font-size="16" fill="#243247" font-weight="400">Compute</text>
+<rect x="294" y="269" width="14" height="14" rx="2" fill="#e1e6ee"/>
+<text x="315" y="282" font-size="16" fill="#243247" font-weight="400">Skip</text>
+<text x="284" y="321" font-size="16" fill="#243247" font-weight="400">For key 6, mask:</text>
+<text x="284" y="351" font-size="25" fill="#087f8c" font-weight="700">[0, 4)</text>
+<text x="284" y="382" font-size="16" fill="#243247" font-weight="400">Hide rows 0–3</text>
+<text x="28" y="438" font-size="16" fill="#243247" font-weight="400">Rows = tokens requesting information (queries)</text>
+<text x="28" y="502" font-size="20" fill="#243247" font-weight="700">2  Convert to GPU-local coordinates</text>
+<text x="28" y="533" font-size="17" fill="#243247" font-weight="400">Separate example: mask global interval [6, 8)</text>
+<rect x="34" y="550" width="46" height="38" rx="5" fill="#dcecf1"/>
+<text x="48" y="576" font-size="18" fill="#243247" font-weight="400">0</text>
+<rect x="85" y="550" width="46" height="38" rx="5" fill="#dcecf1"/>
+<text x="99" y="576" font-size="18" fill="#243247" font-weight="400">1</text>
+<rect x="136" y="550" width="46" height="38" rx="5" fill="#dcecf1"/>
+<text x="150" y="576" font-size="18" fill="#243247" font-weight="400">2</text>
+<rect x="187" y="550" width="46" height="38" rx="5" fill="#dcecf1"/>
+<text x="201" y="576" font-size="18" fill="#243247" font-weight="400">3</text>
+<rect x="238" y="550" width="46" height="38" rx="5" fill="#dcecf1"/>
+<text x="252" y="576" font-size="18" fill="#243247" font-weight="400">4</text>
+<rect x="289" y="550" width="46" height="38" rx="5" fill="#dcecf1"/>
+<text x="303" y="576" font-size="18" fill="#243247" font-weight="400">5</text>
+<rect x="340" y="550" width="46" height="38" rx="5" fill="#d26b20"/>
+<text x="354" y="576" font-size="18" fill="#243247" font-weight="400">6</text>
+<rect x="391" y="550" width="46" height="38" rx="5" fill="#d26b20"/>
+<text x="405" y="576" font-size="18" fill="#243247" font-weight="400">7</text>
+<text x="35" y="618" font-size="18" fill="#243247" font-weight="700">GPU A: 0–3</text>
+<text x="255" y="618" font-size="18" fill="#243247" font-weight="700">GPU B: 4–7</text>
+<text x="35" y="650" font-size="17" fill="#243247" font-weight="400">No overlap</text>
+<text x="255" y="650" font-size="17" fill="#243247" font-weight="400">Subtract offset 4</text>
+<text x="35" y="680" font-size="17" fill="#243247" font-weight="400">→ Nothing to mask</text>
+<text x="255" y="680" font-size="19" fill="#9c4812" font-weight="700">[6, 8) → [2, 4)</text>
+<text x="28" y="717" font-size="16" fill="#243247" font-weight="400">Uses global boundaries and assigned offsets.</text>
+<text x="28" y="741" font-size="16" fill="#243247" font-weight="400">No GPU-to-GPU transfer for this conversion.</text>
+<text x="28" y="805" font-size="20" fill="#243247" font-weight="700">3  Balance the work across GPUs</text>
+<text x="28" y="835" font-size="17" fill="#243247" font-weight="400">Separate example: four tasks cost 8, 6, 2, 4</text>
+<text x="28" y="866" font-size="18" fill="#243247" font-weight="700">Before</text>
+<text x="28" y="900" font-size="16" fill="#243247" font-weight="400">GPU A</text>
+<rect x="101" y="880" width="152" height="25" rx="2" fill="#087f8c"/>
+<text x="106" y="899" font-size="16" fill="#fff" font-weight="700">8</text>
+<rect x="255" y="880" width="114" height="25" rx="2" fill="#3666b0"/>
+<text x="260" y="899" font-size="16" fill="#fff" font-weight="700">6</text>
+<text x="379" y="900" font-size="16" fill="#243247" font-weight="400">= 14</text>
+<text x="28" y="933" font-size="16" fill="#243247" font-weight="400">GPU B</text>
+<rect x="101" y="913" width="38" height="25" rx="2" fill="#087f8c"/>
+<text x="106" y="932" font-size="16" fill="#fff" font-weight="700">2</text>
+<rect x="141" y="913" width="76" height="25" rx="2" fill="#3666b0"/>
+<text x="146" y="932" font-size="16" fill="#fff" font-weight="700">4</text>
+<text x="227" y="933" font-size="16" fill="#243247" font-weight="400">= 6</text>
+<text x="28" y="982" font-size="18" fill="#243247" font-weight="700">After</text>
+<text x="28" y="1016" font-size="16" fill="#243247" font-weight="400">GPU A</text>
+<rect x="101" y="996" width="152" height="25" rx="2" fill="#087f8c"/>
+<text x="106" y="1015" font-size="16" fill="#fff" font-weight="700">8</text>
+<rect x="255" y="996" width="38" height="25" rx="2" fill="#3666b0"/>
+<text x="260" y="1015" font-size="16" fill="#fff" font-weight="700">2</text>
+<text x="303" y="1016" font-size="16" fill="#243247" font-weight="400">= 10</text>
+<text x="28" y="1049" font-size="16" fill="#243247" font-weight="400">GPU B</text>
+<rect x="101" y="1029" width="114" height="25" rx="2" fill="#087f8c"/>
+<text x="106" y="1048" font-size="16" fill="#fff" font-weight="700">6</text>
+<rect x="217" y="1029" width="76" height="25" rx="2" fill="#3666b0"/>
+<text x="222" y="1048" font-size="16" fill="#fff" font-weight="700">4</text>
+<text x="303" y="1049" font-size="16" fill="#243247" font-weight="400">= 10</text>
+<text x="28" y="1101" font-size="16" fill="#243247" font-weight="400">Reduce waiting caused by uneven workloads.</text>
+</g></svg>
