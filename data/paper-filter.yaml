@@ -218,6 +218,14 @@ organizations:
   - han lab
 
 summarize:
+  # 초고와 다른 무료 모델로 원문 대조 → 문장·구조 퇴고. 실패 시 게시하지 않는다.
+  revision:
+    rounds: 2
+    models:
+      - opencode/mimo-v2.6-flash-free
+      - opencode/nemotron-3-ultra-free
+      - opencode/longcat-2.5-preview-free
+    timeout_seconds: 600
   model: opencode-go/deepseek-v4-pro
   # 1차가 실패하면(프로바이더 한도·장애) 여기로 넘어간다. 무료 모델이라
   # 그날 수집분을 통째로 버리는 것보다 낫다. 실제로 쓴 모델은 초안
