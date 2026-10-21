@@ -2448,6 +2448,45 @@
    "status": "completed"
   }
  },
+ "2610.20556": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.20556/fig1-concept-v2-d4b9ade7.webp",
+    "/assets/images/papers/2610.20556/final-0ffd0899.webp",
+    "/assets/images/papers/2610.20556/final-3df94d99.webp",
+    "/assets/images/papers/2610.20556/final-71f9a6ae.webp",
+    "/assets/images/papers/2610.20556/pdf-page-005.webp",
+    "/assets/images/papers/2610.20556/pdf-page-006.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "pdf_pages": 2,
+   "tables": 3,
+   "warnings": []
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-22-paper-2610.20556.md",
+  "failures": 1,
+  "first_seen": "2026-10-22",
+  "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode/deepseek-v4.1-flash-free: 본문이 너무 짧습니다(0자, 최소 2000자). 에이전트가 작업 보고만 냈을 수 있습니다. 앞부분:\n",
+  "matched": {
+   "adjacent": [
+    "latency"
+   ],
+   "core": [
+    "speculative sampling"
+   ],
+   "weak": [
+    "optimization"
+   ]
+  },
+  "materialized_at": "2026-10-22",
+  "score": 0.6271,
+  "slug": "paper-2610-20556",
+  "status": "failed",
+  "title": "Speculative Sampling in Interactive Video Generation"
+ },
  "2610.21463": {
   "assets": {
    "figures": [
