@@ -5,6 +5,7 @@ import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import assert from 'node:assert/strict';
+import { readingPaths } from './reading-paths.mjs';
 
 const base = process.argv[2] || 'http://127.0.0.1:8765';
 const screenshots = process.argv[3];
@@ -55,10 +56,9 @@ try {
   };
   await send('Page.enable');
   const index = await fetch(new URL('/index.json', base)).then(r => { assert(r.ok); return r.json(); });
-  const recent = index.filter(p => p.section === 'posts').slice(0, 5).map(p => p.permalink);
+  const englishIndex = await fetch(new URL('/en/index.json', base)).then(r => { assert(r.ok); return r.json(); });
+  const { recent, series, paths } = readingPaths(index, englishIndex);
   assert.equal(recent.length, 5);
-  const series = index.find(p => p.categories.includes('code-series'))?.permalink;
-  const paths = ['/', '/en/', ...recent, ...recent.map(p => `/en${p}`), ...(series ? [series, `/en${series}`] : [])];
   if (screenshots) await mkdir(screenshots, { recursive: true });
   for (const width of [390, 1440]) {
     await send('Emulation.setDeviceMetricsOverride', { width, height: 900, deviceScaleFactor: 1, mobile: width < 600 });
