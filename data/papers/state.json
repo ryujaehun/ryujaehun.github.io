@@ -2659,6 +2659,12 @@
   "summary_cost_usd": 0.085168512,
   "summary_model": "opencode-go/deepseek-v4-pro",
   "title": "MemT-1.0: Towards Memory-Native Evolution",
+  "translation": {
+   "completed_at": "2026-10-21",
+   "cost_usd": 0.013109058,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  },
   "version": "v1"
  }
 }
