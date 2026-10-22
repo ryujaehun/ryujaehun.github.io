@@ -2467,9 +2467,9 @@
    null
   ],
   "draft_path": "content/posts/2026-10-22-paper-2610.20556.md",
-  "failures": 2,
+  "failures": 3,
   "first_seen": "2026-10-22",
-  "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode/deepseek-v4.1-flash-free: 본문이 너무 짧습니다(0자, 최소 2000자). 에이전트가 작업 보고만 냈을 수 있습니다. 앞부분:\n",
+  "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode/deepseek-v4.1-flash-free: opencode 출력에 본문 text 이벤트가 없습니다. 진단: 2610.20556-revision-3-4533b44b9def46b38ec619c4d8467c9d.json",
   "matched": {
    "adjacent": [
     "latency"
