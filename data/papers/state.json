@@ -2751,5 +2751,83 @@
    "status": "completed"
   },
   "version": "v1"
+ },
+ "2610.28577": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "pdf_pages": 0,
+   "tables": 6,
+   "warnings": []
+  },
+  "categories": [
+   "cs.CL"
+  ],
+  "draft_path": "content/posts/2026-10-23-paper-2610.28577v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-23",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "cache",
+    "latency",
+    "throughput"
+   ],
+   "core": [
+    "key-value cache",
+    "kv cache",
+    "prefill"
+   ],
+   "weak": [
+    "large language model",
+    "llm"
+   ]
+  },
+  "materialized_at": "2026-10-23",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/glm-5.3-flash-free",
+     "output": "2610.28577-revision-1.md",
+     "round": 1
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/mimo-v2.6-flash-free",
+     "output": "2610.28577-revision-2.md",
+     "round": 2
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/mimo-v2.6-flash-free",
+     "output": "2610.28577-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.8173,
+  "slug": "paper-2610-28577v1",
+  "status": "summarized",
+  "summarized_at": "2026-10-23",
+  "summary_cost_usd": 0.07754907600000001,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "Cache Engineering for Agents",
+  "translation": {
+   "completed_at": "2026-10-23",
+   "cost_usd": 0.019703358,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  },
+  "version": "v1"
  }
 }
