@@ -2467,7 +2467,7 @@
    null
   ],
   "draft_path": "content/posts/2026-10-22-paper-2610.20556.md",
-  "failures": 1,
+  "failures": 2,
   "first_seen": "2026-10-22",
   "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode/deepseek-v4.1-flash-free: 본문이 너무 짧습니다(0자, 최소 2000자). 에이전트가 작업 보고만 냈을 수 있습니다. 앞부분:\n",
   "matched": {
