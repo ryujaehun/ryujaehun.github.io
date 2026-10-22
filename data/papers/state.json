@@ -2453,13 +2453,10 @@
    "figures": [
     "/assets/images/papers/2610.20556/fig1-concept-v2-d4b9ade7.webp",
     "/assets/images/papers/2610.20556/final-0ffd0899.webp",
-    "/assets/images/papers/2610.20556/final-3df94d99.webp",
-    "/assets/images/papers/2610.20556/final-71f9a6ae.webp",
-    "/assets/images/papers/2610.20556/pdf-page-005.webp",
-    "/assets/images/papers/2610.20556/pdf-page-006.webp"
+    "/assets/images/papers/2610.20556/final-3df94d99.webp"
    ],
    "license": "http://creativecommons.org/licenses/by/4.0/",
-   "pdf_pages": 2,
+   "pdf_pages": 0,
    "tables": 3,
    "warnings": []
   },
@@ -2469,7 +2466,6 @@
   "draft_path": "content/posts/2026-10-22-paper-2610.20556.md",
   "failures": 2,
   "first_seen": "2026-10-22",
-  "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode/deepseek-v4.1-flash-free: opencode 출력에 본문 text 이벤트가 없습니다. 진단: 2610.20556-revision-3-4533b44b9def46b38ec619c4d8467c9d.json",
   "matched": {
    "adjacent": [
     "latency"
@@ -2482,10 +2478,49 @@
    ]
   },
   "materialized_at": "2026-10-22",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/glm-5.3-flash-free",
+     "output": "2610.20556-revision-1.md",
+     "round": 1
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/minimax-m3.1-flash-free",
+     "output": "2610.20556-revision-2.md",
+     "round": 2
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/deepseek-v4.1-flash-free",
+     "output": "2610.20556-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
   "score": 0.6271,
   "slug": "paper-2610-20556",
-  "status": "failed",
-  "title": "Speculative Sampling in Interactive Video Generation"
+  "status": "summarized",
+  "summarized_at": "2026-10-22",
+  "summary_cost_usd": 0.10257258,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "Speculative Sampling in Interactive Video Generation",
+  "translation": {
+   "failures": 1,
+   "last_error": "모든 모델이 실패했습니다.\nopencode-go/deepseek-v4.1-flash: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode-go/gemini-4-argon-contributor: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode/glm-5.3-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode/deepseek-v4.1-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 19, 2610.20556, 95\nopencode/mimo-v2.6-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 2610.20556, 95",
+   "status": "failed"
+  }
  },
  "2610.21463": {
   "assets": {
