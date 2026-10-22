@@ -1,2710 +1,2710 @@
 {
- "2510.08999": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2510.08999/sqs-main-diagram-crop.webp",
-    "/assets/images/papers/2510.08999/a-self-attention-layer-k-projection-weight-distribution.webp",
-    "/assets/images/papers/2510.08999/b-self-attention-layer-o-projection-weight-distribution.webp",
-    "/assets/images/papers/2510.08999/c-self-attention-layer-q-projection-weight-distribution.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-13-paper-2510.08999.md",
-  "failures": 0,
-  "first_seen": "2026-09-13",
-  "matched": {
-   "systems": [
-    "compression",
-    "pruning",
-    "quantization",
-    "sparsity"
-   ],
-   "weak": [
-    "efficient"
-   ]
-  },
-  "materialized_at": "2026-09-13",
-  "score": 0.5376,
-  "status": "materialized",
-  "title": "SQS: Bayesian DNN Compression through Sparse Quantized Sub-distributions"
- },
- "2609.01343": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 2
-  },
-  "draft_path": "content/posts/2026-09-07-paper-2609.01343.md",
-  "failures": 0,
-  "first_seen": "2026-09-07",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "mixture-of-experts",
-    "moe"
-   ],
-   "core": [
-    "kv cache"
-   ],
-   "weak": [
-    "scaling",
-    "transformer"
-   ]
-  },
-  "materialized_at": "2026-09-07",
-  "score": 0.7001,
-  "status": "materialized",
-  "title": "SMELT: Scaling Laws for Compute-Matched MoE Looped Transformers"
- },
- "2609.02737": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.02737/method.webp",
-    "/assets/images/papers/2609.02737/size-scaling-acc.webp",
-    "/assets/images/papers/2609.02737/size-scaling-tok.webp",
-    "/assets/images/papers/2609.02737/context-scaling-acc.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 10
-  },
-  "draft_path": "content/posts/2026-09-07-paper-2609.02737v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-07",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "cache",
-    "decoding",
-    "long context"
-   ],
-   "core": [
-    "kv cache",
-    "sparse attention"
-   ]
-  },
-  "materialized_at": "2026-09-07",
-  "score": 0.6417,
-  "status": "materialized",
-  "title": "Language Models Can Control Their Own Attention",
-  "version": "v1"
- },
- "2609.02780": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.02780/latency-performance-teaser.webp",
-    "/assets/images/papers/2609.02780/qwen3vl-layer-retr-ability.webp",
-    "/assets/images/papers/2609.02780/llava-layer-retr-ability.webp",
-    "/assets/images/papers/2609.02780/method.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 5
-  },
-  "draft_path": "content/posts/2026-09-08-paper-2609.02780v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-08",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "cache",
-    "latency"
-   ],
-   "core": [
-    "kv cache",
-    "prefill"
-   ],
-   "systems": [
-    "offloading",
-    "pruning",
-    "quantization"
-   ]
-  },
-  "materialized_at": "2026-09-08",
-  "score": 0.5512,
-  "status": "materialized",
-  "title": "ShallowStream: Index Shallow then Answer Deep for Streaming Video Understanding",
-  "version": "v1"
- },
- "2609.03235": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 5
-  },
-  "draft_path": "content/posts/2026-09-07-paper-2609.03235v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-07",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "cache",
-    "long context"
-   ],
-   "core": [
-    "cache compression",
-    "kv cache"
-   ],
-   "systems": [
-    "compression"
-   ],
-   "weak": [
-    "efficiency"
-   ]
-  },
-  "materialized_at": "2026-09-07",
-  "score": 0.5268,
-  "status": "materialized",
-  "title": "SGD-KV: Summarization Guided KV Cache Compression",
-  "version": "v1"
- },
- "2609.03430": {
-  "draft_path": "content/posts/2026-09-06-paper-2609.03430v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-06",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "cache",
-    "throughput"
-   ],
-   "core": [
-    "cache compression",
-    "cache eviction",
-    "kv cache"
-   ],
-   "named_systems": [
-    "vllm"
-   ],
-   "weak": [
-    "efficient"
-   ]
-  },
-  "materialized_at": "2026-09-06",
-  "score": 0.892,
-  "status": "materialized",
-  "title": "Random Attention: Rethinking KV Cache Eviction for Efficient Reasoning",
-  "version": "v1"
- },
- "2609.03949": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 8
-  },
-  "draft_path": "content/posts/2026-09-09-paper-2609.03949v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-09",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "cache",
-    "kernel"
-   ],
-   "core": [
-    "kv cache"
-   ],
-   "systems": [
-    "quantization"
-   ]
-  },
-  "materialized_at": "2026-09-09",
-  "score": 0.5085,
-  "status": "materialized",
-  "title": "VestigeKV: The NoPE-MLA KV Cache Carries Its Own Eviction Signal in a Vestigial Branch",
-  "version": "v1"
- },
- "2609.04010": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.04010/resultsfigure-combined.webp",
-    "/assets/images/papers/2609.04010/uno-dflash-eagle3-qwen-pareto.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "draft_path": "content/posts/2026-09-08-paper-2609.04010v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-08",
-  "matched": {
-   "adjacent": [
-    "autoregressive",
-    "decoding",
-    "distillation",
-    "long context",
-    "throughput"
-   ],
-   "core": [
-    "speculative decoding"
-   ],
-   "weak": [
-    "acceleration",
-    "llm",
-    "scaling"
-   ]
-  },
-  "materialized_at": "2026-09-08",
-  "score": 0.6408,
-  "status": "materialized",
-  "title": "Unlocking Lossless Speedups in LLMs via Discrete Diffusion",
-  "version": "v1"
- },
- "2609.04098": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 6
-  },
-  "draft_path": "content/posts/2026-09-07-paper-2609.04098.md",
-  "failures": 0,
-  "first_seen": "2026-09-07",
-  "matched": {
-   "adjacent": [
-    "attention"
-   ],
-   "core": [
-    "kv cache",
-    "prefill"
-   ],
-   "systems": [
-    "fp8",
-    "linear attention",
-    "nvfp4",
-    "quantization"
-   ],
-   "weak": [
-    "llm",
-    "scaling"
-   ]
-  },
-  "materialized_at": "2026-09-07",
-  "score": 0.5975,
-  "status": "materialized",
-  "title": "Why Gated DeltaNet Survives 4-Bit Quantization: NVFP4 W4A4 for the Recurrent Half of a Hybrid 27B LLM"
- },
- "2609.04105": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.04105/headline-pareto.webp",
-    "/assets/images/papers/2609.04105/cross-shape-speed-accuracy.webp",
-    "/assets/images/papers/2609.04105/nvmx-fast-report.webp",
-    "/assets/images/papers/2609.04105/llama8b-b4-matched-training-curves.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 30
-  },
-  "draft_path": "content/posts/2026-09-07-paper-2609.04105v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-07",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "throughput"
-   ],
-   "core": [
-    "flashattention"
-   ],
-   "systems": [
-    "fp4",
-    "fp8",
-    "mxfp4",
-    "quantization"
-   ]
-  },
-  "materialized_at": "2026-09-07",
-  "score": 0.5334,
-  "status": "materialized",
-  "title": "Hardware-Aware FP4 FlashAttention-4",
-  "version": "v1"
- },
- "2609.04748": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 3
-  },
-  "draft_path": "content/posts/2026-09-07-paper-2609.04748v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-07",
-  "matched": {
-   "adjacent": [
-    "cache",
-    "decoding"
-   ],
-   "core": [
-    "llm serving",
-    "prefix caching"
-   ],
-   "systems": [
-    "quantization"
-   ],
-   "weak": [
-    "optimization"
-   ]
-  },
-  "materialized_at": "2026-09-07",
-  "score": 0.5347,
-  "status": "materialized",
-  "title": "Same Request, Different Answer: Quantization Amplifies Cache-Induced Divergence in LLM Serving",
-  "version": "v1"
- },
- "2609.04895": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 3
-  },
-  "draft_path": "content/posts/2026-09-09-paper-2609.04895v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-09",
-  "matched": {
-   "adjacent": [
-    "cache",
-    "decoding",
-    "memory efficient",
-    "mixture-of-experts",
-    "moe"
-   ],
-   "systems": [
-    "gpu memory"
-   ],
-   "weak": [
-    "efficiency"
-   ]
-  },
-  "materialized_at": "2026-09-09",
-  "score": 0.5202,
-  "status": "materialized",
-  "title": "Cache-Aware Joint Router Adaptation for Memory-Efficient MoE Inference",
-  "version": "v1"
- },
- "2609.04971": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 6
-  },
-  "draft_path": "content/posts/2026-09-07-paper-2609.04971v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-07",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "cache",
-    "decoding",
-    "throughput"
-   ],
-   "core": [
-    "cache compression",
-    "kv cache"
-   ],
-   "systems": [
-    "compression"
-   ],
-   "weak": [
-    "efficient"
-   ]
-  },
-  "materialized_at": "2026-09-07",
-  "score": 0.5334,
-  "status": "materialized",
-  "title": "BeaconKV: Key-Value Cache Compression Guided by Beacon Queries for Efficient Large Reasoning Model Inference",
-  "version": "v1"
- },
- "2609.07108": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.07108/cp-branch-attention.webp",
-    "/assets/images/papers/2609.07108/tap-channel.webp",
-    "/assets/images/papers/2609.07108/qwen3-8b-learning-and-performance.webp",
-    "/assets/images/papers/2609.07108/qwen3-8b-workplace-learning-and-performance.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 2
-  },
-  "categories": [
-   "cs.LG",
-   "cs.DC"
-  ],
-  "draft_path": "content/posts/2026-09-10-paper-2609.07108v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-10",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "long context"
-   ],
-   "core": [
-    "speculative decoding"
-   ],
-   "weak": [
-    "scaling"
-   ]
-  },
-  "materialized_at": "2026-09-10",
-  "score": 0.6395,
-  "status": "materialized",
-  "title": "Online Draft Co-Training for Speculative Decoding in Large-Scale, Long-Context RL Post-Training",
-  "version": "v1"
- },
- "2609.07816": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.07816/approximate.webp",
-    "/assets/images/papers/2609.07816/kdn-overwrite-distributions.webp",
-    "/assets/images/papers/2609.07816/kdn-layer.webp",
-    "/assets/images/papers/2609.07816/mixer-throughput-scaling.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 4
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-12-paper-2609.07816.md",
-  "failures": 0,
-  "first_seen": "2026-09-12",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "decoding",
-    "long context"
-   ],
-   "systems": [
-    "linear attention",
-    "state space model"
-   ],
-   "weak": [
-    "efficient"
-   ]
-  },
-  "materialized_at": "2026-09-12",
-  "score": 0.5452,
-  "status": "materialized",
-  "title": "Kalman Delta Networks: Uncertainty-aware Associative Memory"
- },
- "2609.07883": {
-  "assets": {
-   "figures": [],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 4
-  },
-  "categories": [
-   "cs.CL"
-  ],
-  "draft_path": "content/posts/2026-09-11-paper-2609.07883v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-11",
-  "matched": {
-   "adjacent": [
-    "latency",
-    "long context",
-    "throughput"
-   ],
-   "core": [
-    "continuous batching",
-    "model serving",
-    "prefill",
-    "time per output token"
-   ],
-   "systems": [
-    "scheduling"
-   ],
-   "weak": [
-    "efficiency",
-    "efficient",
-    "large language model",
-    "llm"
-   ]
-  },
-  "materialized_at": "2026-09-11",
-  "score": 0.5463,
-  "status": "materialized",
-  "title": "Deadline-Aware Adaptive Prefill Chunking for Efficient Large Language Model Serving",
-  "version": "v1"
- },
- "2609.08084": {
-  "assets": {
-   "figures": [],
-   "license": "http://creativecommons.org/licenses/by-sa/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-13-paper-2609.08084.md",
-  "failures": 0,
-  "first_seen": "2026-09-13",
-  "matched": {
-   "systems": [
-    "quantization"
-   ],
-   "weak": [
-    "transformer"
-   ]
-  },
-  "materialized_at": "2026-09-13",
-  "score": 0.5062,
-  "status": "materialized",
-  "title": "Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation"
- },
- "2609.08345": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-14-paper-2609.08345.md",
-  "failures": 0,
-  "first_seen": "2026-09-14",
-  "matched": {
-   "adjacent": [
-    "attention"
-   ],
-   "systems": [
-    "pruning"
-   ]
-  },
-  "materialized_at": "2026-09-14",
-  "score": 0.4705,
-  "status": "materialized",
-  "title": "CoVeR: Coverage-Based Token Pruning for Multi-View 3D Reasoning in VLMs"
- },
- "2609.08368": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 8
-  },
-  "categories": [
-   "cs.LG",
-   "cs.CL"
-  ],
-  "draft_path": "content/posts/2026-09-10-paper-2609.08368v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-10",
-  "matched": {
-   "adjacent": [
-    "distillation"
-   ],
-   "named_systems": [
-    "sglang"
-   ],
-   "weak": [
-    "efficiency"
-   ]
-  },
-  "materialized_at": "2026-09-10",
-  "score": 0.6351,
-  "status": "materialized",
-  "title": "Miles v0.1: Production-Level Post-Training",
-  "version": "v1"
- },
- "2609.10355": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 7
-  },
-  "categories": [
-   "cs.CV",
-   "cs.CL",
-   "cs.MM"
-  ],
-  "draft_path": "content/posts/2026-09-11-paper-2609.10355v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-11",
-  "matched": {
-   "adjacent": [
-    "decoding",
-    "latency"
-   ],
-   "core": [
-    "inference efficiency"
-   ],
-   "weak": [
-    "efficiency",
-    "efficient",
-    "llm"
-   ]
-  },
-  "materialized_at": "2026-09-11",
-  "score": 0.551,
-  "status": "materialized",
-  "title": "Why Is Video Still So Expensive? A Survey of Inference-Efficiency Mechanisms in Video and Audiovisual LLMs",
-  "version": "v1"
- },
- "2609.10540": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.10540/pwm-teaser2.webp",
-    "/assets/images/papers/2609.10540/tradeoff-v2.webp",
-    "/assets/images/papers/2609.10540/framework.webp",
-    "/assets/images/papers/2609.10540/qualitative-death-comparison.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 1
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-15-paper-2609.10540.md",
-  "failures": 0,
-  "first_seen": "2026-09-15",
-  "matched": {
-   "core": [
-    "model serving"
-   ]
-  },
-  "materialized_at": "2026-09-15",
-  "score": 0.4505,
-  "status": "materialized",
-  "title": "Programmable World Model"
- },
- "2609.11412": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.11412/fig-radar.webp",
-    "/assets/images/papers/2609.11412/fig-pipeline.webp",
-    "/assets/images/papers/2609.11412/fig-datapipe.webp",
-    "/assets/images/papers/2609.11412/fig-ter-curve.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-12-paper-2609.11412.md",
-  "failures": 0,
-  "first_seen": "2026-09-12",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "distillation"
-   ],
-   "systems": [
-    "compression",
-    "pruning"
-   ]
-  },
-  "materialized_at": "2026-09-12",
-  "score": 0.5402,
-  "status": "materialized",
-  "title": "X-AuT: Progressive Audio-Encoder Compression for Speech LLMs with Cross-Scale Distillation"
- },
- "2609.12945": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 4
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-17-paper-2609.12945.md",
-  "failures": 0,
-  "first_seen": "2026-09-17",
-  "matched": {
-   "adjacent": [
-    "autoregressive"
-   ],
-   "systems": [
-    "quantization"
-   ],
-   "weak": [
-    "large language model",
-    "transformer"
-   ]
-  },
-  "materialized_at": "2026-09-17",
-  "notification": {
-   "attempts": 3,
-   "message_sha256": "8ef4d19c41e1598818934d6cd92f7990dca724dad822b0224488b609ee8dfe24",
-   "notification_id": "paper:2609.12945:ko-en",
-   "sent_at": "2026-09-16T15:28:06.869463+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-12945/",
-    "https://jaehun.me/en/posts/paper-2609-12945/"
-   ]
-  },
-  "score": 0.5215,
-  "slug": "paper-2609-12945",
-  "status": "materialized",
-  "title": "StepAudio 3 Gen Technical Report"
- },
- "2609.13141": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-15-paper-2609.13141.md",
-  "failures": 0,
-  "first_seen": "2026-09-15",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "distillation",
-    "kernel",
-    "long context",
-    "memory efficient"
-   ],
-   "core": [
-    "flashattention",
-    "sparse attention"
-   ],
-   "named_systems": [
-    "triton"
-   ],
-   "weak": [
-    "optimization"
-   ]
-  },
-  "materialized_at": "2026-09-15",
-  "score": 0.6459,
-  "status": "materialized",
-  "title": "SAS: Simple Attention Sparsification via End-to-End Optimization of Context Ranking"
- },
- "2609.13356": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.13356/homepage-7b-rank-heatmap.webp",
-    "/assets/images/papers/2609.13356/teaser.webp",
-    "/assets/images/papers/2609.13356/zgcm1-arch.webp",
-    "/assets/images/papers/2609.13356/architecture-experiments.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-16-paper-2609.13356.md",
-  "failures": 0,
-  "first_seen": "2026-09-16",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "long context"
-   ],
-   "systems": [
-    "fp8",
-    "pruning"
-   ],
-   "weak": [
-    "efficiency",
-    "efficient",
-    "scaling"
-   ]
-  },
-  "materialized_at": "2026-09-16",
-  "notification": {
-   "attempts": 11,
-   "message_sha256": "dfe59fd61a0fef1f07bf37b3f3a609d448fed60b31aed927e6b1a5dd4cd537a6",
-   "notification_id": "paper:2609.13356:ko-en",
-   "sent_at": "2026-09-16T11:51:00.395704+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/zgcm-1-a-fully-open-and-extremely-efficient-foundation-model-for-math-and-agentic-search/",
-    "https://jaehun.me/en/posts/zgcm-1-a-fully-open-and-extremely-efficient-foundation-model-for-math-and-agentic-search/"
-   ]
-  },
-  "score": 0.7924,
-  "status": "materialized",
-  "title": "ZGCM-1: A Fully Open and Extremely Efficient Foundation Model for Math and Agentic Search"
- },
- "2609.15504": {
-  "assets": {
-   "figures": [],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-16-paper-2609.15504.md",
-  "failures": 0,
-  "first_seen": "2026-09-16",
-  "matched": {
-   "adjacent": [
-    "autoregressive"
-   ],
-   "core": [
-    "speculative decoding"
-   ]
-  },
-  "materialized_at": "2026-09-16",
-  "notification": {
-   "attempts": 11,
-   "message_sha256": "724b33fc5fd5c37ad30c3f808c5f20e8895d92266d9e9524adecc8c52e42627a",
-   "notification_id": "paper:2609.15504:ko-en",
-   "sent_at": "2026-09-16T11:51:00.395704+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/how-lossless-is-lossless-speculative-decoding-the-role-of-numerical-precision-in-orthrus/",
-    "https://jaehun.me/en/posts/how-lossless-is-lossless-speculative-decoding-the-role-of-numerical-precision-in-orthrus/"
-   ]
-  },
-  "score": 0.4831,
-  "status": "materialized",
-  "title": "How Lossless Is Lossless Speculative Decoding? The Role of Numerical Precision in Orthrus"
- },
- "2609.15810": {
-  "assets": {
-   "figures": [],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 1
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-20-paper-2609.15810.md",
-  "failures": 0,
-  "first_seen": "2026-09-20",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "kernel"
-   ],
-   "core": [
-    "flashattention"
-   ],
-   "systems": [
-    "attention kernel",
-    "fp8",
-    "quantization"
-   ]
-  },
-  "materialized_at": "2026-09-20",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "6131c2d7f22e1ef204b487c10cecce00db8711dca4fb6e87617d4527c2d8aac5",
-   "notification_id": "paper:2609.15810:ko-en",
-   "sent_at": "2026-09-20T00:56:48.901310+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-15810/",
-    "https://jaehun.me/en/posts/paper-2609-15810/"
-   ]
-  },
-  "score": 0.4945,
-  "slug": "paper-2609-15810",
-  "status": "materialized",
-  "title": "VC-Attention: Value Smoothing and Softmax Casting for Low-bit Attention"
- },
- "2609.17652": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 1
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-18-paper-2609.17652.md",
-  "failures": 0,
-  "first_seen": "2026-09-18",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "cache",
-    "decoding"
-   ],
-   "core": [
-    "kv cache"
-   ],
-   "systems": [
-    "gpu memory",
-    "sparsity"
-   ]
-  },
-  "materialized_at": "2026-09-18",
-  "notification": {
-   "abandoned_at": "2026-09-22T11:58:48.384570+00:00",
-   "attempts": 80,
-   "error_category": "publication-missing",
-   "notification_id": "paper:2609.17652:ko-en",
-   "status": "notify-abandoned",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-17652/",
-    "https://jaehun.me/en/posts/paper-2609-17652/"
-   ]
-  },
-  "score": 0.5048,
-  "slug": "paper-2609-17652",
-  "status": "materialized",
-  "title": "Fathom: Per-Query Read Depth for Sparse Decoding over Offloaded KV Caches"
- },
- "2609.18063": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.18063/fig1-architecture.webp",
-    "/assets/images/papers/2609.18063/fig2-quality.webp",
-    "/assets/images/papers/2609.18063/fig3-anticip.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 4
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-18-paper-2609.18063.md",
-  "failures": 0,
-  "first_seen": "2026-09-18",
-  "matched": {
-   "adjacent": [
-    "mixture-of-experts",
-    "moe"
-   ],
-   "systems": [
-    "int4",
-    "offloading",
-    "quantization",
-    "sparsity"
-   ]
-  },
-  "materialized_at": "2026-09-18",
-  "notification": {
-   "attempts": 3,
-   "message_sha256": "dc7b6711a545bac96d5e02f354a00247fcfd8cac9df197b2b6f3a2889c1b5b6c",
-   "notification_id": "paper:2609.18063:ko-en",
-   "sent_at": "2026-09-18T01:26:59.721226+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-18063/",
-    "https://jaehun.me/en/posts/paper-2609-18063/"
-   ]
-  },
-  "score": 0.5239,
-  "slug": "paper-2609-18063",
-  "status": "materialized",
-  "title": "The Other Half of the Memory Wall: Serving 35B MoEs from SSD with Trained Routing Prediction"
- },
- "2609.18487": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "pdf_pages": 0,
-   "tables": 6,
-   "warnings": []
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-19-paper-2609.18487.md",
-  "failures": 0,
-  "first_seen": "2026-09-19",
-  "matched": {
-   "adjacent": [
-    "autoregressive"
-   ],
-   "systems": [
-    "compression",
-    "quantization"
-   ]
-  },
-  "materialized_at": "2026-09-19",
-  "quality": {
-   "scope": "structure-and-evidence-presence",
-   "status": "passed",
-   "version": 1
-  },
-  "score": 0.5002,
-  "slug": "paper-2609-18487",
-  "status": "summarized",
-  "summarized_at": "2026-10-16",
-  "summary_cost_usd": 0.067128776,
-  "summary_model": "opencode-go/deepseek-v4-pro",
-  "title": "ActionPiece: Rethinking Action Tokenization for Autoregressive Vision-Language-Action Models",
-  "translation": {
-   "completed_at": "2026-10-16",
-   "cost_usd": 0.008788308,
-   "model": "opencode-go/deepseek-v4.1-flash",
-   "status": "completed"
-  }
- },
- "2609.19969": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "pdf_pages": 0,
-   "tables": 5,
-   "warnings": []
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-19-paper-2609.19969.md",
-  "failures": 0,
-  "first_seen": "2026-09-19",
-  "matched": {
-   "adjacent": [
-    "cache",
-    "long context",
-    "mixture-of-experts",
-    "moe"
-   ],
-   "core": [
-    "cache compression",
-    "kv cache",
-    "prefill",
-    "sparse attention"
-   ],
-   "systems": [
-    "fp4"
-   ],
-   "weak": [
-    "efficiency",
-    "efficient",
-    "optimization"
-   ]
-  },
-  "materialized_at": "2026-09-19",
-  "quality": {
-   "scope": "structure-and-evidence-presence",
-   "status": "passed",
-   "version": 1
-  },
-  "score": 0.6471,
-  "slug": "paper-2609-19969",
-  "status": "summarized",
-  "summarized_at": "2026-10-17",
-  "summary_cost_usd": 0.14384238,
-  "summary_model": "opencode-go/deepseek-v4-pro",
-  "title": "DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression",
-  "translation": {
-   "completed_at": "2026-10-17",
-   "cost_usd": 0.010696176,
-   "model": "opencode-go/deepseek-v4.1-flash",
-   "status": "completed"
-  }
- },
- "2609.23900": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "pdf_pages": 0,
-   "tables": 8,
-   "warnings": []
-  },
-  "categories": [
-   "cs.LG"
-  ],
-  "draft_path": "content/posts/2026-09-27-paper-2609.23900v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-27",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "latency",
-    "throughput"
-   ],
-   "core": [
-    "flashattention",
-    "prefill",
-    "speculative decoding"
-   ],
-   "named_systems": [
-    "vllm"
-   ],
-   "systems": [
-    "fp8"
-   ]
-  },
-  "materialized_at": "2026-09-27",
-  "notification": {
-   "abandoned_at": "2026-09-28T05:19:25.123086+00:00",
-   "attempts": 20,
-   "error_category": "publication-missing",
-   "notification_id": "paper:2609.23900v1:ko-en",
-   "status": "notify-abandoned",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-23900v1/",
-    "https://jaehun.me/en/posts/paper-2609-23900v1/"
-   ]
-  },
-  "quality": {
-   "scope": "structure-and-evidence-presence",
-   "status": "passed",
-   "version": 1
-  },
-  "score": 0.5226,
-  "slug": "paper-2609-23900v1",
-  "status": "summarized",
-  "summarized_at": "2026-10-19",
-  "summary_cost_usd": 0.078606176,
-  "summary_model": "opencode-go/deepseek-v4-pro",
-  "title": "GDN Tree-Scan: Served Tree Verification for Recurrent-Hybrid Language Models",
-  "translation": {
-   "completed_at": "2026-10-19",
-   "cost_usd": 0.010768398,
-   "model": "opencode-go/deepseek-v4.1-flash",
-   "status": "completed"
-  },
-  "version": "v1"
- },
- "2609.24197": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.24197/kv-injection.webp",
-    "/assets/images/papers/2609.24197/kv-reuse-motivation.webp",
-    "/assets/images/papers/2609.24197/hspec-overview.webp",
-    "/assets/images/papers/2609.24197/conc-kv-pareto.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 3
-  },
-  "categories": [
-   "cs.LG"
-  ],
-  "draft_path": "content/posts/2026-09-23-paper-2609.24197v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-23",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "cache",
-    "latency",
-    "throughput"
-   ],
-   "core": [
-    "kv cache",
-    "speculative decoding"
-   ],
-   "systems": [
-    "mamba"
-   ],
-   "weak": [
-    "large language model"
-   ]
-  },
-  "materialized_at": "2026-09-23",
-  "notification": {
-   "attempts": 6,
-   "message_sha256": "05aefbd6aa14bf185845470005c59841f30c2f0fe4e62d9a531df8588aae05f7",
-   "notification_id": "paper:2609.24197v1:ko-en",
-   "sent_at": "2026-09-23T00:57:33.445942+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-24197v1/",
-    "https://jaehun.me/en/posts/paper-2609-24197v1/"
-   ]
-  },
-  "score": 0.5434,
-  "slug": "paper-2609-24197v1",
-  "status": "materialized",
-  "title": "H-Spec: Parallel Speculative Decoding Without a Drafter-Side KV Cache",
-  "version": "v1"
- },
- "2609.24639": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.24639/memory-balance.webp",
-    "/assets/images/papers/2609.24639/pareto-traces-closed.webp",
-    "/assets/images/papers/2609.24639/scn-pair.webp",
-    "/assets/images/papers/2609.24639/scn-shrink.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 3
-  },
-  "categories": [
-   "cs.DC",
-   "cs.PF",
-   "eess.SY"
-  ],
-  "draft_path": "content/posts/2026-09-22-paper-2609.24639v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-22",
-  "matched": {
-   "adjacent": [
-    "cache",
-    "throughput"
-   ],
-   "core": [
-    "disaggregated",
-    "disaggregation",
-    "inference serving",
-    "kv cache",
-    "prefill"
-   ]
-  },
-  "materialized_at": "2026-09-22",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "a02e126ca629e59f2bad4f89b6dc0787b3ff79fa79bf2756cef64d40e9e7214d",
-   "notification_id": "paper:2609.24639v1:ko-en",
-   "sent_at": "2026-09-22T12:38:32.812929+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-24639v1/",
-    "https://jaehun.me/en/posts/paper-2609-24639v1/"
-   ]
-  },
-  "score": 0.5463,
-  "slug": "paper-2609-24639v1",
-  "status": "materialized",
-  "title": "Analytical Power-Aware Provisioning for Prefill-Decode Disaggregated AI Inference",
-  "version": "v1"
- },
- "2609.24698": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.24698/tree-spec-bg.webp",
-    "/assets/images/papers/2609.24698/pipeline.webp",
-    "/assets/images/papers/2609.24698/fig-accept-len.webp",
-    "/assets/images/papers/2609.24698/fig-throughput-clean.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 1
-  },
-  "categories": [
-   "cs.CL",
-   "cs.AI"
-  ],
-  "draft_path": "content/posts/2026-09-25-paper-2609.24698v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-25",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "autoregressive",
-    "decoding",
-    "latency",
-    "throughput"
-   ],
-   "core": [
-    "efficient inference",
-    "llm inference",
-    "speculative decoding"
-   ],
-   "weak": [
-    "efficiency"
-   ]
-  },
-  "materialized_at": "2026-09-25",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "64be6a1f4c52bc2dce47688f872025eb8e1c71fec3ee076bc2fc2f00a9c7f884",
-   "notification_id": "paper:2609.24698v1:ko-en",
-   "sent_at": "2026-09-25T00:54:53.832764+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-24698v1/",
-    "https://jaehun.me/en/posts/paper-2609-24698v1/"
-   ]
-  },
-  "score": 0.5428,
-  "slug": "paper-2609-24698v1",
-  "status": "materialized",
-  "title": "Adapting Tree-Structured Speculative Decoding to DeepSeek-V4 for Efficient Inference",
-  "version": "v1"
- },
- "2609.24847": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.24847/roofline-motivation-draft2.webp",
-    "/assets/images/papers/2609.24847/archi-soc.webp",
-    "/assets/images/papers/2609.24847/figure3-trial.webp",
-    "/assets/images/papers/2609.24847/archi-dataflow.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 3
-  },
-  "categories": [
-   "cs.AR",
-   "cs.AI",
-   "cs.DC"
-  ],
-  "draft_path": "content/posts/2026-09-26-paper-2609.24847v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-26",
-  "matched": {
-   "adjacent": [
-    "autoregressive",
-    "decoding",
-    "kernel"
-   ],
-   "core": [
-    "llm inference",
-    "prefill",
-    "speculative decoding"
-   ],
-   "weak": [
-    "efficient"
-   ]
-  },
-  "materialized_at": "2026-09-26",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "e6a76621ed6014a532e80495a678c897bb9698ba69c5a80d35c9d7f53f8da71e",
-   "notification_id": "paper:2609.24847v1:ko-en",
-   "sent_at": "2026-09-26T00:28:14.946910+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-24847v1/",
-    "https://jaehun.me/en/posts/paper-2609-24847v1/"
-   ]
-  },
-  "score": 0.5304,
-  "slug": "paper-2609-24847v1",
-  "status": "materialized",
-  "title": "SPECTRA: Adaptive Execution of Speculative Decoding on a Runtime-Reconfigurable Tiled Architecture",
-  "version": "v1"
- },
- "2609.24991": {
-  "categories": [
-   "cs.DC",
-   "cs.PF"
-  ],
-  "draft_path": "content/posts/2026-09-28-paper-2609.24991v1.md",
-  "failures": 0,
-  "first_seen": "2026-09-28",
-  "matched": {
-   "core": [
-    "kv cache",
-    "prefix caching"
-   ],
-   "named_systems": [
-    "vllm"
-   ],
-   "systems": [
-    "multi-tenant"
-   ],
-   "weak": [
-    "llm",
-    "transformer"
-   ]
-  },
-  "materialized_at": "2026-09-28",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "e4aed80189c14ee596867437f4fcf50b13504c759bb2a68cf79968af8e4f615f",
-   "notification_id": "paper:2609.24991v1:ko-en",
-   "sent_at": "2026-09-28T00:27:50.117372+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-24991v1/",
-    "https://jaehun.me/en/posts/paper-2609-24991v1/"
-   ]
-  },
-  "score": 0.5226,
-  "slug": "paper-2609-24991v1",
-  "status": "materialized",
-  "title": "Who Pays for the KV Cache? Attributing Shared AI Inference Spend Across Kubernetes and LLM Provider Bills",
-  "version": "v1"
- },
- "2609.26796": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.26796/attention-layer.webp",
-    "/assets/images/papers/2609.26796/decoding-process.webp",
-    "/assets/images/papers/2609.26796/flash-dllm.webp",
-    "/assets/images/papers/2609.26796/flash-attention.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-24-paper-2609.26796.md",
-  "failures": 0,
-  "first_seen": "2026-09-24",
-  "matched": {
-   "adjacent": [
-    "autoregressive",
-    "cache",
-    "decoding",
-    "kernel",
-    "memory efficient"
-   ],
-   "core": [
-    "kv cache"
-   ],
-   "systems": [
-    "gpu memory"
-   ],
-   "weak": [
-    "acceleration",
-    "efficiency",
-    "efficient"
-   ]
-  },
-  "materialized_at": "2026-09-24",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "ce5455ec522165607148da5c6f3abbb0b55f9aca3250162f3e69fab829a99db5",
-   "notification_id": "paper:2609.26796:ko-en",
-   "sent_at": "2026-09-24T00:56:52.646803+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-26796/",
-    "https://jaehun.me/en/posts/paper-2609-26796/"
-   ]
-  },
-  "score": 0.5552,
-  "slug": "paper-2609-26796",
-  "status": "materialized",
-  "title": "Flash-dLLM: IO-Aware KV Caching and Parallel Decoding for Fast, Memory-Efficient Diffusion LLMs"
- },
- "2609.30854": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 8
-  },
-  "categories": [
-   "cs.DC",
-   "cs.LG",
-   "cs.PF"
-  ],
-  "draft_path": "content/posts/2026-10-03-paper-2609.30854v1.md",
-  "failures": 0,
-  "first_seen": "2026-10-03",
-  "matched": {
-   "adjacent": [
-    "autoregressive",
-    "cache",
-    "long context",
-    "throughput"
-   ],
-   "core": [
-    "kv cache",
-    "kv compression",
-    "llm inference",
-    "prefix caching"
-   ],
-   "systems": [
-    "compression",
-    "quantization"
-   ]
-  },
-  "materialized_at": "2026-10-03",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "902acda65c1064606ce4eade17951ce238a82dda9c274e0011712744e6e1c6c1",
-   "notification_id": "paper:2609.30854v1:ko-en",
-   "sent_at": "2026-10-03T00:28:29.799060+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-30854v1/",
-    "https://jaehun.me/en/posts/paper-2609-30854v1/"
-   ]
-  },
-  "score": 0.5448,
-  "slug": "paper-2609-30854v1",
-  "status": "materialized",
-  "title": "The KV Cache Is the New Memory Wall",
-  "version": "v1"
- },
- "2609.31093": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "pdf_pages": 0,
-   "tables": 5,
-   "warnings": []
-  },
-  "categories": [
-   "cs.LG"
-  ],
-  "draft_path": "content/posts/2026-09-29-paper-2609.31093v1.md",
-  "failures": 2,
-  "first_seen": "2026-09-29",
-  "matched": {
-   "adjacent": [
-    "attention"
-   ],
-   "core": [
-    "sparse attention"
-   ],
-   "named_systems": [
-    "triton"
-   ],
-   "weak": [
-    "efficient",
-    "scaling"
-   ]
-  },
-  "materialized_at": "2026-09-29",
-  "notification": {
-   "abandoned_at": "2026-09-30T03:48:20.136717+00:00",
-   "attempts": 20,
-   "error_category": "publication-missing",
-   "notification_id": "paper:2609.31093v1:ko-en",
-   "status": "notify-abandoned",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-31093v1/",
-    "https://jaehun.me/en/posts/paper-2609-31093v1/"
-   ]
-  },
-  "quality": {
-   "scope": "structure-and-evidence-presence",
-   "status": "passed",
-   "version": 1
-  },
-  "score": 0.5945,
-  "slug": "paper-2609-31093v1",
-  "status": "summarized",
-  "summarized_at": "2026-10-19",
-  "summary_cost_usd": 0.06386556,
-  "summary_model": "opencode-go/deepseek-v4-pro",
-  "title": "Block Sparse Attention with Log-Linear Complexity",
-  "translation": {
-   "completed_at": "2026-10-19",
-   "cost_usd": 0.011648117999999999,
-   "model": "opencode-go/deepseek-v4.1-flash",
-   "status": "completed"
-  },
-  "version": "v1"
- },
- "2609.32259": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.32259/newintro.webp",
-    "/assets/images/papers/2609.32259/intro-verified-diagnostics.webp",
-    "/assets/images/papers/2609.32259/overview.webp",
-    "/assets/images/papers/2609.32259/heterofold-hotpot-motivation-combined.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-10-05-paper-2609.32259.md",
-  "failures": 0,
-  "first_seen": "2026-10-05",
-  "matched": {
-   "adjacent": [
-    "cache",
-    "long context"
-   ],
-   "core": [
-    "kv cache",
-    "prefill"
-   ],
-   "weak": [
-    "efficient",
-    "llm"
-   ]
-  },
-  "materialized_at": "2026-10-05",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "85d0fe315a92d71a12dc5569a56f0c18e1d67251502ed3280a3a077d3bccf1ab",
-   "notification_id": "paper:2609.32259:ko-en",
-   "sent_at": "2026-10-05T00:27:57.509558+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-32259/",
-    "https://jaehun.me/en/posts/paper-2609-32259/"
-   ]
-  },
-  "score": 0.5691,
-  "slug": "paper-2609-32259",
-  "status": "materialized",
-  "title": "Prefill-Free Cross-Family KV Cache Transfer for Heterogeneous Multi-Agent LLMs"
- },
- "2609.32712": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.32712/teaser-flow-712a89d1.webp",
-    "/assets/images/papers/2609.32712/operator-fidelity-7c69c3a7.webp",
-    "/assets/images/papers/2609.32712/associative-recall-1311c868.webp",
-    "/assets/images/papers/2609.32712/latency-memory-3fbb04e7.webp",
-    "/assets/images/papers/2609.32712/scaling-laws-flops-db1001a0.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "pdf_pages": 0,
-   "tables": 8,
-   "warnings": []
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-30-paper-2609.32712.md",
-  "failures": 0,
-  "first_seen": "2026-09-30",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "decoding",
-    "latency",
-    "long context"
-   ],
-   "systems": [
-    "fused attention",
-    "tensor parallelism"
-   ],
-   "weak": [
-    "scaling"
-   ]
-  },
-  "materialized_at": "2026-09-30",
-  "notification": {
-   "abandoned_at": "2026-09-30T05:30:19.930962+00:00",
-   "attempts": 20,
-   "error_category": "publication-missing",
-   "notification_id": "paper:2609.32712:ko-en",
-   "status": "notify-abandoned",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-32712/",
-    "https://jaehun.me/en/posts/paper-2609-32712/"
-   ]
-  },
-  "quality": {
-   "scope": "structure-and-evidence-presence",
-   "status": "passed",
-   "version": 1
-  },
-  "score": 0.6376,
-  "slug": "paper-2609-32712",
-  "status": "summarized",
-  "summarized_at": "2026-10-19",
-  "summary_cost_usd": 0.0835164,
-  "summary_model": "opencode-go/deepseek-v4-pro",
-  "title": "MassAlloc Attention: Let Attention Allocate Its Own Compute",
-  "translation": {
-   "completed_at": "2026-10-19",
-   "cost_usd": 0.043313238000000004,
-   "model": "opencode-go/deepseek-v4.1-flash",
-   "status": "completed"
-  }
- },
- "2609.34606": {
-  "assets": {
-   "figures": [],
-   "license": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-09-30-paper-2609.34606.md",
-  "failures": 0,
-  "first_seen": "2026-09-30",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "autoregressive",
-    "cache",
-    "latency"
-   ],
-   "core": [
-    "kv cache",
-    "sparse attention"
-   ],
-   "systems": [
-    "gpu memory"
-   ],
-   "weak": [
-    "efficiency",
-    "efficient"
-   ]
-  },
-  "materialized_at": "2026-09-30",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "89b49f237da3c9fb0d36fef07f6d5e6c4aa14799138b6d4ff0950db5255d2a15",
-   "notification_id": "paper:2609.34606:ko-en",
-   "sent_at": "2026-09-30T03:48:50.595059+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-34606/",
-    "https://jaehun.me/en/posts/paper-2609-34606/"
-   ]
-  },
-  "score": 0.6164,
-  "slug": "paper-2609-34606",
-  "status": "materialized",
-  "title": "WorldAttention: An Efficient Attention Architecture for Interactive Video World Models"
- },
- "2609.35259": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.35259/02-full-kl-final-metrics.webp",
-    "/assets/images/papers/2609.35259/05-countdown-learning-rate-effects.webp",
-    "/assets/images/papers/2609.35259/13-contrastive-lambda-three-seed-main-solid.webp",
-    "/assets/images/papers/2609.35259/average-probability-vs-lambda.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 6
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-10-04-paper-2609.35259.md",
-  "failures": 0,
-  "first_seen": "2026-10-04",
-  "matched": {
-   "adjacent": [
-    "distillation"
-   ],
-   "systems": [
-    "sparsity"
-   ]
-  },
-  "materialized_at": "2026-10-04",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "c73dbdc91a4ee987da9e3cbcbff8aecc235788526937edaa807a55b112844e7d",
-   "notification_id": "paper:2609.35259:ko-en",
-   "sent_at": "2026-10-04T00:26:52.267035+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-35259/",
-    "https://jaehun.me/en/posts/paper-2609-35259/"
-   ]
-  },
-  "score": 0.5525,
-  "slug": "paper-2609-35259",
-  "status": "materialized",
-  "title": "On-Policy or Off-Policy Learning? A Systematic Study of Distillation Dynamics"
- },
- "2609.35263": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 8
-  },
-  "categories": [
-   "cs.DC",
-   "cs.AI"
-  ],
-  "draft_path": "content/posts/2026-10-02-paper-2609.35263v1.md",
-  "failures": 0,
-  "first_seen": "2026-10-02",
-  "matched": {
-   "adjacent": [
-    "cache",
-    "throughput"
-   ],
-   "core": [
-    "prefill"
-   ],
-   "named_systems": [
-    "sglang",
-    "tensorrt",
-    "vllm"
-   ],
-   "systems": [
-    "overlapping",
-    "pipeline parallelism",
-    "scheduling"
-   ],
-   "weak": [
-    "efficient",
-    "llm"
-   ]
-  },
-  "materialized_at": "2026-10-02",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "72ff064f20a2b92084208a0d55b7b3c7102b62b6af87630dbdb00bea1f6d3c3a",
-   "notification_id": "paper:2609.35263v1:ko-en",
-   "sent_at": "2026-10-02T00:29:24.520552+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-35263v1/",
-    "https://jaehun.me/en/posts/paper-2609-35263v1/"
-   ]
-  },
-  "score": 0.5466,
-  "slug": "paper-2609-35263v1",
-  "status": "materialized",
-  "title": "WavePP: High-Throughput Pipeline Parallel LLM Prefill under Prefix Reuse",
-  "version": "v1"
- },
- "2609.36322": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2609.36322/group-random-seed-replication.webp",
-    "/assets/images/papers/2609.36322/group-native-kv-head-count.webp",
-    "/assets/images/papers/2609.36322/group-compression-geometry.webp",
-    "/assets/images/papers/2609.36322/group-compression-operator.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-10-01-paper-2609.36322.md",
-  "failures": 0,
-  "first_seen": "2026-10-01",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "cache",
-    "long context"
-   ],
-   "core": [
-    "cache compression",
-    "kv cache",
-    "kv compression"
-   ],
-   "systems": [
-    "compression"
-   ]
-  },
-  "materialized_at": "2026-10-01",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "ba6602ca5207a55b6fad4cf292975aef83bd3e4589a19605b9a3092766d4a6e5",
-   "notification_id": "paper:2609.36322:ko-en",
-   "sent_at": "2026-10-01T00:26:24.839461+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2609-36322/",
-    "https://jaehun.me/en/posts/paper-2609-36322/"
-   ]
-  },
-  "score": 0.6754,
-  "slug": "paper-2609-36322",
-  "status": "materialized",
-  "title": "Periodic Weak Spots: Phase Sensitivity from Chunked KV-Cache Compression"
- },
- "2610.02953": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 8
-  },
-  "categories": [
-   "cs.LG"
-  ],
-  "draft_path": "content/posts/2026-10-07-paper-2610.02953v1.md",
-  "failures": 0,
-  "first_seen": "2026-10-07",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "cache",
-    "decoding",
-    "latency",
-    "long context"
-   ],
-   "core": [
-    "cache compression",
-    "kv cache",
-    "llm serving"
-   ],
-   "systems": [
-    "compression"
-   ],
-   "weak": [
-    "efficiency"
-   ]
-  },
-  "materialized_at": "2026-10-07",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "8278a49f409cf3d75489b7069e733586872968962c8b7e27dc36db8e1a6f5b6f",
-   "notification_id": "paper:2610.02953v1:ko-en",
-   "sent_at": "2026-10-07T00:30:58.899982+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2610-02953v1/",
-    "https://jaehun.me/en/posts/paper-2610-02953v1/"
-   ]
-  },
-  "score": 0.5448,
-  "slug": "paper-2610-02953v1",
-  "status": "materialized",
-  "title": "SlimKV: Joint Token-Feature KV Cache Compression with Reconstruction-Free Beacon Attention",
-  "version": "v1"
- },
- "2610.03027": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2610.03027/motivation-overview.webp",
-    "/assets/images/papers/2610.03027/method-overview.webp",
-    "/assets/images/papers/2610.03027/method-validation.webp",
-    "/assets/images/papers/2610.03027/discussion-efficiency-analysis.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   "cs.LG",
-   "cs.AI",
-   "cs.CL"
-  ],
-  "draft_path": "content/posts/2026-10-06-paper-2610.03027v1.md",
-  "failures": 0,
-  "first_seen": "2026-10-06",
-  "matched": {
-   "adjacent": [
-    "cache",
-    "long context",
-    "throughput"
-   ],
-   "core": [
-    "cache compression",
-    "kv cache",
-    "llm inference"
-   ],
-   "named_systems": [
-    "sglang"
-   ],
-   "systems": [
-    "compression",
-    "quantization"
-   ]
-  },
-  "materialized_at": "2026-10-06",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "fff7776f9bda87fad874b8b54799e156bde2814c63474dcfc1999ad7d5440b52",
-   "notification_id": "paper:2610.03027v1:ko-en",
-   "sent_at": "2026-10-06T00:26:09.955745+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2610-03027v1/",
-    "https://jaehun.me/en/posts/paper-2610-03027v1/"
-   ]
-  },
-  "score": 0.5463,
-  "slug": "paper-2610-03027v1",
-  "status": "materialized",
-  "title": "Tailoring the Quantization Space for 1-Bit KV Cache Compression",
-  "version": "v1"
- },
- "2610.05739": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2610.05739/indoor-005-seed47-homepage-compact.webp",
-    "/assets/images/papers/2610.05739/gdn-forgetting.webp",
-    "/assets/images/papers/2610.05739/hla-wm-method.webp",
-    "/assets/images/papers/2610.05739/gdn-temporal-state-memory-scaling.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-10-15-paper-2610.05739.md",
-  "failures": 0,
-  "first_seen": "2026-10-15",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "autoregressive",
-    "cache",
-    "throughput"
-   ],
-   "core": [
-    "kv cache"
-   ],
-   "systems": [
-    "linear attention"
-   ],
-   "weak": [
-    "efficiency"
-   ]
-  },
-  "materialized_at": "2026-10-15",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "e51e9ebae77b3405bafcf0b5bace55e2de73dbd947ae2b22b33bb4d2c88e0086",
-   "notification_id": "paper:2610.05739:ko-en",
-   "sent_at": "2026-10-15T00:26:54.217978+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2610-05739/",
-    "https://jaehun.me/en/posts/paper-2610-05739/"
-   ]
-  },
-  "score": 0.5493,
-  "slug": "paper-2610-05739",
-  "status": "materialized",
-  "title": "HLA-WM: Hybrid Linear Attention for Long-Horizon Video World Models"
- },
- "2610.06801": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2610.06801/other-visual.webp",
-    "/assets/images/papers/2610.06801/teaser.webp",
-    "/assets/images/papers/2610.06801/oracle-combined.webp",
-    "/assets/images/papers/2610.06801/sources-of-gap-visual.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-10-11-paper-2610.06801.md",
-  "failures": 0,
-  "first_seen": "2026-10-11",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "latency"
-   ],
-   "core": [
-    "sparse attention"
-   ],
-   "systems": [
-    "sparsity"
-   ],
-   "weak": [
-    "efficient"
-   ]
-  },
-  "materialized_at": "2026-10-11",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "e93448c709945fad57c97ca50c7e04f2e5a326cbba64bf799f47a0b23a2a2c40",
-   "notification_id": "paper:2610.06801:ko-en",
-   "sent_at": "2026-10-11T00:27:09.503916+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2610-06801/",
-    "https://jaehun.me/en/posts/paper-2610-06801/"
-   ]
-  },
-  "score": 0.5724,
-  "slug": "paper-2610-06801",
-  "status": "materialized",
-  "title": "MC-Sparse: Deconstructing and Closing the Dense-Sparse Attention Gap in Diffusion Transformers"
- },
- "2610.06833": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2610.06833/m-entropy-ablation.webp",
-    "/assets/images/papers/2610.06833/prior-training-loss.webp",
-    "/assets/images/papers/2610.06833/fixed-pln-learned-distributions.webp",
-    "/assets/images/papers/2610.06833/pd-scaling-comparison.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 3
-  },
-  "categories": [
-   "cs.LG"
-  ],
-  "draft_path": "content/posts/2026-10-13-paper-2610.06833v1.md",
-  "failures": 0,
-  "first_seen": "2026-10-13",
-  "matched": {
-   "adjacent": [
-    "cache",
-    "decoding"
-   ],
-   "core": [
-    "kv cache",
-    "prefill"
-   ]
-  },
-  "materialized_at": "2026-10-13",
-  "notification": {
-   "attempts": 3,
-   "message_sha256": "18bff7d256242faf587d2c755b3dd7db62938a9b96696d4254d2f3335bca0c85",
-   "notification_id": "paper:2610.06833v1:ko-en",
-   "sent_at": "2026-10-13T00:28:29.198072+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2610-06833v1/",
-    "https://jaehun.me/en/posts/paper-2610-06833v1/"
-   ]
-  },
-  "score": 0.5622,
-  "slug": "paper-2610-06833v1",
-  "status": "materialized",
-  "title": "Towards Looped Models Done Right, Part II: Rethinking at Fixed Points",
-  "version": "v1"
- },
- "2610.07767": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 4
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-10-08-paper-2610.07767.md",
-  "failures": 0,
-  "first_seen": "2026-10-08",
-  "matched": {
-   "adjacent": [
-    "mixture-of-experts",
-    "moe"
-   ],
-   "core": [
-    "kv cache"
-   ],
-   "systems": [
-    "fp4",
-    "low-precision",
-    "quantization"
-   ],
-   "weak": [
-    "efficient"
-   ]
-  },
-  "materialized_at": "2026-10-08",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "96180e1c18b412493e4679c12babfe6e8b304aef00b634c1e593fd785d453a7a",
-   "notification_id": "paper:2610.07767:ko-en",
-   "sent_at": "2026-10-08T00:25:20.181880+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2610-07767/",
-    "https://jaehun.me/en/posts/paper-2610-07767/"
-   ]
-  },
-  "score": 0.66,
-  "slug": "paper-2610-07767",
-  "status": "materialized",
-  "title": "TRACE: Rollout-Guided Quantization-Aware Training for FP4 Reinforcement Learning of MoE Language Models"
- },
- "2610.10114": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 8
-  },
-  "categories": [
-   "cs.CL"
-  ],
-  "draft_path": "content/posts/2026-10-09-paper-2610.10114v1.md",
-  "failures": 0,
-  "first_seen": "2026-10-09",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "long context"
-   ],
-   "systems": [
-    "linear attention"
-   ],
-   "weak": [
-    "efficiency"
-   ]
-  },
-  "materialized_at": "2026-10-09",
-  "notification": {
-   "attempts": 3,
-   "message_sha256": "22b5c8e47eb08fb24c0609466e1f46af6387de21a94d5b7a5fd87f5863ac6d01",
-   "notification_id": "paper:2610.10114v1:ko-en",
-   "sent_at": "2026-10-09T00:27:31.695129+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2610-10114v1/",
-    "https://jaehun.me/en/posts/paper-2610-10114v1/"
-   ]
-  },
-  "score": 0.5803,
-  "slug": "paper-2610-10114v1",
-  "status": "materialized",
-  "title": "Mechanics of Long-Context Hybrid Models Part 1.1: From Hybrid Attention to Hybrid Position",
-  "version": "v1"
- },
- "2610.12242": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2610.12242/tradeoff.webp",
-    "/assets/images/papers/2610.12242/routing-levels.webp",
-    "/assets/images/papers/2610.12242/architecture.webp",
-    "/assets/images/papers/2610.12242/schedule.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   "cs.CL"
-  ],
-  "draft_path": "content/posts/2026-10-10-paper-2610.12242v1.md",
-  "failures": 0,
-  "first_seen": "2026-10-10",
-  "matched": {
-   "adjacent": [
-    "batching",
-    "decoding",
-    "throughput"
-   ],
-   "core": [
-    "llm inference",
-    "llm serving"
-   ],
-   "weak": [
-    "efficiency",
-    "efficient",
-    "large language model",
-    "llm"
-   ]
-  },
-  "materialized_at": "2026-10-10",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "b2aa1a0e0ca3fce93aaecb2c94466f6b40fcea25786a28ddf468138cfc0496c5",
-   "notification_id": "paper:2610.12242v1:ko-en",
-   "sent_at": "2026-10-10T00:28:25.362111+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2610-12242v1/",
-    "https://jaehun.me/en/posts/paper-2610-12242v1/"
-   ]
-  },
-  "score": 0.7546,
-  "slug": "paper-2610-12242v1",
-  "status": "materialized",
-  "title": "TokenRouter: Efficient Serving System for Token-Level LLM Routing",
-  "version": "v1"
- },
- "2610.12327": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "tables": 6
-  },
-  "categories": [
-   "cs.LG",
-   "cs.CL"
-  ],
-  "draft_path": "content/posts/2026-10-12-paper-2610.12327v1.md",
-  "failures": 0,
-  "first_seen": "2026-10-12",
-  "matched": {
-   "adjacent": [
-    "autoregressive",
-    "decoding",
-    "kernel",
-    "latency"
-   ],
-   "core": [
-    "llm inference",
-    "prefill"
-   ],
-   "systems": [
-    "pruning"
-   ],
-   "weak": [
-    "efficient",
-    "large language model",
-    "llm"
-   ]
-  },
-  "materialized_at": "2026-10-12",
-  "notification": {
-   "attempts": 4,
-   "message_sha256": "5317ff06d8d5c9101f48b8001bb584e961b8a431a853a0078d7739b9dfc191c2",
-   "notification_id": "paper:2610.12327v1:ko-en",
-   "sent_at": "2026-10-12T00:25:25.096085+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2610-12327v1/",
-    "https://jaehun.me/en/posts/paper-2610-12327v1/"
-   ]
-  },
-  "score": 0.5737,
-  "slug": "paper-2610-12327v1",
-  "status": "materialized",
-  "title": "SparseDecoding: Decoding-Aware Pruning for Accurate and Efficient LLM Inference",
-  "version": "v1"
- },
- "2610.12570": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2610.12570/coverage.webp",
-    "/assets/images/papers/2610.12570/q8b-conc-bars.webp",
-    "/assets/images/papers/2610.12570/concurrency-gain.webp",
-    "/assets/images/papers/2610.12570/q4b-conc-bars.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "tables": 8
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-10-14-paper-2610.12570.md",
-  "failures": 0,
-  "first_seen": "2026-10-14",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "autoregressive",
-    "decoding",
-    "throughput"
-   ],
-   "core": [
-    "speculative decoding"
-   ],
-   "weak": [
-    "acceleration",
-    "large language model"
-   ]
-  },
-  "materialized_at": "2026-10-14",
-  "notification": {
-   "attempts": 3,
-   "message_sha256": "07ee9d0d4c44336dc30a35e2aac657169da050080baa67cd1059f3bccdcade68",
-   "notification_id": "paper:2610.12570:ko-en",
-   "sent_at": "2026-10-14T00:26:01.093025+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2610-12570/",
-    "https://jaehun.me/en/posts/paper-2610-12570/"
-   ]
-  },
-  "score": 0.5599,
-  "slug": "paper-2610-12570",
-  "status": "materialized",
-  "title": "Contextual Correction of Parallel Draftsfor Speculative Decoding"
- },
- "2610.17901": {
-  "assets": {
-   "figures": [],
-   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
-   "pdf_pages": 0,
-   "tables": 8,
-   "warnings": []
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-10-20-paper-2610.17901.md",
-  "failures": 0,
-  "first_seen": "2026-10-20",
-  "matched": {
-   "adjacent": [
-    "attention",
-    "kernel",
-    "long context",
-    "moe",
-    "throughput"
-   ],
-   "core": [
-    "flashattention"
-   ],
-   "systems": [
-    "communication overlap",
-    "context parallelism",
-    "pruning",
-    "sparsity"
-   ],
-   "weak": [
-    "efficiency",
-    "efficient"
-   ]
-  },
-  "materialized_at": "2026-10-20",
-  "quality": {
-   "scope": "structure-and-evidence-presence",
-   "status": "passed",
-   "version": 1
-  },
-  "revision": {
-   "rounds": [
-    {
-     "cost_usd": 0,
-     "independent_of_writer": true,
-     "model": "opencode/glm-5.3-flash-free",
-     "output": "2610.17901-revision-1.md",
-     "round": 1
+  "2510.08999": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2510.08999/sqs-main-diagram-crop.webp",
+        "/assets/images/papers/2510.08999/a-self-attention-layer-k-projection-weight-distribution.webp",
+        "/assets/images/papers/2510.08999/b-self-attention-layer-o-projection-weight-distribution.webp",
+        "/assets/images/papers/2510.08999/c-self-attention-layer-q-projection-weight-distribution.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
     },
-    {
-     "cost_usd": null,
-     "independent_of_writer": true,
-     "model": "opencode/minimax-m3.1-flash-free",
-     "output": "2610.17901-revision-2.md",
-     "round": 2
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-13-paper-2510.08999.md",
+    "failures": 0,
+    "first_seen": "2026-09-13",
+    "matched": {
+      "systems": [
+        "compression",
+        "pruning",
+        "quantization",
+        "sparsity"
+      ],
+      "weak": [
+        "efficient"
+      ]
     },
-    {
-     "cost_usd": 0,
-     "independent_of_writer": true,
-     "model": "opencode/deepseek-v4.1-flash-free",
-     "output": "2610.17901-revision-3.md",
-     "round": 3
+    "materialized_at": "2026-09-13",
+    "score": 0.5376,
+    "status": "materialized",
+    "title": "SQS: Bayesian DNN Compression through Sparse Quantized Sub-distributions"
+  },
+  "2609.01343": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 2
+    },
+    "draft_path": "content/posts/2026-09-07-paper-2609.01343.md",
+    "failures": 0,
+    "first_seen": "2026-09-07",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "mixture-of-experts",
+        "moe"
+      ],
+      "core": [
+        "kv cache"
+      ],
+      "weak": [
+        "scaling",
+        "transformer"
+      ]
+    },
+    "materialized_at": "2026-09-07",
+    "score": 0.7001,
+    "status": "materialized",
+    "title": "SMELT: Scaling Laws for Compute-Matched MoE Looped Transformers"
+  },
+  "2609.02737": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.02737/method.webp",
+        "/assets/images/papers/2609.02737/size-scaling-acc.webp",
+        "/assets/images/papers/2609.02737/size-scaling-tok.webp",
+        "/assets/images/papers/2609.02737/context-scaling-acc.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 10
+    },
+    "draft_path": "content/posts/2026-09-07-paper-2609.02737v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-07",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "cache",
+        "decoding",
+        "long context"
+      ],
+      "core": [
+        "kv cache",
+        "sparse attention"
+      ]
+    },
+    "materialized_at": "2026-09-07",
+    "score": 0.6417,
+    "status": "materialized",
+    "title": "Language Models Can Control Their Own Attention",
+    "version": "v1"
+  },
+  "2609.02780": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.02780/latency-performance-teaser.webp",
+        "/assets/images/papers/2609.02780/qwen3vl-layer-retr-ability.webp",
+        "/assets/images/papers/2609.02780/llava-layer-retr-ability.webp",
+        "/assets/images/papers/2609.02780/method.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 5
+    },
+    "draft_path": "content/posts/2026-09-08-paper-2609.02780v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-08",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "cache",
+        "latency"
+      ],
+      "core": [
+        "kv cache",
+        "prefill"
+      ],
+      "systems": [
+        "offloading",
+        "pruning",
+        "quantization"
+      ]
+    },
+    "materialized_at": "2026-09-08",
+    "score": 0.5512,
+    "status": "materialized",
+    "title": "ShallowStream: Index Shallow then Answer Deep for Streaming Video Understanding",
+    "version": "v1"
+  },
+  "2609.03235": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 5
+    },
+    "draft_path": "content/posts/2026-09-07-paper-2609.03235v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-07",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "cache",
+        "long context"
+      ],
+      "core": [
+        "cache compression",
+        "kv cache"
+      ],
+      "systems": [
+        "compression"
+      ],
+      "weak": [
+        "efficiency"
+      ]
+    },
+    "materialized_at": "2026-09-07",
+    "score": 0.5268,
+    "status": "materialized",
+    "title": "SGD-KV: Summarization Guided KV Cache Compression",
+    "version": "v1"
+  },
+  "2609.03430": {
+    "draft_path": "content/posts/2026-09-06-paper-2609.03430v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-06",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "cache",
+        "throughput"
+      ],
+      "core": [
+        "cache compression",
+        "cache eviction",
+        "kv cache"
+      ],
+      "named_systems": [
+        "vllm"
+      ],
+      "weak": [
+        "efficient"
+      ]
+    },
+    "materialized_at": "2026-09-06",
+    "score": 0.892,
+    "status": "materialized",
+    "title": "Random Attention: Rethinking KV Cache Eviction for Efficient Reasoning",
+    "version": "v1"
+  },
+  "2609.03949": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 8
+    },
+    "draft_path": "content/posts/2026-09-09-paper-2609.03949v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-09",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "cache",
+        "kernel"
+      ],
+      "core": [
+        "kv cache"
+      ],
+      "systems": [
+        "quantization"
+      ]
+    },
+    "materialized_at": "2026-09-09",
+    "score": 0.5085,
+    "status": "materialized",
+    "title": "VestigeKV: The NoPE-MLA KV Cache Carries Its Own Eviction Signal in a Vestigial Branch",
+    "version": "v1"
+  },
+  "2609.04010": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.04010/resultsfigure-combined.webp",
+        "/assets/images/papers/2609.04010/uno-dflash-eagle3-qwen-pareto.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
+    },
+    "draft_path": "content/posts/2026-09-08-paper-2609.04010v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-08",
+    "matched": {
+      "adjacent": [
+        "autoregressive",
+        "decoding",
+        "distillation",
+        "long context",
+        "throughput"
+      ],
+      "core": [
+        "speculative decoding"
+      ],
+      "weak": [
+        "acceleration",
+        "llm",
+        "scaling"
+      ]
+    },
+    "materialized_at": "2026-09-08",
+    "score": 0.6408,
+    "status": "materialized",
+    "title": "Unlocking Lossless Speedups in LLMs via Discrete Diffusion",
+    "version": "v1"
+  },
+  "2609.04098": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 6
+    },
+    "draft_path": "content/posts/2026-09-07-paper-2609.04098.md",
+    "failures": 0,
+    "first_seen": "2026-09-07",
+    "matched": {
+      "adjacent": [
+        "attention"
+      ],
+      "core": [
+        "kv cache",
+        "prefill"
+      ],
+      "systems": [
+        "fp8",
+        "linear attention",
+        "nvfp4",
+        "quantization"
+      ],
+      "weak": [
+        "llm",
+        "scaling"
+      ]
+    },
+    "materialized_at": "2026-09-07",
+    "score": 0.5975,
+    "status": "materialized",
+    "title": "Why Gated DeltaNet Survives 4-Bit Quantization: NVFP4 W4A4 for the Recurrent Half of a Hybrid 27B LLM"
+  },
+  "2609.04105": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.04105/headline-pareto.webp",
+        "/assets/images/papers/2609.04105/cross-shape-speed-accuracy.webp",
+        "/assets/images/papers/2609.04105/nvmx-fast-report.webp",
+        "/assets/images/papers/2609.04105/llama8b-b4-matched-training-curves.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 30
+    },
+    "draft_path": "content/posts/2026-09-07-paper-2609.04105v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-07",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "throughput"
+      ],
+      "core": [
+        "flashattention"
+      ],
+      "systems": [
+        "fp4",
+        "fp8",
+        "mxfp4",
+        "quantization"
+      ]
+    },
+    "materialized_at": "2026-09-07",
+    "score": 0.5334,
+    "status": "materialized",
+    "title": "Hardware-Aware FP4 FlashAttention-4",
+    "version": "v1"
+  },
+  "2609.04748": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 3
+    },
+    "draft_path": "content/posts/2026-09-07-paper-2609.04748v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-07",
+    "matched": {
+      "adjacent": [
+        "cache",
+        "decoding"
+      ],
+      "core": [
+        "llm serving",
+        "prefix caching"
+      ],
+      "systems": [
+        "quantization"
+      ],
+      "weak": [
+        "optimization"
+      ]
+    },
+    "materialized_at": "2026-09-07",
+    "score": 0.5347,
+    "status": "materialized",
+    "title": "Same Request, Different Answer: Quantization Amplifies Cache-Induced Divergence in LLM Serving",
+    "version": "v1"
+  },
+  "2609.04895": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 3
+    },
+    "draft_path": "content/posts/2026-09-09-paper-2609.04895v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-09",
+    "matched": {
+      "adjacent": [
+        "cache",
+        "decoding",
+        "memory efficient",
+        "mixture-of-experts",
+        "moe"
+      ],
+      "systems": [
+        "gpu memory"
+      ],
+      "weak": [
+        "efficiency"
+      ]
+    },
+    "materialized_at": "2026-09-09",
+    "score": 0.5202,
+    "status": "materialized",
+    "title": "Cache-Aware Joint Router Adaptation for Memory-Efficient MoE Inference",
+    "version": "v1"
+  },
+  "2609.04971": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 6
+    },
+    "draft_path": "content/posts/2026-09-07-paper-2609.04971v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-07",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "cache",
+        "decoding",
+        "throughput"
+      ],
+      "core": [
+        "cache compression",
+        "kv cache"
+      ],
+      "systems": [
+        "compression"
+      ],
+      "weak": [
+        "efficient"
+      ]
+    },
+    "materialized_at": "2026-09-07",
+    "score": 0.5334,
+    "status": "materialized",
+    "title": "BeaconKV: Key-Value Cache Compression Guided by Beacon Queries for Efficient Large Reasoning Model Inference",
+    "version": "v1"
+  },
+  "2609.07108": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.07108/cp-branch-attention.webp",
+        "/assets/images/papers/2609.07108/tap-channel.webp",
+        "/assets/images/papers/2609.07108/qwen3-8b-learning-and-performance.webp",
+        "/assets/images/papers/2609.07108/qwen3-8b-workplace-learning-and-performance.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 2
+    },
+    "categories": [
+      "cs.LG",
+      "cs.DC"
+    ],
+    "draft_path": "content/posts/2026-09-10-paper-2609.07108v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-10",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "long context"
+      ],
+      "core": [
+        "speculative decoding"
+      ],
+      "weak": [
+        "scaling"
+      ]
+    },
+    "materialized_at": "2026-09-10",
+    "score": 0.6395,
+    "status": "materialized",
+    "title": "Online Draft Co-Training for Speculative Decoding in Large-Scale, Long-Context RL Post-Training",
+    "version": "v1"
+  },
+  "2609.07816": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.07816/approximate.webp",
+        "/assets/images/papers/2609.07816/kdn-overwrite-distributions.webp",
+        "/assets/images/papers/2609.07816/kdn-layer.webp",
+        "/assets/images/papers/2609.07816/mixer-throughput-scaling.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 4
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-12-paper-2609.07816.md",
+    "failures": 0,
+    "first_seen": "2026-09-12",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "decoding",
+        "long context"
+      ],
+      "systems": [
+        "linear attention",
+        "state space model"
+      ],
+      "weak": [
+        "efficient"
+      ]
+    },
+    "materialized_at": "2026-09-12",
+    "score": 0.5452,
+    "status": "materialized",
+    "title": "Kalman Delta Networks: Uncertainty-aware Associative Memory"
+  },
+  "2609.07883": {
+    "assets": {
+      "figures": [],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 4
+    },
+    "categories": [
+      "cs.CL"
+    ],
+    "draft_path": "content/posts/2026-09-11-paper-2609.07883v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-11",
+    "matched": {
+      "adjacent": [
+        "latency",
+        "long context",
+        "throughput"
+      ],
+      "core": [
+        "continuous batching",
+        "model serving",
+        "prefill",
+        "time per output token"
+      ],
+      "systems": [
+        "scheduling"
+      ],
+      "weak": [
+        "efficiency",
+        "efficient",
+        "large language model",
+        "llm"
+      ]
+    },
+    "materialized_at": "2026-09-11",
+    "score": 0.5463,
+    "status": "materialized",
+    "title": "Deadline-Aware Adaptive Prefill Chunking for Efficient Large Language Model Serving",
+    "version": "v1"
+  },
+  "2609.08084": {
+    "assets": {
+      "figures": [],
+      "license": "http://creativecommons.org/licenses/by-sa/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-13-paper-2609.08084.md",
+    "failures": 0,
+    "first_seen": "2026-09-13",
+    "matched": {
+      "systems": [
+        "quantization"
+      ],
+      "weak": [
+        "transformer"
+      ]
+    },
+    "materialized_at": "2026-09-13",
+    "score": 0.5062,
+    "status": "materialized",
+    "title": "Marigold V2: Revisiting Diffusion Transformers for Monocular Depth Estimation"
+  },
+  "2609.08345": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-14-paper-2609.08345.md",
+    "failures": 0,
+    "first_seen": "2026-09-14",
+    "matched": {
+      "adjacent": [
+        "attention"
+      ],
+      "systems": [
+        "pruning"
+      ]
+    },
+    "materialized_at": "2026-09-14",
+    "score": 0.4705,
+    "status": "materialized",
+    "title": "CoVeR: Coverage-Based Token Pruning for Multi-View 3D Reasoning in VLMs"
+  },
+  "2609.08368": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 8
+    },
+    "categories": [
+      "cs.LG",
+      "cs.CL"
+    ],
+    "draft_path": "content/posts/2026-09-10-paper-2609.08368v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-10",
+    "matched": {
+      "adjacent": [
+        "distillation"
+      ],
+      "named_systems": [
+        "sglang"
+      ],
+      "weak": [
+        "efficiency"
+      ]
+    },
+    "materialized_at": "2026-09-10",
+    "score": 0.6351,
+    "status": "materialized",
+    "title": "Miles v0.1: Production-Level Post-Training",
+    "version": "v1"
+  },
+  "2609.10355": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 7
+    },
+    "categories": [
+      "cs.CV",
+      "cs.CL",
+      "cs.MM"
+    ],
+    "draft_path": "content/posts/2026-09-11-paper-2609.10355v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-11",
+    "matched": {
+      "adjacent": [
+        "decoding",
+        "latency"
+      ],
+      "core": [
+        "inference efficiency"
+      ],
+      "weak": [
+        "efficiency",
+        "efficient",
+        "llm"
+      ]
+    },
+    "materialized_at": "2026-09-11",
+    "score": 0.551,
+    "status": "materialized",
+    "title": "Why Is Video Still So Expensive? A Survey of Inference-Efficiency Mechanisms in Video and Audiovisual LLMs",
+    "version": "v1"
+  },
+  "2609.10540": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.10540/pwm-teaser2.webp",
+        "/assets/images/papers/2609.10540/tradeoff-v2.webp",
+        "/assets/images/papers/2609.10540/framework.webp",
+        "/assets/images/papers/2609.10540/qualitative-death-comparison.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 1
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-15-paper-2609.10540.md",
+    "failures": 0,
+    "first_seen": "2026-09-15",
+    "matched": {
+      "core": [
+        "model serving"
+      ]
+    },
+    "materialized_at": "2026-09-15",
+    "score": 0.4505,
+    "status": "materialized",
+    "title": "Programmable World Model"
+  },
+  "2609.11412": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.11412/fig-radar.webp",
+        "/assets/images/papers/2609.11412/fig-pipeline.webp",
+        "/assets/images/papers/2609.11412/fig-datapipe.webp",
+        "/assets/images/papers/2609.11412/fig-ter-curve.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-12-paper-2609.11412.md",
+    "failures": 0,
+    "first_seen": "2026-09-12",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "distillation"
+      ],
+      "systems": [
+        "compression",
+        "pruning"
+      ]
+    },
+    "materialized_at": "2026-09-12",
+    "score": 0.5402,
+    "status": "materialized",
+    "title": "X-AuT: Progressive Audio-Encoder Compression for Speech LLMs with Cross-Scale Distillation"
+  },
+  "2609.12945": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 4
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-17-paper-2609.12945.md",
+    "failures": 0,
+    "first_seen": "2026-09-17",
+    "matched": {
+      "adjacent": [
+        "autoregressive"
+      ],
+      "systems": [
+        "quantization"
+      ],
+      "weak": [
+        "large language model",
+        "transformer"
+      ]
+    },
+    "materialized_at": "2026-09-17",
+    "notification": {
+      "attempts": 3,
+      "message_sha256": "8ef4d19c41e1598818934d6cd92f7990dca724dad822b0224488b609ee8dfe24",
+      "notification_id": "paper:2609.12945:ko-en",
+      "sent_at": "2026-09-16T15:28:06.869463+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-12945/",
+        "https://jaehun.me/en/posts/paper-2609-12945/"
+      ]
+    },
+    "score": 0.5215,
+    "slug": "paper-2609-12945",
+    "status": "materialized",
+    "title": "StepAudio 3 Gen Technical Report"
+  },
+  "2609.13141": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-15-paper-2609.13141.md",
+    "failures": 0,
+    "first_seen": "2026-09-15",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "distillation",
+        "kernel",
+        "long context",
+        "memory efficient"
+      ],
+      "core": [
+        "flashattention",
+        "sparse attention"
+      ],
+      "named_systems": [
+        "triton"
+      ],
+      "weak": [
+        "optimization"
+      ]
+    },
+    "materialized_at": "2026-09-15",
+    "score": 0.6459,
+    "status": "materialized",
+    "title": "SAS: Simple Attention Sparsification via End-to-End Optimization of Context Ranking"
+  },
+  "2609.13356": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.13356/homepage-7b-rank-heatmap.webp",
+        "/assets/images/papers/2609.13356/teaser.webp",
+        "/assets/images/papers/2609.13356/zgcm1-arch.webp",
+        "/assets/images/papers/2609.13356/architecture-experiments.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-16-paper-2609.13356.md",
+    "failures": 0,
+    "first_seen": "2026-09-16",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "long context"
+      ],
+      "systems": [
+        "fp8",
+        "pruning"
+      ],
+      "weak": [
+        "efficiency",
+        "efficient",
+        "scaling"
+      ]
+    },
+    "materialized_at": "2026-09-16",
+    "notification": {
+      "attempts": 11,
+      "message_sha256": "dfe59fd61a0fef1f07bf37b3f3a609d448fed60b31aed927e6b1a5dd4cd537a6",
+      "notification_id": "paper:2609.13356:ko-en",
+      "sent_at": "2026-09-16T11:51:00.395704+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/zgcm-1-a-fully-open-and-extremely-efficient-foundation-model-for-math-and-agentic-search/",
+        "https://jaehun.me/en/posts/zgcm-1-a-fully-open-and-extremely-efficient-foundation-model-for-math-and-agentic-search/"
+      ]
+    },
+    "score": 0.7924,
+    "status": "materialized",
+    "title": "ZGCM-1: A Fully Open and Extremely Efficient Foundation Model for Math and Agentic Search"
+  },
+  "2609.15504": {
+    "assets": {
+      "figures": [],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-16-paper-2609.15504.md",
+    "failures": 0,
+    "first_seen": "2026-09-16",
+    "matched": {
+      "adjacent": [
+        "autoregressive"
+      ],
+      "core": [
+        "speculative decoding"
+      ]
+    },
+    "materialized_at": "2026-09-16",
+    "notification": {
+      "attempts": 11,
+      "message_sha256": "724b33fc5fd5c37ad30c3f808c5f20e8895d92266d9e9524adecc8c52e42627a",
+      "notification_id": "paper:2609.15504:ko-en",
+      "sent_at": "2026-09-16T11:51:00.395704+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/how-lossless-is-lossless-speculative-decoding-the-role-of-numerical-precision-in-orthrus/",
+        "https://jaehun.me/en/posts/how-lossless-is-lossless-speculative-decoding-the-role-of-numerical-precision-in-orthrus/"
+      ]
+    },
+    "score": 0.4831,
+    "status": "materialized",
+    "title": "How Lossless Is Lossless Speculative Decoding? The Role of Numerical Precision in Orthrus"
+  },
+  "2609.15810": {
+    "assets": {
+      "figures": [],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 1
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-20-paper-2609.15810.md",
+    "failures": 0,
+    "first_seen": "2026-09-20",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "kernel"
+      ],
+      "core": [
+        "flashattention"
+      ],
+      "systems": [
+        "attention kernel",
+        "fp8",
+        "quantization"
+      ]
+    },
+    "materialized_at": "2026-09-20",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "6131c2d7f22e1ef204b487c10cecce00db8711dca4fb6e87617d4527c2d8aac5",
+      "notification_id": "paper:2609.15810:ko-en",
+      "sent_at": "2026-09-20T00:56:48.901310+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-15810/",
+        "https://jaehun.me/en/posts/paper-2609-15810/"
+      ]
+    },
+    "score": 0.4945,
+    "slug": "paper-2609-15810",
+    "status": "materialized",
+    "title": "VC-Attention: Value Smoothing and Softmax Casting for Low-bit Attention"
+  },
+  "2609.17652": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 1
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-18-paper-2609.17652.md",
+    "failures": 0,
+    "first_seen": "2026-09-18",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "cache",
+        "decoding"
+      ],
+      "core": [
+        "kv cache"
+      ],
+      "systems": [
+        "gpu memory",
+        "sparsity"
+      ]
+    },
+    "materialized_at": "2026-09-18",
+    "notification": {
+      "abandoned_at": "2026-09-22T11:58:48.384570+00:00",
+      "attempts": 80,
+      "error_category": "publication-missing",
+      "notification_id": "paper:2609.17652:ko-en",
+      "status": "notify-abandoned",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-17652/",
+        "https://jaehun.me/en/posts/paper-2609-17652/"
+      ]
+    },
+    "score": 0.5048,
+    "slug": "paper-2609-17652",
+    "status": "materialized",
+    "title": "Fathom: Per-Query Read Depth for Sparse Decoding over Offloaded KV Caches"
+  },
+  "2609.18063": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.18063/fig1-architecture.webp",
+        "/assets/images/papers/2609.18063/fig2-quality.webp",
+        "/assets/images/papers/2609.18063/fig3-anticip.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 4
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-18-paper-2609.18063.md",
+    "failures": 0,
+    "first_seen": "2026-09-18",
+    "matched": {
+      "adjacent": [
+        "mixture-of-experts",
+        "moe"
+      ],
+      "systems": [
+        "int4",
+        "offloading",
+        "quantization",
+        "sparsity"
+      ]
+    },
+    "materialized_at": "2026-09-18",
+    "notification": {
+      "attempts": 3,
+      "message_sha256": "dc7b6711a545bac96d5e02f354a00247fcfd8cac9df197b2b6f3a2889c1b5b6c",
+      "notification_id": "paper:2609.18063:ko-en",
+      "sent_at": "2026-09-18T01:26:59.721226+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-18063/",
+        "https://jaehun.me/en/posts/paper-2609-18063/"
+      ]
+    },
+    "score": 0.5239,
+    "slug": "paper-2609-18063",
+    "status": "materialized",
+    "title": "The Other Half of the Memory Wall: Serving 35B MoEs from SSD with Trained Routing Prediction"
+  },
+  "2609.18487": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "pdf_pages": 0,
+      "tables": 6,
+      "warnings": []
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-19-paper-2609.18487.md",
+    "failures": 0,
+    "first_seen": "2026-09-19",
+    "matched": {
+      "adjacent": [
+        "autoregressive"
+      ],
+      "systems": [
+        "compression",
+        "quantization"
+      ]
+    },
+    "materialized_at": "2026-09-19",
+    "quality": {
+      "scope": "structure-and-evidence-presence",
+      "status": "passed",
+      "version": 1
+    },
+    "score": 0.5002,
+    "slug": "paper-2609-18487",
+    "status": "summarized",
+    "summarized_at": "2026-10-16",
+    "summary_cost_usd": 0.067128776,
+    "summary_model": "opencode-go/deepseek-v4-pro",
+    "title": "ActionPiece: Rethinking Action Tokenization for Autoregressive Vision-Language-Action Models",
+    "translation": {
+      "completed_at": "2026-10-16",
+      "cost_usd": 0.008788308,
+      "model": "opencode-go/deepseek-v4.1-flash",
+      "status": "completed"
     }
-   ],
-   "status": "passed"
   },
-  "score": 0.5792,
-  "slug": "paper-2610-17901",
-  "status": "summarized",
-  "summarized_at": "2026-10-20",
-  "summary_cost_usd": 0.108798052,
-  "summary_model": "opencode-go/deepseek-v4-pro",
-  "title": "FlashMask-3: Efficient and Expressive Mask-Aware Distributed Attention",
-  "translation": {
-   "completed_at": "2026-10-20",
-   "cost_usd": 0.3425284,
-   "model": "opencode-go/gemini-4-argon-contributor",
-   "status": "completed"
+  "2609.19969": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "pdf_pages": 0,
+      "tables": 5,
+      "warnings": []
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-19-paper-2609.19969.md",
+    "failures": 0,
+    "first_seen": "2026-09-19",
+    "matched": {
+      "adjacent": [
+        "cache",
+        "long context",
+        "mixture-of-experts",
+        "moe"
+      ],
+      "core": [
+        "cache compression",
+        "kv cache",
+        "prefill",
+        "sparse attention"
+      ],
+      "systems": [
+        "fp4"
+      ],
+      "weak": [
+        "efficiency",
+        "efficient",
+        "optimization"
+      ]
+    },
+    "materialized_at": "2026-09-19",
+    "quality": {
+      "scope": "structure-and-evidence-presence",
+      "status": "passed",
+      "version": 1
+    },
+    "score": 0.6471,
+    "slug": "paper-2609-19969",
+    "status": "summarized",
+    "summarized_at": "2026-10-17",
+    "summary_cost_usd": 0.14384238,
+    "summary_model": "opencode-go/deepseek-v4-pro",
+    "title": "DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression",
+    "translation": {
+      "completed_at": "2026-10-17",
+      "cost_usd": 0.010696176,
+      "model": "opencode-go/deepseek-v4.1-flash",
+      "status": "completed"
+    }
+  },
+  "2609.23900": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "pdf_pages": 0,
+      "tables": 8,
+      "warnings": []
+    },
+    "categories": [
+      "cs.LG"
+    ],
+    "draft_path": "content/posts/2026-09-27-paper-2609.23900v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-27",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "latency",
+        "throughput"
+      ],
+      "core": [
+        "flashattention",
+        "prefill",
+        "speculative decoding"
+      ],
+      "named_systems": [
+        "vllm"
+      ],
+      "systems": [
+        "fp8"
+      ]
+    },
+    "materialized_at": "2026-09-27",
+    "notification": {
+      "abandoned_at": "2026-09-28T05:19:25.123086+00:00",
+      "attempts": 20,
+      "error_category": "publication-missing",
+      "notification_id": "paper:2609.23900v1:ko-en",
+      "status": "notify-abandoned",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-23900v1/",
+        "https://jaehun.me/en/posts/paper-2609-23900v1/"
+      ]
+    },
+    "quality": {
+      "scope": "structure-and-evidence-presence",
+      "status": "passed",
+      "version": 1
+    },
+    "score": 0.5226,
+    "slug": "paper-2609-23900v1",
+    "status": "summarized",
+    "summarized_at": "2026-10-19",
+    "summary_cost_usd": 0.078606176,
+    "summary_model": "opencode-go/deepseek-v4-pro",
+    "title": "GDN Tree-Scan: Served Tree Verification for Recurrent-Hybrid Language Models",
+    "translation": {
+      "completed_at": "2026-10-19",
+      "cost_usd": 0.010768398,
+      "model": "opencode-go/deepseek-v4.1-flash",
+      "status": "completed"
+    },
+    "version": "v1"
+  },
+  "2609.24197": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.24197/kv-injection.webp",
+        "/assets/images/papers/2609.24197/kv-reuse-motivation.webp",
+        "/assets/images/papers/2609.24197/hspec-overview.webp",
+        "/assets/images/papers/2609.24197/conc-kv-pareto.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 3
+    },
+    "categories": [
+      "cs.LG"
+    ],
+    "draft_path": "content/posts/2026-09-23-paper-2609.24197v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-23",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "cache",
+        "latency",
+        "throughput"
+      ],
+      "core": [
+        "kv cache",
+        "speculative decoding"
+      ],
+      "systems": [
+        "mamba"
+      ],
+      "weak": [
+        "large language model"
+      ]
+    },
+    "materialized_at": "2026-09-23",
+    "notification": {
+      "attempts": 6,
+      "message_sha256": "05aefbd6aa14bf185845470005c59841f30c2f0fe4e62d9a531df8588aae05f7",
+      "notification_id": "paper:2609.24197v1:ko-en",
+      "sent_at": "2026-09-23T00:57:33.445942+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-24197v1/",
+        "https://jaehun.me/en/posts/paper-2609-24197v1/"
+      ]
+    },
+    "score": 0.5434,
+    "slug": "paper-2609-24197v1",
+    "status": "materialized",
+    "title": "H-Spec: Parallel Speculative Decoding Without a Drafter-Side KV Cache",
+    "version": "v1"
+  },
+  "2609.24639": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.24639/memory-balance.webp",
+        "/assets/images/papers/2609.24639/pareto-traces-closed.webp",
+        "/assets/images/papers/2609.24639/scn-pair.webp",
+        "/assets/images/papers/2609.24639/scn-shrink.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 3
+    },
+    "categories": [
+      "cs.DC",
+      "cs.PF",
+      "eess.SY"
+    ],
+    "draft_path": "content/posts/2026-09-22-paper-2609.24639v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-22",
+    "matched": {
+      "adjacent": [
+        "cache",
+        "throughput"
+      ],
+      "core": [
+        "disaggregated",
+        "disaggregation",
+        "inference serving",
+        "kv cache",
+        "prefill"
+      ]
+    },
+    "materialized_at": "2026-09-22",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "a02e126ca629e59f2bad4f89b6dc0787b3ff79fa79bf2756cef64d40e9e7214d",
+      "notification_id": "paper:2609.24639v1:ko-en",
+      "sent_at": "2026-09-22T12:38:32.812929+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-24639v1/",
+        "https://jaehun.me/en/posts/paper-2609-24639v1/"
+      ]
+    },
+    "score": 0.5463,
+    "slug": "paper-2609-24639v1",
+    "status": "materialized",
+    "title": "Analytical Power-Aware Provisioning for Prefill-Decode Disaggregated AI Inference",
+    "version": "v1"
+  },
+  "2609.24698": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.24698/tree-spec-bg.webp",
+        "/assets/images/papers/2609.24698/pipeline.webp",
+        "/assets/images/papers/2609.24698/fig-accept-len.webp",
+        "/assets/images/papers/2609.24698/fig-throughput-clean.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 1
+    },
+    "categories": [
+      "cs.CL",
+      "cs.AI"
+    ],
+    "draft_path": "content/posts/2026-09-25-paper-2609.24698v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-25",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "autoregressive",
+        "decoding",
+        "latency",
+        "throughput"
+      ],
+      "core": [
+        "efficient inference",
+        "llm inference",
+        "speculative decoding"
+      ],
+      "weak": [
+        "efficiency"
+      ]
+    },
+    "materialized_at": "2026-09-25",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "64be6a1f4c52bc2dce47688f872025eb8e1c71fec3ee076bc2fc2f00a9c7f884",
+      "notification_id": "paper:2609.24698v1:ko-en",
+      "sent_at": "2026-09-25T00:54:53.832764+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-24698v1/",
+        "https://jaehun.me/en/posts/paper-2609-24698v1/"
+      ]
+    },
+    "score": 0.5428,
+    "slug": "paper-2609-24698v1",
+    "status": "materialized",
+    "title": "Adapting Tree-Structured Speculative Decoding to DeepSeek-V4 for Efficient Inference",
+    "version": "v1"
+  },
+  "2609.24847": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.24847/roofline-motivation-draft2.webp",
+        "/assets/images/papers/2609.24847/archi-soc.webp",
+        "/assets/images/papers/2609.24847/figure3-trial.webp",
+        "/assets/images/papers/2609.24847/archi-dataflow.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 3
+    },
+    "categories": [
+      "cs.AR",
+      "cs.AI",
+      "cs.DC"
+    ],
+    "draft_path": "content/posts/2026-09-26-paper-2609.24847v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-26",
+    "matched": {
+      "adjacent": [
+        "autoregressive",
+        "decoding",
+        "kernel"
+      ],
+      "core": [
+        "llm inference",
+        "prefill",
+        "speculative decoding"
+      ],
+      "weak": [
+        "efficient"
+      ]
+    },
+    "materialized_at": "2026-09-26",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "e6a76621ed6014a532e80495a678c897bb9698ba69c5a80d35c9d7f53f8da71e",
+      "notification_id": "paper:2609.24847v1:ko-en",
+      "sent_at": "2026-09-26T00:28:14.946910+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-24847v1/",
+        "https://jaehun.me/en/posts/paper-2609-24847v1/"
+      ]
+    },
+    "score": 0.5304,
+    "slug": "paper-2609-24847v1",
+    "status": "materialized",
+    "title": "SPECTRA: Adaptive Execution of Speculative Decoding on a Runtime-Reconfigurable Tiled Architecture",
+    "version": "v1"
+  },
+  "2609.24991": {
+    "categories": [
+      "cs.DC",
+      "cs.PF"
+    ],
+    "draft_path": "content/posts/2026-09-28-paper-2609.24991v1.md",
+    "failures": 0,
+    "first_seen": "2026-09-28",
+    "matched": {
+      "core": [
+        "kv cache",
+        "prefix caching"
+      ],
+      "named_systems": [
+        "vllm"
+      ],
+      "systems": [
+        "multi-tenant"
+      ],
+      "weak": [
+        "llm",
+        "transformer"
+      ]
+    },
+    "materialized_at": "2026-09-28",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "e4aed80189c14ee596867437f4fcf50b13504c759bb2a68cf79968af8e4f615f",
+      "notification_id": "paper:2609.24991v1:ko-en",
+      "sent_at": "2026-09-28T00:27:50.117372+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-24991v1/",
+        "https://jaehun.me/en/posts/paper-2609-24991v1/"
+      ]
+    },
+    "score": 0.5226,
+    "slug": "paper-2609-24991v1",
+    "status": "materialized",
+    "title": "Who Pays for the KV Cache? Attributing Shared AI Inference Spend Across Kubernetes and LLM Provider Bills",
+    "version": "v1"
+  },
+  "2609.26796": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.26796/attention-layer.webp",
+        "/assets/images/papers/2609.26796/decoding-process.webp",
+        "/assets/images/papers/2609.26796/flash-dllm.webp",
+        "/assets/images/papers/2609.26796/flash-attention.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-24-paper-2609.26796.md",
+    "failures": 0,
+    "first_seen": "2026-09-24",
+    "matched": {
+      "adjacent": [
+        "autoregressive",
+        "cache",
+        "decoding",
+        "kernel",
+        "memory efficient"
+      ],
+      "core": [
+        "kv cache"
+      ],
+      "systems": [
+        "gpu memory"
+      ],
+      "weak": [
+        "acceleration",
+        "efficiency",
+        "efficient"
+      ]
+    },
+    "materialized_at": "2026-09-24",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "ce5455ec522165607148da5c6f3abbb0b55f9aca3250162f3e69fab829a99db5",
+      "notification_id": "paper:2609.26796:ko-en",
+      "sent_at": "2026-09-24T00:56:52.646803+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-26796/",
+        "https://jaehun.me/en/posts/paper-2609-26796/"
+      ]
+    },
+    "score": 0.5552,
+    "slug": "paper-2609-26796",
+    "status": "materialized",
+    "title": "Flash-dLLM: IO-Aware KV Caching and Parallel Decoding for Fast, Memory-Efficient Diffusion LLMs"
+  },
+  "2609.30854": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 8
+    },
+    "categories": [
+      "cs.DC",
+      "cs.LG",
+      "cs.PF"
+    ],
+    "draft_path": "content/posts/2026-10-03-paper-2609.30854v1.md",
+    "failures": 0,
+    "first_seen": "2026-10-03",
+    "matched": {
+      "adjacent": [
+        "autoregressive",
+        "cache",
+        "long context",
+        "throughput"
+      ],
+      "core": [
+        "kv cache",
+        "kv compression",
+        "llm inference",
+        "prefix caching"
+      ],
+      "systems": [
+        "compression",
+        "quantization"
+      ]
+    },
+    "materialized_at": "2026-10-03",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "902acda65c1064606ce4eade17951ce238a82dda9c274e0011712744e6e1c6c1",
+      "notification_id": "paper:2609.30854v1:ko-en",
+      "sent_at": "2026-10-03T00:28:29.799060+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-30854v1/",
+        "https://jaehun.me/en/posts/paper-2609-30854v1/"
+      ]
+    },
+    "score": 0.5448,
+    "slug": "paper-2609-30854v1",
+    "status": "materialized",
+    "title": "The KV Cache Is the New Memory Wall",
+    "version": "v1"
+  },
+  "2609.31093": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "pdf_pages": 0,
+      "tables": 5,
+      "warnings": []
+    },
+    "categories": [
+      "cs.LG"
+    ],
+    "draft_path": "content/posts/2026-09-29-paper-2609.31093v1.md",
+    "failures": 2,
+    "first_seen": "2026-09-29",
+    "matched": {
+      "adjacent": [
+        "attention"
+      ],
+      "core": [
+        "sparse attention"
+      ],
+      "named_systems": [
+        "triton"
+      ],
+      "weak": [
+        "efficient",
+        "scaling"
+      ]
+    },
+    "materialized_at": "2026-09-29",
+    "notification": {
+      "abandoned_at": "2026-09-30T03:48:20.136717+00:00",
+      "attempts": 20,
+      "error_category": "publication-missing",
+      "notification_id": "paper:2609.31093v1:ko-en",
+      "status": "notify-abandoned",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-31093v1/",
+        "https://jaehun.me/en/posts/paper-2609-31093v1/"
+      ]
+    },
+    "quality": {
+      "scope": "structure-and-evidence-presence",
+      "status": "passed",
+      "version": 1
+    },
+    "score": 0.5945,
+    "slug": "paper-2609-31093v1",
+    "status": "summarized",
+    "summarized_at": "2026-10-19",
+    "summary_cost_usd": 0.06386556,
+    "summary_model": "opencode-go/deepseek-v4-pro",
+    "title": "Block Sparse Attention with Log-Linear Complexity",
+    "translation": {
+      "completed_at": "2026-10-19",
+      "cost_usd": 0.011648117999999999,
+      "model": "opencode-go/deepseek-v4.1-flash",
+      "status": "completed"
+    },
+    "version": "v1"
+  },
+  "2609.32259": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.32259/newintro.webp",
+        "/assets/images/papers/2609.32259/intro-verified-diagnostics.webp",
+        "/assets/images/papers/2609.32259/overview.webp",
+        "/assets/images/papers/2609.32259/heterofold-hotpot-motivation-combined.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-10-05-paper-2609.32259.md",
+    "failures": 0,
+    "first_seen": "2026-10-05",
+    "matched": {
+      "adjacent": [
+        "cache",
+        "long context"
+      ],
+      "core": [
+        "kv cache",
+        "prefill"
+      ],
+      "weak": [
+        "efficient",
+        "llm"
+      ]
+    },
+    "materialized_at": "2026-10-05",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "85d0fe315a92d71a12dc5569a56f0c18e1d67251502ed3280a3a077d3bccf1ab",
+      "notification_id": "paper:2609.32259:ko-en",
+      "sent_at": "2026-10-05T00:27:57.509558+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-32259/",
+        "https://jaehun.me/en/posts/paper-2609-32259/"
+      ]
+    },
+    "score": 0.5691,
+    "slug": "paper-2609-32259",
+    "status": "materialized",
+    "title": "Prefill-Free Cross-Family KV Cache Transfer for Heterogeneous Multi-Agent LLMs"
+  },
+  "2609.32712": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.32712/teaser-flow-712a89d1.webp",
+        "/assets/images/papers/2609.32712/operator-fidelity-7c69c3a7.webp",
+        "/assets/images/papers/2609.32712/associative-recall-1311c868.webp",
+        "/assets/images/papers/2609.32712/latency-memory-3fbb04e7.webp",
+        "/assets/images/papers/2609.32712/scaling-laws-flops-db1001a0.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "pdf_pages": 0,
+      "tables": 8,
+      "warnings": []
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-30-paper-2609.32712.md",
+    "failures": 0,
+    "first_seen": "2026-09-30",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "decoding",
+        "latency",
+        "long context"
+      ],
+      "systems": [
+        "fused attention",
+        "tensor parallelism"
+      ],
+      "weak": [
+        "scaling"
+      ]
+    },
+    "materialized_at": "2026-09-30",
+    "notification": {
+      "abandoned_at": "2026-09-30T05:30:19.930962+00:00",
+      "attempts": 20,
+      "error_category": "publication-missing",
+      "notification_id": "paper:2609.32712:ko-en",
+      "status": "notify-abandoned",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-32712/",
+        "https://jaehun.me/en/posts/paper-2609-32712/"
+      ]
+    },
+    "quality": {
+      "scope": "structure-and-evidence-presence",
+      "status": "passed",
+      "version": 1
+    },
+    "score": 0.6376,
+    "slug": "paper-2609-32712",
+    "status": "summarized",
+    "summarized_at": "2026-10-19",
+    "summary_cost_usd": 0.0835164,
+    "summary_model": "opencode-go/deepseek-v4-pro",
+    "title": "MassAlloc Attention: Let Attention Allocate Its Own Compute",
+    "translation": {
+      "completed_at": "2026-10-19",
+      "cost_usd": 0.043313238000000004,
+      "model": "opencode-go/deepseek-v4.1-flash",
+      "status": "completed"
+    }
+  },
+  "2609.34606": {
+    "assets": {
+      "figures": [],
+      "license": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-09-30-paper-2609.34606.md",
+    "failures": 0,
+    "first_seen": "2026-09-30",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "autoregressive",
+        "cache",
+        "latency"
+      ],
+      "core": [
+        "kv cache",
+        "sparse attention"
+      ],
+      "systems": [
+        "gpu memory"
+      ],
+      "weak": [
+        "efficiency",
+        "efficient"
+      ]
+    },
+    "materialized_at": "2026-09-30",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "89b49f237da3c9fb0d36fef07f6d5e6c4aa14799138b6d4ff0950db5255d2a15",
+      "notification_id": "paper:2609.34606:ko-en",
+      "sent_at": "2026-09-30T03:48:50.595059+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-34606/",
+        "https://jaehun.me/en/posts/paper-2609-34606/"
+      ]
+    },
+    "score": 0.6164,
+    "slug": "paper-2609-34606",
+    "status": "materialized",
+    "title": "WorldAttention: An Efficient Attention Architecture for Interactive Video World Models"
+  },
+  "2609.35259": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.35259/02-full-kl-final-metrics.webp",
+        "/assets/images/papers/2609.35259/05-countdown-learning-rate-effects.webp",
+        "/assets/images/papers/2609.35259/13-contrastive-lambda-three-seed-main-solid.webp",
+        "/assets/images/papers/2609.35259/average-probability-vs-lambda.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 6
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-10-04-paper-2609.35259.md",
+    "failures": 0,
+    "first_seen": "2026-10-04",
+    "matched": {
+      "adjacent": [
+        "distillation"
+      ],
+      "systems": [
+        "sparsity"
+      ]
+    },
+    "materialized_at": "2026-10-04",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "c73dbdc91a4ee987da9e3cbcbff8aecc235788526937edaa807a55b112844e7d",
+      "notification_id": "paper:2609.35259:ko-en",
+      "sent_at": "2026-10-04T00:26:52.267035+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-35259/",
+        "https://jaehun.me/en/posts/paper-2609-35259/"
+      ]
+    },
+    "score": 0.5525,
+    "slug": "paper-2609-35259",
+    "status": "materialized",
+    "title": "On-Policy or Off-Policy Learning? A Systematic Study of Distillation Dynamics"
+  },
+  "2609.35263": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 8
+    },
+    "categories": [
+      "cs.DC",
+      "cs.AI"
+    ],
+    "draft_path": "content/posts/2026-10-02-paper-2609.35263v1.md",
+    "failures": 0,
+    "first_seen": "2026-10-02",
+    "matched": {
+      "adjacent": [
+        "cache",
+        "throughput"
+      ],
+      "core": [
+        "prefill"
+      ],
+      "named_systems": [
+        "sglang",
+        "tensorrt",
+        "vllm"
+      ],
+      "systems": [
+        "overlapping",
+        "pipeline parallelism",
+        "scheduling"
+      ],
+      "weak": [
+        "efficient",
+        "llm"
+      ]
+    },
+    "materialized_at": "2026-10-02",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "72ff064f20a2b92084208a0d55b7b3c7102b62b6af87630dbdb00bea1f6d3c3a",
+      "notification_id": "paper:2609.35263v1:ko-en",
+      "sent_at": "2026-10-02T00:29:24.520552+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-35263v1/",
+        "https://jaehun.me/en/posts/paper-2609-35263v1/"
+      ]
+    },
+    "score": 0.5466,
+    "slug": "paper-2609-35263v1",
+    "status": "materialized",
+    "title": "WavePP: High-Throughput Pipeline Parallel LLM Prefill under Prefix Reuse",
+    "version": "v1"
+  },
+  "2609.36322": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2609.36322/group-random-seed-replication.webp",
+        "/assets/images/papers/2609.36322/group-native-kv-head-count.webp",
+        "/assets/images/papers/2609.36322/group-compression-geometry.webp",
+        "/assets/images/papers/2609.36322/group-compression-operator.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-10-01-paper-2609.36322.md",
+    "failures": 0,
+    "first_seen": "2026-10-01",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "cache",
+        "long context"
+      ],
+      "core": [
+        "cache compression",
+        "kv cache",
+        "kv compression"
+      ],
+      "systems": [
+        "compression"
+      ]
+    },
+    "materialized_at": "2026-10-01",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "ba6602ca5207a55b6fad4cf292975aef83bd3e4589a19605b9a3092766d4a6e5",
+      "notification_id": "paper:2609.36322:ko-en",
+      "sent_at": "2026-10-01T00:26:24.839461+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2609-36322/",
+        "https://jaehun.me/en/posts/paper-2609-36322/"
+      ]
+    },
+    "score": 0.6754,
+    "slug": "paper-2609-36322",
+    "status": "materialized",
+    "title": "Periodic Weak Spots: Phase Sensitivity from Chunked KV-Cache Compression"
+  },
+  "2610.02953": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 8
+    },
+    "categories": [
+      "cs.LG"
+    ],
+    "draft_path": "content/posts/2026-10-07-paper-2610.02953v1.md",
+    "failures": 0,
+    "first_seen": "2026-10-07",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "cache",
+        "decoding",
+        "latency",
+        "long context"
+      ],
+      "core": [
+        "cache compression",
+        "kv cache",
+        "llm serving"
+      ],
+      "systems": [
+        "compression"
+      ],
+      "weak": [
+        "efficiency"
+      ]
+    },
+    "materialized_at": "2026-10-07",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "8278a49f409cf3d75489b7069e733586872968962c8b7e27dc36db8e1a6f5b6f",
+      "notification_id": "paper:2610.02953v1:ko-en",
+      "sent_at": "2026-10-07T00:30:58.899982+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2610-02953v1/",
+        "https://jaehun.me/en/posts/paper-2610-02953v1/"
+      ]
+    },
+    "score": 0.5448,
+    "slug": "paper-2610-02953v1",
+    "status": "materialized",
+    "title": "SlimKV: Joint Token-Feature KV Cache Compression with Reconstruction-Free Beacon Attention",
+    "version": "v1"
+  },
+  "2610.03027": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2610.03027/motivation-overview.webp",
+        "/assets/images/papers/2610.03027/method-overview.webp",
+        "/assets/images/papers/2610.03027/method-validation.webp",
+        "/assets/images/papers/2610.03027/discussion-efficiency-analysis.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      "cs.LG",
+      "cs.AI",
+      "cs.CL"
+    ],
+    "draft_path": "content/posts/2026-10-06-paper-2610.03027v1.md",
+    "failures": 0,
+    "first_seen": "2026-10-06",
+    "matched": {
+      "adjacent": [
+        "cache",
+        "long context",
+        "throughput"
+      ],
+      "core": [
+        "cache compression",
+        "kv cache",
+        "llm inference"
+      ],
+      "named_systems": [
+        "sglang"
+      ],
+      "systems": [
+        "compression",
+        "quantization"
+      ]
+    },
+    "materialized_at": "2026-10-06",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "fff7776f9bda87fad874b8b54799e156bde2814c63474dcfc1999ad7d5440b52",
+      "notification_id": "paper:2610.03027v1:ko-en",
+      "sent_at": "2026-10-06T00:26:09.955745+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2610-03027v1/",
+        "https://jaehun.me/en/posts/paper-2610-03027v1/"
+      ]
+    },
+    "score": 0.5463,
+    "slug": "paper-2610-03027v1",
+    "status": "materialized",
+    "title": "Tailoring the Quantization Space for 1-Bit KV Cache Compression",
+    "version": "v1"
+  },
+  "2610.05739": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2610.05739/indoor-005-seed47-homepage-compact.webp",
+        "/assets/images/papers/2610.05739/gdn-forgetting.webp",
+        "/assets/images/papers/2610.05739/hla-wm-method.webp",
+        "/assets/images/papers/2610.05739/gdn-temporal-state-memory-scaling.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-10-15-paper-2610.05739.md",
+    "failures": 0,
+    "first_seen": "2026-10-15",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "autoregressive",
+        "cache",
+        "throughput"
+      ],
+      "core": [
+        "kv cache"
+      ],
+      "systems": [
+        "linear attention"
+      ],
+      "weak": [
+        "efficiency"
+      ]
+    },
+    "materialized_at": "2026-10-15",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "e51e9ebae77b3405bafcf0b5bace55e2de73dbd947ae2b22b33bb4d2c88e0086",
+      "notification_id": "paper:2610.05739:ko-en",
+      "sent_at": "2026-10-15T00:26:54.217978+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2610-05739/",
+        "https://jaehun.me/en/posts/paper-2610-05739/"
+      ]
+    },
+    "score": 0.5493,
+    "slug": "paper-2610-05739",
+    "status": "materialized",
+    "title": "HLA-WM: Hybrid Linear Attention for Long-Horizon Video World Models"
+  },
+  "2610.06801": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2610.06801/other-visual.webp",
+        "/assets/images/papers/2610.06801/teaser.webp",
+        "/assets/images/papers/2610.06801/oracle-combined.webp",
+        "/assets/images/papers/2610.06801/sources-of-gap-visual.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-10-11-paper-2610.06801.md",
+    "failures": 0,
+    "first_seen": "2026-10-11",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "latency"
+      ],
+      "core": [
+        "sparse attention"
+      ],
+      "systems": [
+        "sparsity"
+      ],
+      "weak": [
+        "efficient"
+      ]
+    },
+    "materialized_at": "2026-10-11",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "e93448c709945fad57c97ca50c7e04f2e5a326cbba64bf799f47a0b23a2a2c40",
+      "notification_id": "paper:2610.06801:ko-en",
+      "sent_at": "2026-10-11T00:27:09.503916+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2610-06801/",
+        "https://jaehun.me/en/posts/paper-2610-06801/"
+      ]
+    },
+    "score": 0.5724,
+    "slug": "paper-2610-06801",
+    "status": "materialized",
+    "title": "MC-Sparse: Deconstructing and Closing the Dense-Sparse Attention Gap in Diffusion Transformers"
+  },
+  "2610.06833": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2610.06833/m-entropy-ablation.webp",
+        "/assets/images/papers/2610.06833/prior-training-loss.webp",
+        "/assets/images/papers/2610.06833/fixed-pln-learned-distributions.webp",
+        "/assets/images/papers/2610.06833/pd-scaling-comparison.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 3
+    },
+    "categories": [
+      "cs.LG"
+    ],
+    "draft_path": "content/posts/2026-10-13-paper-2610.06833v1.md",
+    "failures": 0,
+    "first_seen": "2026-10-13",
+    "matched": {
+      "adjacent": [
+        "cache",
+        "decoding"
+      ],
+      "core": [
+        "kv cache",
+        "prefill"
+      ]
+    },
+    "materialized_at": "2026-10-13",
+    "notification": {
+      "attempts": 3,
+      "message_sha256": "18bff7d256242faf587d2c755b3dd7db62938a9b96696d4254d2f3335bca0c85",
+      "notification_id": "paper:2610.06833v1:ko-en",
+      "sent_at": "2026-10-13T00:28:29.198072+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2610-06833v1/",
+        "https://jaehun.me/en/posts/paper-2610-06833v1/"
+      ]
+    },
+    "score": 0.5622,
+    "slug": "paper-2610-06833v1",
+    "status": "materialized",
+    "title": "Towards Looped Models Done Right, Part II: Rethinking at Fixed Points",
+    "version": "v1"
+  },
+  "2610.07767": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 4
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-10-08-paper-2610.07767.md",
+    "failures": 0,
+    "first_seen": "2026-10-08",
+    "matched": {
+      "adjacent": [
+        "mixture-of-experts",
+        "moe"
+      ],
+      "core": [
+        "kv cache"
+      ],
+      "systems": [
+        "fp4",
+        "low-precision",
+        "quantization"
+      ],
+      "weak": [
+        "efficient"
+      ]
+    },
+    "materialized_at": "2026-10-08",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "96180e1c18b412493e4679c12babfe6e8b304aef00b634c1e593fd785d453a7a",
+      "notification_id": "paper:2610.07767:ko-en",
+      "sent_at": "2026-10-08T00:25:20.181880+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2610-07767/",
+        "https://jaehun.me/en/posts/paper-2610-07767/"
+      ]
+    },
+    "score": 0.66,
+    "slug": "paper-2610-07767",
+    "status": "materialized",
+    "title": "TRACE: Rollout-Guided Quantization-Aware Training for FP4 Reinforcement Learning of MoE Language Models"
+  },
+  "2610.10114": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 8
+    },
+    "categories": [
+      "cs.CL"
+    ],
+    "draft_path": "content/posts/2026-10-09-paper-2610.10114v1.md",
+    "failures": 0,
+    "first_seen": "2026-10-09",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "long context"
+      ],
+      "systems": [
+        "linear attention"
+      ],
+      "weak": [
+        "efficiency"
+      ]
+    },
+    "materialized_at": "2026-10-09",
+    "notification": {
+      "attempts": 3,
+      "message_sha256": "22b5c8e47eb08fb24c0609466e1f46af6387de21a94d5b7a5fd87f5863ac6d01",
+      "notification_id": "paper:2610.10114v1:ko-en",
+      "sent_at": "2026-10-09T00:27:31.695129+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2610-10114v1/",
+        "https://jaehun.me/en/posts/paper-2610-10114v1/"
+      ]
+    },
+    "score": 0.5803,
+    "slug": "paper-2610-10114v1",
+    "status": "materialized",
+    "title": "Mechanics of Long-Context Hybrid Models Part 1.1: From Hybrid Attention to Hybrid Position",
+    "version": "v1"
+  },
+  "2610.12242": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2610.12242/tradeoff.webp",
+        "/assets/images/papers/2610.12242/routing-levels.webp",
+        "/assets/images/papers/2610.12242/architecture.webp",
+        "/assets/images/papers/2610.12242/schedule.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      "cs.CL"
+    ],
+    "draft_path": "content/posts/2026-10-10-paper-2610.12242v1.md",
+    "failures": 0,
+    "first_seen": "2026-10-10",
+    "matched": {
+      "adjacent": [
+        "batching",
+        "decoding",
+        "throughput"
+      ],
+      "core": [
+        "llm inference",
+        "llm serving"
+      ],
+      "weak": [
+        "efficiency",
+        "efficient",
+        "large language model",
+        "llm"
+      ]
+    },
+    "materialized_at": "2026-10-10",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "b2aa1a0e0ca3fce93aaecb2c94466f6b40fcea25786a28ddf468138cfc0496c5",
+      "notification_id": "paper:2610.12242v1:ko-en",
+      "sent_at": "2026-10-10T00:28:25.362111+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2610-12242v1/",
+        "https://jaehun.me/en/posts/paper-2610-12242v1/"
+      ]
+    },
+    "score": 0.7546,
+    "slug": "paper-2610-12242v1",
+    "status": "materialized",
+    "title": "TokenRouter: Efficient Serving System for Token-Level LLM Routing",
+    "version": "v1"
+  },
+  "2610.12327": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "tables": 6
+    },
+    "categories": [
+      "cs.LG",
+      "cs.CL"
+    ],
+    "draft_path": "content/posts/2026-10-12-paper-2610.12327v1.md",
+    "failures": 0,
+    "first_seen": "2026-10-12",
+    "matched": {
+      "adjacent": [
+        "autoregressive",
+        "decoding",
+        "kernel",
+        "latency"
+      ],
+      "core": [
+        "llm inference",
+        "prefill"
+      ],
+      "systems": [
+        "pruning"
+      ],
+      "weak": [
+        "efficient",
+        "large language model",
+        "llm"
+      ]
+    },
+    "materialized_at": "2026-10-12",
+    "notification": {
+      "attempts": 4,
+      "message_sha256": "5317ff06d8d5c9101f48b8001bb584e961b8a431a853a0078d7739b9dfc191c2",
+      "notification_id": "paper:2610.12327v1:ko-en",
+      "sent_at": "2026-10-12T00:25:25.096085+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2610-12327v1/",
+        "https://jaehun.me/en/posts/paper-2610-12327v1/"
+      ]
+    },
+    "score": 0.5737,
+    "slug": "paper-2610-12327v1",
+    "status": "materialized",
+    "title": "SparseDecoding: Decoding-Aware Pruning for Accurate and Efficient LLM Inference",
+    "version": "v1"
+  },
+  "2610.12570": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2610.12570/coverage.webp",
+        "/assets/images/papers/2610.12570/q8b-conc-bars.webp",
+        "/assets/images/papers/2610.12570/concurrency-gain.webp",
+        "/assets/images/papers/2610.12570/q4b-conc-bars.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "tables": 8
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-10-14-paper-2610.12570.md",
+    "failures": 0,
+    "first_seen": "2026-10-14",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "autoregressive",
+        "decoding",
+        "throughput"
+      ],
+      "core": [
+        "speculative decoding"
+      ],
+      "weak": [
+        "acceleration",
+        "large language model"
+      ]
+    },
+    "materialized_at": "2026-10-14",
+    "notification": {
+      "attempts": 3,
+      "message_sha256": "07ee9d0d4c44336dc30a35e2aac657169da050080baa67cd1059f3bccdcade68",
+      "notification_id": "paper:2610.12570:ko-en",
+      "sent_at": "2026-10-14T00:26:01.093025+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2610-12570/",
+        "https://jaehun.me/en/posts/paper-2610-12570/"
+      ]
+    },
+    "score": 0.5599,
+    "slug": "paper-2610-12570",
+    "status": "materialized",
+    "title": "Contextual Correction of Parallel Draftsfor Speculative Decoding"
+  },
+  "2610.17901": {
+    "assets": {
+      "figures": [],
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "pdf_pages": 0,
+      "tables": 8,
+      "warnings": []
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-10-20-paper-2610.17901.md",
+    "failures": 0,
+    "first_seen": "2026-10-20",
+    "matched": {
+      "adjacent": [
+        "attention",
+        "kernel",
+        "long context",
+        "moe",
+        "throughput"
+      ],
+      "core": [
+        "flashattention"
+      ],
+      "systems": [
+        "communication overlap",
+        "context parallelism",
+        "pruning",
+        "sparsity"
+      ],
+      "weak": [
+        "efficiency",
+        "efficient"
+      ]
+    },
+    "materialized_at": "2026-10-20",
+    "quality": {
+      "scope": "structure-and-evidence-presence",
+      "status": "passed",
+      "version": 1
+    },
+    "revision": {
+      "rounds": [
+        {
+          "cost_usd": 0,
+          "independent_of_writer": true,
+          "model": "opencode/glm-5.3-flash-free",
+          "output": "2610.17901-revision-1.md",
+          "round": 1
+        },
+        {
+          "cost_usd": null,
+          "independent_of_writer": true,
+          "model": "opencode/minimax-m3.1-flash-free",
+          "output": "2610.17901-revision-2.md",
+          "round": 2
+        },
+        {
+          "cost_usd": 0,
+          "independent_of_writer": true,
+          "model": "opencode/deepseek-v4.1-flash-free",
+          "output": "2610.17901-revision-3.md",
+          "round": 3
+        }
+      ],
+      "status": "passed"
+    },
+    "score": 0.5792,
+    "slug": "paper-2610-17901",
+    "status": "summarized",
+    "summarized_at": "2026-10-20",
+    "summary_cost_usd": 0.108798052,
+    "summary_model": "opencode-go/deepseek-v4-pro",
+    "title": "FlashMask-3: Efficient and Expressive Mask-Aware Distributed Attention",
+    "translation": {
+      "completed_at": "2026-10-20",
+      "cost_usd": 0.3425284,
+      "model": "opencode-go/gemini-4-argon-contributor",
+      "status": "completed"
+    }
+  },
+  "2610.20556": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2610.20556/fig1-concept-v2-d4b9ade7.webp",
+        "/assets/images/papers/2610.20556/final-0ffd0899.webp",
+        "/assets/images/papers/2610.20556/final-3df94d99.webp",
+        "/assets/images/papers/2610.20556/final-71f9a6ae.webp",
+        "/assets/images/papers/2610.20556/pdf-page-005.webp",
+        "/assets/images/papers/2610.20556/pdf-page-006.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "pdf_pages": 2,
+      "tables": 3,
+      "warnings": []
+    },
+    "categories": [
+      null
+    ],
+    "draft_path": "content/posts/2026-10-22-paper-2610.20556.md",
+    "failures": 2,
+    "first_seen": "2026-10-22",
+    "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode/deepseek-v4.1-flash-free: opencode 출력에 본문 text 이벤트가 없습니다. 진단: 2610.20556-revision-3-4533b44b9def46b38ec619c4d8467c9d.json",
+    "matched": {
+      "adjacent": [
+        "latency"
+      ],
+      "core": [
+        "speculative sampling"
+      ],
+      "weak": [
+        "optimization"
+      ]
+    },
+    "materialized_at": "2026-10-22",
+    "score": 0.6271,
+    "slug": "paper-2610-20556",
+    "status": "failed",
+    "title": "Speculative Sampling in Interactive Video Generation"
+  },
+  "2610.21463": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2610.21463/fig1-overview-cf45ccc8.webp",
+        "/assets/images/papers/2610.21463/fig2-pareto-37b58824.webp",
+        "/assets/images/papers/2610.21463/fig5-phase-719ce858.webp",
+        "/assets/images/papers/2610.21463/fig3-ablation-94a6b520.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "pdf_pages": 0,
+      "tables": 8,
+      "warnings": []
+    },
+    "categories": [
+      "cs.CL",
+      "cs.AI",
+      "cs.LG"
+    ],
+    "draft_path": "content/posts/2026-10-20-paper-2610.21463v1.md",
+    "failures": 0,
+    "first_seen": "2026-10-20",
+    "matched": {
+      "adjacent": [
+        "autoregressive",
+        "decoding",
+        "latency"
+      ],
+      "core": [
+        "prefill"
+      ],
+      "weak": [
+        "large language model"
+      ]
+    },
+    "materialized_at": "2026-10-20",
+    "quality": {
+      "scope": "structure-and-evidence-presence",
+      "status": "passed",
+      "version": 1
+    },
+    "revision": {
+      "rounds": [
+        {
+          "cost_usd": 0,
+          "model": "opencode/beam-free",
+          "output": "2610.21463-revision-1.md",
+          "round": 1
+        },
+        {
+          "cost_usd": 0,
+          "model": "opencode/beam-free",
+          "output": "2610.21463-revision-2.md",
+          "round": 2
+        }
+      ],
+      "source": "validated draft recovered after generation timeout",
+      "status": "passed"
+    },
+    "score": 0.5914,
+    "slug": "paper-2610-21463v1",
+    "status": "summarized",
+    "summarized_at": "2026-10-20",
+    "summary_cost_usd": 0,
+    "summary_model": "opencode/deepseek-v4.1-flash-free",
+    "title": "Trajectory-Level Speculation with Semantic Verification for Tool-Using Agents",
+    "translation": {
+      "completed_at": "2026-10-21",
+      "cost_usd": 0.022489133999999997,
+      "model": "opencode-go/deepseek-v4.1-flash",
+      "status": "completed"
+    },
+    "version": "v1"
+  },
+  "2610.23787": {
+    "assets": {
+      "figures": [
+        "/assets/images/papers/2610.23787/agent-bb8b8580.webp",
+        "/assets/images/papers/2610.23787/background2-7e391277.webp",
+        "/assets/images/papers/2610.23787/overview2-beb8d083.webp",
+        "/assets/images/papers/2610.23787/training-fd7dc2b7.webp",
+        "/assets/images/papers/2610.23787/ablation-0d71c141.webp"
+      ],
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "pdf_pages": 0,
+      "tables": 5,
+      "warnings": []
+    },
+    "categories": [
+      "cs.CL"
+    ],
+    "draft_path": "content/posts/2026-10-20-paper-2610.23787v1.md",
+    "failures": 0,
+    "first_seen": "2026-10-20",
+    "matched": {
+      "adjacent": [
+        "decoding",
+        "long context"
+      ],
+      "core": [
+        "kv cache",
+        "speculative decoding"
+      ],
+      "weak": [
+        "large language model",
+        "llm"
+      ]
+    },
+    "materialized_at": "2026-10-20",
+    "notification": {
+      "attempts": 5,
+      "message_sha256": "1dce1c5eb3924d6f9fd95ab78826a67ed4ccdd36e2fabd4971cd646533988b97",
+      "notification_id": "paper:2610.23787v1:ko-en",
+      "sent_at": "2026-10-20T00:29:23.007072+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2610-23787v1/",
+        "https://jaehun.me/en/posts/paper-2610-23787v1/"
+      ]
+    },
+    "quality": {
+      "scope": "structure-and-evidence-presence",
+      "status": "passed",
+      "version": 1
+    },
+    "score": 0.6542,
+    "slug": "paper-2610-23787v1",
+    "status": "summarized",
+    "summarized_at": "2026-10-20",
+    "summary_cost_usd": 0.117635408,
+    "summary_model": "opencode-go/deepseek-v4-pro",
+    "title": "DLite: History-free Speculative Decoding for Agentic AI",
+    "translation": {
+      "completed_at": "2026-10-20",
+      "cost_usd": 0.00913899,
+      "model": "opencode-go/deepseek-v4.1-flash",
+      "status": "completed"
+    },
+    "version": "v1"
+  },
+  "2610.26825": {
+    "assets": {
+      "figures": [],
+      "license": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "pdf_pages": 0,
+      "tables": 8,
+      "warnings": []
+    },
+    "categories": [
+      "cs.CL",
+      "cs.LG"
+    ],
+    "draft_path": "content/posts/2026-10-21-paper-2610.26825v1.md",
+    "failures": 0,
+    "first_seen": "2026-10-21",
+    "matched": {
+      "core": [
+        "kv cache"
+      ],
+      "weak": [
+        "efficient"
+      ]
+    },
+    "materialized_at": "2026-10-21",
+    "notification": {
+      "attempts": 14,
+      "message_sha256": "a1f27ebd896532d49ba12fcefa167b8a770cda6339163b02968977a1e4071ab0",
+      "notification_id": "paper:2610.26825v1:ko-en",
+      "sent_at": "2026-10-21T01:22:18.551706+00:00",
+      "status": "sent",
+      "urls": [
+        "https://jaehun.me/posts/paper-2610-26825v1/",
+        "https://jaehun.me/en/posts/paper-2610-26825v1/"
+      ]
+    },
+    "quality": {
+      "scope": "structure-and-evidence-presence",
+      "status": "passed",
+      "version": 1
+    },
+    "revision": {
+      "rounds": [
+        {
+          "cost_usd": 0,
+          "independent_of_writer": true,
+          "model": "opencode/glm-5.3-flash-free",
+          "output": "2610.26825-revision-1.md",
+          "round": 1
+        },
+        {
+          "cost_usd": 0,
+          "independent_of_writer": true,
+          "model": "opencode/minimax-m3.1-flash-free",
+          "output": "2610.26825-revision-2.md",
+          "round": 2
+        },
+        {
+          "cost_usd": 0,
+          "independent_of_writer": true,
+          "model": "opencode/deepseek-v4.1-flash-free",
+          "output": "2610.26825-revision-3.md",
+          "round": 3
+        }
+      ],
+      "status": "passed"
+    },
+    "score": 0.6926,
+    "slug": "paper-2610-26825v1",
+    "status": "summarized",
+    "summarized_at": "2026-10-21",
+    "summary_cost_usd": 0.085168512,
+    "summary_model": "opencode-go/deepseek-v4-pro",
+    "title": "MemT-1.0: Towards Memory-Native Evolution",
+    "translation": {
+      "completed_at": "2026-10-21",
+      "cost_usd": 0.013109058,
+      "model": "opencode-go/deepseek-v4.1-flash",
+      "status": "completed"
+    },
+    "version": "v1"
   }
- },
- "2610.20556": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2610.20556/fig1-concept-v2-d4b9ade7.webp",
-    "/assets/images/papers/2610.20556/final-0ffd0899.webp",
-    "/assets/images/papers/2610.20556/final-3df94d99.webp",
-    "/assets/images/papers/2610.20556/final-71f9a6ae.webp",
-    "/assets/images/papers/2610.20556/pdf-page-005.webp",
-    "/assets/images/papers/2610.20556/pdf-page-006.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "pdf_pages": 2,
-   "tables": 3,
-   "warnings": []
-  },
-  "categories": [
-   null
-  ],
-  "draft_path": "content/posts/2026-10-22-paper-2610.20556.md",
-  "failures": 3,
-  "first_seen": "2026-10-22",
-  "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode/deepseek-v4.1-flash-free: opencode 출력에 본문 text 이벤트가 없습니다. 진단: 2610.20556-revision-3-4533b44b9def46b38ec619c4d8467c9d.json",
-  "matched": {
-   "adjacent": [
-    "latency"
-   ],
-   "core": [
-    "speculative sampling"
-   ],
-   "weak": [
-    "optimization"
-   ]
-  },
-  "materialized_at": "2026-10-22",
-  "score": 0.6271,
-  "slug": "paper-2610-20556",
-  "status": "failed",
-  "title": "Speculative Sampling in Interactive Video Generation"
- },
- "2610.21463": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2610.21463/fig1-overview-cf45ccc8.webp",
-    "/assets/images/papers/2610.21463/fig2-pareto-37b58824.webp",
-    "/assets/images/papers/2610.21463/fig5-phase-719ce858.webp",
-    "/assets/images/papers/2610.21463/fig3-ablation-94a6b520.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "pdf_pages": 0,
-   "tables": 8,
-   "warnings": []
-  },
-  "categories": [
-   "cs.CL",
-   "cs.AI",
-   "cs.LG"
-  ],
-  "draft_path": "content/posts/2026-10-20-paper-2610.21463v1.md",
-  "failures": 0,
-  "first_seen": "2026-10-20",
-  "matched": {
-   "adjacent": [
-    "autoregressive",
-    "decoding",
-    "latency"
-   ],
-   "core": [
-    "prefill"
-   ],
-   "weak": [
-    "large language model"
-   ]
-  },
-  "materialized_at": "2026-10-20",
-  "quality": {
-   "scope": "structure-and-evidence-presence",
-   "status": "passed",
-   "version": 1
-  },
-  "revision": {
-   "rounds": [
-    {
-     "cost_usd": 0,
-     "model": "opencode/beam-free",
-     "output": "2610.21463-revision-1.md",
-     "round": 1
-    },
-    {
-     "cost_usd": 0,
-     "model": "opencode/beam-free",
-     "output": "2610.21463-revision-2.md",
-     "round": 2
-    }
-   ],
-   "source": "validated draft recovered after generation timeout",
-   "status": "passed"
-  },
-  "score": 0.5914,
-  "slug": "paper-2610-21463v1",
-  "status": "summarized",
-  "summarized_at": "2026-10-20",
-  "summary_cost_usd": 0,
-  "summary_model": "opencode/deepseek-v4.1-flash-free",
-  "title": "Trajectory-Level Speculation with Semantic Verification for Tool-Using Agents",
-  "translation": {
-   "completed_at": "2026-10-21",
-   "cost_usd": 0.022489133999999997,
-   "model": "opencode-go/deepseek-v4.1-flash",
-   "status": "completed"
-  },
-  "version": "v1"
- },
- "2610.23787": {
-  "assets": {
-   "figures": [
-    "/assets/images/papers/2610.23787/agent-bb8b8580.webp",
-    "/assets/images/papers/2610.23787/background2-7e391277.webp",
-    "/assets/images/papers/2610.23787/overview2-beb8d083.webp",
-    "/assets/images/papers/2610.23787/training-fd7dc2b7.webp",
-    "/assets/images/papers/2610.23787/ablation-0d71c141.webp"
-   ],
-   "license": "http://creativecommons.org/licenses/by/4.0/",
-   "pdf_pages": 0,
-   "tables": 5,
-   "warnings": []
-  },
-  "categories": [
-   "cs.CL"
-  ],
-  "draft_path": "content/posts/2026-10-20-paper-2610.23787v1.md",
-  "failures": 0,
-  "first_seen": "2026-10-20",
-  "matched": {
-   "adjacent": [
-    "decoding",
-    "long context"
-   ],
-   "core": [
-    "kv cache",
-    "speculative decoding"
-   ],
-   "weak": [
-    "large language model",
-    "llm"
-   ]
-  },
-  "materialized_at": "2026-10-20",
-  "notification": {
-   "attempts": 5,
-   "message_sha256": "1dce1c5eb3924d6f9fd95ab78826a67ed4ccdd36e2fabd4971cd646533988b97",
-   "notification_id": "paper:2610.23787v1:ko-en",
-   "sent_at": "2026-10-20T00:29:23.007072+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2610-23787v1/",
-    "https://jaehun.me/en/posts/paper-2610-23787v1/"
-   ]
-  },
-  "quality": {
-   "scope": "structure-and-evidence-presence",
-   "status": "passed",
-   "version": 1
-  },
-  "score": 0.6542,
-  "slug": "paper-2610-23787v1",
-  "status": "summarized",
-  "summarized_at": "2026-10-20",
-  "summary_cost_usd": 0.117635408,
-  "summary_model": "opencode-go/deepseek-v4-pro",
-  "title": "DLite: History-free Speculative Decoding for Agentic AI",
-  "translation": {
-   "completed_at": "2026-10-20",
-   "cost_usd": 0.00913899,
-   "model": "opencode-go/deepseek-v4.1-flash",
-   "status": "completed"
-  },
-  "version": "v1"
- },
- "2610.26825": {
-  "assets": {
-   "figures": [],
-   "license": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
-   "pdf_pages": 0,
-   "tables": 8,
-   "warnings": []
-  },
-  "categories": [
-   "cs.CL",
-   "cs.LG"
-  ],
-  "draft_path": "content/posts/2026-10-21-paper-2610.26825v1.md",
-  "failures": 0,
-  "first_seen": "2026-10-21",
-  "matched": {
-   "core": [
-    "kv cache"
-   ],
-   "weak": [
-    "efficient"
-   ]
-  },
-  "materialized_at": "2026-10-21",
-  "notification": {
-   "attempts": 14,
-   "message_sha256": "a1f27ebd896532d49ba12fcefa167b8a770cda6339163b02968977a1e4071ab0",
-   "notification_id": "paper:2610.26825v1:ko-en",
-   "sent_at": "2026-10-21T01:22:18.551706+00:00",
-   "status": "sent",
-   "urls": [
-    "https://jaehun.me/posts/paper-2610-26825v1/",
-    "https://jaehun.me/en/posts/paper-2610-26825v1/"
-   ]
-  },
-  "quality": {
-   "scope": "structure-and-evidence-presence",
-   "status": "passed",
-   "version": 1
-  },
-  "revision": {
-   "rounds": [
-    {
-     "cost_usd": 0,
-     "independent_of_writer": true,
-     "model": "opencode/glm-5.3-flash-free",
-     "output": "2610.26825-revision-1.md",
-     "round": 1
-    },
-    {
-     "cost_usd": 0,
-     "independent_of_writer": true,
-     "model": "opencode/minimax-m3.1-flash-free",
-     "output": "2610.26825-revision-2.md",
-     "round": 2
-    },
-    {
-     "cost_usd": 0,
-     "independent_of_writer": true,
-     "model": "opencode/deepseek-v4.1-flash-free",
-     "output": "2610.26825-revision-3.md",
-     "round": 3
-    }
-   ],
-   "status": "passed"
-  },
-  "score": 0.6926,
-  "slug": "paper-2610-26825v1",
-  "status": "summarized",
-  "summarized_at": "2026-10-21",
-  "summary_cost_usd": 0.085168512,
-  "summary_model": "opencode-go/deepseek-v4-pro",
-  "title": "MemT-1.0: Towards Memory-Native Evolution",
-  "translation": {
-   "completed_at": "2026-10-21",
-   "cost_usd": 0.013109058,
-   "model": "opencode-go/deepseek-v4.1-flash",
-   "status": "completed"
-  },
-  "version": "v1"
- }
 }
