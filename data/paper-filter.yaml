@@ -228,7 +228,7 @@ summarize:
     models:
       - opencode/mimo-v2.6-flash-free
       - opencode/beam-free
-    # 최종 차수는 지정 모델로만 완료한다. 초고가 DeepSeek인 경우 재점검으로 기록한다.
+    # 최종 차수는 DeepSeek 우선, 실패하면 위 models의 무료 후보로 대체한다.
     final_models:
       - opencode/deepseek-v4.1-flash-free
     timeout_seconds: 600
