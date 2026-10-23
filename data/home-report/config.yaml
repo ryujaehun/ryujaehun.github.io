@@ -3,25 +3,44 @@ runtime: ~/.local/state/home-report
 signal_db: ~/workspace/naver/data/apt_signal.sqlite3
 postgres_container: infra-postgres-1
 listing_dbs:
-  - ~/workspace/naver/data/서울_매매.sqlite3
-  - ~/workspace/naver/data/분당구_아파트.sqlite3
+- ~/workspace/naver/data/서울_매매.sqlite3
+- ~/workspace/naver/data/분당구_아파트.sqlite3
 min_sample: 5
 trade_max_age_days: 45
 watch_change_pct: 3
 max_news: 12
 news_feeds:
-  - name: 연합뉴스 경제 RSS
-    url: https://www.yna.co.kr/rss/economy.xml
-  - name: Google 뉴스 서울·경기 부동산
-    url: https://news.google.com/rss/search?q=%EC%84%9C%EC%9A%B8+%EA%B2%BD%EA%B8%B0+%EB%B6%80%EB%8F%99%EC%82%B0+%EC%95%84%ED%8C%8C%ED%8A%B8+when%3A35d&hl=ko&gl=KR&ceid=KR%3Ako
+- name: 연합뉴스 경제 RSS
+  url: https://www.yna.co.kr/rss/economy.xml
+- name: Google 뉴스 서울·경기 부동산
+  url: https://news.google.com/rss/search?q=%EC%84%9C%EC%9A%B8+%EA%B2%BD%EA%B8%B0+%EB%B6%80%EB%8F%99%EC%82%B0+%EC%95%84%ED%8C%8C%ED%8A%B8+when%3A35d&hl=ko&gl=KR&ceid=KR%3Ako
 llm:
   models:
-    - opencode/deepseek-v4.1-flash-free
-    - opencode/glm-5.3-flash-free
-  timeout_seconds: 240
+  - opencode/deepseek-v4.1-flash-free
+  - opencode/glm-5.3-flash-free
+  timeout_seconds: 180
   max_attempts: 2
+  total_timeout_seconds: 1080
+  max_revision_rounds: 3
+  reviewers:
+    facts:
+    - opencode/glm-5.3-flash-free
+    - opencode/beam-free
+    reader:
+    - opencode/mimo-v2.6-flash-free
+    - opencode/nemotron-3.5-lightning-free
+  revision_models:
+  - opencode/deepseek-v4.1-flash-free
+  final_models:
+  - opencode/glm-5.3-flash-free
+  - opencode/beam-free
 publish:
   branch: main
   auto: true
 max_daily_news: 5
 metric_max_age_days: 62
+comparison_lag_days: 30
+volume_lag_days: 30
+complex_window_days: 90
+complex_min_sample: 5
+max_complex_comparisons: 10
