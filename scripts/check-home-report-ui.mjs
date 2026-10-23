@@ -1,5 +1,5 @@
 // Dependency-free smoke checks against a running Hugo build. Requires Chrome and Node 22+.
-// Usage: node scripts/check-reading-ui.mjs http://127.0.0.1:8765 [screenshot-directory]
+// Usage: node scripts/check-home-report-ui.mjs http://127.0.0.1:8765 [screenshot-directory]
 import { spawn } from 'node:child_process';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -77,6 +77,19 @@ try {
           const text=article?.textContent || '';
           const rows=article?[...article.querySelectorAll('.report-price-row')]:[];
           const samples=rows.map(e=>e.textContent.match(/거래 (\\d+) → (\\d+)건/)).filter(Boolean).map(m=>[+m[1],+m[2]]);
+          // Research is optional and selected per report; validate every displayed attribution.
+          const researchSources=[];
+          const researchHeading=article?[...article.querySelectorAll('h2')].find(h=>h.textContent.includes('참고 리포트와 해석의 범위')):null;
+          for(let node=researchHeading?.nextElementSibling;node && !['H2','HR'].includes(node.tagName);node=node.nextElementSibling){
+            if(node.tagName!=='H3')continue;
+            const attribution=node.nextElementSibling;
+            const source=attribution?[...attribution.querySelectorAll('a[href]')].find(a=>a.protocol==='https:'):null;
+            const citation=attribution?.querySelector('a[href^="#fn:"]');
+            const note=citation?document.getElementById(decodeURIComponent(citation.hash.slice(1))):null;
+            researchSources.push({organization:node.textContent.trim(),
+              valid:!!source && !!note && [...note.querySelectorAll('a[href]')].some(a=>a.href===source.href)
+                && attribution.textContent.split('·').length>=3 && /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(attribution.textContent)});
+          }
           const clips=article?[...article.querySelectorAll('.report-kpi,.report-price-row,.report-volume-row')].filter(e=>e.getBoundingClientRect().right>innerWidth+1 || e.getBoundingClientRect().left<0).length:99;
           function rgb(color){const c=document.createElement('canvas');c.width=c.height=1;const x=c.getContext('2d');x.fillStyle=color;x.fillRect(0,0,1,1);return [...x.getImageData(0,0,1,1).data].slice(0,3);}
           function lum(v){return v.map(n=>{n/=255;return n<=.04045?n/12.92:Math.pow((n+.055)/1.055,2.4)}).reduce((a,v,i)=>a+v*[.2126,.7152,.0722][i],0);}
@@ -86,7 +99,7 @@ try {
             overflow:document.documentElement.scrollWidth>innerWidth+1,
             badReferences:citations.filter(a=>!document.getElementById(decodeURIComponent(a.hash.slice(1)))).map(a=>a.hash),
             rawFootnotes:/\\[\\^\\d+\\]/.test(text),
-            research:['하나금융연구소','국토연구원','한국부동산원'].every(n=>text.includes(n)),
+            researchSources,
             minimumContrast:Math.min(...contrast),
             priceTop:article?.querySelector('.report-price-list')?.getBoundingClientRect().top+scrollY};
         })()`);
@@ -96,7 +109,8 @@ try {
         assert(result.samples.length===result.priceRows && result.samples.every(v=>Math.min(...v)>=5), 'Price cards need ample sample counts');
         assert(result.volumeRows>=0 && result.volumeRows<=8, 'Volume selection');
         assert.deepEqual(result.badReferences, [], 'All HTML citation anchors must resolve');
-        assert(!result.rawFootnotes && result.research, 'Visible citations and attributed reports');
+        assert(!result.rawFootnotes, 'Footnotes must be rendered');
+        assert(result.researchSources.every(source=>source.valid), 'Displayed research needs author, date, original URL and matching citation');
         assert(result.minimumContrast>=4.5, `Report contrast ${result.minimumContrast.toFixed(2)}`);
         if(screenshots){
           const stem=`${['daily','weekly','monthly'][number]}-${width}-${dark?'dark':'light'}`;
