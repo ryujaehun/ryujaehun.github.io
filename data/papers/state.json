@@ -2753,6 +2753,89 @@
   },
   "version": "v1"
  },
+ "2610.28559": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.28559/fused-decoding-4d8d4d65.webp",
+    "/assets/images/papers/2610.28559/selfspec-frontier-6-a5764948.webp",
+    "/assets/images/papers/2610.28559/throughput-frontier-2-76dfee5a.webp",
+    "/assets/images/papers/2610.28559/training-a38745ec.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "pdf_pages": 0,
+   "tables": 6,
+   "warnings": []
+  },
+  "categories": [
+   "cs.CL",
+   "cs.AI"
+  ],
+  "draft_path": "content/posts/2026-10-24-paper-2610.28559v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-24",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "autoregressive",
+    "decoding",
+    "throughput"
+   ],
+   "core": [
+    "prefix caching",
+    "speculative decoding"
+   ],
+   "weak": [
+    "acceleration",
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-10-24",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/glm-5.3-flash-free",
+     "output": "2610.28559-revision-1.md",
+     "round": 1
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/mimo-v2.6-flash-free",
+     "output": "2610.28559-revision-2.md",
+     "round": 2
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/mimo-v2.6-flash-free",
+     "output": "2610.28559-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.653,
+  "slug": "paper-2610-28559v1",
+  "status": "summarized",
+  "summarized_at": "2026-10-24",
+  "summary_cost_usd": 0.075756384,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "Large Flow Language Models",
+  "translation": {
+   "completed_at": "2026-10-24",
+   "cost_usd": 0.0057101159999999995,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  },
+  "version": "v1"
+ },
  "2610.28577": {
   "assets": {
    "figures": [],
