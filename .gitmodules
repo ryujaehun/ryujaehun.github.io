@@ -4,3 +4,6 @@
 [submodule "automation"]
 	path = automation
 	url = git@github.com:ryujaehun/blog-automation.git
+[submodule "home_report"]
+	path = home_report
+	url = git@github.com:ryujaehun/home-report.git

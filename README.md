@@ -16,12 +16,13 @@ git submodule update --init themes/hugo-narrow
 hugo server -D          # http://localhost:1313
 ```
 
-submodule이 둘 있습니다.
+submodule이 셋 있습니다.
 
 | submodule | 경로 | 공개 | 빌드에 필요 |
 |---|---|---|---|
 | [hugo-narrow](https://github.com/tom2almighty/hugo-narrow) | `themes/hugo-narrow` | public | **필요** |
 | blog-automation | `automation` | private | 불필요 |
+| [home-report](https://github.com/ryujaehun/home-report) | `home_report` | private | 불필요 |
 
 `automation`은 콘텐츠 자동화 도구라 사이트 빌드와 무관합니다. private
 이므로 권한이 없으면 체크아웃되지 않고, 그래도 빌드는 됩니다. 그래서
@@ -101,3 +102,7 @@ python3 automation/tasks/papers/cli.py summarize --backend opencode  # 완전 �
 
 - 테마: <https://github.com/tom2almighty/hugo-narrow> (GPL-3.0)
 - 일부 글 작성에 LLM(Gemini, GPT)의 도움을 받았습니다.
+
+### 부동산 정기 리포트
+
+서울·경기 아파트의 일간 변화·주간 투자 기회·월간 거시·수급 리포트는 `home_report/` private submodule에서 생성합니다. 일간·주간에는 뉴스 이슈를 함께 정리합니다. 설정은 `data/home-report/config.yaml`, 비공개 실행 기록은 블로그 밖에 보관합니다. 운영 방법은 [home_report/README.md](home_report/README.md)를 참고하세요.
