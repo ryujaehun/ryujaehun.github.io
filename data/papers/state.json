@@ -2479,10 +2479,11 @@
   },
   "materialized_at": "2026-10-22",
   "notification": {
+   "abandoned_at": "2026-10-23T01:28:41.522591+00:00",
    "attempts": 20,
    "error_category": "publication-missing",
    "notification_id": "paper:2610.20556:ko-en",
-   "status": "notify-pending",
+   "status": "notify-abandoned",
    "urls": [
     "https://jaehun.me/posts/paper-2610-20556/",
     "https://jaehun.me/en/posts/paper-2610-20556/"
@@ -2527,8 +2528,8 @@
   "summary_model": "opencode-go/deepseek-v4-pro",
   "title": "Speculative Sampling in Interactive Video Generation",
   "translation": {
-   "failures": 1,
-   "last_error": "모든 모델이 실패했습니다.\nopencode-go/deepseek-v4.1-flash: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode-go/gemini-4-argon-contributor: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode/glm-5.3-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode/deepseek-v4.1-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 19, 2610.20556, 95\nopencode/mimo-v2.6-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 2610.20556, 95",
+   "failures": 2,
+   "last_error": "모든 모델이 실패했습니다.\nopencode-go/deepseek-v4.1-flash: 품질 검사 실패: 수치 누락 또는 변경: 2610.20556, 95\nopencode-go/gemini-4-argon-contributor: 품질 검사 실패: 수치 누락 또는 변경: 2610.20556, 95\nopencode/glm-5.3-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode/deepseek-v4.1-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode/mimo-v2.6-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 95",
    "status": "failed"
   }
  },
