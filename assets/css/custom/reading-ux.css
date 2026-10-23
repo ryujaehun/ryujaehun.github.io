@@ -57,3 +57,9 @@
 @media (prefers-reduced-motion: reduce) {
   #dock, #dock * { transition: none; }
 }
+
+/* The link owns keyboard focus; its decorative child cannot receive it. */
+.post-card > a:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 4px; border-radius: .75rem; }
+@media (prefers-reduced-motion: reduce) {
+  .post-card > a > div, .post-card img { transition: none; transform: none; }
+}

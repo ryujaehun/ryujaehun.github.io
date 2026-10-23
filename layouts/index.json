@@ -1,0 +1,21 @@
+{{- $records := slice -}}
+{{- $mainSections := .Site.MainSections -}}
+
+{{- range where .Site.RegularPages "Section" "in" $mainSections -}}
+  {{- $summary := partialCached "seo/description.html" . .RelPermalink -}}
+
+  {{- $records = $records | append (dict
+    "title" .Title
+    "summary" ($summary | htmlUnescape)
+    "content" .Plain
+    "permalink" .RelPermalink
+    "section" .Section
+    "date" (partial "helpers/date.html" (dict "date" .Date "variant" "long"))
+    "readingTime" .ReadingTime
+    "tags" (.Params.tags | default (slice))
+    "categories" (.Params.categories | default (slice))
+    )
+  -}}
+{{- end -}}
+
+{{- $records | jsonify -}}

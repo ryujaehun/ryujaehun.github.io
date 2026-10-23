@@ -89,6 +89,11 @@ try {
           overflow: document.documentElement.scrollWidth > innerWidth + 1,
           mathErrors: [...document.querySelectorAll('.katex-error')].map(e => e.title),
           renderedMath: document.querySelectorAll('.katex').length,
+          description: document.querySelector('meta[name="description"]')?.content,
+          brokenImageMarkup: !!prose && prose.textContent.includes('](/assets/images/') && prose.textContent.includes('!'),
+          brokenLocalImages: article ? [...article.querySelectorAll('img')].filter(img =>
+            new URL(img.src).origin === location.origin && img.complete && img.naturalWidth === 0
+          ).map(img => img.getAttribute('src')) : [],
           expectsMath: !!article && /\\$[^$]+\\$/.test(prose.textContent),
           malformed: article ? [...article.querySelectorAll('*')].filter(e => e.namespaceURI === 'http://www.w3.org/1999/xhtml' && !/^[a-z][a-z0-9-]*$/.test(e.localName)).map(e => e.localName) : [],
           leftovers: !!article && /densegray|Draftsfor|operatorname_/.test(article.textContent),
@@ -107,6 +112,10 @@ try {
       assert.equal(result.h1, 1, `${path}: one main heading`);
       assert(!result.overflow, `${path} at ${width}px: horizontal page overflow`);
       assert.deepEqual(result.mathErrors, [], `${path}: KaTeX errors`);
+      assert(!result.brokenImageMarkup, `${path}: image Markdown displayed as text`);
+      assert.deepEqual(result.brokenLocalImages, [], `${path}: broken local images`);
+      const record = [...index, ...englishIndex].find(p => p.permalink === path);
+      if (record) assert.equal(record.summary, result.description, `${path}: search and page descriptions agree`);
       assert.deepEqual(result.malformed, [], `${path}: malformed HTML elements`);
       assert(!result.leftovers, `${path}: conversion artifacts`);
       assert(!result.expectsMath || result.renderedMath > 0, `${path}: math renderer did not run`);

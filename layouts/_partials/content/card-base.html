@@ -17,14 +17,8 @@
   {{- $coverImage = $page.Scratch.Get "imageUrl" -}}
 {{- end -}}
 
-{{- $summaryContent := "" -}}
-{{- if $page.Params.summary -}}
-  {{- $summaryContent = $page.Params.summary -}}
-{{- else if $page.Params.description -}}
-  {{- $summaryContent = $page.Params.description -}}
-{{- else if $page.Summary -}}
-  {{- $summaryContent = $page.Summary | plainify | truncate 140 -}}
-{{- end -}}
+{{/* Use the same cleaned description as search-engine previews. */}}
+{{- $summaryContent := partialCached "seo/description.html" $page $page.RelPermalink -}}
 
 {{/* 文章卡片 */}}
 <article class="group post-card">
