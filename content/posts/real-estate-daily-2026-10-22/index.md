@@ -10,7 +10,7 @@ tags: ["서울", "경기", "아파트", "시장 리포트"]
 description: "서울·경기 아파트의 금리, 실제 거래와 주요 뉴스를 함께 살펴봅니다."
 ---
 
-수집본 확인: 2026-10-23. 실거래는 현재 수집본으로 기간을 재구성한 값입니다.
+수집본 확인: 2026-10-24 (한국시간). 실거래는 현재 수집본으로 기간을 재구성한 값입니다.
 
 <section class="report-overview" aria-label="핵심 지표"> <div class="report-kpi"> <span class="report-kpi-label">거래량 · 수록 30개 지역 <sup> <a href="#fn:1" aria-label="출처 1">1</a> </sup> </span> <strong class="report-kpi-value">4,881<small>건</small> </strong> <span class="report-kpi-change"> <span class="report-up">+2.7%</span> · 이전 4,751건</span> <span class="report-kpi-note">증가 14곳 · 감소 15곳 · 동일 1곳</span> <span class="report-kpi-date">8월 26일~9월 22일</span> </div> <div class="report-kpi"> <span class="report-kpi-label">단지 사례 · 성남시 분당구</span> <strong class="report-kpi-value">10억 9,150만원<sup> <a href="#fn:2" aria-label="출처 2">2</a> </sup> </strong> <span class="report-kpi-change"> <span class="report-up">+5.5%</span> <span class="report-kpi-before">이전 10억 3,500만원</span> </span> <span class="report-kpi-note">매화마을공무원2 · 58㎡대 · 6층 이상</span> <span class="report-kpi-date">6월 25일~9월 22일 · 중간가격</span> </div> <div class="report-kpi"> <span class="report-kpi-label">국고채 3년 금리</span> <strong class="report-kpi-value">연 3.84%<sup> <a href="#fn:3" aria-label="출처 3">3</a> </sup> </strong> <span class="report-kpi-change"> <span class="report-up">+0.018%p</span> <span class="report-kpi-before">이전 연 3.822%</span> </span> <span class="report-kpi-note">국채시장 지표</span> <span class="report-kpi-date">기준일 2026-10-22</span> </div> </section>
 
