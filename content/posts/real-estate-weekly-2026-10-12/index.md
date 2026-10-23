@@ -3,26 +3,29 @@ title: "서울·경기 아파트 주간 시장 점검 | 2026-10-12"
 slug: "서울경기-아파트-주간-투자-기회-점검-2026-10-12"
 date: 2026-10-19T08:00:00+09:00
 draft: false
+home_report: true
 categories: ["부동산"]
 tags: ["서울", "경기", "아파트", "시장 리포트"]
 description: "서울·경기 아파트의 금리, 실제 거래와 주요 뉴스를 함께 살펴봅니다."
 ---
 
-> - 리포트 기간: 10월 12일~10월 18일
-> - 지역 거래량: 8월 22일~9월 18일 / 비교 대상 7월 25일~8월 21일
-> - 단지 중간가격: 6월 21일~9월 18일 / 비교 대상 3월 23일~6월 20일
+<section class="report-overview" aria-label="핵심 지표"> <div class="report-kpi"> <span class="report-kpi-label">거래량 · 수록 30지역 <sup> <a href="#fn:1" aria-label="출처 1">1</a> </sup> </span> <strong class="report-kpi-value">4,710<small>건</small> </strong> <span class="report-kpi-change"> <span class="report-down">-8.4%</span> · 이전 5,143건</span> <span class="report-kpi-note">증가 10곳 · 감소 20곳 · 동일 0곳</span> <span class="report-kpi-date">8월 22일~9월 18일</span> </div> <div class="report-kpi"> <span class="report-kpi-label">단지 사례 · 성남시 분당구</span> <strong class="report-kpi-value">10.9억<small>원</small> <sup> <a href="#fn:2" aria-label="출처 2">2</a> </sup> </strong> <span class="report-kpi-change"> <span class="report-up">+5.6%</span> <span class="report-kpi-before">이전 10.325억원</span> </span> <span class="report-kpi-note">매화마을공무원2 · 58㎡대 · 6층 이상</span> <span class="report-kpi-date">6월 21일~9월 18일 · 중간가격</span> </div> <div class="report-kpi"> <span class="report-kpi-label">국고채 3년 금리</span> <strong class="report-kpi-value">연 3.854%<sup> <a href="#fn:3" aria-label="출처 3">3</a> </sup> </strong> <span class="report-kpi-change"> <span class="report-down">-0.129%p</span> <span class="report-kpi-before">이전 연 3.983%</span> </span> <span class="report-kpi-note">국채시장 지표</span> <span class="report-kpi-date">기준일 2026-10-16</span> </div> </section>
 
-경기 남부의 거래가 동시에 늘어난 것은 아닙니다. 같은 길이의 앞선 구간과 비교하면 수원 영통구는 396건에서 492건으로 늘었지만, 성남 분당구는 188건에서 149건으로, 용인 수지구는 416건에서 281건으로 줄었습니다. 남부권을 하나로 묶기보다 거래가 늘어난 곳을 구분해 볼 시점입니다.[^1][^2][^3]
+<dl class="report-periods"> <div> <dt>리포트 기간</dt> <dd>10월 12일~10월 18일</dd> </div> <div> <dt>거래량 비교</dt> <dd>8월 22일~9월 18일 / 이전 7월 25일~8월 21일</dd> </div> <div> <dt>단지 가격 비교</dt> <dd>6월 21일~9월 18일 / 이전 3월 23일~6월 20일</dd> </div> </dl>
 
-단지 가격은 별도의 더 긴 구간으로 비교했습니다. 영통동 황골마을주공1 59㎡대 6층 이상의 기간 중간가격은 5억 650만원에서 6억 1,450만원으로 높아졌지만 거래는 52건에서 32건으로 줄었습니다. 야탑동 매화마을공무원2 58㎡대 6층 이상도 중간가격은 10억 9,000만원으로 +5.6% 높아진 반면 거래는 28건에서 24건으로 줄었습니다. 두 단지에서는 가격 상승과 거래 확대가 함께 나타나지는 않았습니다.[^4][^5]
+## 핵심 판단
 
-금융 여건에서는 국고채 3년 금리가 연 3.854%로 이전 관측 연 3.983%보다 낮아졌습니다. 금리 하락을 곧바로 위 거래의 원인으로 연결하지는 않겠습니다. 금리 관측과 실거래 비교 구간이 다르고, 국고채 금리는 개인에게 적용되는 주택담보대출 금리도 아니기 때문입니다.[^6]
+수록 지역 합계는 서울·경기 전체 통계와 구분합니다.[^1]
+
+수록 지역의 거래는 감소 쪽이 우세했습니다. 30지역 합계는 5,143건에서 4,710건으로 변했고 증감률은 -8.4%입니다. 거래가 늘어난 10곳보다 줄어든 20곳이 많았습니다. 따라서 몇몇 강세 지역의 소식만으로 수록 지역 전반의 거래 확대를 설명하기는 어렵습니다.[^1]
+
+경기 남부 안에서도 차이가 컸습니다. 영통구는 396건에서 492건으로 늘었지만, 분당구는 188건에서 149건으로, 수지구는 416건에서 281건으로 줄었습니다. 더 긴 단지 비교 구간에서는 황골마을주공1 59㎡대 6층 이상의 중간가격이 +21.3% 높아졌으나 거래는 52건에서 32건으로 감소했습니다. 지역의 거래 증가와 특정 단지의 거래 증가는 별개입니다.[^4][^5][^6][^7]
 
 ## 금리와 시장 지표
 
 | 지표 | 최근 관측 | 이전 관측 | 기준일 |
 |---|---:|---:|---|
-| 국고채 3년 금리[^6] | 연 3.854% | 연 3.983% | 10월 16일 |
+| 국고채 3년 금리[^3] | 연 3.854% | 연 3.983% | 10월 16일 |
 
 이전 관측은 이번 리포트 시작 전에 확인한 값입니다. 지표마다 발표 주기와 관측일이 다릅니다.
 
@@ -30,16 +33,24 @@ description: "서울·경기 아파트의 금리, 실제 거래와 주요 뉴스
 
 6월 21일~9월 18일 거래를 3월 23일~6월 20일 거래와 비교했습니다. 같은 단지·면적대·층 구간에서 양쪽 모두 다섯 건 이상 거래된 경우만 골랐습니다. 신고가 뒤늦게 들어오는 영향을 줄이려고 최근 한 달은 비교에서 뺐습니다.
 
+<div class="report-price-list" role="list" aria-label="동일 조건 단지별 중간가격 변화"><div class="report-price-row" role="listitem"><div class="report-row-head"><strong>매화마을공무원2<sup><a href="#fn:2" aria-label="출처 2">2</a></sup></strong><span class="report-price-current">10.9억원</span></div><div class="report-price-meta">성남시 분당구 야탑동 · 58㎡대 · 6층 이상</div><div class="report-price-track" aria-hidden="true"><span class="report-bar-up" style="left:50.000%;width:13.146%"></span></div><div class="report-row-values"><span>이전 10.325억원</span><strong class="report-up">+5.6%</strong></div><div class="report-price-sample"><span>거래 28 → 24건</span><span class="report-direction">가격↑ · 건수↓</span></div></div><div class="report-price-row" role="listitem"><div class="report-row-head"><strong>황골마을주공1<sup><a href="#fn:7" aria-label="출처 7">7</a></sup></strong><span class="report-price-current">6.145억원</span></div><div class="report-price-meta">수원시 영통구 영통동 · 59㎡대 · 6층 이상</div><div class="report-price-track" aria-hidden="true"><span class="report-bar-up" style="left:50.000%;width:50.000%"></span></div><div class="report-row-values"><span>이전 5.065억원</span><strong class="report-up">+21.3%</strong></div><div class="report-price-sample"><span>거래 52 → 32건</span><span class="report-direction">가격↑ · 건수↓</span></div></div><div class="report-price-row" role="listitem"><div class="report-row-head"><strong>잠실엘스<sup><a href="#fn:8" aria-label="출처 8">8</a></sup></strong><span class="report-price-current">33.8억원</span></div><div class="report-price-meta">송파구 잠실동 · 84㎡대 · 6층 이상</div><div class="report-price-track" aria-hidden="true"><span class="report-bar-up" style="left:50.000%;width:7.042%"></span></div><div class="report-row-values"><span>이전 32.8억원</span><strong class="report-up">+3%</strong></div><div class="report-price-sample"><span>거래 37 → 21건</span><span class="report-direction">가격↑ · 건수↓</span></div></div><div class="report-price-row" role="listitem"><div class="report-row-head"><strong>더트루엘마곡HQ<sup><a href="#fn:9" aria-label="출처 9">9</a></sup></strong><span class="report-price-current">6.43억원</span></div><div class="report-price-meta">강서구 공항동 · 48㎡대 · 6층 이상</div><div class="report-price-track" aria-hidden="true"><span class="report-bar-down" style="left:49.531%;width:0.469%"></span></div><div class="report-row-values"><span>이전 6.44억원</span><strong class="report-down">-0.2%</strong></div><div class="report-price-sample"><span>거래 28 → 20건</span><span class="report-direction">가격↓ · 건수↓</span></div></div></div>
+
+비교 가능한 464개 중 지역 분산과 표본 수를 고려해 고른 사례입니다. 8개 선정 사례 중 4개를 먼저 표시했습니다. 막대의 가운데는 0%, 양끝은 ±21.3%이며 상승률 순위가 아닙니다.
+
+<details class="report-data-table"><summary>단지별 정확한 가격·거래 건수 표</summary>
+
 | 단지·면적 | 앞선 기간 중간가격 | 최근 기간 중간가격 | 차이 | 거래 건수(전→후) |
 |---|---:|---:|---:|---:|
-| 성남시 분당구 야탑동<br>매화마을공무원2 · 58㎡대 · 6층 이상[^5] | 10억 3,250만원 | 10억 9,000만원 | +5.6% | 28→24 |
-| 수원시 영통구 영통동<br>황골마을주공1 · 59㎡대 · 6층 이상[^4] | 5억 650만원 | 6억 1,450만원 | +21.3% | 52→32 |
-| 송파구 잠실동<br>잠실엘스 · 84㎡대 · 6층 이상[^7] | 32억 8,000만원 | 33억 8,000만원 | +3.0% | 37→21 |
-| 강서구 공항동<br>더트루엘마곡HQ · 48㎡대 · 6층 이상[^8] | 6억 4,400만원 | 6억 4,300만원 | -0.2% | 28→20 |
-| 용인시 기흥구 구갈동<br>기흥역센트럴푸르지오 · 84㎡대 · 6층 이상[^9] | 9억 4,700만원 | 10억 3,500만원 | +9.3% | 49→19 |
-| 도봉구 도봉동<br>한신 · 84㎡대 · 6층 이상[^10] | 6억 1,000만원 | 6억 4,750만원 | +6.1% | 23→18 |
-| 용인시 수지구 풍덕천동<br>현대성우8차 · 59㎡대 · 6층 이상[^11] | 10억 6,000만원 | 11억 4,000만원 | +7.5% | 29→18 |
-| 성남시 수정구 신흥동<br>산성역포레스티아 · 74㎡대 · 6층 이상[^12] | 14억 5,000만원 | 15억 4,000만원 | +6.2% | 29→17 |
+| 성남시 분당구 야탑동<br>매화마을공무원2 · 58㎡대 · 6층 이상[^2] | 10억 3,250만원 | 10억 9,000만원 | +5.6% | 28→24 |
+| 수원시 영통구 영통동<br>황골마을주공1 · 59㎡대 · 6층 이상[^7] | 5억 650만원 | 6억 1,450만원 | +21.3% | 52→32 |
+| 송파구 잠실동<br>잠실엘스 · 84㎡대 · 6층 이상[^8] | 32억 8,000만원 | 33억 8,000만원 | +3.0% | 37→21 |
+| 강서구 공항동<br>더트루엘마곡HQ · 48㎡대 · 6층 이상[^9] | 6억 4,400만원 | 6억 4,300만원 | -0.2% | 28→20 |
+| 용인시 기흥구 구갈동<br>기흥역센트럴푸르지오 · 84㎡대 · 6층 이상[^10] | 9억 4,700만원 | 10억 3,500만원 | +9.3% | 49→19 |
+| 도봉구 도봉동<br>한신 · 84㎡대 · 6층 이상[^11] | 6억 1,000만원 | 6억 4,750만원 | +6.1% | 23→18 |
+| 용인시 수지구 풍덕천동<br>현대성우8차 · 59㎡대 · 6층 이상[^12] | 10억 6,000만원 | 11억 4,000만원 | +7.5% | 29→18 |
+| 성남시 수정구 신흥동<br>산성역포레스티아 · 74㎡대 · 6층 이상[^13] | 14억 5,000만원 | 15억 4,000만원 | +6.2% | 29→17 |
+
+</details>
 
 이 가격은 실제 거래의 가운데 값입니다. 현재 매물 가격과 비교할 때는 동·층·수리 상태도 함께 보세요.
 
@@ -47,41 +58,62 @@ description: "서울·경기 아파트의 금리, 실제 거래와 주요 뉴스
 
 8월 22일~9월 18일의 거래 건수입니다. 바로 앞선 같은 길이의 기간과 비교했습니다. 거래가 다섯 건 이상인 지역 중 변화가 눈에 띄는 곳을 추렸습니다.
 
+위 막대는 이전, 아래 막대는 최근 건수입니다. 모든 지역은 같은 건수 축을 사용합니다.
+
+<div class="report-volume-list" role="list" aria-label="지역별 거래 건수 비교"><div class="report-volume-row" role="listitem"><div class="report-row-head"><strong>노원구<sup><a href="#fn:14" aria-label="출처 14">14</a></sup></strong><span class="report-down">-180건 <small>(-30.0%)</small></span></div><div class="report-bar-pair" aria-hidden="true"><span class="report-bar-before" style="width:100.000%"></span><span class="report-bar-now report-bar-down" style="width:70.000%"></span></div><div class="report-row-values"><span>이전 600건</span><strong>최근 420건</strong></div></div><div class="report-volume-row" role="listitem"><div class="report-row-head"><strong>용인시 수지구<sup><a href="#fn:6" aria-label="출처 6">6</a></sup></strong><span class="report-down">-135건 <small>(-32.5%)</small></span></div><div class="report-bar-pair" aria-hidden="true"><span class="report-bar-before" style="width:69.333%"></span><span class="report-bar-now report-bar-down" style="width:46.833%"></span></div><div class="report-row-values"><span>이전 416건</span><strong>최근 281건</strong></div></div><div class="report-volume-row" role="listitem"><div class="report-row-head"><strong>송파구<sup><a href="#fn:15" aria-label="출처 15">15</a></sup></strong><span class="report-up">+126건 <small>(+67.4%)</small></span></div><div class="report-bar-pair" aria-hidden="true"><span class="report-bar-before" style="width:31.167%"></span><span class="report-bar-now report-bar-up" style="width:52.167%"></span></div><div class="report-row-values"><span>이전 187건</span><strong>최근 313건</strong></div></div><div class="report-volume-row" role="listitem"><div class="report-row-head"><strong>동작구<sup><a href="#fn:16" aria-label="출처 16">16</a></sup></strong><span class="report-down">-96건 <small>(-50.8%)</small></span></div><div class="report-bar-pair" aria-hidden="true"><span class="report-bar-before" style="width:31.500%"></span><span class="report-bar-now report-bar-down" style="width:15.500%"></span></div><div class="report-row-values"><span>이전 189건</span><strong>최근 93건</strong></div></div><div class="report-volume-row" role="listitem"><div class="report-row-head"><strong>수원시 영통구<sup><a href="#fn:4" aria-label="출처 4">4</a></sup></strong><span class="report-up">+96건 <small>(+24.2%)</small></span></div><div class="report-bar-pair" aria-hidden="true"><span class="report-bar-before" style="width:66.000%"></span><span class="report-bar-now report-bar-up" style="width:82.000%"></span></div><div class="report-row-values"><span>이전 396건</span><strong>최근 492건</strong></div></div><div class="report-volume-row" role="listitem"><div class="report-row-head"><strong>강서구<sup><a href="#fn:17" aria-label="출처 17">17</a></sup></strong><span class="report-down">-73건 <small>(-23.4%)</small></span></div><div class="report-bar-pair" aria-hidden="true"><span class="report-bar-before" style="width:52.000%"></span><span class="report-bar-now report-bar-down" style="width:39.833%"></span></div><div class="report-row-values"><span>이전 312건</span><strong>최근 239건</strong></div></div><div class="report-volume-row" role="listitem"><div class="report-row-head"><strong>강동구<sup><a href="#fn:18" aria-label="출처 18">18</a></sup></strong><span class="report-down">-69건 <small>(-35.9%)</small></span></div><div class="report-bar-pair" aria-hidden="true"><span class="report-bar-before" style="width:32.000%"></span><span class="report-bar-now report-bar-down" style="width:20.500%"></span></div><div class="report-row-values"><span>이전 192건</span><strong>최근 123건</strong></div></div><div class="report-volume-row" role="listitem"><div class="report-row-head"><strong>성남시 분당구<sup><a href="#fn:5" aria-label="출처 5">5</a></sup></strong><span class="report-down">-39건 <small>(-20.7%)</small></span></div><div class="report-bar-pair" aria-hidden="true"><span class="report-bar-before" style="width:31.333%"></span><span class="report-bar-now report-bar-down" style="width:24.833%"></span></div><div class="report-row-values"><span>이전 188건</span><strong>최근 149건</strong></div></div></div>
+
+<details class="report-data-table"><summary>지역별 정확한 거래 건수 표</summary>
+
 | 지역 | 앞선 기간 | 최근 기간 | 차이 |
 |---|---:|---:|---:|
-| 노원구[^13] | 600건 | 420건 | -180건 |
-| 용인시 수지구[^3] | 416건 | 281건 | -135건 |
-| 송파구[^14] | 187건 | 313건 | +126건 |
-| 동작구[^15] | 189건 | 93건 | -96건 |
-| 수원시 영통구[^1] | 396건 | 492건 | +96건 |
-| 강서구[^16] | 312건 | 239건 | -73건 |
-| 강동구[^17] | 192건 | 123건 | -69건 |
-| 성남시 분당구[^2] | 188건 | 149건 | -39건 |
+| 노원구[^14] | 600건 | 420건 | -180건 |
+| 용인시 수지구[^6] | 416건 | 281건 | -135건 |
+| 송파구[^15] | 187건 | 313건 | +126건 |
+| 동작구[^16] | 189건 | 93건 | -96건 |
+| 수원시 영통구[^4] | 396건 | 492건 | +96건 |
+| 강서구[^17] | 312건 | 239건 | -73건 |
+| 강동구[^18] | 192건 | 123건 | -69건 |
+| 성남시 분당구[^5] | 188건 | 149건 | -39건 |
 
-![지역별 거래량 비교](volume.png)
+</details>
+
+[거래량 비교 차트 PNG 보기](volume.png)
 
 ## 이번에 함께 읽을 뉴스
 
-이번 주 보도는 분당·영통·동탄 등 경기 남부의 가격 강세를 전합니다. 여기의 지역 거래 건수는 그보다 앞선 구간이므로, 최근 보도와 같은 시점의 가격·거래 동반 상승으로 읽을 수는 없습니다. 같은 남부권에서도 거래 증가와 감소가 엇갈린다는 배경으로 보겠습니다.[^18][^19]
+보도가 전한 분당·영통·동탄의 가격 강세는 지역별 선호 차이를 살펴볼 단서입니다. 다만 이 글의 거래 구간과 보도 시점은 다릅니다. 하나금융연구소는 실수요와 공급 시차를 배경으로 보았지만, 이번 자료에는 매수자 특성이나 실제 공급량이 없어 해당 설명을 직접 검증한 것은 아닙니다.[^19][^20][^21]
 
-경기 분양가 상승 보도는 기존 아파트 거래와 구분해 읽을 기사입니다. 분양가는 새로 공급되는 주택의 가격이고, 위 표는 기존 단지에서 실제로 이뤄진 거래의 기간 중간가격입니다. 신축과 기존 주택의 입지·면적·상품 차이를 맞추지 않은 채 가격 차이만으로 어느 쪽이 저평가됐다고 결론 내리지는 않겠습니다.[^20]
+분양가 상승과 기존 아파트의 기간 중간가격도 구분해야 합니다. 전자는 새로 공급되는 주택의 가격, 후자는 실제 체결된 기존 주택의 가격 분포입니다. 공식 표본 가격지수 역시 별도 산식의 지표입니다. 지표의 이름과 비교 구간을 맞춘 뒤 방향을 비교하겠습니다.[^22][^23]
 
-- [재건축·반도체 호재… 분당·영통·동탄, 수도권 집값 주도 - 경기신문](https://news.google.com/rss/articles/CBMiZEFVX3lxTE1ydGRvRjhNWmhEb09IMkJNbzZ2RzV4Qmx1b0c3YW9yN1I0WlI0UE81X2hHWEFjckZmYnA4M2dfT3dKNmtWZDJXd05OUHM4TDdrckZmdGVZV2h1TkpjMUxTaFd2QXQ?oc=5) — 경기신문, 10월 18일
-- [“저렴하니 넓은 곳으로”… 인천 아파트, 서울·경기보다 대형 평형 인기 - 중부일보](https://news.google.com/rss/articles/CBMib0FVX3lxTE01ZTUwYURnU0xQVXhDNDhKZHJGd1FHTzdtVWlnVmhCdEh5NndNLWRsYTM4LUtiYWthYl9kaUh1RlFYbFFTQkcyVmVQY2JmbmJWdEFXbUs5NXNEUFRzaEZrVzN1LWpoNTF4QWFobTVtOA?oc=5) — 중부일보, 10월 18일
-- [서울도 아닌데 평당 4000만원…경기 아파트 분양가의 역습 - 핀포인트뉴스](https://news.google.com/rss/articles/CBMic0FVX3lxTE44TGFVV3FfbFBQOFNGLXNkODJDSkhGdW9yM0NKSWlvUXZ5NG82Z0ZEbEJsWTRVc21yZGVlR2JkX29oT3JXazRvNXJLeHdINDROVUxfdFJEZm5wVG8zZmpQY056RWZZamZJb20wWHA4OEVRVkHSAXdBVV95cUxNUnlYeXlRc3dpWWc5eTNhcHFFYkV2OTZXcXhGZ2lGakkxZ1JBTWJ1MXBETVJ0TVY3b0h6RVhnS3hXMy1fN00xYVBuWmRIeUpNSEVBUkhyT0xOYjk4MW55ak1lRkZFSEszWjk4RzRBdmNtMnFVSE5TZw?oc=5) — 핀포인트뉴스, 10월 17일
-- [서울 아파트값 상승 다시 확대…강남 대신 외곽·경기남부 - TopStarNews](https://news.google.com/rss/articles/CBMickFVX3lxTE1wTmhCOU1LMERnS3FGOENBaENrWFlYZUlKV1Rwal82Z1JpZ0R5OFExZUQwajNXS1VJQXdITHpUUnI4NmFYVVR1UGxROGdWR0gtSjNoVFRJNWJuRnZzWnQwLUhZVmNHVzRfSjNHS3pzQjhBdw?oc=5) — TopStarNews, 10월 17일
 - [\[통계로 보는 부동산\] 서울보다 더 오른 경기 아파트값… 분당·영통·동탄 등 강세 - 아주경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE1MZXNtRVlsdnZoRV9DNEluLVVrV0lGWEFQNEFiU19seGkyUzlicHpOYjBRSHNTU2JkLW42WmJTZ0gzT3JZSEhQTlltVUIzVW1kUXYwMmt4U0dVUdIBWEFVX3lxTE1mWGxqMEtqaXZZUW9IdEc4azFpNmpGMXY3SmRfYVhuX2xmc2ZMbnJsRzBVWDZjbXRjS2gyNmoyOFJVNXZ2UFIwcmI3WXQwdlpqZ2xfZUdaWGo?oc=5) — 아주경제, 10월 17일
-- [“구리가 4천만원?”…‘또 역대 최고’ 찍은 경기도 아파트 분양가 - 경기일보](https://news.google.com/rss/articles/CBMiW0FVX3lxTFBIdzZPZ3piQWptM0pPZXRLYTd3cUppTFlEVnFOeVo1TnQ1c3FncTJ2dUJ6LXExaHJqTmVLWWNUOXY0MjVWc2c1VWY0Mm5hSlJBME1OTV80WHUxVlE?oc=5) — 경기일보, 10월 17일
 - [경기 분양가 3.3㎡당 2256만원 &#x27;역대 최고&#x27;…구리 4000만원 육박 - 뉴시스](https://news.google.com/rss/articles/CBMiYEFVX3lxTE56YWpBaFJMTm1jTlpyVHFiMVNrMFduUUlGZkJURTlLVXlSZzZVWGJaTE1qbzVYZml2RUt6NXpzNTF1bjlFYWZ0WnpaanZHb2dubEoxU3F1M2lVejZxYldteNIBeEFVX3lxTE03R2I5b0hlZ1kzOFBxbHU1Q1FtNnoxMV90Wm9zNktLRkJoVUVRUFF2dnlCSFU0Nlg3azhNcnNfRVp5Q3JXZTVRU1pBdTlWd3AzQ1FYcUJkMnBqblZNYXh3bTl2SEd5XzRwZXZoSVhMZXc4N1BGbTN6aA?oc=5) — 뉴시스, 10월 17일
-- [대출 조이고 거래 막아도…서울 아파트 &#x27;마이웨이&#x27; &gt; 뉴스 - 지데일리](https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9QSkNRNjk3d0NIT0ZfWUcwWVZKaml1TWJUQXNpbnZvQmVjOWdLT1RzN0FDOVZFcjN6QmFQSktMWjJoSEViWmJJWHNEdjQ2RmdEV3VhMVk5WExPVkJDdVlBVUVTbGhYS3M?oc=5) — 지데일리, 10월 15일
 - [서울 아파트값 오름폭 2주째 확대…경기 ‘반도체 벨트’도 강세 - 한겨레](https://news.google.com/rss/articles/CBMiaEFVX3lxTE9wTnpmb0d6bnhGQnJQMGtVand0Q19fSjB2dHJSVGRJalFVLWtscVRrR19scjBxMjZlTWpGU3hyNXF1QW9oQVlKWmdudVNIV2hjSkI3NWVTVE90YVZ5Y1JCdlRzVkpYamxz?oc=5) — 한겨레, 10월 15일
-- [숨고르던 서울 아파트값 다시 상승폭 커져… 분당·군포 등 경기 남부 강세 - 서울신문](https://news.google.com/rss/articles/CBMieEFVX3lxTE56OS1VSVJKTW5DTi1BeGdxVHl2U1FtSHRvSmlEZGg0WFNET1NrXzFCT1pQRHBGOEpnckpQQnNHbXpsT3FJYUNIY0VOaEtURncwT1N6Y0FMYk5VSkg3U0ZicUJZVHAzNmprZ0dpNW9KRW5sdUl4bWdJMw?oc=5) — 서울신문, 10월 15일
-- [서울 아파트값 88주 연속 상승, 최장 기록 경신 - 센트럴경제](https://news.google.com/rss/articles/CBMiZkFVX3lxTFBwa1c0TnBpMVFCdEpvRWRiczJ1RXphaG1UMDdreF9qOUdHU3ZZU3UyRkJCS0xHLTlzVDdKZ1ZkX0hOakIzNEFmX3FCc2RrejFjQVJEdUpRSmRMYjFBRFZPZlB3VzJvQdIBakFVX3lxTE9EaGJoTlV5QnE3eEtBWDJJVDlnNEhzUFFKRTBhNzZjbXIyc29FOUtoTzdTN0tUMm9kUUtIZXdaYlNtWGJTdGM1RU9lZGF5WFVpSlBMVGx0U1dXcGRYWV9wVGV5a2czR3Jzb2c?oc=5) — 센트럴경제, 10월 15일
-- [서울 아파트값 88주째 상승 랠리…강남 주춤한 사이 경기 남부 ‘불장’ - 와이드경제](https://news.google.com/rss/articles/CBMibEFVX3lxTE5iVTR3TE9DVGx1ZWhKdm40TEJwa0dEeTJZUWNHVGxrcVVfcmo5ckNXUkZOVjNIa2pWMFdKb0RJSTlfMUgtVmZRd3pJYkRySWg4RDI5SEZFby1vdUVPZ0F2bmN4NFhTdzRaYWd1WA?oc=5) — 와이드경제, 10월 15일
 
 ## 다음에는 이 부분을 보겠습니다
 
-다음 비교에서 볼 지점은 영통의 거래 증가가 이어지는지와, 분당·수지의 감소가 멈추는지입니다. 이들 지역의 건수가 같은 길이의 구간에서 함께 늘어난다면 수록 지역 안에서 거래 증가의 범위가 넓어졌다고 볼 근거가 됩니다. 영통만 늘고 다른 지역은 계속 줄어든다면 남부권에 거래 증가가 퍼졌다는 해석은 약해집니다. 단지 가격은 별도로 같은 면적·층 조건의 중간가격과 거래 건수를 함께 비교하겠습니다.[^1][^2][^3]
+거래가 늘어난 지역의 수가 넓어지고 합계 거래량도 증가로 돌아서는지가 다음 확인점입니다. 일부 지역만 늘면 지역 간 차이가 이어진다는 해석이 남습니다. 단지 가격에서는 매화마을공무원2 58㎡대 6층 이상의 중간가격 10억 9,000만원과 24건이라는 거래 규모를 같은 길이의 후속 구간과 비교하겠습니다. 국고채 3년 금리의 최근 관측 연 3.854%는 별도의 금융 여건으로 점검하겠습니다.[^2][^3][^1]
+
+## 참고 리포트와 해석의 범위
+
+기관의 진단·구조적 배경·작성방법을 참고했습니다. 아래 자료를 이번 기간의 새 시장 지표로 합산하지 않았습니다.
+
+### 하나금융연구소 · 시장 해석
+
+[부동산: 실수요 중심의 상승세 지속](https://www.hanaif.re.kr/boardDetail.do?hmpeSeqNo=37072) · 이재원 · 2026-09-21[^21]
+
+공급 시차와 실수요를 가격 흐름의 배경으로 살펴본 진단입니다. 이 글의 거래 건수만으로 매수자 구성이나 공급 부족을 입증하지 않습니다.
+
+### 국토연구원 · 구조적 배경
+
+[인구구조 전환에 따른 부동산시장 영향과 향후 과제](https://www.krihs.re.kr/boardDownload.es?bid=0008&list_no=398455&seq=3) · 박진백 외 · 2026-05-18[^24]
+
+교육·고용과 인구·가구 구조를 장기 주거수요의 경로로 살펴봅니다. 단기 거래 증감과 장기 수요 전망을 분리하고, 해당 지역의 실제 이동 자료를 추가 확인합니다.
+
+### 한국부동산원 · 통계 방법론
+
+[전국주택가격동향조사: 조사방법·지수 편제](https://www.reb.or.kr/reb/cm/cntnts/cntntsView.do?cntntsId=1033&mi=10333&statId=S234820263) · 부동산통계처 · 상시 방법론 · 확인 2026-10-23[^23]
+
+표본 가격지수와 거래 중간가격은 산식과 표본 구성이 다른 지표입니다. 공식 지수의 주간 변동률과 이 글의 단지별 기간 중간가격 변화를 같은 상승률로 비교하지 않습니다.
 
 ---
 
@@ -103,23 +135,27 @@ description: "서울·경기 아파트의 금리, 실제 거래와 주요 뉴스
 
 </details>
 
-[^1]: 수원시 영통구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
-[^2]: 성남시 분당구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
-[^3]: 용인시 수지구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
-[^4]: 수원시 영통구 영통동 황골마을주공1, 59㎡대·6층 이상. 국토교통부 신고 거래의 기간별 중간가격.
-[^5]: 성남시 분당구 야탑동 매화마을공무원2, 58㎡대·6층 이상. 국토교통부 신고 거래의 기간별 중간가격.
-[^6]: 국고채 3년 금리 · [ecos](https://ecos.bok.or.kr/api/), 관측일 10월 16일
-[^7]: 송파구 잠실동 잠실엘스, 84㎡대·6층 이상. 국토교통부 신고 거래의 기간별 중간가격.
-[^8]: 강서구 공항동 더트루엘마곡HQ, 48㎡대·6층 이상. 국토교통부 신고 거래의 기간별 중간가격.
-[^9]: 용인시 기흥구 구갈동 기흥역센트럴푸르지오, 84㎡대·6층 이상. 국토교통부 신고 거래의 기간별 중간가격.
-[^10]: 도봉구 도봉동 한신, 84㎡대·6층 이상. 국토교통부 신고 거래의 기간별 중간가격.
-[^11]: 용인시 수지구 풍덕천동 현대성우8차, 59㎡대·6층 이상. 국토교통부 신고 거래의 기간별 중간가격.
-[^12]: 성남시 수정구 신흥동 산성역포레스티아, 74㎡대·6층 이상. 국토교통부 신고 거래의 기간별 중간가격.
-[^13]: 노원구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
-[^14]: 송파구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
-[^15]: 동작구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
-[^16]: 강서구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
-[^17]: 강동구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
-[^18]: [\[통계로 보는 부동산\] 서울보다 더 오른 경기 아파트값… 분당·영통·동탄 등 강세 - 아주경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE1MZXNtRVlsdnZoRV9DNEluLVVrV0lGWEFQNEFiU19seGkyUzlicHpOYjBRSHNTU2JkLW42WmJTZ0gzT3JZSEhQTlltVUIzVW1kUXYwMmt4U0dVUdIBWEFVX3lxTE1mWGxqMEtqaXZZUW9IdEc4azFpNmpGMXY3SmRfYVhuX2xmc2ZMbnJsRzBVWDZjbXRjS2gyNmoyOFJVNXZ2UFIwcmI3WXQwdlpqZ2xfZUdaWGo?oc=5) · 아주경제, 10월 17일
-[^19]: [서울 아파트값 오름폭 2주째 확대…경기 ‘반도체 벨트’도 강세 - 한겨레](https://news.google.com/rss/articles/CBMiaEFVX3lxTE9wTnpmb0d6bnhGQnJQMGtVand0Q19fSjB2dHJSVGRJalFVLWtscVRrR19scjBxMjZlTWpGU3hyNXF1QW9oQVlKWmdudVNIV2hjSkI3NWVTVE90YVZ5Y1JCdlRzVkpYamxz?oc=5) · 한겨레, 10월 15일
-[^20]: [경기 분양가 3.3㎡당 2256만원 &#x27;역대 최고&#x27;…구리 4000만원 육박 - 뉴시스](https://news.google.com/rss/articles/CBMiYEFVX3lxTE56YWpBaFJMTm1jTlpyVHFiMVNrMFduUUlGZkJURTlLVXlSZzZVWGJaTE1qbzVYZml2RUt6NXpzNTF1bjlFYWZ0WnpaanZHb2dubEoxU3F1M2lVejZxYldteNIBeEFVX3lxTE03R2I5b0hlZ1kzOFBxbHU1Q1FtNnoxMV90Wm9zNktLRkJoVUVRUFF2dnlCSFU0Nlg3azhNcnNfRVp5Q3JXZTVRU1pBdTlWd3AzQ1FYcUJkMnBqblZNYXh3bTl2SEd5XzRwZXZoSVhMZXc4N1BGbTN6aA?oc=5) · 뉴시스, 10월 17일
+[^1]: 수록 30지역 합계 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/) 신고 거래 자체 집계. 서울·경기 전체 통계가 아닙니다.
+[^2]: 성남시 분당구 야탑동 매화마을공무원2, 58㎡대·6층 이상. [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/) 신고 거래 자체 집계. 앞선 28건·최근 24건의 기간 중간가격.
+[^3]: 국고채 3년 금리 · [한국은행 ECOS](https://ecos.bok.or.kr/api/), 관측일 10월 16일
+[^4]: 수원시 영통구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
+[^5]: 성남시 분당구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
+[^6]: 용인시 수지구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
+[^7]: 수원시 영통구 영통동 황골마을주공1, 59㎡대·6층 이상. [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/) 신고 거래 자체 집계. 앞선 52건·최근 32건의 기간 중간가격.
+[^8]: 송파구 잠실동 잠실엘스, 84㎡대·6층 이상. [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/) 신고 거래 자체 집계. 앞선 37건·최근 21건의 기간 중간가격.
+[^9]: 강서구 공항동 더트루엘마곡HQ, 48㎡대·6층 이상. [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/) 신고 거래 자체 집계. 앞선 28건·최근 20건의 기간 중간가격.
+[^10]: 용인시 기흥구 구갈동 기흥역센트럴푸르지오, 84㎡대·6층 이상. [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/) 신고 거래 자체 집계. 앞선 49건·최근 19건의 기간 중간가격.
+[^11]: 도봉구 도봉동 한신, 84㎡대·6층 이상. [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/) 신고 거래 자체 집계. 앞선 23건·최근 18건의 기간 중간가격.
+[^12]: 용인시 수지구 풍덕천동 현대성우8차, 59㎡대·6층 이상. [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/) 신고 거래 자체 집계. 앞선 29건·최근 18건의 기간 중간가격.
+[^13]: 성남시 수정구 신흥동 산성역포레스티아, 74㎡대·6층 이상. [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/) 신고 거래 자체 집계. 앞선 29건·최근 17건의 기간 중간가격.
+[^14]: 노원구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
+[^15]: 송파구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
+[^16]: 동작구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
+[^17]: 강서구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
+[^18]: 강동구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
+[^19]: [\[통계로 보는 부동산\] 서울보다 더 오른 경기 아파트값… 분당·영통·동탄 등 강세 - 아주경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE1MZXNtRVlsdnZoRV9DNEluLVVrV0lGWEFQNEFiU19seGkyUzlicHpOYjBRSHNTU2JkLW42WmJTZ0gzT3JZSEhQTlltVUIzVW1kUXYwMmt4U0dVUdIBWEFVX3lxTE1mWGxqMEtqaXZZUW9IdEc4azFpNmpGMXY3SmRfYVhuX2xmc2ZMbnJsRzBVWDZjbXRjS2gyNmoyOFJVNXZ2UFIwcmI3WXQwdlpqZ2xfZUdaWGo?oc=5) · 아주경제, 10월 17일
+[^20]: [서울 아파트값 오름폭 2주째 확대…경기 ‘반도체 벨트’도 강세 - 한겨레](https://news.google.com/rss/articles/CBMiaEFVX3lxTE9wTnpmb0d6bnhGQnJQMGtVand0Q19fSjB2dHJSVGRJalFVLWtscVRrR19scjBxMjZlTWpGU3hyNXF1QW9oQVlKWmdudVNIV2hjSkI3NWVTVE90YVZ5Y1JCdlRzVkpYamxz?oc=5) · 한겨레, 10월 15일
+[^21]: 하나금융연구소 · 이재원, [보고서 원문](https://www.hanaif.re.kr/boardDetail.do?hmpeSeqNo=37072), 2026-09-21. 공식 게시문 요약.
+[^22]: [경기 분양가 3.3㎡당 2256만원 &#x27;역대 최고&#x27;…구리 4000만원 육박 - 뉴시스](https://news.google.com/rss/articles/CBMiYEFVX3lxTE56YWpBaFJMTm1jTlpyVHFiMVNrMFduUUlGZkJURTlLVXlSZzZVWGJaTE1qbzVYZml2RUt6NXpzNTF1bjlFYWZ0WnpaanZHb2dubEoxU3F1M2lVejZxYldteNIBeEFVX3lxTE03R2I5b0hlZ1kzOFBxbHU1Q1FtNnoxMV90Wm9zNktLRkJoVUVRUFF2dnlCSFU0Nlg3azhNcnNfRVp5Q3JXZTVRU1pBdTlWd3AzQ1FYcUJkMnBqblZNYXh3bTl2SEd5XzRwZXZoSVhMZXc4N1BGbTN6aA?oc=5) · 뉴시스, 10월 17일
+[^23]: 한국부동산원 · 부동산통계처, [보고서 원문](https://www.reb.or.kr/reb/cm/cntnts/cntntsView.do?cntntsId=1033&mi=10333&statId=S234820263), 상시 방법론 · 확인 2026-10-23. 공식 조사방법·지수 산정·용어해설.
+[^24]: 국토연구원 · 박진백 외, [보고서 원문](https://www.krihs.re.kr/boardDownload.es?bid=0008&list_no=398455&seq=3), 2026-05-18. 국토정책Brief 제1063호 주요 내용·정책방안.
