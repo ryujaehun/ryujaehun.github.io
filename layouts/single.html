@@ -34,7 +34,7 @@
   </header>
 
   <!-- 页面内容 -->
-  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none">
+  <article class="prose prose-neutral dark:prose-invert mb-12 max-w-none{{ if .Params.home_report }} home-report{{ end }}">
     {{ .Content }}
   </article>
 
