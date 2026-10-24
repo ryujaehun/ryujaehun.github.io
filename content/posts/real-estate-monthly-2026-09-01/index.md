@@ -152,3 +152,6 @@ description: "서울·경기 아파트의 금리, 실제 거래와 주요 뉴스
 [^21]: 성북구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
 [^22]: 송파구 거래 건수 · [국토교통부 실거래가 공개시스템](https://rt.molit.go.kr/).
 [^23]: 국토연구원 · 박진백 외, [보고서 원문](https://www.krihs.re.kr/boardDownload.es?bid=0008&list_no=398455&seq=3), 2026-05-18. 국토정책Brief 제1063호 주요 내용·정책방안.
+
+
+<span hidden data-home-report-digest="26bfedf80316d574d51d9beaf0ae9a905b5dd1b421ac2870511c5957b14557b0"></span>
