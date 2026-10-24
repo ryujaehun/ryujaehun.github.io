@@ -55,6 +55,9 @@ try {
     return result.result.value;
   };
   await send('Page.enable');
+  await send('Network.enable');
+  // Production math must keep rendering even when the former CDN is unavailable.
+  await send('Network.setBlockedURLs', { urls: ['*://cdn.jsdelivr.net/npm/katex@*'] });
   const index = await fetch(new URL('/index.json', base)).then(r => { assert(r.ok); return r.json(); });
   const englishIndex = await fetch(new URL('/en/index.json', base)).then(r => { assert(r.ok); return r.json(); });
   const { recent, series, paths } = readingPaths(index, englishIndex);
@@ -89,6 +92,10 @@ try {
           overflow: document.documentElement.scrollWidth > innerWidth + 1,
           mathErrors: [...document.querySelectorAll('.katex-error')].map(e => e.title),
           renderedMath: document.querySelectorAll('.katex').length,
+          mathAssets: [...document.querySelectorAll('script[src],link[rel=stylesheet]')]
+            .map(e => e.src || e.href).filter(url => /katex@/.test(url)),
+          mathFontsLoaded: [...document.fonts].filter(f => f.family.startsWith('KaTeX') && f.status === 'loaded').length,
+          failedMathFonts: [...document.fonts].filter(f => f.family.startsWith('KaTeX') && f.status === 'error').map(f => f.family),
           description: document.querySelector('meta[name="description"]')?.content,
           brokenImageMarkup: !!prose && prose.textContent.includes('](/assets/images/') && prose.textContent.includes('!'),
           brokenLocalImages: article ? [...article.querySelectorAll('img')].filter(img =>
@@ -112,6 +119,9 @@ try {
       assert.equal(result.h1, 1, `${path}: one main heading`);
       assert(!result.overflow, `${path} at ${width}px: horizontal page overflow`);
       assert.deepEqual(result.mathErrors, [], `${path}: KaTeX errors`);
+      assert(result.mathAssets.every(url => new URL(url).origin === new URL(base).origin), `${path}: KaTeX assets must be local`);
+      assert.deepEqual(result.failedMathFonts, [], `${path}: failed KaTeX fonts`);
+      if (result.renderedMath) assert(result.mathFontsLoaded > 0, `${path}: local math fonts did not load`);
       assert(!result.brokenImageMarkup, `${path}: image Markdown displayed as text`);
       assert.deepEqual(result.brokenLocalImages, [], `${path}: broken local images`);
       const record = [...index, ...englishIndex].find(p => p.permalink === path);

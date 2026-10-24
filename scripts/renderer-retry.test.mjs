@@ -51,20 +51,55 @@ test('content and browser failures are never retried', async () => {
   }
 });
 
-test('the real KaTeX gate rejects unsupported commands despite permissive page options', async () => {
+async function mathFixture(t) {
+  const { mkdtemp, cp, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const fixture = await mkdtemp(join(tmpdir(), 'blog-local-katex-'));
+  t.after(() => rm(fixture, {recursive:true, force:true}));
+  await cp(new URL('./fixtures/renderer-invalid-math/', import.meta.url), fixture, {recursive:true});
+  await cp(new URL('../static/vendor/', import.meta.url), join(fixture,'vendor'), {recursive:true});
+  return fixture;
+}
+
+async function checkMath(fixture) {
   const { spawn } = await import('node:child_process');
   const { fileURLToPath } = await import('node:url');
   const checker = fileURLToPath(new URL('./check-math.mjs', import.meta.url));
   const wrapper = fileURLToPath(new URL('./renderer-retry.mjs', import.meta.url));
-  const fixture = fileURLToPath(new URL('./fixtures/renderer-invalid-math', import.meta.url));
-  const result = await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, [wrapper, checker, fixture]);
-    let stderr = '';
+    let stderr = '', stdout = '';
     child.stderr.on('data', chunk => { stderr += chunk; });
-    child.stdout.resume();
+    child.stdout.on('data', chunk => { stdout += chunk; });
     child.once('error', reject);
-    child.once('exit', code => resolve({code, stderr}));
+    child.once('exit', code => resolve({code, stderr, stdout}));
   });
+}
+
+test('the real local KaTeX gate rejects unsupported commands despite permissive page options', async t => {
+  const result = await checkMath(await mathFixture(t));
   assert.equal(result.code, 1);
   assert.match(result.stderr, /Undefined control sequence/);
+});
+
+test('the real local KaTeX gate renders valid math without a CDN', async t => {
+  const { readFile, writeFile } = await import('node:fs/promises');
+  const { join } = await import('node:path');
+  const fixture = await mathFixture(t);
+  const page=join(fixture,'index.html');
+  await writeFile(page,(await readFile(page,'utf8')).replace('undefinedCommand','alpha'));
+  const result=await checkMath(fixture);
+  assert.equal(result.code,0,result.stderr);
+  assert.match(result.stdout,/Checked 1 formulas/);
+});
+
+test('missing local KaTeX assets fail rather than falling back to a CDN', async t => {
+  const { unlink } = await import('node:fs/promises');
+  const { join } = await import('node:path');
+  const fixture = await mathFixture(t);
+  await unlink(join(fixture,'vendor/katex@0.16.22/katex.min.js'));
+  const result=await checkMath(fixture);
+  assert.equal(result.code,1);
+  assert.match(result.stderr,/ENOENT.*katex\.min\.js/s);
 });

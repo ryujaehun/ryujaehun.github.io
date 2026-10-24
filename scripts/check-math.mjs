@@ -26,11 +26,21 @@ if (!pages.length) {
   console.log('Checked 0 formulas and 0 code sources');
   process.exit(0);
 }
-const rendererUrls = html => [...html.matchAll(/https:\/\/cdn\.jsdelivr\.net\/npm\/katex@[^"'\s<>]+\.js/g)].map(m => m[0]);
+const rendererUrls = html => [...html.matchAll(/<script\b[^>]*\bsrc=["']?([^"'\s>]+)/gi)]
+  .map(m => m[1]).filter(url => /\/(?:katex|auto-render)\.min\.js$/.test(url));
 const mathPages = pages.filter(p => p.html.includes('renderMathInElement(document.body,'));
 const urls = mathPages.length ? rendererUrls(mathPages[0].html) : [];
 assert(!mathPages.length || urls.length === 2, 'Expected the KaTeX and auto-render URLs in the build');
 for (const page of mathPages) assert.deepEqual(rendererUrls(page.html), urls, `Different KaTeX renderer: ${page.path}`);
+// Read the actual published local assets. Never silently substitute another renderer
+// if an asset is missing. CDN fixtures remain supported by the existing fetch gate.
+const renderers = await Promise.all(urls.map(async url => {
+  if (url.startsWith('https://cdn.jsdelivr.net/npm/katex@')) return {url};
+  const path = new URL(url, 'https://build.invalid').pathname;
+  const asset = path.match(/\/vendor\/katex@[0-9.]+\/(?:contrib\/)?(?:katex|auto-render)\.min\.js$/)?.[0];
+  assert(asset, `Unexpected local KaTeX asset: ${url}`);
+  return {url, code:await readFile(join(directory, asset.slice(1)), 'utf8')};
+}));
 const profile = await mkdtemp(join(tmpdir(), 'blog-math-check-'));
 const chrome = spawn(process.env.CHROME_BIN || 'google-chrome', [
   '--headless', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
@@ -82,12 +92,18 @@ try {
   assert.equal(await evaluate('document.compatMode'),'CSS1Compat');
   loadingRenderer = true;
   await evaluate(`(async () => {
-    for (const url of ${JSON.stringify(urls)}) await new Promise((resolve, reject) => {
+    for (const renderer of ${JSON.stringify(renderers)}) await new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = url;
-      script.onload = resolve;
-      script.onerror = () => reject(new Error('Failed to load ' + url));
-      document.head.append(script);
+      if (renderer.code !== undefined) {
+        script.textContent = renderer.code;
+        document.head.append(script);
+        resolve();
+      } else {
+        script.src = renderer.url;
+        script.onload = resolve;
+        script.onerror = () => reject(new Error('Failed to load ' + renderer.url));
+        document.head.append(script);
+      }
     });
   })()`);
   loadingRenderer = false;

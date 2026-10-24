@@ -1,28 +1,6 @@
-{{/*
-  외부 origin 연결을 미리 열어 둔다.
-
-  왜: Lighthouse 실측(라이브, 논문 글)에서 LCP 4.2s 중 81%(3,406ms)가
-  render delay 였다. TTFB 는 811ms 로 문제가 아니다. 렌더가 늦는 이유 중
-  기다릴 필요가 없는 부분이 서드파티 연결이다 — google-analytics 420ms,
-  giscus 296ms 를 Lighthouse 가 직접 절감 대상으로 지목했다.
-
-  KaTeX 와 mermaid 는 cdn.jsdelivr.net 에서 오는데, 그 <link> 와 <script>
-  는 본문 끝(features/*.html)에 있어 문서를 거의 다 파싱해야 발견된다.
-  특히 katex.min.css 는 렌더를 막는 스타일시트라 그때부터 DNS·TLS 를
-  새로 여는 시간이 그대로 흰 화면이 된다. head 에서 연결을 미리 열고
-  CSS 는 preload 로 내려받기를 앞당긴다.
-
-  preconnect 는 4 개를 넘기지 않는다 (연결 자체에도 비용이 있다).
-  필요한 페이지에서만 붙인다.
-
-  처음에는 google-analytics 와 giscus 를 dns-prefetch 로 뒀는데, 배포 후
-  라이브에서 재어 보니 Lighthouse 가 둘을 여전히 preconnect 후보로
-  지목했다(각각 약 370ms / 300ms). dns-prefetch 는 이름만 풀고 TLS 는
-  열지 않아 절감이 거의 없다. preconnect 로 올린다. 이러면 평범한 글에서
-  3 개(gtm, ga, giscus), 수식·도표가 있는 글에서 4 개가 된다.
-*/}}
-
-{{- $katexCSS := "https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" -}}
+{{/* Preconnect only for external services used on this page. KaTeX CSS and
+     its relative fonts are now local; preload exactly the feature partial URL. */}}
+{{- $katexCSS := ("vendor/katex@0.16.22/katex.min.css" | relURL) -}}
 {{- $katexSRI := "sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" -}}
 
 {{/* 테마 katex 파셜과 같은 조건으로 판단한다. 어긋나면 쓸모없는 연결을
@@ -50,7 +28,7 @@
 <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
 <link rel="preconnect" href="https://www.google-analytics.com" crossorigin />
 {{- end }}
-{{- if or $hasMath $hasMermaid }}
+{{- if $hasMermaid }}
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 {{- end }}
 {{- if $hasMath }}
