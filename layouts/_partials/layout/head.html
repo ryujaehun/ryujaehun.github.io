@@ -93,7 +93,7 @@
   <link rel="icon" type="image/svg+xml" href="{{ `favicon.svg` | relURL }}" />
 {{ end }}
 
-{{- if or .IsPage .IsHome .IsSection .IsNode -}}
+{{- if or .IsPage .IsHome .IsSection .IsBranch -}}
   {{- $_ := .Content -}}
 {{- end -}}
 
