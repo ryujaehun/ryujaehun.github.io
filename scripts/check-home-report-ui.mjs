@@ -90,12 +90,12 @@ try {
               valid:!!source && !!note && [...note.querySelectorAll('a[href]')].some(a=>a.href===source.href)
                 && attribution.textContent.split('·').length>=3 && /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(attribution.textContent)});
           }
-          const clips=article?[...article.querySelectorAll('.report-kpi,.report-price-row,.report-volume-row')].filter(e=>e.getBoundingClientRect().right>innerWidth+1 || e.getBoundingClientRect().left<0).length:99;
+          const clips=article?[...article.querySelectorAll('.report-kpi,.report-price-row,.report-volume-row,.report-history-row')].filter(e=>e.getBoundingClientRect().right>innerWidth+1 || e.getBoundingClientRect().left<0).length:99;
           function rgb(color){const c=document.createElement('canvas');c.width=c.height=1;const x=c.getContext('2d');x.fillStyle=color;x.fillRect(0,0,1,1);return [...x.getImageData(0,0,1,1).data].slice(0,3);}
           function lum(v){return v.map(n=>{n/=255;return n<=.04045?n/12.92:Math.pow((n+.055)/1.055,2.4)}).reduce((a,v,i)=>a+v*[.2126,.7152,.0722][i],0);}
           const contrast=article?[...article.querySelectorAll('.report-up,.report-down,.report-kpi-label,.report-kpi-value')].map(e=>{let p=e,bg='transparent';while(p){bg=getComputedStyle(p).backgroundColor;if(!['rgba(0, 0, 0, 0)','transparent'].includes(bg))break;p=p.parentElement;}const f=lum(rgb(getComputedStyle(e).color)),b=lum(rgb(bg));return (Math.max(f,b)+.05)/(Math.min(f,b)+.05);}):[];
           return {article:!!article,kpis:article?.querySelectorAll('.report-kpi').length, priceRows:rows.length, samples,
-            volumeRows:article?.querySelectorAll('.report-volume-row').length,clipped:clips,
+            volumeRows:article?.querySelectorAll('.report-volume-row').length, historyRows:article?.querySelectorAll('.report-history-row').length,clipped:clips,
             overflow:document.documentElement.scrollWidth>innerWidth+1,
             badReferences:citations.filter(a=>!document.getElementById(decodeURIComponent(a.hash.slice(1)))).map(a=>a.hash),
             rawFootnotes:/\\[\\^\\d+\\]/.test(text),
@@ -108,6 +108,7 @@ try {
         assert(result.priceRows>=0 && result.priceRows<=4, 'Primary price cards must be readable and bounded');
         assert(result.samples.length===result.priceRows && result.samples.every(v=>Math.min(...v)>=5), 'Price cards need ample sample counts');
         assert(result.volumeRows>=0 && result.volumeRows<=8, 'Volume selection');
+        assert(result.historyRows>=0 && result.historyRows<=24, 'Monthly history must stay bounded');
         assert.deepEqual(result.badReferences, [], 'All HTML citation anchors must resolve');
         assert(!result.rawFootnotes, 'Footnotes must be rendered');
         assert(result.researchSources.every(source=>source.valid), 'Displayed research needs author, date, original URL and matching citation');

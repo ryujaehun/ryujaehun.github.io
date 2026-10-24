@@ -23,7 +23,7 @@
 .home-report .report-periods > div { display: grid; grid-template-columns: 6.5rem minmax(0,1fr); gap: .5rem; margin-block: .25rem; }
 .home-report .report-periods dt { font-weight: 650; color: var(--report-ink); }
 .home-report .report-periods dd { margin: 0; color: var(--color-muted-foreground); }
-.home-report .report-price-list,.home-report .report-volume-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .85rem 1.1rem; margin-block: 1.25rem; }
+.home-report .report-price-list,.home-report .report-volume-list,.home-report .report-history-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .85rem 1.1rem; margin-block: 1.25rem; }
 .home-report .report-price-row { min-width: 0; border: 1px solid var(--color-border); border-radius: .6rem; padding: .9rem; }
 .home-report .report-row-head { display: flex; align-items: flex-start; justify-content: space-between; gap: .65rem; font-size: .92rem; line-height: 1.5; }
 .home-report .report-row-head strong { min-width: 0; word-break: keep-all; overflow-wrap: anywhere; }
@@ -43,7 +43,7 @@
 .home-report .report-row-values strong.report-down { color: var(--report-down); }
 .home-report .report-price-sample { display: flex; flex-wrap: wrap; gap: .35rem .5rem; justify-content: space-between; align-items: center; margin-top: .55rem; font-size: .7rem; color: var(--color-muted-foreground); }
 .home-report .report-direction { padding: .08rem .4rem; border: 1px solid var(--color-border); border-radius: 3px; white-space: nowrap; }
-.home-report .report-volume-row { min-width: 0; padding-block: .8rem; border-top: 1px solid var(--color-border); }
+.home-report .report-volume-row,.home-report .report-history-row { min-width: 0; padding-block: .8rem; border-top: 1px solid var(--color-border); }
 .home-report .report-bar-pair { margin-block: .6rem; }
 .home-report .report-bar-pair > span { display: block; height: .35rem; border-radius: 2px; margin-block: .25rem; }
 .home-report .report-bar-before { background: #8b9bab; }
@@ -57,7 +57,7 @@
   .home-report .report-kpi:first-child .report-kpi-label,.home-report .report-kpi:first-child .report-kpi-note,.home-report .report-kpi:first-child .report-kpi-date { grid-column: 1/-1; }
   .home-report .report-kpi { padding: .75rem; }
   .home-report .report-kpi-value { font-size: 1.4rem; }
-  .home-report .report-price-list,.home-report .report-volume-list { grid-template-columns: minmax(0,1fr); }
+  .home-report .report-price-list,.home-report .report-volume-list,.home-report .report-history-list { grid-template-columns: minmax(0,1fr); }
   .home-report .report-price-row { padding: .85rem; }
   .home-report .report-row-head .report-price-current { font-size: 1.1rem; }
   .home-report .report-periods > div { grid-template-columns: 5.4rem minmax(0,1fr); }
