@@ -139,3 +139,6 @@ description: "서울·경기 아파트의 금리, 실제 거래와 주요 뉴스
 [^16]: [서울 아파트값 0.13%↑···성북·서대문 뛰고 강남·서초 내렸다 - 스마트비즈](https://news.google.com/rss/articles/CBMibEFVX3lxTE5tSjFKTG9CSUtsQ1hzWUFCS1h0S0ZYUkZrREVYUVpBSkx0eWxtVnh4dUlkWXhqYUhKTWVhbjRIdlRGWEJTbWNhb3ZYSjBacnV1d0tzUmRVUUpBWWlyQm5od1ItU2FzZmM5TG5kbw?oc=5) · 스마트비즈, 10월 22일
 [^17]: [서울 아파트값 상승폭 3주만에 축소…경기 남부는 &#x27;키 맞추기&#x27; 확산\[부동산AtoZ\] - 아시아경제](https://news.google.com/rss/articles/CBMiYEFVX3lxTE8yS3ZsOUFtWHlkeGhuOTB0bUJxeTIzSlNqMGpWWW9hQjNaTERVR3cwRFFTMldmM3Z4ZGZ1UUw0RnByY3NGazYzTHVrUTRmTFFQLW5ETXNGSmNoeENscHJJVA?oc=5) · 아시아경제, 10월 22일
 [^18]: 한국부동산원 · 부동산통계처, [보고서 원문](https://www.reb.or.kr/reb/cm/cntnts/cntntsView.do?cntntsId=1033&mi=10333&statId=S234820263), 상시 방법론 · 확인 2026-10-23. 공식 조사방법·지수 산정·용어해설.
+
+
+<span hidden data-home-report-digest="03b3d787db7aa51a101909b897b3cb8999f01fd9e2c492789e5fa3d671d1eb94"></span>
