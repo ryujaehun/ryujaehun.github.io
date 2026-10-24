@@ -2936,5 +2936,80 @@
    "status": "completed"
   },
   "version": "v1"
+ },
+ "2610.31574": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "pdf_pages": 0,
+   "tables": 7,
+   "warnings": []
+  },
+  "categories": [
+   "cs.LG"
+  ],
+  "draft_path": "content/posts/2026-10-25-paper-2610.31574v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-25",
+  "matched": {
+   "adjacent": [
+    "attention"
+   ],
+   "core": [
+    "sparse attention"
+   ],
+   "systems": [
+    "compression"
+   ],
+   "weak": [
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-10-25",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/glm-5.3-flash-free",
+     "output": "2610.31574-revision-1.md",
+     "round": 1
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/beam-free",
+     "output": "2610.31574-revision-2.md",
+     "round": 2
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/beam-free",
+     "output": "2610.31574-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.6138,
+  "slug": "paper-2610-31574v1",
+  "status": "summarized",
+  "summarized_at": "2026-10-25",
+  "summary_cost_usd": 0.061456956,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "Rethinking Sequence Compression with Test-time Regression",
+  "translation": {
+   "completed_at": "2026-10-25",
+   "cost_usd": 0.01884894,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  },
+  "version": "v1"
  }
 }
