@@ -31,3 +31,20 @@ Run locally after building:
 python3 -m unittest discover -s scripts -p 'test_check_local_links.py'
 python3 scripts/check_local_links.py public --base-url https://jaehun.me/
 ```
+
+## Translation recovery
+
+The same paper's English edition had exhausted three automated retries. Numeric
+validation treated `95th` as a word and rejected a faithful translation of
+`95 백분위수`. The validator now normalizes English ordinal suffixes before
+comparing numeric values; changed or missing percentiles still fail. Six new
+regression cases and the full 990-test automation suite passed.
+
+The recovered translation passes the new validator; the previous validator
+rejects the same text with only `수치 누락 또는 변경: 95`. It was generated with
+`opencode/glm-5.3-flash-free` using the production-pinned OpenCode 1.18.29 after
+local Go credentials returned an expiry error. Reported translation cost: $0.
+
+After recovery, the 686-post source check passed, and a fresh Hugo build passed
+the local-link audit across 2,156 HTML files. Every published paper recorded in
+the automation state now has a published English counterpart.
