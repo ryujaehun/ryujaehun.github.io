@@ -106,6 +106,8 @@ jobs:
           done
           node scripts/check-reading-ui.mjs http://127.0.0.1:8765
           node scripts/check-home-report-ui.mjs http://127.0.0.1:8765
+      - name: Render every Mermaid diagram
+        run: node scripts/check-mermaid.mjs public
       - name: Cache Save
         id: cache-save
         uses: actions/cache/save@v6
