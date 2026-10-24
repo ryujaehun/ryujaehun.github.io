@@ -85,7 +85,7 @@ flowchart LR
 **Terminology**
 
 - $d$: the original hidden dimension (e.g., 4096) (source: §2.2).
-- $\ell$: the latent dimension, $\ell<d$ (e.g., 1024) (source: §2.2).
+- $\ell$: the latent dimension, $\ell\lt d$ (e.g., 1024) (source: §2.2).
 - $N$: total number of experts, $K$: number of active (top-$K$) experts per token (source: §2.2).
 - "All-to-all traffic/weight load" is identified as the MoE bottleneck (source: §2.1).
 

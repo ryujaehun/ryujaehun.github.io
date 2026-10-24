@@ -85,7 +85,7 @@ flowchart LR
 **용어 정의**
 
 * $d$ : 원래 hidden dimension (예: 4096) (근거: §2.2). 
-* $\ell$ : latent dimension, $\ell<d$ (예: 1024) (근거: §2.2). 
+* $\ell$ : latent dimension, $\ell\lt d$ (예: 1024) (근거: §2.2).
 * $N$ : 전체 expert 개수, $K$ : token당 활성(top-$K$) expert 수 (근거: §2.2). 
 * “all-to-all traffic/weight load”는 MoE 병목으로 지목된다 (근거: §2.1). 
 
