@@ -16,24 +16,24 @@ news_feeds:
   url: https://news.google.com/rss/search?q=%EC%84%9C%EC%9A%B8+%EA%B2%BD%EA%B8%B0+%EB%B6%80%EB%8F%99%EC%82%B0+%EC%95%84%ED%8C%8C%ED%8A%B8+when%3A35d&hl=ko&gl=KR&ceid=KR%3Ako
 llm:
   models:
-  - opencode/deepseek-v4.1-flash-free
-  - opencode/glm-5.3-flash-free
+  - opencode-go/deepseek-v4.1-flash
+  - opencode-go/glm-5.3-flash
   timeout_seconds: 180
   max_attempts: 2
   total_timeout_seconds: 1080
   max_revision_rounds: 3
   reviewers:
     facts:
-    - opencode/glm-5.3-flash-free
-    - opencode/beam-free
+    - opencode-go/glm-5.3-flash
+    - opencode-go/qwen3.8-flash
     reader:
-    - opencode/mimo-v2.6-flash-free
-    - opencode/nemotron-3.5-lightning-free
+    - opencode-go/mimo-v2.6-flash
+    - opencode-go/kimi-k3
   revision_models:
-  - opencode/deepseek-v4.1-flash-free
+  - opencode-go/deepseek-v4.1-flash
   final_models:
-  - opencode/glm-5.3-flash-free
-  - opencode/beam-free
+  - opencode-go/glm-5.3-flash
+  - opencode-go/qwen3.8-flash
 publish:
   branch: main
   auto: true
