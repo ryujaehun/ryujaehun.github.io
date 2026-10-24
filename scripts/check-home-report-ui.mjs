@@ -118,6 +118,15 @@ try {
           await writeFile(join(screenshots,stem+'.png'),Buffer.from(shot.data,'base64'));
           if(number===1){const price=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:0,y:Math.max(0,result.priceTop-110),width,height:1000,scale:1}});await writeFile(join(screenshots,stem+'-prices.png'),Buffer.from(price.data,'base64'));}
         }
+        if (await evaluate(`!!document.querySelector('.report-background summary')`)) {
+          assert(!await evaluate(`document.querySelector('.report-background').open`),'Daily historical background starts folded');
+          await evaluate(`document.querySelector('.report-background summary').focus()`);
+          await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13,text:'\r'});
+          await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+          await pause(100);
+          assert(await evaluate(`document.querySelector('.report-background').open`),'Historical background must open with keyboard');
+          assert(!await evaluate(`document.documentElement.scrollWidth>innerWidth+1`),'Expanded background must not overflow');
+        }
         if (await evaluate(`!!document.querySelector('.report-data-table summary')`)) {
         await evaluate(`document.querySelector('.report-data-table summary').focus()`);
         await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13,text:'\r'});
