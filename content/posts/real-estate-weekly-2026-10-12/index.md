@@ -160,3 +160,6 @@ description: "서울·경기 아파트의 금리, 실제 거래와 주요 뉴스
 [^22]: 하나금융연구소 · 이재원, [보고서 원문](https://www.hanaif.re.kr/boardDetail.do?hmpeSeqNo=37072), 2026-09-21. 공식 게시문 요약.
 [^23]: [경기 분양가 3.3㎡당 2256만원 &#x27;역대 최고&#x27;…구리 4000만원 육박 - 뉴시스](https://news.google.com/rss/articles/CBMiYEFVX3lxTE56YWpBaFJMTm1jTlpyVHFiMVNrMFduUUlGZkJURTlLVXlSZzZVWGJaTE1qbzVYZml2RUt6NXpzNTF1bjlFYWZ0WnpaanZHb2dubEoxU3F1M2lVejZxYldteNIBeEFVX3lxTE03R2I5b0hlZ1kzOFBxbHU1Q1FtNnoxMV90Wm9zNktLRkJoVUVRUFF2dnlCSFU0Nlg3azhNcnNfRVp5Q3JXZTVRU1pBdTlWd3AzQ1FYcUJkMnBqblZNYXh3bTl2SEd5XzRwZXZoSVhMZXc4N1BGbTN6aA?oc=5) · 뉴시스, 10월 17일
 [^24]: 한국부동산원 · 부동산통계처, [보고서 원문](https://www.reb.or.kr/reb/cm/cntnts/cntntsView.do?cntntsId=1033&mi=10333&statId=S234820263), 상시 방법론 · 확인 2026-10-23. 공식 조사방법·지수 산정·용어해설.
+
+
+<span hidden data-home-report-digest="f639d9173de7bba3bfaf9d6d6020f21a3d1bba21ae0f52cf05b62069ab723081"></span>
