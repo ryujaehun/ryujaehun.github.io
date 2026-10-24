@@ -4,6 +4,7 @@ import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import assert from 'node:assert/strict';
+import { rendererLoadExitCode } from './renderer-retry.mjs';
 // Render all math and check that copyable code survives minification and math rendering.
 // Usage: node scripts/check-math.mjs public
 const directory = resolve(process.argv[2] || 'public');
@@ -36,6 +37,7 @@ const chrome = spawn(process.env.CHROME_BIN || 'google-chrome', [
   '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank',
 ], { stdio: ['ignore', 'ignore', 'pipe'] });
 let socket;
+let loadingRenderer = false;
 try {
   const endpoint = await new Promise((resolve, reject) => {
     let stderr = '';
@@ -78,6 +80,7 @@ try {
   const {frameTree}=await send('Page.getFrameTree');
   await send('Page.setDocumentContent',{frameId:frameTree.frame.id,html:'<!doctype html><html><head></head><body></body></html>'});
   assert.equal(await evaluate('document.compatMode'),'CSS1Compat');
+  loadingRenderer = true;
   await evaluate(`(async () => {
     for (const url of ${JSON.stringify(urls)}) await new Promise((resolve, reject) => {
       const script = document.createElement('script');
@@ -87,6 +90,7 @@ try {
       document.head.append(script);
     });
   })()`);
+  loadingRenderer = false;
   let total = 0, codeSources = 0;
   const failures = [];
   for (const page of pages) {
@@ -112,6 +116,8 @@ try {
       const options = ${options || 'null'};
       const callbacks = [];
       if (options) {
+        // Unsupported commands otherwise become red text without a .katex-error node.
+        options.throwOnError = true;
         options.errorCallback = (message, error) => callbacks.push(String(error));
         renderMathInElement(root, options);
       }
@@ -135,6 +141,9 @@ try {
   for (const failure of failures) console.error(JSON.stringify(failure));
   console.log(`Checked ${total} formulas and ${codeSources} code sources in ${pages.length} HTML files; ${failures.length} failing pages`);
   if (failures.length) process.exitCode = 1;
+} catch (error) {
+  console.error(error);
+  process.exitCode = rendererLoadExitCode(error, loadingRenderer);
 } finally {
   socket?.close();
   if (chrome.pid && chrome.exitCode === null && chrome.signalCode === null) {

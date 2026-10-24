@@ -96,7 +96,7 @@ jobs:
           node-version: "22"
       - name: Check recent posts in desktop and mobile Chrome
         run: |
-          node --test scripts/reading-paths.test.mjs
+          node --test scripts/reading-paths.test.mjs scripts/renderer-retry.test.mjs
           python3 -m http.server 8765 --bind 127.0.0.1 --directory public > /tmp/blog-ui-server.log 2>&1 &
           UI_SERVER_PID=$!
           trap 'kill "$UI_SERVER_PID"' EXIT
@@ -107,9 +107,9 @@ jobs:
           node scripts/check-reading-ui.mjs http://127.0.0.1:8765
           node scripts/check-home-report-ui.mjs http://127.0.0.1:8765
       - name: Render every Mermaid diagram
-        run: node scripts/check-mermaid.mjs public
+        run: node scripts/renderer-retry.mjs scripts/check-mermaid.mjs public
       - name: Render all math and preserve copyable code
-        run: node scripts/check-math.mjs public
+        run: node scripts/renderer-retry.mjs scripts/check-math.mjs public
       - name: Cache Save
         id: cache-save
         uses: actions/cache/save@v6

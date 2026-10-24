@@ -4,6 +4,7 @@ import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import assert from 'node:assert/strict';
+import { rendererLoadExitCode } from './renderer-retry.mjs';
 // Render every Mermaid block in the actual Hugo output, including older posts.
 // Usage: node scripts/check-mermaid.mjs public
 const directory = resolve(process.argv[2] || 'public');
@@ -36,6 +37,7 @@ const chrome = spawn(process.env.CHROME_BIN || 'google-chrome', [
 ], { stdio: ['ignore', 'ignore', 'pipe'] });
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 let socket;
+let loadingRenderer = false;
 try {
   const endpoint = await new Promise((resolve, reject) => {
     let stderr = '';
@@ -75,11 +77,13 @@ try {
     return result.result.value;
   };
   await send('Page.enable');
+  loadingRenderer = true;
   await evaluate(`(async () => {
     const {default: mermaid} = await import(${JSON.stringify(renderer)});
     mermaid.initialize({startOnLoad:false,securityLevel:'loose',theme:'default'});
     window.auditMermaid = mermaid;
   })()`);
+  loadingRenderer = false;
   let total = 0;
   const failures = [];
   for (const page of pages) {
@@ -107,6 +111,9 @@ try {
   for (const failure of failures) console.error(`${failure.path} diagram ${failure.index + 1}: ${failure.error || 'No SVG rendered'}`);
   console.log(`Checked ${total} Mermaid diagrams in ${pages.length} HTML files; ${failures.length} failures`);
   if (failures.length) process.exitCode = 1;
+} catch (error) {
+  console.error(error);
+  process.exitCode = rendererLoadExitCode(error, loadingRenderer);
 } finally {
   socket?.close();
   if (chrome.pid && chrome.exitCode === null && chrome.signalCode === null) {
