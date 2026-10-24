@@ -2528,8 +2528,8 @@
   "summary_model": "opencode-go/deepseek-v4-pro",
   "title": "Speculative Sampling in Interactive Video Generation",
   "translation": {
-   "failures": 2,
-   "last_error": "모든 모델이 실패했습니다.\nopencode-go/deepseek-v4.1-flash: 품질 검사 실패: 수치 누락 또는 변경: 2610.20556, 95\nopencode-go/gemini-4-argon-contributor: 품질 검사 실패: 수치 누락 또는 변경: 2610.20556, 95\nopencode/glm-5.3-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode/deepseek-v4.1-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode/mimo-v2.6-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 95",
+   "failures": 3,
+   "last_error": "모든 모델이 실패했습니다.\nopencode-go/deepseek-v4.1-flash: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode-go/gemini-4-argon-contributor: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode/glm-5.3-flash-free: 품질 검사 실패: 링크/이미지 목적지 누락 또는 변경: /assets/images/papers/2610.20556/final-3df94d99.webp, /assets/images/papers/2610.20556/final-71f9a6ae.webp; 수치 누락 또는 변경: 0, 0.000, 0.005, 0.014, 0.021, 0.065, 0.069, 0.155, 0.204, 0.26, 0.438, 0.493, 0.524, 1.32, 1.35, 1.41, 1.42, 1.6, 1.63, 1.781, 1.87, 1.91, 1.95, 105.2, 119.4, 1280, 1406.2, 143.4, 15, 1521.4, 159.2, 166.5, 17, 1737.1, 18, 19, 19.669, 194.7, 2.39, 2.4, 2.47, 2.5, 2.6, 2.7, 20, 20.339, 21, 211.0, 218.7, 22, 23, 25, 276.4, 3.11, 3.23, 3.3, 318.4, 3335.5, 358.3, 384.1, 4.1, 4.13, 4.24, 4.3, 4.407, 4.45, 4.49, 4.64, 4.66, 4.82, 443.8, 448, 45, 480, 49, 5, 5.09, 50, 52, 599.6, 6, 6.44, 6.59, 6.98, 6.99, 63.7, 6432.8, 65.9, 67.0, 7, 72.1, 72.7, 72.9, 750.0, 77.5, 78.6, 78.84, 79.00, 8, 809.2, 81.59, 81.65, 81.66, 81.70, 81.86, 82.13, 832, 899.7, 9, 91.5, 95, 95.8; 수식($$) 8개 -> 2개; 표 행 38개 -> 3개\nopencode/deepseek-v4.1-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 95\nopencode/mimo-v2.6-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 95",
    "status": "failed"
   }
  },
