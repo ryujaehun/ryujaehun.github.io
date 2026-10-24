@@ -108,6 +108,8 @@ jobs:
           node scripts/check-home-report-ui.mjs http://127.0.0.1:8765
       - name: Render every Mermaid diagram
         run: node scripts/check-mermaid.mjs public
+      - name: Render all math and preserve copyable code
+        run: node scripts/check-math.mjs public
       - name: Cache Save
         id: cache-save
         uses: actions/cache/save@v6

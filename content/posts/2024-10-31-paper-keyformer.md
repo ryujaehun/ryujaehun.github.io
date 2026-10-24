@@ -211,7 +211,7 @@ for t in range(T):               # 각 디코딩 단계에서
 #### 단계 2: 첫 번째 디코딩 루프 (디코딩 단계 t=0)
 
 1. **프롬프트 처리 단계**:
-   - 모든 토큰에 대해 \( x_i = \text{compute_logits}(Q_i, K_{\text{all}}, S_n) \)를 계산하여 로짓 값을 얻습니다. 예를 들어 "The", "quick", "brown" 등에 대한 로짓이 계산됩니다.
+   - 모든 토큰에 대해 \( x_i = \text{compute\_logits}(Q_i, K_{\text{all}}, S_n) \)를 계산하여 로짓 값을 얻습니다. 예를 들어 "The", "quick", "brown" 등에 대한 로짓이 계산됩니다.
 
 2. **Score Function 업데이트**:
    - 각 토큰에 대해 Gumbel 분포를 사용하여 노이즈를 추가한 다음 \( f_{\theta} \)를 업데이트합니다.
