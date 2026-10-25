@@ -2754,6 +2754,76 @@
   },
   "version": "v1"
  },
+ "2610.27999": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "pdf_pages": 0,
+   "tables": 3,
+   "warnings": []
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-26-paper-2610.27999.md",
+  "failures": 0,
+  "first_seen": "2026-10-26",
+  "matched": {
+   "adjacent": [
+    "autoregressive",
+    "latency",
+    "throughput"
+   ],
+   "systems": [
+    "gpu memory"
+   ]
+  },
+  "materialized_at": "2026-10-26",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/glm-5.3-flash-free",
+     "output": "2610.27999-revision-1.md",
+     "round": 1
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/mimo-v2.6-flash-free",
+     "output": "2610.27999-revision-2.md",
+     "round": 2
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/mimo-v2.6-flash-free",
+     "output": "2610.27999-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.6049,
+  "slug": "paper-2610-27999",
+  "status": "summarized",
+  "summarized_at": "2026-10-26",
+  "summary_cost_usd": 0.061014755999999996,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "Matrix-Game 4.0: Harnessing Video Models for Real-Time Playable Game Worlds",
+  "translation": {
+   "completed_at": "2026-10-26",
+   "cost_usd": 0.02421423,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  }
+ },
  "2610.28559": {
   "assets": {
    "figures": [
