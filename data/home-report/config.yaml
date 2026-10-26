@@ -18,17 +18,17 @@ llm:
   models:
   - opencode-go/deepseek-v4.1-flash
   - opencode-go/glm-5.3-flash
-  timeout_seconds: 180
+  timeout_seconds: 480
   max_attempts: 2
-  total_timeout_seconds: 1080
+  total_timeout_seconds: 1680
   max_revision_rounds: 3
   reviewers:
     facts:
     - opencode-go/glm-5.3-flash
     - opencode-go/qwen3.8-flash
     reader:
-    - opencode-go/mimo-v2.6-flash
     - opencode-go/kimi-k3
+    - opencode-go/mimo-v2.6-flash
   revision_models:
   - opencode-go/deepseek-v4.1-flash
   final_models:
@@ -44,3 +44,47 @@ volume_lag_days: 30
 complex_window_days: 90
 complex_min_sample: 5
 max_complex_comparisons: 10
+rone:
+  enabled: true
+  key_env: RONE_API_KEY
+  key_file: /home/jaehun/workspace/real_est_analysis/infra/.env.prod
+observations:
+  enabled: true
+housing_data:
+  enabled: true
+  key_file: /home/jaehun/workspace/real_est_analysis/infra/.env.prod
+report_quality:
+  enabled: true
+  tracked_cohorts:
+  - region_code: '41135'
+    dong: 야탑동
+    complex: 매화마을공무원2
+    area: 58
+    floor_band: 6층 이상
+  - region_code: '41135'
+    dong: 정자동
+    complex: 한솔마을(4단지)(주공)
+    area: 35
+    floor_band: 6층 이상
+  - region_code: '41135'
+    dong: 이매동
+    complex: 이매촌(한신)
+    area: 50
+    floor_band: 6층 이상
+  - region_code: '41135'
+    dong: 수내동
+    complex: 양지마을(5단지)(한양501-514)
+    area: 35
+    floor_band: 6층 이상
+  - region_code: '41135'
+    dong: 정자동
+    complex: 한솔마을(5단지)(주공)
+    area: 41
+    floor_band: 1~5층
+  - region_code: '41135'
+    dong: 서현동
+    complex: 시범한양
+    area: 35
+    floor_band: 6층 이상
+deployment:
+  expected_commit: 7f29d59ba1ca4057bb00488e4822fffc4fdb1560
