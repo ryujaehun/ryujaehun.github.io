@@ -2534,6 +2534,84 @@
    "status": "completed"
   }
  },
+ "2610.20818": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.20818/teaser-3978d2d1.webp",
+    "/assets/images/papers/2610.20818/main-c4e40a44.webp",
+    "/assets/images/papers/2610.20818/input-b5160d1b.webp",
+    "/assets/images/papers/2610.20818/ar-head-3ed194b7.webp",
+    "/assets/images/papers/2610.20818/attention-mask-25427521.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "pdf_pages": 0,
+   "tables": 8,
+   "warnings": []
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-27-paper-2610.20818.md",
+  "failures": 0,
+  "first_seen": "2026-10-27",
+  "matched": {
+   "adjacent": [
+    "autoregressive",
+    "cache"
+   ],
+   "core": [
+    "inference efficiency"
+   ],
+   "weak": [
+    "large language model",
+    "optimization"
+   ]
+  },
+  "materialized_at": "2026-10-27",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/glm-5.3-flash-free",
+     "output": "2610.20818-revision-1.md",
+     "round": 1
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/mimo-v2.6-flash-free",
+     "output": "2610.20818-revision-2.md",
+     "round": 2
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/deepseek-v4.1-flash-free",
+     "output": "2610.20818-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.5764,
+  "slug": "paper-2610-20818",
+  "status": "summarized",
+  "summarized_at": "2026-10-27",
+  "summary_cost_usd": 0.118973756,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "Intern Lumina U2: A Multi-Codebook Diffusion Large Language Model for Omni-Visual Understanding and Image Generation",
+  "translation": {
+   "failures": 1,
+   "last_error": "모든 모델이 실패했습니다.\nopencode-go/deepseek-v4.1-flash: 품질 검사 실패: 수치 누락 또는 변경: 4095\nopencode-go/gemini-4-argon-contributor: opencode 오류: UnknownError: Unexpected server error. Check server logs for details.\nopencode/glm-5.3-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 4095\nopencode/deepseek-v4.1-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 4095\nopencode/mimo-v2.6-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 4095",
+   "status": "failed"
+  }
+ },
  "2610.21463": {
   "assets": {
    "figures": [
