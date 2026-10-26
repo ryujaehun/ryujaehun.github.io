@@ -14,7 +14,7 @@ import zipfile
 from pathlib import Path
 
 BAD = {"failure", "timed_out", "action_required", "startup_failure", "stale"}
-REPORTS = {"summarize.json", "translate.json", "assets.json", "notify.json",
+REPORTS = {"fetch.json", "summarize.json", "translate.json", "assets.json", "notify.json",
            "series-work.json", "series-notify.json"}
 
 
@@ -69,7 +69,7 @@ def report_failures(data):
             for task in report.get("tasks", [])[:20]:
                 if isinstance(task, dict) and task.get("status") not in {"complete", "idle"}:
                     failures.append(f"{info.filename}: {sanitize(task)[:600]}")
-            for key in ("failed", "pending"):
+            for key in ("failed", "failed_sources", "pending"):
                 values = report.get(key, [])
                 if isinstance(values, list):
                     for value in values[:20]:
