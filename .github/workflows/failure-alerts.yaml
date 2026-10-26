@@ -1,0 +1,52 @@
+name: Detailed failure alerts
+
+on:
+  workflow_run:
+    workflows: [Deploy Hugo site to Pages]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+# Serialize duplicate events/retries for the same source run and attempt.
+concurrency:
+  group: failure-alert-${{ github.event.workflow_run.id || github.run_id }}-${{ github.event.workflow_run.run_attempt || 1 }}
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.head_repository.full_name == github.repository &&
+       contains(fromJSON('["push","schedule","workflow_dispatch"]'), github.event.workflow_run.event) &&
+       github.event.workflow_run.conclusion != 'cancelled')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Never check out code from the triggering run or execute its artifacts.
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/cache/restore@v6
+        id: receipt
+        with:
+          path: .workflow-alert-sent
+          key: failure-alert-v1-${{ github.event.workflow_run.id || github.run_id }}-${{ github.event.workflow_run.run_attempt || 1 }}
+      - name: Send detailed failure alert (manual runs send a labelled test)
+        if: steps.receipt.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          ALERT_TEST: ${{ github.event_name == 'workflow_dispatch' && '--test-message' || '' }}
+        run: python3 scripts/workflow_alert.py $ALERT_TEST
+      - uses: actions/cache/save@v6
+        if: steps.receipt.outputs.cache-hit != 'true' && success()
+        with:
+          path: .workflow-alert-sent
+          key: failure-alert-v1-${{ github.event.workflow_run.id || github.run_id }}-${{ github.event.workflow_run.run_attempt || 1 }}
