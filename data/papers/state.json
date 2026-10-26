@@ -2568,6 +2568,16 @@
    ]
   },
   "materialized_at": "2026-10-27",
+  "notification": {
+   "attempts": 10,
+   "error_category": "publication-missing",
+   "notification_id": "paper:2610.20818:ko-en",
+   "status": "notify-pending",
+   "urls": [
+    "https://jaehun.me/posts/paper-2610-20818/",
+    "https://jaehun.me/en/posts/paper-2610-20818/"
+   ]
+  },
   "quality": {
    "scope": "structure-and-evidence-presence",
    "status": "passed",
