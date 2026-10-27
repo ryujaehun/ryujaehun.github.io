@@ -129,11 +129,30 @@ try {
           assert(!await evaluate(`document.documentElement.scrollWidth>innerWidth+1`),'Expanded background must not overflow');
         }
         if (await evaluate(`!!document.querySelector('.report-data-table summary')`)) {
+        // A data table can sit inside multiple native disclosures. Open each
+        // ancestor with the keyboard before trying to focus its hidden child.
+        const ancestors = await evaluate(`(() => {
+          const all=[...document.querySelectorAll('details')];
+          const path=[];
+          for(let p=document.querySelector('.report-data-table').parentElement;p;p=p.parentElement){
+            if(p.tagName==='DETAILS')path.unshift(all.indexOf(p));
+          }
+          return path;
+        })()`);
+        for(const index of ancestors){
+          if(await evaluate(`document.querySelectorAll('details')[${index}].open`))continue;
+          await evaluate(`document.querySelectorAll('details')[${index}].querySelector(':scope > summary').focus()`);
+          await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13,text:'\r'});
+          await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+          await pause(100);
+          assert(await evaluate(`document.querySelectorAll('details')[${index}].open`),'Every enclosing disclosure must open with keyboard');
+        }
         await evaluate(`document.querySelector('.report-data-table summary').focus()`);
         await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13,text:'\r'});
         await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
         await pause(100);
         assert(await evaluate(`document.querySelector('.report-data-table').open`),'Data tables must open with keyboard');
+        assert(!await evaluate(`document.documentElement.scrollWidth>innerWidth+1`),'Expanded data tables must not overflow');
         }
         console.log(JSON.stringify({title:report.title,width,dark,...result}));
       }
