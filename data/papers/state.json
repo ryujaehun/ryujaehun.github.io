@@ -2569,7 +2569,7 @@
   },
   "materialized_at": "2026-10-27",
   "notification": {
-   "attempts": 10,
+   "attempts": 20,
    "error_category": "publication-missing",
    "notification_id": "paper:2610.20818:ko-en",
    "status": "notify-pending",
@@ -2617,7 +2617,7 @@
   "summary_model": "opencode-go/deepseek-v4-pro",
   "title": "Intern Lumina U2: A Multi-Codebook Diffusion Large Language Model for Omni-Visual Understanding and Image Generation",
   "translation": {
-   "failures": 1,
+   "failures": 2,
    "last_error": "모든 모델이 실패했습니다.\nopencode-go/deepseek-v4.1-flash: 품질 검사 실패: 수치 누락 또는 변경: 4095\nopencode-go/gemini-4-argon-contributor: opencode 오류: UnknownError: Unexpected server error. Check server logs for details.\nopencode/glm-5.3-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 4095\nopencode/deepseek-v4.1-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 4095\nopencode/mimo-v2.6-flash-free: 품질 검사 실패: 수치 누락 또는 변경: 4095",
    "status": "failed"
   }
