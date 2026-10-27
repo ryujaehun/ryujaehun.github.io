@@ -2569,10 +2569,11 @@
   },
   "materialized_at": "2026-10-27",
   "notification": {
+   "abandoned_at": "2026-10-27T02:11:13.797842+00:00",
    "attempts": 20,
    "error_category": "publication-missing",
    "notification_id": "paper:2610.20818:ko-en",
-   "status": "notify-pending",
+   "status": "notify-abandoned",
    "urls": [
     "https://jaehun.me/posts/paper-2610-20818/",
     "https://jaehun.me/en/posts/paper-2610-20818/"
