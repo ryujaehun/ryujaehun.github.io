@@ -34,6 +34,8 @@ llm:
   final_models:
   - opencode-go/glm-5.3-flash
   - opencode-go/qwen3.8-flash
+  workflow_by_kind:
+    weekly: analysis-first-v1
 publish:
   branch: main
   auto: true
@@ -87,4 +89,4 @@ report_quality:
     area: 35
     floor_band: 6층 이상
 deployment:
-  expected_commit: 7f29d59ba1ca4057bb00488e4822fffc4fdb1560
+  expected_commit: 0e471ea25bc5f586d7ac11e620a668e518888d82
