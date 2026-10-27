@@ -74,6 +74,10 @@ def report_failures(data):
                 if isinstance(values, list):
                     for value in values[:20]:
                         failures.append(f"{info.filename} {key}: {sanitize(value)[:240]}")
+            source_errors = report.get("source_errors", {})
+            if isinstance(source_errors, dict):
+                for source, error in list(source_errors.items())[:20]:
+                    failures.append(f"{info.filename}: {sanitize(source)[:120]}: {sanitize(error)[:600]}")
     return failures
 
 
