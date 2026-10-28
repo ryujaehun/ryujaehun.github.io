@@ -3284,5 +3284,84 @@
    "status": "completed"
   },
   "version": "v1"
+ },
+ "2610.37386": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.37386/prelim-75139eab.webp",
+    "/assets/images/papers/2610.37386/drift-aaf988c8.webp",
+    "/assets/images/papers/2610.37386/ranked-412cd20a.webp",
+    "/assets/images/papers/2610.37386/method-5b57e252.webp",
+    "/assets/images/papers/2610.37386/speed-145f8a1c.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "pdf_pages": 0,
+   "tables": 8,
+   "warnings": []
+  },
+  "categories": [
+   "cs.LG",
+   "cs.AI"
+  ],
+  "draft_path": "content/posts/2026-10-29-paper-2610.37386v1.md",
+  "failures": 0,
+  "first_seen": "2026-10-29",
+  "matched": {
+   "adjacent": [
+    "decoding",
+    "mixture-of-experts",
+    "moe"
+   ],
+   "named_systems": [
+    "triton",
+    "vllm"
+   ]
+  },
+  "materialized_at": "2026-10-29",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/glm-5.3-flash-free",
+     "output": "2610.37386-revision-1.md",
+     "round": 1
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/mimo-v2.6-flash-free",
+     "output": "2610.37386-revision-2.md",
+     "round": 2
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/mimo-v2.6-flash-free",
+     "output": "2610.37386-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.6195,
+  "slug": "paper-2610-37386v1",
+  "status": "summarized",
+  "summarized_at": "2026-10-29",
+  "summary_cost_usd": 0.106386632,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "Channel Selection for Mixture-of-Experts Decoding Needs No Calibration Data",
+  "translation": {
+   "completed_at": "2026-10-29",
+   "cost_usd": 0.006155238,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  },
+  "version": "v1"
  }
 }
