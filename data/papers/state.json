@@ -2697,6 +2697,84 @@
   },
   "version": "v1"
  },
+ "2610.22543": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.22543/fig-ladder-ac2a3d9c.webp",
+    "/assets/images/papers/2610.22543/fig-method-e3edcded.webp",
+    "/assets/images/papers/2610.22543/fig-maxcommit-7c9a39b3.webp",
+    "/assets/images/papers/2610.22543/fig-oracle-b5721523.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "pdf_pages": 0,
+   "tables": 8,
+   "warnings": []
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-30-paper-2610.22543.md",
+  "failures": 0,
+  "first_seen": "2026-10-30",
+  "matched": {
+   "adjacent": [
+    "autoregressive",
+    "decoding",
+    "throughput"
+   ],
+   "core": [
+    "speculative decoding"
+   ],
+   "weak": [
+    "acceleration"
+   ]
+  },
+  "materialized_at": "2026-10-30",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/glm-5.3-flash-free",
+     "output": "2610.22543-revision-1.md",
+     "round": 1
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/mimo-v2.6-flash-free",
+     "output": "2610.22543-revision-2.md",
+     "round": 2
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/mimo-v2.6-flash-free",
+     "output": "2610.22543-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.5756,
+  "slug": "paper-2610-22543",
+  "status": "summarized",
+  "summarized_at": "2026-10-30",
+  "summary_cost_usd": 0.155927156,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "On the SPOT: Enhancing Speculative Decoding for Diffusion Language Models via Commit-Order Prediction",
+  "translation": {
+   "completed_at": "2026-10-30",
+   "cost_usd": 0.02418942,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  }
+ },
  "2610.23787": {
   "assets": {
    "figures": [
