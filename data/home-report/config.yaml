@@ -31,6 +31,7 @@ llm:
     - opencode-go/mimo-v2.6-flash
   revision_models:
   - opencode-go/deepseek-v4.1-flash
+  - opencode-go/glm-5.3-flash
   final_models:
   - opencode-go/glm-5.3-flash
   - opencode-go/qwen3.8-flash
@@ -89,4 +90,4 @@ report_quality:
     area: 35
     floor_band: 6층 이상
 deployment:
-  expected_commit: 0e471ea25bc5f586d7ac11e620a668e518888d82
+  expected_commit: 8c21a0382b26cdef575ac11a977a374ca2ba5390
