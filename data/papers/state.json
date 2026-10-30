@@ -3374,6 +3374,78 @@
   },
   "version": "v1"
  },
+ "2610.36671": {
+  "assets": {
+   "figures": [],
+   "license": null,
+   "pdf_pages": 0,
+   "tables": 8,
+   "warnings": []
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-10-31-paper-2610.36671.md",
+  "failures": 0,
+  "first_seen": "2026-10-31",
+  "matched": {
+   "adjacent": [
+    "decoding"
+   ],
+   "systems": [
+    "pruning"
+   ],
+   "weak": [
+    "efficiency",
+    "efficient"
+   ]
+  },
+  "materialized_at": "2026-10-31",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/glm-5.3-flash-free",
+     "output": "2610.36671-revision-1.md",
+     "round": 1
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/mimo-v2.6-flash-free",
+     "output": "2610.36671-revision-2.md",
+     "round": 2
+    },
+    {
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode/deepseek-v4.1-flash-free",
+     "output": "2610.36671-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.606,
+  "slug": "paper-2610-36671",
+  "status": "summarized",
+  "summarized_at": "2026-10-31",
+  "summary_cost_usd": 0.103747952,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "Look Only When Needed: Certificate-Guided Visual Routing for Efficient Diffusion VLMs",
+  "translation": {
+   "completed_at": "2026-10-31",
+   "cost_usd": 0.005132178,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  }
+ },
  "2610.37386": {
   "assets": {
    "figures": [
