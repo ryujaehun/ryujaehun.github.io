@@ -98,6 +98,9 @@ python3 automation/tasks/papers/cli.py summarize --backend opencode  # 완전 �
 `main`에 push하면 `.github/workflows/main.yaml`이 빌드해 GitHub Pages로 배포합니다.
 도메인은 `static/CNAME`(jaehun.me)으로 연결되어 있습니다.
 
+검색 메타·사이트맵·RSS는 배포 CI에서 검사합니다. 네이버 Search Advisor 제출 절차와
+콘텐츠 운영 권고는 [검색 최적화 점검](docs/search-optimization-2026-10-31.md)을 참고하세요.
+
 ## Acknowledgement
 
 - 테마: <https://github.com/tom2almighty/hugo-narrow> (GPL-3.0)

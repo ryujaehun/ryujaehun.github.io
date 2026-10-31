@@ -1,0 +1,2 @@
+{{- $robots := partial "seo/robots.html" . | lower -}}
+{{- return (gt (len (findRE `(^|[\s,])(noindex|none)($|[\s,])` $robots)) 0) -}}

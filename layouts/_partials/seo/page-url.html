@@ -1,0 +1,11 @@
+{{/* .Permalink identifies the collection's first page, even on later pagers.
+     Do not initialize a paginator for the homepage (it does not render one). */}}
+{{- $url := .Permalink -}}
+{{- if in (slice "section" "taxonomy" "term") .Kind -}}
+  {{- with .Paginator -}}
+    {{- if gt .PageNumber 1 -}}
+      {{- $url = .URL | absURL -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $url -}}

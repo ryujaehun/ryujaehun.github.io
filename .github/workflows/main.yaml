@@ -86,6 +86,10 @@ jobs:
             grep "Duplicate target paths" hugo-build.log
             exit 1
           fi
+      - name: Check search metadata, sitemaps and Naver RSS
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_check_seo.py'
+          python3 scripts/check_seo.py public --base-url "${{ steps.pages.outputs.base_url }}/"
       - name: Check local links and images across the build
         run: |
           python3 -m unittest discover -s scripts -p 'test_check_local_links.py'

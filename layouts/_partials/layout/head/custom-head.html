@@ -9,7 +9,15 @@
   가장 낮은 쪽(= 기본 언어 한국어)을 가리킨다.
   https://developers.google.com/search/docs/specialty/international/localized-versions
 */}}
-{{- if .IsTranslated -}}
+{{/* Later pages across languages contain different sets of posts. Linking
+     them to translated page one would misrepresent translation equivalence. */}}
+{{- $firstPage := true -}}
+{{- if in (slice "section" "taxonomy" "term") .Kind -}}
+  {{- with .Paginator -}}
+    {{- $firstPage = eq .PageNumber 1 -}}
+  {{- end -}}
+{{- end -}}
+{{- if and .IsTranslated $firstPage -}}
   {{- $all := .AllTranslations -}}
   {{- range $all }}
   <link rel="alternate" hreflang="{{ .Language.Locale }}" href="{{ .Permalink }}" />

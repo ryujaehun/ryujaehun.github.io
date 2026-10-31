@@ -1,0 +1,41 @@
+{{- $pages := .RegularPages -}}
+{{- if .IsHome -}}
+  {{- $pages = where site.RegularPages "Type" "posts" -}}
+{{- end -}}
+{{- $eligible := slice -}}
+{{- range $pages -}}
+  {{- if not (partial "seo/noindex.html" .) -}}
+    {{- $eligible = $eligible | append . -}}
+  {{- end -}}
+{{- end -}}
+{{- $limit := site.Config.Services.RSS.Limit -}}
+{{- if ge $limit 0 -}}
+  {{- $eligible = $eligible | first $limit -}}
+{{- end -}}
+{{- printf "<?xml version=%q encoding=%q?>" "1.0" "utf-8" | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ .Title | transform.XMLEscape | safeHTML }}</title>
+    <link>{{ .Permalink }}</link>
+    <description>{{ (.Description | default site.Params.description) | transform.XMLEscape | safeHTML }}</description>
+    <language>{{ .Language.Locale }}</language>
+    {{- with .OutputFormats.Get "RSS" }}
+    <atom:link href="{{ .Permalink }}" rel="self" type="application/rss+xml" />
+    {{- end }}
+    {{- range $eligible }}
+    <item>
+      <title>{{ .Title | transform.XMLEscape | safeHTML }}</title>
+      <link>{{ .Permalink }}</link>
+      <guid isPermaLink="true">{{ .Permalink }}</guid>
+      <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</pubDate>
+      {{/* Naver requests the complete body, rather than Hugo's default summary.
+           Escape markup as XML text so feed readers recover the rendered HTML. */}}
+      <description>{{- if or $.IsHome (eq $.Section "posts") -}}
+        {{- .Content | transform.XMLEscape | safeHTML -}}
+      {{- else -}}
+        {{- .Summary | transform.XMLEscape | safeHTML -}}
+      {{- end -}}</description>
+    </item>
+    {{- end }}
+  </channel>
+</rss>

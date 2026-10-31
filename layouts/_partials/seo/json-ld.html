@@ -11,6 +11,7 @@
   https://developers.google.com/search/docs/appearance/structured-data
 */}}
 
+{{- $pageURL := partial "seo/page-url.html" . -}}
 {{- $home := site.Home.Permalink -}}
 {{- $siteID := printf "%s#website" $home -}}
 {{- $personID := printf "%s#person" $home -}}
@@ -119,8 +120,8 @@
 {{- if and (not .IsPage) (not .IsHome) -}}
   {{- $coll := dict
     "@type" "CollectionPage"
-    "@id" (printf "%s#collection" .Permalink)
-    "url" .Permalink
+    "@id" (printf "%s#collection" $pageURL)
+    "url" $pageURL
     "name" (.Title | plainify)
     "isPartOf" (dict "@id" $siteID)
     "inLanguage" .Language.Locale

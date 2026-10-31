@@ -1,0 +1,7 @@
+{{/* Share the effective directive between HTML, sitemap and RSS. Explicit
+     front matter overrides the default thin-term policy. */}}
+{{- $robots := .Params.robots -}}
+{{- if not $robots -}}
+  {{- $robots = cond (partial "seo/thin-term.html" .) "noindex, follow" "index, follow, max-image-preview:large" -}}
+{{- end -}}
+{{- return $robots -}}

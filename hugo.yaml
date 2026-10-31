@@ -39,7 +39,7 @@ languages:
         - { name: Email, url: "mailto:jaehunryu@icloud.com", weight: 30, params: { icon: email } }
     # 한국어 페이지에 적용될 파라미터
     params:
-      description: "기술과 일상에 대한 생각을 기록하는 블로그입니다." # SEO를 위한 사이트 설명
+      description: "딥러닝 컴파일러 엔지니어 류재훈의 기술 블로그. LLM 추론 최적화, KV 캐시, 컴파일러, C++와 AI 논문·오픈소스 코드 분석을 정리합니다." # SEO를 위한 사이트 설명
       keywords: ["개발", "컴파일러", "프로그래밍", "에세이"] # SEO를 위한 검색 키워드
       author:
         name: "류재훈" # 작성자 이름
@@ -92,7 +92,7 @@ languages:
         - { name: Email, url: "mailto:jaehunryu@icloud.com", weight: 30, params: { icon: email } }
     # 영어 페이지에 적용될 파라미터
     params:
-      description: "A blog about technology, daily life, and thoughts."
+      description: "Technical notes by Jaehun Ryu, a deep learning compiler engineer, on LLM inference, KV caches, compilers, C++, AI papers, and open-source code."
       keywords: ["Development", "Compiler", "Programming", "Essay"]
       author:
         name: "Jaehun Ryu"
@@ -182,7 +182,7 @@ params:
   favicon:
     svg: "/favicon.svg" # 브라우저 탭에 표시될 SVG 형식의 파비콘입니다.
   images:
-    - "/images/og-default.avif" # 소셜 미디어에 공유 시 표시될 기본 미리보기 이미지입니다.
+    - "/images/avatar.webp" # 소셜 미디어에 공유 시 표시될 기본 미리보기 이미지입니다.
 
   # 작성자 정보 (모든 언어 공통)
   author:

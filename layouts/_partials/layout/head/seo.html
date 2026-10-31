@@ -34,7 +34,7 @@
 {{- end -}}
 
 <meta property="og:site_name" content="{{ site.Title }}" />
-<meta property="og:url" content="{{ .Permalink }}" />
+<meta property="og:url" content="{{ partial "seo/page-url.html" . }}" />
 <meta property="og:title" content="{{ $title }}" />
 <meta property="og:description" content="{{ $desc }}" />
 <meta property="og:locale" content="{{ $ogLocale }}" />
