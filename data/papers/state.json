@@ -3457,6 +3457,54 @@
    "status": "completed"
   }
  },
+ "2610.37230": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.37230/prefix-hit-tp4x2-ac390d8e.webp",
+    "/assets/images/papers/2610.37230/dp-cache-safe-advantage-3c067c06.webp",
+    "/assets/images/papers/2610.37230/dp-placement-9ae19654.webp",
+    "/assets/images/papers/2610.37230/workers96-759ca236.webp",
+    "/assets/images/papers/2610.37230/workers128-83277c31.webp",
+    "/assets/images/papers/2610.37230/glm-traces-2a9a14ed.webp",
+    "/assets/images/papers/2610.37230/prefix-hit-tp4x2-8584e74a.webp",
+    "/assets/images/papers/2610.37230/ob-18f408cd.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "pdf_pages": 0,
+   "tables": 8,
+   "warnings": []
+  },
+  "categories": [
+   "cs.DC"
+  ],
+  "draft_path": "content/posts/2026-11-01-paper-2610.37230v1.md",
+  "failures": 1,
+  "first_seen": "2026-11-01",
+  "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode/glm-5.3-flash-free: opencode 가 600초 안에 끝나지 않았습니다.\nopencode/mimo-v2.6-flash-free: opencode 가 600초 안에 끝나지 않았습니다.\nopencode/beam-free: opencode 가 600초 안에 끝나지 않았습니다.",
+  "matched": {
+   "adjacent": [
+    "cache",
+    "latency",
+    "throughput"
+   ],
+   "core": [
+    "time to first token",
+    "ttft"
+   ],
+   "systems": [
+    "scheduling"
+   ],
+   "weak": [
+    "llm"
+   ]
+  },
+  "materialized_at": "2026-11-01",
+  "score": 0.6306,
+  "slug": "paper-2610-37230v1",
+  "status": "failed",
+  "title": "TAO: Tool-Aware Joint Scheduling for LLM-Based Agentic Serving",
+  "version": "v1"
+ },
  "2610.37386": {
   "assets": {
    "figures": [
