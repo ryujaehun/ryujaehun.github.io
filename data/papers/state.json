@@ -3478,7 +3478,7 @@
    "cs.DC"
   ],
   "draft_path": "content/posts/2026-11-01-paper-2610.37230v1.md",
-  "failures": 2,
+  "failures": 3,
   "first_seen": "2026-11-01",
   "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode/glm-5.3-flash-free: opencode 가 600초 안에 끝나지 않았습니다.\nopencode/mimo-v2.6-flash-free: opencode 가 600초 안에 끝나지 않았습니다.\nopencode/beam-free: opencode 가 600초 안에 끝나지 않았습니다.",
   "matched": {
