@@ -236,7 +236,7 @@ summarize:
   # 그날 수집분을 통째로 버리는 것보다 낫다. 실제로 쓴 모델은 초안
   # 카테고리(with-…)에 남으니 나중에 구분된다.
   fallback_models:
-    - opencode-go/gemini-4-argon-contributor # Go 구독 한도
+    - opencode-go/gemini-4-argon # Go 구독 한도
     - opencode/glm-5.3-flash-free
     - opencode/deepseek-v4.1-flash-free
     - opencode/mimo-v2.6-flash-free
@@ -253,7 +253,7 @@ translate:
   # 편당 $0.008 남짓이었고 번역은 입력이 짧아 더 싸다.
   model: opencode-go/deepseek-v4.1-flash
   fallback_models:
-    - opencode-go/gemini-4-argon-contributor # Go 구독 한도
+    - opencode-go/gemini-4-argon # Go 구독 한도
     - opencode/glm-5.3-flash-free
     - opencode/deepseek-v4.1-flash-free
     - opencode/mimo-v2.6-flash-free
