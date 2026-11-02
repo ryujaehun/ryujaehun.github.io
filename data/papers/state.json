@@ -2933,6 +2933,46 @@
   },
   "version": "v1"
  },
+ "2610.26834": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2610.26834/state-figure-decay-v5-c1e4b717.webp",
+    "/assets/images/papers/2610.26834/gradnorm-8k-paper-68e98933.webp",
+    "/assets/images/papers/2610.26834/kronlstm-block-05e3145d.webp",
+    "/assets/images/papers/2610.26834/ruler-lc32k-dashed-78665a5a.webp",
+    "/assets/images/papers/2610.26834/length-generalization-7b984288.webp",
+    "/assets/images/papers/2610.26834/training-throughput-babb49e7.webp",
+    "/assets/images/papers/2610.26834/pdf-page-002.webp",
+    "/assets/images/papers/2610.26834/pdf-page-010.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "pdf_pages": 2,
+   "tables": 8,
+   "warnings": []
+  },
+  "categories": [
+   "cs.LG",
+   "cs.AI"
+  ],
+  "draft_path": "content/posts/2026-11-02-paper-2610.26834v1.md",
+  "failures": 0,
+  "first_seen": "2026-11-02",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "long context"
+   ],
+   "systems": [
+    "linear attention"
+   ]
+  },
+  "materialized_at": "2026-11-02",
+  "score": 0.5584,
+  "slug": "paper-2610-26834v1",
+  "status": "materialized",
+  "title": "Kronecker Delta Rule for Long Context Linear Attention",
+  "version": "v1"
+ },
  "2610.27999": {
   "assets": {
    "figures": [],
