@@ -218,19 +218,18 @@ organizations:
   - han lab
 
 summarize:
-  # 무료 모델로 원문 대조 → 문장·구조 → DeepSeek 최종 원문 대조. 실패 시 게시하지 않는다.
+  # 기존 Go 구독으로 원문 대조 → 문장·구조 → DeepSeek 최종 원문 대조.
   revision:
     rounds: 3
     round_models:
-      - [opencode/glm-5.3-flash-free]
-      - [opencode/minimax-m3.1-flash-free]
-    # 1·2차의 기본 모델 실패 시 사용할 공통 대체 후보
+      - [opencode-go/glm-5.3-flash]
+      - [opencode-go/minimax-m3.1-flash]
+    # 무료 IP 한도와 분리된 Go 구독 후보만 사용한다.
     models:
-      - opencode/mimo-v2.6-flash-free
-      - opencode/beam-free
-    # 최종 차수는 DeepSeek 우선, 실패하면 위 models의 무료 후보로 대체한다.
+      - opencode-go/mimo-v2.6-flash
+      - opencode-go/kimi-k2.7-code
     final_models:
-      - opencode/deepseek-v4.1-flash-free
+      - opencode-go/deepseek-v4.1-flash
     timeout_seconds: 600
   model: opencode-go/deepseek-v4-pro
   # 1차가 실패하면(프로바이더 한도·장애) 여기로 넘어간다. 무료 모델이라
