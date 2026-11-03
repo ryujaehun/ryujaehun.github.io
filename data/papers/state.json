@@ -2962,6 +2962,16 @@
    ]
   },
   "materialized_at": "2026-11-02",
+  "notification": {
+   "attempts": 10,
+   "error_category": "http-status",
+   "notification_id": "paper:2610.26834v1:ko-en",
+   "status": "notify-pending",
+   "urls": [
+    "https://jaehun.me/posts/paper-2610-26834v1/",
+    "https://jaehun.me/en/posts/paper-2610-26834v1/"
+   ]
+  },
   "quality": {
    "scope": "structure-and-evidence-presence",
    "status": "passed",
