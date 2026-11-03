@@ -2937,16 +2937,11 @@
   "assets": {
    "figures": [
     "/assets/images/papers/2610.26834/state-figure-decay-v5-c1e4b717.webp",
-    "/assets/images/papers/2610.26834/gradnorm-8k-paper-68e98933.webp",
     "/assets/images/papers/2610.26834/kronlstm-block-05e3145d.webp",
-    "/assets/images/papers/2610.26834/ruler-lc32k-dashed-78665a5a.webp",
-    "/assets/images/papers/2610.26834/length-generalization-7b984288.webp",
-    "/assets/images/papers/2610.26834/training-throughput-babb49e7.webp",
-    "/assets/images/papers/2610.26834/pdf-page-002.webp",
-    "/assets/images/papers/2610.26834/pdf-page-010.webp"
+    "/assets/images/papers/2610.26834/ruler-lc32k-dashed-78665a5a.webp"
    ],
    "license": "http://creativecommons.org/licenses/by/4.0/",
-   "pdf_pages": 2,
+   "pdf_pages": 0,
    "tables": 8,
    "warnings": []
   },
@@ -2967,11 +2962,55 @@
    ]
   },
   "materialized_at": "2026-11-02",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cached": false,
+     "cost_usd": 0.018132,
+     "independent_of_writer": true,
+     "model": "opencode-go/glm-5.3-flash",
+     "output": "2610.26834-revision-1.md",
+     "round": 1
+    },
+    {
+     "cached": false,
+     "cost_usd": 0.02789328,
+     "independent_of_writer": true,
+     "model": "opencode-go/minimax-m3.1-flash",
+     "output": "2610.26834-revision-2.md",
+     "round": 2
+    },
+    {
+     "cached": false,
+     "cost_usd": 0.16644616,
+     "independent_of_writer": true,
+     "model": "opencode-go/kimi-k2.7-code",
+     "output": "2610.26834-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
   "score": 0.5584,
   "slug": "paper-2610-26834v1",
-  "status": "materialized",
+  "status": "summarized",
+  "summarized_at": "2026-11-04",
+  "summary_cost_usd": 0.285499604,
+  "summary_model": "opencode-go/deepseek-v4-pro",
   "title": "Kronecker Delta Rule for Long Context Linear Attention",
-  "version": "v1"
+  "translation": {
+   "completed_at": "2026-11-04",
+   "cost_usd": 0.014901491999999999,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  },
+  "version": "v1",
+  "writer_checkpoint_reused": false
  },
  "2610.27999": {
   "assets": {
