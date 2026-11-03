@@ -50,12 +50,10 @@ max_complex_comparisons: 10
 rone:
   enabled: true
   key_env: RONE_API_KEY
-  key_file: /home/jaehun/workspace/real_est_analysis/infra/.env.prod
 observations:
   enabled: true
 housing_data:
   enabled: true
-  key_file: /home/jaehun/workspace/real_est_analysis/infra/.env.prod
 report_quality:
   enabled: true
   tracked_cohorts:
@@ -90,4 +88,7 @@ report_quality:
     area: 35
     floor_band: 6층 이상
 deployment:
-  expected_commit: 561c2e669fdf94ee0ec038df2090be73c18664ea
+  expected_commit: 26c533da07445127ea0d497c28b1d3622d1d191b
+
+regional_report:
+  enabled: true
