@@ -3534,6 +3534,17 @@
    ]
   },
   "materialized_at": "2026-11-01",
+  "notification": {
+   "attempts": 1,
+   "message_sha256": "6a47c11c1e6fb3db7566cf45e4d346b3f10d3cb069a268736327bea22714bce3",
+   "notification_id": "paper:2610.37230v1:ko-en",
+   "sent_at": "2026-11-03T01:24:16.929724+00:00",
+   "status": "sent",
+   "urls": [
+    "https://jaehun.me/posts/paper-2610-37230v1/",
+    "https://jaehun.me/en/posts/paper-2610-37230v1/"
+   ]
+  },
   "quality": {
    "scope": "structure-and-evidence-presence",
    "status": "passed",
