@@ -3734,5 +3734,86 @@
    "status": "completed"
   },
   "version": "v1"
+ },
+ "2611.02501": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "pdf_pages": 0,
+   "tables": 7,
+   "warnings": []
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-11-05-paper-2611.02501.md",
+  "failures": 0,
+  "first_seen": "2026-11-05",
+  "matched": {
+   "adjacent": [
+    "autoregressive",
+    "batching",
+    "decoding"
+   ],
+   "core": [
+    "speculative decoding"
+   ],
+   "systems": [
+    "quantization"
+   ],
+   "weak": [
+    "llm",
+    "optimization"
+   ]
+  },
+  "materialized_at": "2026-11-05",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cached": false,
+     "cost_usd": 0.01413849,
+     "independent_of_writer": true,
+     "model": "opencode-go/glm-5.3-flash",
+     "output": "2611.02501-revision-1.md",
+     "round": 1
+    },
+    {
+     "cached": false,
+     "cost_usd": 0.02375328,
+     "independent_of_writer": true,
+     "model": "opencode-go/minimax-m3.1-flash",
+     "output": "2611.02501-revision-2.md",
+     "round": 2
+    },
+    {
+     "cached": false,
+     "cost_usd": 0.12499835,
+     "independent_of_writer": true,
+     "model": "opencode-go/kimi-k2.7-code",
+     "output": "2611.02501-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.6651,
+  "slug": "paper-2611-02501",
+  "status": "summarized",
+  "summarized_at": "2026-11-05",
+  "summary_cost_usd": 0.257251948,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "SpecPilot: Autonomous Algorithm Discovery and Systems Optimization for Speculative Decoding",
+  "translation": {
+   "completed_at": "2026-11-05",
+   "cost_usd": 0.02816355,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "status": "completed"
+  },
+  "writer_checkpoint_reused": false
  }
 }
