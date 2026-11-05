@@ -88,7 +88,7 @@ report_quality:
     area: 35
     floor_band: 6층 이상
 deployment:
-  expected_commit: 26c533da07445127ea0d497c28b1d3622d1d191b
+  expected_commit: 7301165d08ca4f658a3fbe23ac1dcb057ba8f877
 
 regional_report:
   enabled: true
