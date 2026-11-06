@@ -222,6 +222,8 @@ summarize:
     enabled: false
     timeout_seconds: 600
     fallback_timeout_seconds: 600
+    repair_variants:
+      opencode-go/minimax-m3.1-flash: low
   # 기존 Go 구독으로 원문 대조 → 문장·구조 → DeepSeek 최종 원문 대조.
   revision:
     rounds: 3
@@ -234,6 +236,9 @@ summarize:
       - opencode-go/kimi-k2.7-code
     final_models:
       - opencode-go/deepseek-v4.1-flash
+    # 같은 원문 대조 요청에서 확인한 추론 옵션. 모델별로만 적용한다.
+    model_variants:
+      opencode-go/deepseek-v4.1-flash: low
     timeout_seconds: 600
   model: opencode-go/deepseek-v4-pro
   # 1차가 실패하면(프로바이더 한도·장애) 여기로 넘어간다. 무료 모델이라
