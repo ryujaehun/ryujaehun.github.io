@@ -41,6 +41,8 @@ jobs:
       HUGO_VERSION: 0.165.0
       HUGO_ENVIRONMENT: production
       TZ: Asia/Seoul
+      # Chrome uses a Unix socket whose path must fit the OS length limit.
+      TMPDIR: /tmp
     steps:
       - name: Install Hugo CLI
         run: |
