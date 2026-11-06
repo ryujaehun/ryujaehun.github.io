@@ -35,7 +35,8 @@ defaults:
 jobs:
   # Build job
   build:
-    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, linux, x64, local-ryujaehun.github.io]
     env:
       HUGO_VERSION: 0.165.0
       HUGO_ENVIRONMENT: production
@@ -86,6 +87,8 @@ jobs:
             grep "Duplicate target paths" hugo-build.log
             exit 1
           fi
+      - name: Test pinned publication checker
+        run: python3 -m unittest discover -s scripts -p 'test_check_posts.py'
       - name: Check search metadata, sitemaps and Naver RSS
         run: |
           python3 -m unittest discover -s scripts -p 'test_check_seo.py'
@@ -98,6 +101,13 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "22"
+      - name: Install Chrome for local browser checks
+        run: |
+          if ! command -v google-chrome > /dev/null; then
+            wget -qO "${{ runner.temp }}/google-chrome.deb" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+            sudo apt-get update
+            sudo apt-get install -y "${{ runner.temp }}/google-chrome.deb"
+          fi
       - name: Check recent posts in desktop and mobile Chrome
         run: |
           node --test scripts/reading-paths.test.mjs scripts/renderer-retry.test.mjs scripts/katex-assets.test.mjs
@@ -131,7 +141,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, local-ryujaehun.github.io]
     needs: build
     steps:
       - name: Deploy to GitHub Pages

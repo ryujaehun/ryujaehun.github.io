@@ -218,6 +218,10 @@ organizations:
   - han lab
 
 summarize:
+  evidence:
+    enabled: false
+    timeout_seconds: 600
+    fallback_timeout_seconds: 600
   # 기존 Go 구독으로 원문 대조 → 문장·구조 → DeepSeek 최종 원문 대조.
   revision:
     rounds: 3
@@ -249,6 +253,12 @@ summarize:
   fallback_timeout_seconds: 600
 
 translate:
+  semantic_review:
+    enabled: false
+    models:
+      - opencode-go/glm-5.3-flash
+      - opencode-go/minimax-m3.1-flash
+    timeout_seconds: 600
   # 번역은 요약보다 쉬운 일이라 싼 모델로 충분하다. 실측 비용은 요약이
   # 편당 $0.008 남짓이었고 번역은 입력이 짧아 더 싸다.
   model: opencode-go/deepseek-v4.1-flash

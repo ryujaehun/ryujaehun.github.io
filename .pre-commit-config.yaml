@@ -17,7 +17,7 @@ repos:
     hooks:
       - id: post-lint
         name: 글의 LaTeX·mermaid·코드펜스 검사
-        entry: python3 automation/tasks/papers/cli.py check --fix --path
+        entry: python3 scripts/check_posts.py
         language: system
         files: ^content/posts/.*\.md$
         pass_filenames: true
