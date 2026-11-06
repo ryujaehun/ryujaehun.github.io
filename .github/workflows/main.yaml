@@ -149,3 +149,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+        with:
+          # Pages 대기열·파일 동기화가 10분을 넘겨 취소된 실행을 반영한다.
+          timeout: 1200000
