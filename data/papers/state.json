@@ -3919,11 +3919,15 @@
   "summary_model": "opencode-go/deepseek-v4-pro",
   "title": "SpecOPD: Branch-Parallel On-Policy Distillation for Speculative Decoding",
   "translation": {
-   "failure_kind": "permanent",
-   "failures": 1,
-   "last_error": "모든 모델이 실패했습니다.\nopencode-go/deepseek-v4.1-flash: 품질 검사 실패: 수치–단위 누락 또는 단위 변경: percent=2.57 (1개), percent=4.33 (1개)\nopencode-go/gemini-4-argon: 품질 검사 실패: 수치–단위 누락 또는 단위 변경: percent=2.57 (1개), percent=4.33 (1개)\nopencode/glm-5.3-flash-free: 품질 검사 실패: 수치–단위 누락 또는 단위 변경: percent=2.57 (1개), percent=4.33 (1개)\nopencode/deepseek-v4.1-flash-free: 품질 검사 실패: 수치–단위 누락 또는 단위 변경: percent=2.57 (1개), percent=4.33 (1개)\nopencode/mimo-v2.6-flash-free: 품질 검사 실패: 수치–단위 누락 또는 단위 변경: percent=2.57 (1개), percent=4.33 (1개)",
-   "last_failed_at": "2026-11-06T23:46:00.435767+00:00",
-   "status": "failed"
+   "completed_at": "2026-11-07",
+   "cost_usd": 0,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "quality": {
+    "scope": "structure-and-normalized-quantities",
+    "semantic_review": "disabled",
+    "version": 1
+   },
+   "status": "completed"
   },
   "writer_checkpoint_reused": false
  }
