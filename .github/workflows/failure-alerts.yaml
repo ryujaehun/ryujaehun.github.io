@@ -28,7 +28,7 @@ jobs:
     timeout-minutes: 10
     steps:
       # Never check out code from the triggering run or execute its artifacts.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: main
           persist-credentials: false
