@@ -150,5 +150,5 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v5
         with:
-          # Pages 대기열·파일 동기화가 10분을 넘겨 취소된 실행을 반영한다.
-          timeout: 1200000
+          # deploy-pages가 지원하는 최대 대기 시간은 10분이다.
+          timeout: 600000
