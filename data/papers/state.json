@@ -3868,8 +3868,8 @@
   },
   "materialized_at": "2026-11-07",
   "notification": {
-   "attempts": 10,
-   "error_category": "publication-missing",
+   "attempts": 20,
+   "error_category": "http-status",
    "notification_id": "paper:2611.02846:ko-en",
    "status": "notify-pending",
    "urls": [
