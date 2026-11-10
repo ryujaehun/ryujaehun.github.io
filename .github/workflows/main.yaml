@@ -14,11 +14,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+# Publish the validated build to gh-pages and explicitly request a Pages build.
 permissions:
-  contents: read
+  contents: write
   pages: write
-  id-token: write
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -133,22 +132,36 @@ jobs:
           path: |
             ${{ runner.temp }}/hugo_cache
           key: ${{ steps.cache-restore.outputs.cache-primary-key }}
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v5
+      - name: Test branch publication
+        run: python3 -m unittest discover -s scripts -p 'test_publish_pages.py'
+      - name: Checkout Pages publication branch
+        uses: actions/checkout@v7
         with:
-          path: ./public
-
-  # Deployment job
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: [self-hosted, linux, x64, local-ryujaehun.github.io]
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
-        with:
-          # deploy-pages가 지원하는 최대 대기 시간은 10분이다.
-          timeout: 600000
+          ref: gh-pages
+          path: .pages-publish
+          submodules: false
+      - name: Publish verified build to gh-pages
+        run: bash scripts/publish-pages.sh public .pages-publish
+      - name: Request GitHub Pages branch build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # GITHUB_TOKEN pushes do not trigger branch-based Pages deployment.
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
+      - name: Verify the published source commit
+        env:
+          PAGES_BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: |
+          # Pages API success alone can be stale. Require the live site to expose
+          # this build's source SHA before reporting publication success.
+          for attempt in {1..60}; do
+            if curl -fsS --max-time 20 --header 'Cache-Control: no-cache' \
+              "$PAGES_BASE_URL/build-info.json?commit=$GITHUB_SHA" \
+              | jq -e --arg expected "$GITHUB_SHA" '.commit == $expected' > /dev/null; then
+              echo "Published $GITHUB_SHA at $PAGES_BASE_URL" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo '::error::The live Pages site did not expose the expected source commit.'
+          exit 1

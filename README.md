@@ -95,8 +95,16 @@ python3 automation/tasks/papers/cli.py summarize --backend opencode  # 완전 �
 
 ## 배포
 
-`main`에 push하면 `.github/workflows/main.yaml`이 빌드해 GitHub Pages로 배포합니다.
-도메인은 `static/CNAME`(jaehun.me)으로 연결되어 있습니다.
+`main`에 push하면 `.github/workflows/main.yaml`이 로컬 self-hosted 러너에서 빌드·검사한 뒤
+정적 파일만 `gh-pages` 브랜치에 게시합니다. 워크플로는 Pages 브랜치 빌드를 명시적으로
+요청하고, 공개 사이트의 `build-info.json`에 현재 소스 커밋이 표시되는지 확인합니다.
+GitHub Pages 설정은 **Deploy from a branch → gh-pages → / (root)** 를 사용하며,
+`github-pages` 환경의 허용 브랜치에는 `main`과 `gh-pages`가 포함되어야 합니다.
+도메인은 `static/CNAME`(jaehun.me)을 유지합니다.
+
+2026-11-10 `actions/deploy-pages`의 시간 초과와 완료된 배포를 진행 중으로 판단하는
+서버 측 상태 불일치를 겪어 브랜치 게시 방식으로 전환했습니다. `.nojekyll`로 Jekyll
+재빌드를 생략하고, GitHub Pages 호스팅과 기존 DNS·HTTPS를 계속 사용합니다.
 
 검색 메타·사이트맵·RSS는 배포 CI에서 검사합니다. 네이버 Search Advisor 제출 절차와
 콘텐츠 운영 권고는 [검색 최적화 점검](docs/search-optimization-2026-10-31.md)을 참고하세요.
