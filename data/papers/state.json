@@ -4141,6 +4141,88 @@
   "version": "v1",
   "writer_checkpoint_reused": false
  },
+ "2611.06500": {
+  "assets": {
+   "figures": [],
+   "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "pdf_pages": 0,
+   "tables": 4,
+   "warnings": []
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-11-11-paper-2611.06500.md",
+  "failures": 0,
+  "first_seen": "2026-11-11",
+  "matched": {
+   "adjacent": [
+    "attention"
+   ],
+   "systems": [
+    "compression",
+    "pruning"
+   ],
+   "weak": [
+    "large language model",
+    "llm"
+   ]
+  },
+  "materialized_at": "2026-11-11",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/glm-5.3-flash",
+     "output": "2611.06500-revision-1.md",
+     "round": 1
+    },
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/minimax-m3.1-flash",
+     "output": "2611.06500-revision-2.md",
+     "round": 2
+    },
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/mimo-v2.6-flash",
+     "output": "2611.06500-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.6111,
+  "slug": "paper-2611-06500",
+  "status": "summarized",
+  "summarized_at": "2026-11-11",
+  "summary_cost_usd": 0,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "Tools Need Not Speak in Text: Latent Context Compression for Agents",
+  "translation": {
+   "completed_at": "2026-11-11",
+   "cost_usd": 0,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "quality": {
+    "scope": "structure-and-normalized-quantities",
+    "semantic_review": "disabled",
+    "version": 1
+   },
+   "status": "completed"
+  },
+  "writer_checkpoint_reused": false
+ },
  "2611.08290": {
   "assets": {
    "figures": [],
