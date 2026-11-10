@@ -4173,7 +4173,7 @@
   },
   "materialized_at": "2026-11-10",
   "notification": {
-   "attempts": 10,
+   "attempts": 20,
    "error_category": "http-status",
    "notification_id": "paper:2611.08290v1:ko-en",
    "status": "notify-pending",
