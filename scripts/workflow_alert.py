@@ -83,9 +83,20 @@ def report_failures(data):
 
 def error_excerpt(raw):
     text = sanitize(raw.decode("utf-8", errors="replace"))
-    lines = text.splitlines()
-    errors = [line for line in lines if re.search(
-        r"(?i)(##\[error\]|traceback|error:|exception:|timed?\s*out|실패|오류|\s!\s)", line)]
+    errors = []
+    command_group = False
+    for line in text.splitlines():
+        message = re.sub(r"^\ufeff?\d{4}-\d{2}-\d{2}T\S+\s+", "", line)
+        # Actions prints the script and environment before executing a Run step.
+        # Error strings inside that preamble are not runtime failures.
+        if message.startswith("##[group]Run "):
+            command_group = True
+        if command_group:
+            if message.startswith("##[endgroup]"):
+                command_group = False
+            continue
+        if re.search(r"(?i)(##\[error\]|traceback|error:|exception:|timed?\s*out|실패|오류|\s!\s)", line):
+            errors.append(line)
     # Do not send arbitrary log tails (which can include environment dumps).
     return "\n".join(errors[-6:])[:1600] or "명시적 오류 줄이 없습니다. 아래 실행 로그를 확인하세요."
 
