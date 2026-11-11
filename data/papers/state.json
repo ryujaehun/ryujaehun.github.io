@@ -4330,5 +4330,95 @@
   },
   "version": "v1",
   "writer_checkpoint_reused": false
+ },
+ "2611.09709": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2611.09709/fig-spec-inverted-3f346f07.webp",
+    "/assets/images/papers/2611.09709/fig-fill-vs-kva-31d38e86.webp",
+    "/assets/images/papers/2611.09709/fig-decay-rho-eacea1bc.webp",
+    "/assets/images/papers/2611.09709/fig-two-sweep-70260f30.webp",
+    "/assets/images/papers/2611.09709/fig-wrong-stick-ad943d42.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "pdf_pages": 0,
+   "tables": 8,
+   "warnings": []
+  },
+  "categories": [
+   "cs.LG",
+   "cs.CL"
+  ],
+  "draft_path": "content/posts/2026-11-12-paper-2611.09709v1.md",
+  "failures": 0,
+  "first_seen": "2026-11-12",
+  "matched": {
+   "adjacent": [
+    "cache",
+    "decoding"
+   ],
+   "core": [
+    "prefill",
+    "time to first token"
+   ],
+   "named_systems": [
+    "vllm"
+   ]
+  },
+  "materialized_at": "2026-11-12",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/glm-5.3-flash",
+     "output": "2611.09709-revision-1.md",
+     "round": 1
+    },
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/minimax-m3.1-flash",
+     "output": "2611.09709-revision-2.md",
+     "round": 2
+    },
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/deepseek-v4.1-flash",
+     "output": "2611.09709-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.5919,
+  "slug": "paper-2611-09709v1",
+  "status": "summarized",
+  "summarized_at": "2026-11-12",
+  "summary_cost_usd": 0,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "RidgeFill: Training-Free Late-Layer Cache Fill for Faster Prefill",
+  "translation": {
+   "completed_at": "2026-11-12",
+   "cost_usd": 0,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "quality": {
+    "scope": "structure-and-normalized-quantities",
+    "semantic_review": "disabled",
+    "version": 1
+   },
+   "status": "completed"
+  },
+  "version": "v1",
+  "writer_checkpoint_reused": false
  }
 }
