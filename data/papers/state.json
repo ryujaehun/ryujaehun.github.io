@@ -4431,5 +4431,90 @@
   },
   "version": "v1",
   "writer_checkpoint_reused": false
+ },
+ "2611.12304": {
+  "assets": {
+   "figures": [],
+   "license": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+   "pdf_pages": 0,
+   "tables": 8,
+   "warnings": []
+  },
+  "categories": [
+   "cs.DC"
+  ],
+  "draft_path": "content/posts/2026-11-13-paper-2611.12304v1.md",
+  "failures": 0,
+  "first_seen": "2026-11-13",
+  "matched": {
+   "adjacent": [
+    "cache",
+    "latency"
+   ],
+   "core": [
+    "cache eviction",
+    "disaggregated",
+    "kv cache",
+    "llm inference",
+    "llm serving",
+    "prefill",
+    "ttft"
+   ]
+  },
+  "materialized_at": "2026-11-13",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/glm-5.3-flash",
+     "output": "2611.12304-revision-1.md",
+     "round": 1
+    },
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/minimax-m3.1-flash",
+     "output": "2611.12304-revision-2.md",
+     "round": 2
+    },
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/deepseek-v4.1-flash",
+     "output": "2611.12304-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.6261,
+  "slug": "paper-2611-12304v1",
+  "status": "summarized",
+  "summarized_at": "2026-11-13",
+  "summary_cost_usd": 0,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "Evolving Infra: Agent-Adaptive LLM Serving at Scale",
+  "translation": {
+   "completed_at": "2026-11-13",
+   "cost_usd": 0,
+   "model": "opencode/glm-5.3-flash-free",
+   "quality": {
+    "scope": "structure-and-normalized-quantities",
+    "semantic_review": "disabled",
+    "version": 1
+   },
+   "status": "completed"
+  },
+  "version": "v1",
+  "writer_checkpoint_reused": false
  }
 }
