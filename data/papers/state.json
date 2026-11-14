@@ -4463,7 +4463,7 @@
   },
   "materialized_at": "2026-11-14",
   "notification": {
-   "attempts": 1,
+   "attempts": 2,
    "error_category": "http-status",
    "http_status": 404,
    "notification_id": "paper:2611.10649:ko-en",
