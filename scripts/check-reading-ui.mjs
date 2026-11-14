@@ -75,7 +75,19 @@ try {
         await pause(200);
       }
       assert(ready, `Page load timed out: ${path}`);
-      await evaluate('document.fonts.ready.then(() => true)');
+      // Fonts used only inside closed details are not requested until layout.
+      // Exercise that content too, then restore the initial reading state.
+      await evaluate(`(async () => {
+        const collapsed = [...document.querySelectorAll('details:not([open])')];
+        try {
+          collapsed.forEach(details => { details.open = true; });
+          await new Promise(requestAnimationFrame);
+          await document.fonts.ready;
+        } finally {
+          collapsed.forEach(details => { details.open = false; });
+        }
+        return true;
+      })()`);
       const result = await evaluate(`(() => {
         const article = document.querySelector('main article.prose');
         const prose = article?.cloneNode(true);
