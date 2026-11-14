@@ -4463,11 +4463,11 @@
   },
   "materialized_at": "2026-11-14",
   "notification": {
-   "attempts": 2,
-   "error_category": "http-status",
-   "http_status": 404,
+   "attempts": 3,
+   "message_sha256": "fe03630ccd85eef8ac7b9e890ab9a0b9706a1fa4192b3f9dbc6279d5120be032",
    "notification_id": "paper:2611.10649:ko-en",
-   "status": "notify-pending",
+   "sent_at": "2026-11-14T05:07:28.948528+00:00",
+   "status": "sent",
    "urls": [
     "https://jaehun.me/posts/paper-2611-10649/",
     "https://jaehun.me/en/posts/paper-2611-10649/"
