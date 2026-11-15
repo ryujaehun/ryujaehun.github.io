@@ -4657,7 +4657,7 @@
   },
   "materialized_at": "2026-11-15",
   "notification": {
-   "attempts": 1,
+   "attempts": 0,
    "error_category": "publication-missing",
    "notification_id": "paper:2611.17331:ko-en",
    "status": "notify-pending",
@@ -4708,11 +4708,15 @@
   "summary_model": "opencode/deepseek-v4.1-flash-free",
   "title": "TTB: Test-time Baking for Efficient Rendering of Decoder-only View Synthesis Models",
   "translation": {
-   "failure_kind": "permanent",
-   "failures": 1,
-   "last_error": "모든 모델이 실패했습니다.\nopencode-go/deepseek-v4.1-flash: 품질 검사 실패: 수치–단위 추가 또는 단위 변경: multiplier=4 (1개)\nopencode-go/gemini-4-argon: 품질 검사 실패: 수치–단위 추가 또는 단위 변경: multiplier=4 (1개)\nopencode/glm-5.3-flash-free: 품질 검사 실패: 수치–단위 추가 또는 단위 변경: multiplier=4 (1개)\nopencode/deepseek-v4.1-flash-free: 품질 검사 실패: 수치–단위 추가 또는 단위 변경: multiplier=4 (1개)\nopencode/mimo-v2.6-flash-free: opencode 가 339초 안에 끝나지 않았습니다.",
-   "last_failed_at": "2026-11-14T23:57:10.615008+00:00",
-   "status": "failed"
+   "completed_at": "2026-11-15",
+   "cost_usd": 0,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "quality": {
+    "scope": "structure-and-normalized-quantities",
+    "semantic_review": "disabled",
+    "version": 1
+   },
+   "status": "completed"
   },
   "writer_checkpoint_reused": false
  }
