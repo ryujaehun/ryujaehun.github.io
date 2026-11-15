@@ -4623,6 +4623,92 @@
   "version": "v1",
   "writer_checkpoint_reused": false
  },
+ "2611.13410": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2611.13410/teaser-f58dba5c.webp",
+    "/assets/images/papers/2611.13410/method-7c77faaa.webp",
+    "/assets/images/papers/2611.13410/efficiency-3fe3f052.webp",
+    "/assets/images/papers/2611.13410/create-and-write-matching-sentence-abccea3a.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "pdf_pages": 0,
+   "tables": 7,
+   "warnings": []
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-11-16-paper-2611.13410.md",
+  "failures": 0,
+  "first_seen": "2026-11-16",
+  "matched": {
+   "adjacent": [
+    "distillation"
+   ],
+   "systems": [
+    "quantization",
+    "w4a16"
+   ],
+   "weak": [
+    "llm"
+   ]
+  },
+  "materialized_at": "2026-11-16",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/glm-5.3-flash",
+     "output": "2611.13410-revision-1.md",
+     "round": 1
+    },
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/minimax-m3.1-flash",
+     "output": "2611.13410-revision-2.md",
+     "round": 2
+    },
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/deepseek-v4.1-flash",
+     "output": "2611.13410-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
+  "score": 0.5841,
+  "slug": "paper-2611-13410",
+  "status": "summarized",
+  "summarized_at": "2026-11-16",
+  "summary_cost_usd": 0,
+  "summary_model": "opencode-go/deepseek-v4-pro",
+  "title": "SteerDistill: Quantizing LLM Agents via Closed-Loop Teacher Steering",
+  "translation": {
+   "completed_at": "2026-11-16",
+   "cost_usd": 0,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "quality": {
+    "scope": "structure-and-normalized-quantities",
+    "semantic_review": "disabled",
+    "version": 1
+   },
+   "status": "completed"
+  },
+  "writer_checkpoint_reused": false
+ },
  "2611.17331": {
   "assets": {
    "figures": [
