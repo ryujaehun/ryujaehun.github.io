@@ -4817,5 +4817,48 @@
    "status": "completed"
   },
   "writer_checkpoint_reused": false
+ },
+ "2611.18482": {
+  "assets": {
+   "figures": [
+    "/assets/images/papers/2611.18482/teaser-radar-new-804fa990.webp",
+    "/assets/images/papers/2611.18482/overview-new-8d37d4f9.webp",
+    "/assets/images/papers/2611.18482/empirical-study-5d70df8d.webp",
+    "/assets/images/papers/2611.18482/sparse-motivation-e3527352.webp",
+    "/assets/images/papers/2611.18482/empirical-study-supp-50e96707.webp",
+    "/assets/images/papers/2611.18482/pdf-page-002.webp",
+    "/assets/images/papers/2611.18482/pdf-page-014.webp"
+   ],
+   "license": "http://creativecommons.org/licenses/by/4.0/",
+   "pdf_pages": 2,
+   "tables": 8,
+   "warnings": []
+  },
+  "categories": [
+   null
+  ],
+  "draft_path": "content/posts/2026-11-17-paper-2611.18482.md",
+  "failure_kind": "transient",
+  "failures": 0,
+  "first_seen": "2026-11-17",
+  "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode-go/mimo-v2.6-flash: opencode 오류: provider.go-limit: 429: OpenCode Go monthly usage limit reached. Switch to a free model, or turn on Extra Usage on the Go page in OpenCode Console to keep going.\nopencode-go/kimi-k2.7-code: opencode 오류: provider.go-limit: 429: OpenCode Go monthly usage limit reached. Switch to a free model, or turn on Extra Usage on the Go page in OpenCode Console to keep going.",
+  "last_failed_at": "2026-11-16T23:07:25.475213+00:00",
+  "matched": {
+   "adjacent": [
+    "attention",
+    "decoding"
+   ],
+   "core": [
+    "sparse attention",
+    "speculative decoding"
+   ]
+  },
+  "materialized_at": "2026-11-17",
+  "next_retry_at": "2026-11-16T23:22:25.475213+00:00",
+  "score": 0.6121,
+  "slug": "paper-2611-18482",
+  "status": "failed",
+  "title": "MMFlash: Faster Speculative Decoding for Vision-Language Models",
+  "transient_failures": 1
  }
 }
