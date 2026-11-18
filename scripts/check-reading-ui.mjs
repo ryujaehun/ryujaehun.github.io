@@ -54,6 +54,13 @@ try {
     if (result.exceptionDetails) throw new Error(JSON.stringify(result.exceptionDetails));
     return result.result.value;
   };
+  const waitFor = async (expression, message) => {
+    for (let attempt = 0; attempt < 50; attempt++) {
+      if (await evaluate(expression)) return;
+      await pause(100);
+    }
+    assert.fail(message);
+  };
   await send('Page.enable');
   await send('Network.enable');
   // Production math must keep rendering even when the former CDN is unavailable.
@@ -62,6 +69,22 @@ try {
   const englishIndex = await fetch(new URL('/en/index.json', base)).then(r => { assert(r.ok); return r.json(); });
   const { recent, series, paths } = readingPaths(index, englishIndex);
   assert.equal(recent.length, 5);
+  const { identifier: searchFailureProbe } = await send('Page.addScriptToEvaluateOnNewDocument', {
+    source: `(() => {
+      if (location.pathname !== '/' && location.pathname !== '/en/') return;
+      const fetchIndex = window.fetch.bind(window);
+      const indexPath = location.pathname + 'index.json';
+      window.searchIndexRequests = 0;
+      window.fetch = (input, options) => {
+        if (new URL(input, location.href).pathname === indexPath && ++window.searchIndexRequests === 1) {
+          return new Promise(resolve => {
+            window.failFirstSearch = () => resolve(new Response('', { status: 503 }));
+          });
+        }
+        return fetchIndex(input, options);
+      };
+    })()`,
+  });
   if (screenshots) await mkdir(screenshots, { recursive: true });
   for (const width of [390, 1440]) {
     await send('Emulation.setDeviceMetricsOverride', { width, height: 900, deviceScaleFactor: 1, mobile: width < 600 });
@@ -151,6 +174,23 @@ try {
         assert(await evaluate("!!document.querySelector('.home-search')"), `${path}: visible home search entry`);
         await evaluate("document.querySelector('.home-search').click()");
         assert(await evaluate("document.querySelector('#search-modal').getAttribute('aria-hidden') === 'false'"), `${path}: home search opens`);
+        const record = (path === '/' ? index : englishIndex)[0];
+        const search = query => evaluate(`(() => {
+          const input = document.querySelector('#search-input');
+          input.value = ${JSON.stringify(query)};
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+        })()`);
+        await search(record.title);
+        await waitFor("window.failFirstSearch && !document.querySelector('#search-loading').hidden", `${path}: search waits for its first index request`);
+        await evaluate('window.failFirstSearch()');
+        await waitFor("document.querySelector('#search-error')?.hidden === false", `${path}: HTTP 503 shows a search error`);
+        assert(await evaluate("document.querySelector('#search-no-results').hidden"), `${path}: network failure is distinct from no results`);
+        await evaluate("document.querySelector('#search-retry').click()");
+        await waitFor(`Array.from(document.querySelectorAll('#search-items a')).some(link => link.pathname === ${JSON.stringify(record.permalink)})`, `${path}: retry returns a real post`);
+        assert.equal(await evaluate('window.searchIndexRequests'), 2, `${path}: exactly one additional request`);
+        await search('no-results-blog-regression-07e42ecc');
+        await waitFor("!document.querySelector('#search-no-results').hidden", `${path}: an unmatched query shows no results`);
+        assert(await evaluate("document.querySelector('#search-error').hidden"), `${path}: successful empty search hides the error`);
         await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
         await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
         assert(await evaluate("document.querySelector('#search-modal').getAttribute('aria-hidden') === 'true'"), `${path}: home search closes with Escape`);
@@ -194,6 +234,7 @@ try {
       console.log(`PASS ${width}px ${path} (${result.renderedMath} formulas${result.firstCardTop === null ? '' : `, first card y=${Math.round(result.firstCardTop)}`})`);
     }
   }
+  await send('Page.removeScriptToEvaluateOnNewDocument', { identifier: searchFailureProbe });
 } finally {
   socket?.close();
   if (chrome.pid && chrome.exitCode === null && chrome.signalCode === null) {
