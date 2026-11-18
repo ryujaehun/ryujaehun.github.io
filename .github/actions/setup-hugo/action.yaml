@@ -1,0 +1,12 @@
+name: Install Hugo Extended
+description: Install the blog's pinned Hugo version on a Linux x64 runner
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        HUGO_VERSION: 0.165.0
+      run: |
+        package="$RUNNER_TEMP/hugo-extended.deb"
+        wget -O "$package" "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+        sudo dpkg -i "$package"

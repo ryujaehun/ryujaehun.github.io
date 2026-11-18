@@ -1,0 +1,23 @@
+name: Validate Hugo changes
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout public theme
+        run: git submodule update --init themes/hugo-narrow
+      - uses: ./.github/actions/setup-hugo
+      - name: Build and validate the site
+        run: bash scripts/validate-site.sh public

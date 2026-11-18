@@ -37,16 +37,10 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: [self-hosted, linux, x64, local-ryujaehun.github.io]
     env:
-      HUGO_VERSION: 0.165.0
-      HUGO_ENVIRONMENT: production
       TZ: Asia/Seoul
       # Chrome uses a Unix socket whose path must fit the OS length limit.
       TMPDIR: /tmp
     steps:
-      - name: Install Hugo CLI
-        run: |
-          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb
-          sudo dpkg -i ${{ runner.temp }}/hugo.deb
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -55,6 +49,7 @@ jobs:
           # 따로 초기화한다.
           submodules: false
           fetch-depth: 0
+      - uses: ./.github/actions/setup-hugo
       - name: Checkout theme submodule
         run: git submodule update --init themes/hugo-narrow
       - name: Setup Pages
@@ -72,32 +67,11 @@ jobs:
           restore-keys: hugo-
       - name: Configure Git
         run: git config core.quotepath false
-      - name: Build with Hugo
-        run: |
-          # --printPathWarnings 로 URL 이 겹치는 글을 잡는다. 겹치면 한쪽만
-          # 게시되고 나머지는 조용히 덮여 사라진다(실측 2쌍). Hugo 는 이걸
-          # 경고로만 알리고 종료 코드는 0 이라 직접 걸러 실패시킨다.
-          hugo \
-            --gc \
-            --minify \
-            --printPathWarnings \
-            --baseURL "${{ steps.pages.outputs.base_url }}/" \
-            --cacheDir "${{ runner.temp }}/hugo_cache" 2>&1 | tee hugo-build.log
-          if grep -q "Duplicate target paths" hugo-build.log; then
-            echo "::error::URL 이 겹치는 글이 있습니다. 위 경고의 경로를 확인하세요."
-            grep "Duplicate target paths" hugo-build.log
-            exit 1
-          fi
-      - name: Test pinned publication checker
-        run: python3 -m unittest discover -s scripts -p 'test_check_posts.py'
-      - name: Check search metadata, sitemaps and Naver RSS
-        run: |
-          python3 -m unittest discover -s scripts -p 'test_check_seo.py'
-          python3 scripts/check_seo.py public --base-url "${{ steps.pages.outputs.base_url }}/"
-      - name: Check local links and images across the build
-        run: |
-          python3 -m unittest discover -s scripts -p 'test_check_local_links.py'
-          python3 scripts/check_local_links.py public --base-url "${{ steps.pages.outputs.base_url }}/"
+      - name: Build and validate the site
+        env:
+          HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
+          PAGES_BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: bash scripts/validate-site.sh public "$PAGES_BASE_URL"
       - name: Setup Node.js for browser checks
         uses: actions/setup-node@v6
         with:
