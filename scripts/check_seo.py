@@ -15,6 +15,9 @@ class Head(HTMLParser):
         self.canonicals = []
         self.meta = {}
         self.alternates = []
+        self.rss_discovery = []
+        self.footer_feeds = []
+        self.in_footer = False
         self.scripts = []
         self.script = None
         self.refresh = False
@@ -28,6 +31,14 @@ class Head(HTMLParser):
             self.canonicals.append(attrs.get('href', ''))
         if tag == 'link' and 'hreflang' in attrs:
             self.alternates.append(attrs)
+        if tag == 'link' and attrs.get('rel') == 'alternate' and attrs.get('type') == 'application/rss+xml':
+            self.rss_discovery.append(attrs.get('href', ''))
+        if tag == 'footer':
+            self.in_footer = True
+        if tag == 'a' and self.in_footer:
+            href = attrs.get('href') or ''
+            if urlsplit(href).path.rsplit('/', 1)[-1] == 'index.xml':
+                self.footer_feeds.append(href)
         if tag == 'script' and attrs.get('type') == 'application/ld+json':
             self.script = ''
 
@@ -36,6 +47,8 @@ class Head(HTMLParser):
             self.script += data
 
     def handle_endtag(self, tag):
+        if tag == 'footer':
+            self.in_footer = False
         if tag == 'script' and self.script is not None:
             self.scripts.append(self.script)
             self.script = None
@@ -124,7 +137,18 @@ def check(root, base_url):
                 errors.append(f'{path.relative_to(root)}: noindex sitemap target {loc.text}')
     if not sitemap_count:
         errors.append('No sitemap URLs found')
+
+    def check_rss_links(page_url, feed_url, *, home=False):
+        doc = documents.get(unquote(page_url))
+        if not doc or [urljoin(page_url, link) for link in doc.footer_feeds] != [feed_url]:
+            errors.append(f'{page_url}: footer RSS must point to {feed_url}')
+        if home and (not doc or [urljoin(page_url, link) for link in doc.rss_discovery] != [feed_url]):
+            errors.append(f'{page_url}: RSS discovery must point to {feed_url}')
+
     for language in ('', 'en/'):
+        home_url = urljoin(base_url, language)
+        feed_url = urljoin(home_url, 'index.xml')
+        check_rss_links(home_url, feed_url, home=True)
         feed = root / language / 'index.xml'
         if not feed.exists():
             errors.append(f'Missing RSS: {language}index.xml')
@@ -134,7 +158,7 @@ def check(root, base_url):
         items = ET.parse(feed).findall('channel/item')
         if not 1 <= len(items) <= 30:
             errors.append(f'{language}index.xml: expected 1–30 recent posts')
-        for item in items:
+        for offset, item in enumerate(items):
             description = item.findtext('description', '')
             link = item.findtext('link', '')
             origin = urlsplit(base_url)
@@ -146,6 +170,8 @@ def check(root, base_url):
             if not article.is_file():
                 errors.append(f'{language}index.xml: missing item target {link}')
                 continue
+            if offset == 0:
+                check_rss_links(link, feed_url)
             actual = BodyText()
             actual.feed(description)
             expected_body = BodyText(article_only=True)

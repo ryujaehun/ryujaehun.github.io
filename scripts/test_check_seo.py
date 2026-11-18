@@ -11,19 +11,25 @@ class SearchMetadataTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         (self.root / 'avatar.webp').write_bytes(b'image')
-        self.page('posts/example/', '<h2>Heading</h2><p>Opening.</p><p>Final finding.</p>')
+        article = '<h2>Heading</h2><p>Opening.</p><p>Final finding.</p>'
+        self.page('', '')
+        self.page('en/', '')
+        self.page('posts/example/', article)
+        self.page('en/posts/example/', article)
         self.page('posts/page/2/', '')
         (self.root / 'sitemap.xml').write_text('''<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://example.com/posts/example/</loc></url></urlset>''')
         for lang in ('', 'en/'):
             path = self.root / lang / 'index.xml'
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text('''<rss><channel><item><link>https://example.com/posts/example/</link><description>&lt;h2&gt;Heading&lt;/h2&gt;&lt;p&gt;Opening.&lt;/p&gt;&lt;p&gt;Final finding.&lt;/p&gt;</description></item></channel></rss>''')
+            path.write_text(f'''<rss><channel><item><link>https://example.com/{lang}posts/example/</link><description>&lt;h2&gt;Heading&lt;/h2&gt;&lt;p&gt;Opening.&lt;/p&gt;&lt;p&gt;Final finding.&lt;/p&gt;</description></item></channel></rss>''')
 
     def page(self, route, body, robots='index, follow'):
         path = self.root / route / 'index.html'
         path.parent.mkdir(parents=True, exist_ok=True)
         url = 'https://example.com/' + route
-        path.write_text(f'''<link rel="canonical" href="{url}"><meta property="og:url" content="{url}"><meta name="description" content="Example"><meta name="robots" content="{robots}"><meta property="og:image" content="https://example.com/avatar.webp"><meta name="twitter:image" content="https://example.com/avatar.webp"><script type="application/ld+json">{{"@graph":[{{"@type":"CollectionPage","url":"{url}"}}]}}</script><article class="prose">{body}</article>''')
+        feed = '/en/index.xml' if route.startswith('en/') else '/index.xml'
+        discovery = f'<link rel="alternate" type="application/rss+xml" href="{feed}">' if route in ('', 'en/') else ''
+        path.write_text(f'''<link rel="canonical" href="{url}">{discovery}<meta property="og:url" content="{url}"><meta name="description" content="Example"><meta name="robots" content="{robots}"><meta property="og:image" content="https://example.com/avatar.webp"><meta name="twitter:image" content="https://example.com/avatar.webp"><script type="application/ld+json">{{"@graph":[{{"@type":"CollectionPage","url":"{url}"}}]}}</script><article class="prose">{body}</article><footer><a href="{feed}">RSS</a></footer>''')
         return path
 
     def errors(self):
@@ -44,6 +50,18 @@ class SearchMetadataTests(unittest.TestCase):
         path = self.root / 'index.xml'
         path.write_text(path.read_text().replace('&lt;p&gt;Final finding.&lt;/p&gt;', ''))
         self.assertTrue(any('full HTML body' in error for error in self.errors()))
+
+    def test_english_rss_footer_targets_english_feed(self):
+        for route in ('en/', 'en/posts/example/'):
+            path = self.root / route / 'index.html'
+            path.write_text(path.read_text().replace('<footer><a href="/en/index.xml"', '<footer><a href="/index.xml"'))
+        errors = self.errors()
+        self.assertEqual(2, sum('footer RSS' in error for error in errors))
+
+    def test_home_rss_discovery_agrees_with_footer(self):
+        path = self.root / 'en/index.html'
+        path.write_text(path.read_text().replace('type="application/rss+xml" href="/en/index.xml"', 'type="application/rss+xml" href="/index.xml"'))
+        self.assertTrue(any('RSS discovery' in error for error in self.errors()))
 
     def test_noindex_and_none_must_not_be_in_sitemap(self):
         for directive in ('NOINDEX, follow', 'none'):
