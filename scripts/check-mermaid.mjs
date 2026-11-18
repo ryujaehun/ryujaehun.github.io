@@ -31,11 +31,17 @@ assert(rendererPaths.size === 1 && !rendererPaths.has(undefined), 'Expected one 
 const [rendererPath] = rendererPaths;
 const asset = rendererPath.match(/\/vendor\/mermaid@[\d.]+\/mermaid\.min\.js$/)?.[0];
 assert(asset, `Unexpected Mermaid asset: ${rendererPath}`);
-const bundle = await readFile(join(directory, asset.slice(1)));
+const mainPath = pages[0].html.match(/<script\b[^>]*\bsrc=["']?((?:\/[^/"'\s>]+)*\/js\/main(?:\.[a-f\d]+)?\.js)(?=["'\s>])/i)?.[1];
+assert(mainPath, 'Expected the theme controls script in the preview page');
+const [bundle, themeControls] = await Promise.all([
+  readFile(join(directory, asset.slice(1))),
+  readFile(join(directory, 'js', mainPath.split('/').at(-1))),
+]);
+const scripts = new Map([[rendererPath, bundle], [mainPath, themeControls]]);
 const preview = createServer((request, response) => {
-  if (request.url === rendererPath) {
+  if (scripts.has(request.url)) {
     response.setHeader('Content-Type', 'text/javascript; charset=utf-8');
-    response.end(bundle);
+    response.end(scripts.get(request.url));
   } else if (request.url === '/mermaid-preview.html') {
     response.setHeader('Content-Type', 'text/html; charset=utf-8');
     response.end(pages[0].html);
@@ -107,9 +113,10 @@ try {
   await waitFor(`location.href === ${JSON.stringify(url)} && !!document.querySelector('pre.mermaid svg')`, 'Mermaid must render on the page with the CDN blocked');
   const expectedTheme = await evaluate(`(() => {
     window.firstDiagram = document.querySelector('pre.mermaid svg');
-    const dark = document.documentElement.classList.toggle('dark');
-    window.dispatchEvent(new CustomEvent('themeChanged'));
-    return dark ? 'dark' : 'default';
+    const mode = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+    document.querySelector('#theme-toggle').click();
+    document.querySelector('#theme-dropdown button[data-theme="' + mode + '"]').click();
+    return mode === 'dark' ? 'dark' : 'default';
   })()`);
   await waitFor(`(() => {
     const svg = document.querySelector('pre.mermaid svg');

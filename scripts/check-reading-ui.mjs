@@ -78,15 +78,41 @@ try {
     const fullBytes = gzipSync(fullIndex).length;
     assert(initialBytes <= fullBytes * 0.2, `${path}: initial search index should be at least 80% smaller`);
     console.log(`${path} search index ${initialBytes} bytes gzip (full index ${fullBytes} bytes)`);
-    const post = records[0];
-    const metadataLower = metadata.toLowerCase();
-    const bodyOnly = bodyByPath.get(post.permalink).match(/[a-z\d_-]{10,}/gi)
-      ?.find(word => !metadataLower.includes(word.toLowerCase()));
-    assert(bodyOnly, `${path}: representative post has a body-only keyword`);
-    return { records, bodyOnly };
+    const searchable = records.map(record => ({
+      record,
+      metadata: [record.title, record.summary, ...record.tags, ...record.categories].join(' ').toLowerCase(),
+      body: bodyByPath.get(record.permalink).toLowerCase(),
+    }));
+    const tagsTried = new Set();
+    let tagSample;
+    for (const { record } of searchable) {
+      for (const tag of record.tags) {
+        if (typeof tag !== 'string' || !tag.trim() || tagsTried.has(tag)) continue;
+        tagsTried.add(tag);
+        const terms = tag.toLowerCase().trim().split(/\s+/);
+        const extra = searchable.find(({ metadata, body }) =>
+          terms.some(term => !metadata.includes(term)) &&
+          terms.every(term => metadata.includes(term) || body.includes(term)));
+        if (extra) {
+          tagSample = { record, tag, extra: extra.record };
+          break;
+        }
+      }
+      if (tagSample) break;
+    }
+    assert(tagSample, `${path}: a tag also appears in another post's full text`);
+    const metadataLower = searchable.map(entry => entry.metadata).join('\n');
+    for (const record of records) {
+      const query = bodyByPath.get(record.permalink).match(/[\p{L}\p{N}_-]{10,}/gu)
+        ?.find(word => !metadataLower.includes(word.toLowerCase()));
+      if (query) return { records, tagSample, bodySample: { record, query } };
+    }
+    assert.fail(`${path}: search index contains a post with a body-only keyword`);
   };
-  const { records: index, bodyOnly: koreanBodyOnly } = await readIndex('/');
-  const { records: englishIndex, bodyOnly: englishBodyOnly } = await readIndex('/en/');
+  const ko = await readIndex('/');
+  const en = await readIndex('/en/');
+  const { records: index } = ko;
+  const { records: englishIndex } = en;
   const { recent, series, paths } = readingPaths(index, englishIndex);
   assert.equal(recent.length, 5);
   const { identifier: searchFailureProbe } = await send('Page.addScriptToEvaluateOnNewDocument', {
@@ -198,16 +224,16 @@ try {
         assert(await evaluate("!!document.querySelector('.home-search')"), `${path}: visible home search entry`);
         await evaluate("document.querySelector('.home-search').click()");
         assert(await evaluate("document.querySelector('#search-modal').getAttribute('aria-hidden') === 'false'"), `${path}: home search opens`);
-        const record = (path === '/' ? index : englishIndex)[0];
+        const { records: [record], tagSample, bodySample } = path === '/' ? ko : en;
         const search = query => evaluate(`(() => {
           const input = document.querySelector('#search-input');
           window.previousSearchResult = document.querySelector('#search-items a');
           input.value = ${JSON.stringify(query)};
           input.dispatchEvent(new Event('input', { bubbles: true }));
         })()`);
-        const latestResultsIncludePost = `!document.querySelector('#search-results-list').hidden &&
+        const latestResultsInclude = post => `!document.querySelector('#search-results-list').hidden &&
           document.querySelector('#search-items a') !== window.previousSearchResult &&
-          Array.from(document.querySelectorAll('#search-items a')).some(link => link.pathname === ${JSON.stringify(record.permalink)})`;
+          Array.from(document.querySelectorAll('#search-items a')).some(link => link.pathname === ${JSON.stringify(post.permalink)})`;
         await search(record.title);
         await waitFor("window.failFirstSearch && !document.querySelector('#search-loading').hidden", `${path}: search waits for its first index request`);
         await evaluate('window.failFirstSearch()');
@@ -216,17 +242,17 @@ try {
         await evaluate("document.querySelector('#search-retry').click()");
         await waitFor(`Array.from(document.querySelectorAll('#search-items a')).some(link => link.pathname === ${JSON.stringify(record.permalink)})`, `${path}: retry returns a real post`);
         assert.equal(await evaluate('window.searchIndexRequests'), 2, `${path}: exactly one additional request`);
-        const tag = record.tags[0];
-        assert(tag, `${path}: representative post has a tag`);
-        await search(tag);
-        await waitFor(latestResultsIncludePost, `${path}: a representative tag returns the post`);
+        await search(tagSample.tag);
+        await waitFor(latestResultsInclude(tagSample.record), `${path}: a representative tag returns the post`);
         assert.equal(await evaluate('window.searchBodyRequests'), 0, `${path}: title and tag results load without full text`);
         if (width === 1440) {
+          const containsExtra = `Array.from(document.querySelectorAll('#search-items a')).some(link => link.pathname === ${JSON.stringify(tagSample.extra.permalink)})`;
+          assert.equal(await evaluate(containsExtra), false, `${path}: metadata results exclude the body-only match`);
           await evaluate("document.querySelector('#search-expand').click()");
-          await waitFor("window.searchBodyRequests === 1 && !document.querySelector('#search-results-list').hidden", `${path}: full-text action returns results`);
+          await waitFor(`window.searchBodyRequests === 1 && !document.querySelector('#search-results-list').hidden && (${containsExtra})`, `${path}: full-text action adds the body-only result`);
         }
-        await search(path === '/' ? koreanBodyOnly : englishBodyOnly);
-        await waitFor(latestResultsIncludePost, `${path}: body-only keyword returns the post`);
+        await search(bodySample.query);
+        await waitFor(latestResultsInclude(bodySample.record), `${path}: body-only keyword returns the post`);
         assert.equal(await evaluate('window.searchBodyRequests'), 1, `${path}: each modal shares the full-text download`);
         await search('no-results-blog-regression-07e42ecc');
         await waitFor("!document.querySelector('#search-no-results').hidden", `${path}: an unmatched query shows no results`);
