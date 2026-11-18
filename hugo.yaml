@@ -348,9 +348,14 @@ enableGitInfo: true
 # 6. 빌드 및 출력 설정
 # -----------------------------------------------------------------------------
 outputs:
-  home: ["HTML", "RSS", "JSON", "WebAppManifest"] # 홈페이지에서 생성할 파일 형식입니다.
+  home: ["HTML", "RSS", "JSON", "SearchBody", "WebAppManifest"] # 홈페이지에서 생성할 파일 형식입니다.
 
 outputFormats:
+  SearchBody:
+    mediaType: application/json
+    baseName: search-body
+    isPlainText: true
+    notAlternative: true
   WebAppManifest: # PWA를 위한 웹 앱 매니페스트 파일 설정입니다.
     mediaType: "application/manifest+json"
     baseName: "site"

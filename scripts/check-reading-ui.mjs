@@ -4,6 +4,7 @@ import { spawn } from 'node:child_process';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { gzipSync } from 'node:zlib';
 import assert from 'node:assert/strict';
 import { readingPaths } from './reading-paths.mjs';
 
@@ -65,8 +66,27 @@ try {
   await send('Network.enable');
   // Production math must keep rendering even when the former CDN is unavailable.
   await send('Network.setBlockedURLs', { urls: ['*://cdn.jsdelivr.net/npm/katex@*'] });
-  const index = await fetch(new URL('/index.json', base)).then(r => { assert(r.ok); return r.json(); });
-  const englishIndex = await fetch(new URL('/en/index.json', base)).then(r => { assert(r.ok); return r.json(); });
+  const readIndex = async path => {
+    const metadata = await fetch(new URL(`${path}index.json`, base)).then(r => { assert(r.ok); return r.text(); });
+    const records = JSON.parse(metadata);
+    assert(records.length && records.every(record => !('content' in record)), `${path}: initial index excludes full text`);
+    const bodies = await fetch(new URL(`${path}search-body.json`, base)).then(r => { assert(r.ok); return r.json(); });
+    const bodyByPath = new Map(bodies.map(({ permalink, content }) => [permalink, content]));
+    assert.deepEqual([...bodyByPath.keys()].sort(), records.map(record => record.permalink).sort(), `${path}: each post has metadata and body entries`);
+    const fullIndex = JSON.stringify(records.map(record => ({ ...record, content: bodyByPath.get(record.permalink) })));
+    const initialBytes = gzipSync(metadata).length;
+    const fullBytes = gzipSync(fullIndex).length;
+    assert(initialBytes <= fullBytes * 0.2, `${path}: initial search index should be at least 80% smaller`);
+    console.log(`${path} search index ${initialBytes} bytes gzip (full index ${fullBytes} bytes)`);
+    const post = records[0];
+    const metadataLower = metadata.toLowerCase();
+    const bodyOnly = bodyByPath.get(post.permalink).match(/[a-z\d_-]{10,}/gi)
+      ?.find(word => !metadataLower.includes(word.toLowerCase()));
+    assert(bodyOnly, `${path}: representative post has a body-only keyword`);
+    return { records, bodyOnly };
+  };
+  const { records: index, bodyOnly: koreanBodyOnly } = await readIndex('/');
+  const { records: englishIndex, bodyOnly: englishBodyOnly } = await readIndex('/en/');
   const { recent, series, paths } = readingPaths(index, englishIndex);
   assert.equal(recent.length, 5);
   const { identifier: searchFailureProbe } = await send('Page.addScriptToEvaluateOnNewDocument', {
@@ -74,9 +94,13 @@ try {
       if (location.pathname !== '/' && location.pathname !== '/en/') return;
       const fetchIndex = window.fetch.bind(window);
       const indexPath = location.pathname + 'index.json';
+      const bodyPath = location.pathname + 'search-body.json';
       window.searchIndexRequests = 0;
+      window.searchBodyRequests = 0;
       window.fetch = (input, options) => {
-        if (new URL(input, location.href).pathname === indexPath && ++window.searchIndexRequests === 1) {
+        const path = new URL(input, location.href).pathname;
+        if (path === bodyPath) window.searchBodyRequests++;
+        if (path === indexPath && ++window.searchIndexRequests === 1) {
           return new Promise(resolve => {
             window.failFirstSearch = () => resolve(new Response('', { status: 503 }));
           });
@@ -177,9 +201,13 @@ try {
         const record = (path === '/' ? index : englishIndex)[0];
         const search = query => evaluate(`(() => {
           const input = document.querySelector('#search-input');
+          window.previousSearchResult = document.querySelector('#search-items a');
           input.value = ${JSON.stringify(query)};
           input.dispatchEvent(new Event('input', { bubbles: true }));
         })()`);
+        const latestResultsIncludePost = `!document.querySelector('#search-results-list').hidden &&
+          document.querySelector('#search-items a') !== window.previousSearchResult &&
+          Array.from(document.querySelectorAll('#search-items a')).some(link => link.pathname === ${JSON.stringify(record.permalink)})`;
         await search(record.title);
         await waitFor("window.failFirstSearch && !document.querySelector('#search-loading').hidden", `${path}: search waits for its first index request`);
         await evaluate('window.failFirstSearch()');
@@ -188,6 +216,18 @@ try {
         await evaluate("document.querySelector('#search-retry').click()");
         await waitFor(`Array.from(document.querySelectorAll('#search-items a')).some(link => link.pathname === ${JSON.stringify(record.permalink)})`, `${path}: retry returns a real post`);
         assert.equal(await evaluate('window.searchIndexRequests'), 2, `${path}: exactly one additional request`);
+        const tag = record.tags[0];
+        assert(tag, `${path}: representative post has a tag`);
+        await search(tag);
+        await waitFor(latestResultsIncludePost, `${path}: a representative tag returns the post`);
+        assert.equal(await evaluate('window.searchBodyRequests'), 0, `${path}: title and tag results load without full text`);
+        if (width === 1440) {
+          await evaluate("document.querySelector('#search-expand').click()");
+          await waitFor("window.searchBodyRequests === 1 && !document.querySelector('#search-results-list').hidden", `${path}: full-text action returns results`);
+        }
+        await search(path === '/' ? koreanBodyOnly : englishBodyOnly);
+        await waitFor(latestResultsIncludePost, `${path}: body-only keyword returns the post`);
+        assert.equal(await evaluate('window.searchBodyRequests'), 1, `${path}: each modal shares the full-text download`);
         await search('no-results-blog-regression-07e42ecc');
         await waitFor("!document.querySelector('#search-no-results').hidden", `${path}: an unmatched query shows no results`);
         assert(await evaluate("document.querySelector('#search-error').hidden"), `${path}: successful empty search hides the error`);

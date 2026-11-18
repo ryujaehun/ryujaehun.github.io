@@ -7,7 +7,6 @@
   {{- $records = $records | append (dict
     "title" .Title
     "summary" ($summary | htmlUnescape)
-    "content" .Plain
     "permalink" .RelPermalink
     "section" .Section
     "date" (partial "helpers/date.html" (dict "date" .Date "variant" "long"))

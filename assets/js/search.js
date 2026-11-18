@@ -11,18 +11,20 @@
   let searchLoading = null;
   let searchError = null;
   let searchRetry = null;
+  let searchExpand = null;
   let searchNoResults = null;
   let searchResultsList = null;
   let searchStats = null;
   let searchItems = null;
 
   let isModalVisible = false;
-  let searchData = null;
-  let searchDataPromise = null;
+  let loadMetadata;
+  let loadBodies;
   let currentResults = [];
   let selectedIndex = -1;
   let searchTimeout = null;
   let searchRevision = 0;
+  let retryFullText = false;
   let lastFocusedElement = null;
 
   function readJSONConfig(id) {
@@ -71,6 +73,7 @@
     searchLoading = document.getElementById("search-loading");
     searchError = document.getElementById("search-error");
     searchRetry = document.getElementById("search-retry");
+    searchExpand = document.getElementById("search-expand");
     searchNoResults = document.getElementById("search-no-results");
     searchResultsList = document.getElementById("search-results-list");
     searchStats = document.getElementById("search-stats");
@@ -78,6 +81,11 @@
 
     if (!searchModal) return;
 
+    const config = readJSONConfig("search-config");
+    loadMetadata = indexLoader(config.searchIndexURL, records => records);
+    loadBodies = indexLoader(config.searchBodyURL, records => new Map(
+      records.map(({ permalink, content }) => [permalink, content])
+    ));
     bindEvents();
   }
 
@@ -85,12 +93,14 @@
     searchClose?.addEventListener("click", hideSearch);
     searchClear?.addEventListener("click", clearSearch);
     searchOverlay?.addEventListener("click", hideSearch);
-    searchRetry?.addEventListener("click", () => {
+    const searchCurrentQuery = (includeBody) => {
       const query = searchInput.value.trim();
       if (!query) return;
       searchInput.focus();
-      performSearch(query, ++searchRevision);
-    });
+      performSearch(query, ++searchRevision, includeBody);
+    };
+    searchRetry?.addEventListener("click", () => searchCurrentQuery(retryFullText));
+    searchExpand?.addEventListener("click", () => searchCurrentQuery(true));
 
     if (searchInput) {
       searchInput.addEventListener("input", handleInput);
@@ -223,7 +233,7 @@
       searchInput?.focus();
     }, 50);
 
-    ensureSearchData().catch(() => {});
+    loadMetadata().catch(() => {});
 
     document.dispatchEvent(
       new CustomEvent("search:open", {
@@ -335,31 +345,24 @@
     });
   }
 
-  async function ensureSearchData() {
-    if (searchData) return searchData;
-    if (searchDataPromise) return searchDataPromise;
-
-    const searchConfig = readJSONConfig("search-config");
-    const indexURL = searchConfig?.searchIndexURL || "/index.json";
-
-    searchDataPromise = fetch(indexURL)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        return response.json();
-      })
-      .then((data) => {
-        if (!Array.isArray(data)) throw new Error("Invalid search index");
-        searchData = data;
-        return searchData;
-      })
-      .finally(() => {
-        searchDataPromise = null;
-      });
-
-    return searchDataPromise;
+  function indexLoader(url, indexRecords) {
+    let pending;
+    return () => {
+      pending ??= fetch(url)
+        .then((response) => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
+        })
+        .then((records) => {
+          if (!Array.isArray(records)) throw new Error("Invalid search index");
+          return indexRecords(records);
+        })
+        .catch((error) => {
+          pending = null;
+          throw error;
+        });
+      return pending;
+    };
   }
 
   function handleInput(event) {
@@ -383,29 +386,40 @@
     }, 200);
   }
 
-  async function performSearch(query, revision) {
+  async function performSearch(query, revision, includeBody = false) {
     if (revision !== searchRevision) return;
     currentResults = [];
     resetNavigation();
     showLoadingState();
 
+    let metadataResults = [];
     try {
-      const data = await ensureSearchData();
+      const records = await loadMetadata();
       if (revision !== searchRevision) return;
-      currentResults = searchRecords(data, query);
-
-      if (currentResults.length === 0) {
-        showNoResultsState();
-        return;
-      }
-
-      renderResults(currentResults, query);
-      showResultsList();
+      metadataResults = searchRecords(records, query);
+      const useBody = includeBody || metadataResults.length === 0;
+      const results = useBody ? searchRecords(records, query, await loadBodies()) : metadataResults;
+      if (revision !== searchRevision) return;
+      showSearchResults(results, query, useBody);
     } catch (_) {
       if (revision !== searchRevision) return;
-      hideAllStates();
+      if (metadataResults.length) showSearchResults(metadataResults, query, false);
+      else hideAllStates();
+      retryFullText = includeBody;
       searchError.hidden = false;
     }
+  }
+
+  function showSearchResults(results, query, usedBody) {
+    currentResults = results;
+    if (!results.length) {
+      showNoResultsState();
+      return;
+    }
+
+    renderResults(results, query);
+    showResultsList();
+    searchExpand.hidden = usedBody;
   }
 
   function parseKeywords(query) {
@@ -424,10 +438,10 @@
     return String(value || "").toLowerCase();
   }
 
-  function scoreRecord(record, keywords) {
+  function scoreRecord(record, keywords, body) {
     const title = normalizeText(record.title);
     const summary = normalizeText(record.summary);
-    const content = normalizeText(record.content);
+    const content = normalizeText(body);
     const tags = normalizeText(record.tags);
     const categories = normalizeText(record.categories);
 
@@ -469,17 +483,17 @@
     return score;
   }
 
-  function searchRecords(records, query) {
+  function searchRecords(records, query, bodies) {
     const keywords = parseKeywords(query);
     if (keywords.length === 0) return [];
 
-    return records
-      .map((record) => {
-        const score = scoreRecord(record, keywords);
-        return { ...record, keywords, score };
-      })
-      .filter((record) => record.score >= 0)
-      .sort((left, right) => right.score - left.score);
+    const results = [];
+    for (const record of records) {
+      const content = bodies?.get(record.permalink);
+      const score = scoreRecord(record, keywords, content);
+      if (score >= 0) results.push({ ...record, content, keywords, score });
+    }
+    return results.sort((left, right) => right.score - left.score);
   }
 
   function renderResults(results, query) {

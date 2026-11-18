@@ -100,6 +100,9 @@
 
     <!-- 搜索结果列表 -->
     <div id="search-results-list" hidden>
+      <button id="search-expand" type="button" class="text-primary px-4 py-3 text-sm underline" hidden>
+        {{ if eq site.Language.Lang "ko" }}본문까지 검색{{ else }}Search full text{{ end }}
+      </button>
       <!-- 结果统计 -->
       <div
         id="search-stats"

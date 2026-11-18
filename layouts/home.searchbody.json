@@ -1,0 +1,5 @@
+{{- $bodies := slice -}}
+{{- range where .Site.RegularPages "Section" "in" .Site.MainSections -}}
+  {{- $bodies = $bodies | append (dict "permalink" .RelPermalink "content" .Plain) -}}
+{{- end -}}
+{{- $bodies | jsonify -}}
