@@ -109,6 +109,12 @@ GitHub Pages 설정은 **Deploy from a branch → gh-pages → / (root)** 를 �
 검색 메타·사이트맵·RSS는 배포 CI에서 검사합니다. 네이버 Search Advisor 제출 절차와
 콘텐츠 운영 권고는 [검색 최적화 점검](docs/search-optimization-2026-10-31.md)을 참고하세요.
 
+Mermaid가 있는 글은 사이트에 포함된 브라우저 번들을 사용합니다. 번들을 갱신할 때는
+`npm pack mermaid@<버전>`으로 받은 패키지에서 `dist/mermaid.min.js`와 `LICENSE`를
+`static/vendor/mermaid@<버전>/`에 옮기고 `sha256sum mermaid.min.js LICENSE > SHA256SUMS`를
+실행합니다. Mermaid partial의 버전도 맞춘 뒤 `hugo --minify`와
+`node scripts/check-mermaid.mjs public`으로 다이어그램과 테마 전환을 확인합니다.
+
 ## Acknowledgement
 
 - 테마: <https://github.com/tom2almighty/hugo-narrow> (GPL-3.0)

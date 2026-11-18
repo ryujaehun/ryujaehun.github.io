@@ -1,10 +1,10 @@
-// Requires Chrome and Node 22+; uses the same CDN module as the built site.
+// Requires Chrome and Node 22+; checks the renderer shipped by the site.
 import { spawn } from 'node:child_process';
 import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
+import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import assert from 'node:assert/strict';
-import { rendererLoadExitCode } from './renderer-retry.mjs';
 // Render every Mermaid block in the actual Hugo output, including older posts.
 // Usage: node scripts/check-mermaid.mjs public
 const directory = resolve(process.argv[2] || 'public');
@@ -26,10 +26,27 @@ if (!pages.length) {
   console.log('Checked 0 Mermaid diagrams');
   process.exit(0);
 }
-// Use the renderer shipped by the build, so changes to the theme version apply here too.
-const renderers = new Set(pages.map(({ html }) => html.match(/https:\/\/cdn\.jsdelivr\.net\/npm\/mermaid@[^"'\s<>]+\/mermaid\.esm\.min\.mjs/)?.[0]));
-assert(renderers.size === 1 && !renderers.has(undefined), 'Expected one Mermaid renderer URL in the build');
-const [renderer] = renderers;
+const rendererPaths = new Set(pages.map(({ html }) => html.match(/<script\b[^>]*\bsrc=["']?(\/(?!\/)[^"'\s>]*\/mermaid@[\d.]+\/mermaid\.min\.js)(?=["'\s>])/i)?.[1]));
+assert(rendererPaths.size === 1 && !rendererPaths.has(undefined), 'Expected one local Mermaid renderer in the build');
+const [rendererPath] = rendererPaths;
+const asset = rendererPath.match(/\/vendor\/mermaid@[\d.]+\/mermaid\.min\.js$/)?.[0];
+assert(asset, `Unexpected Mermaid asset: ${rendererPath}`);
+const bundle = await readFile(join(directory, asset.slice(1)));
+const preview = createServer((request, response) => {
+  if (request.url === rendererPath) {
+    response.setHeader('Content-Type', 'text/javascript; charset=utf-8');
+    response.end(bundle);
+  } else if (request.url === '/mermaid-preview.html') {
+    response.setHeader('Content-Type', 'text/html; charset=utf-8');
+    response.end(pages[0].html);
+  } else {
+    response.writeHead(404).end();
+  }
+});
+await new Promise((resolve, reject) => {
+  preview.once('error', reject);
+  preview.listen(0, '127.0.0.1', resolve);
+});
 const profile = await mkdtemp(join(tmpdir(), 'blog-mermaid-check-'));
 const chrome = spawn(process.env.CHROME_BIN || 'google-chrome', [
   '--headless', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
@@ -37,7 +54,6 @@ const chrome = spawn(process.env.CHROME_BIN || 'google-chrome', [
 ], { stdio: ['ignore', 'ignore', 'pipe'] });
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 let socket;
-let loadingRenderer = false;
 try {
   const endpoint = await new Promise((resolve, reject) => {
     let stderr = '';
@@ -77,13 +93,29 @@ try {
     return result.result.value;
   };
   await send('Page.enable');
-  loadingRenderer = true;
-  await evaluate(`(async () => {
-    const {default: mermaid} = await import(${JSON.stringify(renderer)});
-    mermaid.initialize({startOnLoad:false,securityLevel:'loose',theme:'default'});
-    window.auditMermaid = mermaid;
+  await send('Network.enable');
+  await send('Network.setBlockedURLs', { urls: ['*://cdn.jsdelivr.net/*'] });
+  const url = `http://127.0.0.1:${preview.address().port}/mermaid-preview.html`;
+  await send('Page.navigate', { url });
+  const waitFor = async (expression, message) => {
+    for (let attempt = 0; attempt < 100; attempt++) {
+      if (await evaluate(expression)) return;
+      await pause(100);
+    }
+    assert.fail(message);
+  };
+  await waitFor(`location.href === ${JSON.stringify(url)} && !!document.querySelector('pre.mermaid svg')`, 'Mermaid must render on the page with the CDN blocked');
+  const expectedTheme = await evaluate(`(() => {
+    window.firstDiagram = document.querySelector('pre.mermaid svg');
+    const dark = document.documentElement.classList.toggle('dark');
+    window.dispatchEvent(new CustomEvent('themeChanged'));
+    return dark ? 'dark' : 'default';
   })()`);
-  loadingRenderer = false;
+  await waitFor(`(() => {
+    const svg = document.querySelector('pre.mermaid svg');
+    return !!svg && svg !== window.firstDiagram && mermaid.mermaidAPI.getConfig().theme === ${JSON.stringify(expectedTheme)};
+  })()`, 'Mermaid must render again after the theme changes');
+  await evaluate(`mermaid.initialize({startOnLoad:false,securityLevel:'loose',theme:'default'})`);
   let total = 0;
   const failures = [];
   for (const page of pages) {
@@ -94,7 +126,7 @@ try {
         const container = document.createElement('div');
         document.body.append(container);
         try {
-          const {svg} = await window.auditMermaid.render('audit' + ${total} + '_' + index, block.textContent, container);
+          const {svg} = await mermaid.render('audit' + ${total} + '_' + index, block.textContent, container);
           results.push({index, ok:svg.includes('<svg')});
         } catch (error) {
           results.push({index, ok:false, error:String(error)});
@@ -113,7 +145,7 @@ try {
   if (failures.length) process.exitCode = 1;
 } catch (error) {
   console.error(error);
-  process.exitCode = rendererLoadExitCode(error, loadingRenderer);
+  process.exitCode = 1;
 } finally {
   socket?.close();
   if (chrome.pid && chrome.exitCode === null && chrome.signalCode === null) {
@@ -123,5 +155,6 @@ try {
       chrome.kill();
     });
   }
+  await new Promise(resolve => preview.close(resolve));
   await rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
 }

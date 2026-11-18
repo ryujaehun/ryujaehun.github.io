@@ -1,0 +1,65 @@
+{{/* Use the theme's Mermaid settings with the site's vendored renderer. */}}
+
+{{/* 获取全局配置 */}}
+{{- $globalMermaid := site.Params.mermaid -}}
+{{- $globalEnabled := false -}}
+
+{{- if $globalMermaid -}}
+  {{- if eq (printf "%T" $globalMermaid) "bool" -}}
+    {{- $globalEnabled = $globalMermaid -}}
+  {{- else -}}
+    {{- $globalEnabled = $globalMermaid.enabled | default false -}}
+  {{- end -}}
+{{- end -}}
+
+{{/* 获取页面级配置 */}}
+{{- $pageMermaid := .Params.mermaid -}}
+{{- $pageEnabled := false -}}
+
+{{- if $pageMermaid -}}
+  {{- if eq (printf "%T" $pageMermaid) "bool" -}}
+    {{- $pageEnabled = $pageMermaid -}}
+  {{- else -}}
+    {{- $pageEnabled = $pageMermaid.enabled | default false -}}
+  {{- end -}}
+{{- end -}}
+
+{{/* 检查是否需要加载 Mermaid */}}
+{{- $shouldLoad := false -}}
+{{- if $globalEnabled -}}
+  {{- $shouldLoad = true -}}
+{{- else if $pageEnabled -}}
+  {{- $shouldLoad = true -}}
+{{- end -}}
+
+{{- if and $shouldLoad (.Store.Get "hasMermaid") -}}
+  <style>
+    .mermaid svg { display: block; margin: 0 auto; }
+  </style>
+  <script id="mermaid-renderer" src="{{ "vendor/mermaid@11.17.2/mermaid.min.js" | relURL }}" defer></script>
+  <script>
+    document.getElementById("mermaid-renderer").addEventListener("load", () => {
+      const nodes = [...document.querySelectorAll(".mermaid")];
+      const sources = nodes.map(node => node.textContent);
+      let rendering = Promise.resolve();
+
+      function renderForTheme() {
+        rendering = rendering.then(async () => {
+          nodes.forEach((node, index) => {
+            node.removeAttribute("data-processed");
+            node.textContent = sources[index];
+          });
+          window.mermaid.initialize({
+            startOnLoad: false,
+            theme: document.documentElement.classList.contains("dark") ? "dark" : "default",
+            securityLevel: "loose",
+          });
+          await window.mermaid.run({ nodes });
+        }).catch(error => console.error("Mermaid rendering failed", error));
+      }
+
+      renderForTheme();
+      window.addEventListener("themeChanged", renderForTheme);
+    }, { once: true });
+  </script>
+{{- end -}}
