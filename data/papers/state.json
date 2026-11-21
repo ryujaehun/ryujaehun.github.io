@@ -4842,7 +4842,7 @@
   "failures": 0,
   "first_seen": "2026-11-17",
   "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode-go/kimi-k2.7-code: opencode 오류: provider.go-limit: 429: OpenCode Go monthly usage limit reached. Switch to a free model, or turn on Extra Usage on the Go page in OpenCode Console to keep going.\nopencode/glm-5.3-flash-free: OpenCode authoritative session messages unavailable or malformed",
-  "last_failed_at": "2026-11-20T23:24:55.476755+00:00",
+  "last_failed_at": "2026-11-21T07:00:16.440252+00:00",
   "matched": {
    "adjacent": [
     "attention",
@@ -4854,11 +4854,11 @@
    ]
   },
   "materialized_at": "2026-11-17",
-  "next_retry_at": "2026-11-20T23:39:55.476755+00:00",
+  "next_retry_at": "2026-11-21T07:15:16.440252+00:00",
   "score": 0.6121,
   "slug": "paper-2611-18482",
   "status": "failed",
   "title": "MMFlash: Faster Speculative Decoding for Vision-Language Models",
-  "transient_failures": 8
+  "transient_failures": 9
  }
 }
