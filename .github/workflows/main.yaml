@@ -73,7 +73,7 @@ jobs:
           PAGES_BASE_URL: ${{ steps.pages.outputs.base_url }}
         run: bash scripts/validate-site.sh public "$PAGES_BASE_URL"
       - name: Setup Node.js for browser checks
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: "22"
       - name: Install Chrome for local browser checks
