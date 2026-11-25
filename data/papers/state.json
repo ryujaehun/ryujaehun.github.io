@@ -4824,13 +4824,10 @@
     "/assets/images/papers/2611.18482/teaser-radar-new-804fa990.webp",
     "/assets/images/papers/2611.18482/overview-new-8d37d4f9.webp",
     "/assets/images/papers/2611.18482/empirical-study-5d70df8d.webp",
-    "/assets/images/papers/2611.18482/sparse-motivation-e3527352.webp",
-    "/assets/images/papers/2611.18482/empirical-study-supp-50e96707.webp",
-    "/assets/images/papers/2611.18482/pdf-page-002.webp",
-    "/assets/images/papers/2611.18482/pdf-page-014.webp"
+    "/assets/images/papers/2611.18482/sparse-motivation-e3527352.webp"
    ],
    "license": "http://creativecommons.org/licenses/by/4.0/",
-   "pdf_pages": 2,
+   "pdf_pages": 0,
    "tables": 8,
    "warnings": []
   },
@@ -4838,11 +4835,8 @@
    null
   ],
   "draft_path": "content/posts/2026-11-17-paper-2611.18482.md",
-  "failure_kind": "transient",
   "failures": 0,
   "first_seen": "2026-11-17",
-  "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode-go/kimi-k2.7-code: opencode 오류: provider.go-limit: 429: OpenCode Go monthly usage limit reached. Switch to a free model, or turn on Extra Usage on the Go page in OpenCode Console to keep going.\nopencode/glm-5.3-flash-free: OpenCode authoritative session messages unavailable or malformed",
-  "last_failed_at": "2026-11-24T23:01:24.704518+00:00",
   "matched": {
    "adjacent": [
     "attention",
@@ -4854,11 +4848,59 @@
    ]
   },
   "materialized_at": "2026-11-17",
-  "next_retry_at": "2026-11-24T23:16:24.704518+00:00",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cached": true,
+     "cost_usd": 0.0,
+     "independent_of_writer": true,
+     "model": "opencode/deepseek-v4.1-flash-free",
+     "output": "2611.18482-revision-1.md",
+     "round": 1
+    },
+    {
+     "cached": true,
+     "cost_usd": 0.0,
+     "independent_of_writer": true,
+     "model": "opencode/deepseek-v4.1-flash-free",
+     "output": "2611.18482-revision-2.md",
+     "round": 2
+    },
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/kimi-k2.7-code",
+     "output": "2611.18482-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
   "score": 0.6121,
   "slug": "paper-2611-18482",
-  "status": "failed",
+  "status": "summarized",
+  "summarized_at": "2026-11-26",
+  "summary_cost_usd": 0.0,
+  "summary_model": "opencode/mimo-v2.6-flash-free",
   "title": "MMFlash: Faster Speculative Decoding for Vision-Language Models",
-  "transient_failures": 16
+  "transient_failures": 16,
+  "translation": {
+   "completed_at": "2026-11-26",
+   "cost_usd": 0,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "quality": {
+    "scope": "structure-and-normalized-quantities",
+    "semantic_review": "disabled",
+    "version": 1
+   },
+   "status": "completed"
+  },
+  "writer_checkpoint_reused": true
  }
 }
