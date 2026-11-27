@@ -4930,7 +4930,7 @@
   "failures": 0,
   "first_seen": "2026-11-27",
   "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode-go/deepseek-v4-pro: OpenCode authoritative session messages unavailable or malformed\nopencode-go/gemini-4-argon: OpenCode authoritative session messages unavailable or malformed\nopencode/glm-5.3-flash-free: OpenCode authoritative session messages unavailable or malformed\nopencode/deepseek-v4.1-flash-free: opencode 가 600초 안에 끝나지 않았습니다.\nopencode/mimo-v2.6-flash-free: opencode 가 600초 안에 끝나지 않았습니다.",
-  "last_failed_at": "2026-11-27T08:42:44.838350+00:00",
+  "last_failed_at": "2026-11-27T23:22:09.902045+00:00",
   "matched": {
    "adjacent": [
     "attention",
@@ -4945,11 +4945,11 @@
    ]
   },
   "materialized_at": "2026-11-27",
-  "next_retry_at": "2026-11-27T08:57:44.838350+00:00",
+  "next_retry_at": "2026-11-27T23:37:09.902045+00:00",
   "score": 0.7744,
   "slug": "paper-2611-29897",
   "status": "failed",
   "title": "Motion Mamba 2.0: Autoregressive Diffusion Mamba for Long-Horizon Humanoid Control",
-  "transient_failures": 2
+  "transient_failures": 3
  }
 }
