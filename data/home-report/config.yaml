@@ -27,8 +27,8 @@ llm:
     - opencode-go/glm-5.3-flash
     - opencode-go/qwen3.8-flash
     reader:
-    - opencode-go/kimi-k3
-    - opencode-go/mimo-v2.6-flash
+    - opencode-go/minimax-m3.1-flash
+    - opencode-go/longcat-2.5
   revision_models:
   - opencode-go/deepseek-v4.1-flash
   - opencode-go/glm-5.3-flash

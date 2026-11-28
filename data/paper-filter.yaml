@@ -233,7 +233,7 @@ summarize:
     # 무료 IP 한도와 분리된 Go 구독 후보만 사용한다.
     models:
       - opencode-go/mimo-v2.6-flash
-      - opencode-go/kimi-k2.7-code
+      - opencode-go/longcat-2.5
     final_models:
       - opencode-go/deepseek-v4.1-flash
     # 같은 원문 대조 요청에서 확인한 추론 옵션. 모델별로만 적용한다.
@@ -246,11 +246,12 @@ summarize:
   # 카테고리(with-…)에 남으니 나중에 구분된다.
   fallback_models:
     - opencode-go/gemini-4-argon # Go 구독 한도
-    - opencode/glm-5.3-flash-free
+    - opencode/hy4-flash-free
     - opencode/deepseek-v4.1-flash-free
     - opencode/mimo-v2.6-flash-free
   # PDF 비지원 무료 모델에는 페이지 번호를 보존한 원문 텍스트를 첨부한다.
   pdf_text_models:
+    - opencode/hy4-flash-free
     - opencode/deepseek-v4.1-flash-free
     - opencode/mimo-v2.6-flash-free
   variant: null           # opencode --variant 값. null 이면 생략한다.
@@ -269,7 +270,7 @@ translate:
   model: opencode-go/deepseek-v4.1-flash
   fallback_models:
     - opencode-go/gemini-4-argon # Go 구독 한도
-    - opencode/glm-5.3-flash-free
+    - opencode/hy4-flash-free
     - opencode/deepseek-v4.1-flash-free
     - opencode/mimo-v2.6-flash-free
   variant: null
