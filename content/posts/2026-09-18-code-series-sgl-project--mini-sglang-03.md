@@ -13,6 +13,7 @@ chapter_order: 3
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: '2편에서 요청 하나는 세 길이로 표현되는 장부가 됐다. 이제 질문은 하나다. 대기 중인 요청이 여럿일 때, 이번 스텝에 무엇을 얼마나 넣을 것인가.'
 ---
 2편에서 요청 하나는 세 길이로 표현되는 장부가 됐다. 이제 질문은 하나다. 대기 중인
 요청이 여럿일 때, 이번 스텝에 **무엇을 얼마나** 넣을 것인가.

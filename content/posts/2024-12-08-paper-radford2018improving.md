@@ -5,6 +5,7 @@ categories:
 - LLM
 date: "2024-12-08"
 title: Improving Language Understanding by Generative Pre-Training
+description: '논문 "Improving Language Understanding by Generative Pre-Training"의 주요 내용을 자세히 정리하고, 강점과 독창성, 알고리즘의 예제 과정을 설명한 뒤, 한계점도 다루겠습니다.'
 ---
 
 [논문 링크](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)

@@ -13,6 +13,7 @@ chapter_order: 2
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: 'In chapter 1, what reached the scheduler was a 1-D int32 tensor on the CPU.'
 ---
 In chapter 1, what reached the scheduler was a 1-D int32 tensor on the CPU. While
 that token sequence grows into an answer, the system has to write down somewhere

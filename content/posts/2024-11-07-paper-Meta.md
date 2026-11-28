@@ -6,6 +6,7 @@ date: "2024-11-07"
 tags:
 - Programming Languages
 title: Meta Large Language Model Compiler Foundation Models of Compiler Optimization
+description: '이 논문은 Meta AI에서 제안한 LLM Compiler라는 모델을 설명합니다. 이는 컴파일러 최적화 작업을 위해 설계된 대규모 언어 모델(LLM)로, 코드 최적화 및 디스어셈블리와 같은 컴파일러 관련 작업에서 높은 성능을 발휘하도록 훈련되었습니다.'
 ---
 
 논문 : https://arxiv.org/abs/2407.02524

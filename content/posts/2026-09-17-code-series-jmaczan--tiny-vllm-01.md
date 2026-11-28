@@ -13,6 +13,7 @@ chapter_order: 1
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: 'vLLM 본체가 십수만 줄인 걸 생각하면, 이건 "추론 엔진을 이루는 아이디어들의 최소 증명"에 가깝다. 그래서 읽을 가치가 있다. 논문에서 이름만 보던 것들이 여기서는 100줄 안에 들어와 있다.'
 ---
 
 [jmaczan/tiny-vllm](https://github.com/jmaczan/tiny-vllm)은 Llama 3.2 1B Instruct 를 GPU 에서 돌리는 추론 엔진을 C++ 와 CUDA 로 처음부터 짠 저장소다. PyTorch 도, Hugging Face 도, 심지어 토크나이저도 쓰지 않는다. safetensors 파일을 직접 열어 가중치를 GPU 로 올리고, 어텐션과 RMSNorm 과 softmax 를 전부 자기 커널로 계산한다.

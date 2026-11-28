@@ -13,6 +13,7 @@ chapter_order: 4
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: 'In part 3, when looking at the Q/K/V projections, I wrote this sentence and moved on: "Activations and weights are row-major, but cuBLAS assumes column-major…'
 ---
 In part 3, when looking at the Q/K/V projections, I wrote this sentence and moved on: "Activations and weights are row-major, but cuBLAS assumes column-major, so the call is made using only the `CUBLAS_OP_T` transpose flag and the lda/ldb/ldc arguments. Why it's called this way is covered in part 4." This part is that "why." While part 3 looked at the order in which the kernels flow, this part pulls out the same cuBLAS call again and reads each argument one by one.
 

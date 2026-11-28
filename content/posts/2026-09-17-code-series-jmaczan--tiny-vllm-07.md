@@ -13,6 +13,7 @@ chapter_order: 7
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: 'GPU 는 한 번에 한 시퀀스만 처리하면 그 시퀀스가 prefill 을 마치고 decode 로 넘어가는 사이에서 쉬게 된다. continuous batching 은 처리 중이던 요청이 끝나는 대로 그 자리에 큐에서 기다리던 다음 요청을 넣어 GPU 를 놀리지 않는 방식이다.'
 ---
 GPU 는 한 번에 한 시퀀스만 처리하면 그 시퀀스가 prefill 을 마치고 decode 로 넘어가는 사이에서 쉬게 된다. continuous batching 은 처리 중이던 요청이 끝나는 대로 그 자리에 큐에서 기다리던 다음 요청을 넣어 GPU 를 놀리지 않는 방식이다. 이 저장소의 README 도 그 원리를 한 문단으로 정리한다 — "슬롯에 프롬프트를 채우고, 어느 슬롯의 생성이 끝나면 그 결과를 돌려준 뒤 큐에서 기다리던 프롬프트를 갓 비워진 슬롯에 채운다."
 

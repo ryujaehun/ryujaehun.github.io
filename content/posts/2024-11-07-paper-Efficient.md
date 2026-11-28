@@ -6,6 +6,7 @@ date: "2024-11-07"
 tags:
 - Natural Language Processing
 title: Efficient Streaming Language Models with Attention Sinks
+description: '예를 들어, 10개의 토큰이 있는 경우, 11번째 토큰을 생성할 때 모델은 초기 몇 개의 토큰을 어텐션 싱크로 유지하고 최근 토큰들을 롤링 캐시에 저장합니다. 이를 통해 모델은 메모리 절약을 위해 전체 시퀀스를 저장하지 않고도 안정적으로 초기 문맥과 최신 정보에 집중할 수 있게 됩니다.'
 ---
 
 논문 : https://arxiv.org/abs/2309.17453

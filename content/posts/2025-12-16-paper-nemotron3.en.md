@@ -10,6 +10,7 @@ tags:
 - Mixture of Experts
 cover: https://developer-blogs.nvidia.com/wp-content/uploads/2025/12/image3-8-png.webp
 draft: false
+description: 'The axis Nemotron 3 repeatedly stresses is inference efficiency on "agentic workloads".'
 ---
 
 [Paper](https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-White-Paper.pdf)

@@ -13,6 +13,7 @@ chapter_order: 5
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: 'prefill 이 프롬프트 전체를 한 번에 흘려 보내면, 그다음부터는 지금까지 만든 토큰을 바탕으로 토큰을 하나씩 만들어야 한다. 이 단계가 decode 다.'
 ---
 prefill 이 프롬프트 전체를 한 번에 흘려 보내면, 그다음부터는 지금까지 만든 토큰을 바탕으로 **토큰을 하나씩** 만들어야 한다. 이 단계가 decode 다. 1편에서 본 대로 prefill 과 decode 는 연산의 모양이 달라서 — 전자는 행렬 × 행렬, 후자는 벡터 × 행렬 — 이 저장소는 커널을 따로 만든다. `embeddingGatherKernelDecode`, `ropeKernelDecode`, `softmaxKernelDecode` 처럼 이름에 `Decode` 가 붙은 변형들이고, 여기에 prefill 에 대응이 없는 `pagedAttentionKernel` 이 하나 더 붙는다. 이 편은 그 커널들을 prefill 과 나란히 놓고 **무엇이 다르고 왜 다른 모양인지**, 그리고 새 토큰의 K/V 가 어떻게 캐시에 붙는지를 읽는다.
 

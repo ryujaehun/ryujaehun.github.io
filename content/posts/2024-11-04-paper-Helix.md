@@ -9,6 +9,7 @@ tags:
 - Machine Learning
 title: Helix Distributed Serving of Large Language Models via Max-Flow on Heterogeneous
   GPUs
+description: '논문에서는 Helix라는 시스템을 소개하며, 이 시스템은 이기종(heterogeneous) GPU 클러스터 상에서 대규모 언어 모델(LLM)을 분산적으로 제공하기 위해 설계되었습니다. Helix의 주요 강점과 독창성, 핵심 알고리즘 예시, 한계점을 다음과 같이 정리해드립니다.'
 ---
 
 논문 : https://arxiv.org/abs/2406.01566v1

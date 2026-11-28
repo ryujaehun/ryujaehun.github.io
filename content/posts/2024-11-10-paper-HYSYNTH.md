@@ -6,6 +6,7 @@ date: "2024-11-10"
 tags:
 - Programming Languages
 title: HYSYNTH Context-Free LLM Approximation for Guiding Program Synthesis
+description: 'HYSYNTH는 세 단계로 구성된 하이브리드 프로그램 합성 시스템입니다:'
 ---
 
 논문 : https://arxiv.org/abs/2405.15880v2

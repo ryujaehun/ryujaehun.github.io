@@ -13,6 +13,7 @@ chapter_order: 5
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: '4편에서 요청 하나가 자기 자리를 잡는 법을 봤다. 그런데 같은 시스템 프롬프트로 들어오는 요청 백 개가 각자 같은 계산을 반복하면 그 자리는 금방 동난다.'
 ---
 4편에서 요청 하나가 자기 자리를 잡는 법을 봤다. 그런데 같은 시스템 프롬프트로
 들어오는 요청 백 개가 각자 같은 계산을 반복하면 그 자리는 금방 동난다.

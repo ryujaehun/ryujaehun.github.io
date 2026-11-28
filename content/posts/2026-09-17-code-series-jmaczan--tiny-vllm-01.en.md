@@ -13,6 +13,7 @@ chapter_order: 1
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: 'The striking part is the size. The product is two files, 1,572 lines.'
 ---
 
 [jmaczan/tiny-vllm](https://github.com/jmaczan/tiny-vllm) is an inference engine for Llama 3.2 1B Instruct, written from scratch in C++ and CUDA. No PyTorch, no Hugging Face, not even a tokenizer. It opens the safetensors file itself, pushes the weights onto the GPU, and computes attention, RMSNorm, and softmax in its own kernels.

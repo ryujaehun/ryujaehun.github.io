@@ -5,6 +5,7 @@ categories:
 - finance
 date: "2024-12-10"
 title: ' Benchmarks as Limits to Arbitrage: Understanding the Low-Volatility Anomaly'
+description: '저자들은 이 현상이 다음 두 가지 주요 요인에 의해 발생한다고 주장합니다: 1. 비합리적인 투자자 행동: 일부 투자자들이 로또와 같은 높은 변동성을 선호하는 경향. 2.'
 ---
 
 [논문 링크](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1585031)

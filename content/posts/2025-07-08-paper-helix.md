@@ -11,6 +11,7 @@ tags:
 cover : https://www.storagereview.com/wp-content/uploads/2025/07/image2-2-png-e1752234784623.webp
 title: '[논문리뷰] Helix Parallelism: Rethinking Sharding Strategies for Interactive Multi-Million-Token
   LLM Decoding'
+description: '대형 LLM을 “실시간”으로 서빙할 때는 두 가지 상반된 병목이 동시에 발생한다.'
 ---
 
 [논문 링크](https://research.nvidia.com/publication/2025-07_helix-parallelism-rethinking-sharding-strategies-interactive-multi-million)

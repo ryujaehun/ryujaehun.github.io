@@ -13,6 +13,7 @@ chapter_order: 1
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: 'LLM 서빙 프레임워크를 처음 열면 대개 스케줄러부터 찾는다. 하지만 스케줄러 코드를 아무리 읽어도 "이 함수는 누가 부르고, 저 큐에는 누가 넣는가"가 풀리지 않는다. Mini-SGLang 은 한 프로세스짜리 프로그램이 아니기 때문이다.'
 ---
 LLM 서빙 프레임워크를 처음 열면 대개 스케줄러부터 찾는다. 하지만 스케줄러 코드를
 아무리 읽어도 "이 함수는 누가 부르고, 저 큐에는 누가 넣는가"가 풀리지 않는다.

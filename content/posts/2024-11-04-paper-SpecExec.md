@@ -7,6 +7,7 @@ tags:
 - Natural Language Processing
 title: SpecExec Massively Parallel Speculative Decoding for Interactive LLM Inference
   on Consumer Devices
+description: '논문 "SpecExec: Massively Parallel Speculative Decoding for Interactive LLM Inference on Consumer Devices"의 주요 강점과 독창적인 점, 핵심 알고리즘 예시, 한계점 등을 한국어로 설명드리겠습니다.'
 ---
 
 논문 : https://arxiv.org/abs/2406.02532

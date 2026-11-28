@@ -6,6 +6,7 @@ date: "2024-11-04"
 tags:
 - Natural Language Processing
 title: Sequoia Scalable, Robust, and Hardware-aware Speculative Decoding
+description: '논문 "Sequoia: Scalable, Robust, and Hardware-aware Speculative Decoding"는 대형 언어 모델(LLM)에서 효율적인 추론(추론 속도 향상)을 위한 추론 속도 개선 알고리즘인 Sequoia를 제안합니다.'
 ---
 
 논문 : https://arxiv.org/abs/2402.12374

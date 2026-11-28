@@ -7,6 +7,7 @@ tags:
 - Artificial Intelligence
 title: RAG4ITOps A Supervised Fine-Tunable and Comprehensive RAG Framework for IT
   Operations and Maintenance
+description: '이 논문 "RAG4ITOps: A Supervised Fine-Tunable and Comprehensive RAG Framework for IT Operations and Maintenance"는 IT 운영 및 유지보수를 위한 질의응답(QA) 시스템을 개선하기 위한…'
 ---
 
 논문 : https://arxiv.org/abs/2410.15805v1

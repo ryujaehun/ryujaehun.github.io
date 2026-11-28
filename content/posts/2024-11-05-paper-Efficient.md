@@ -7,6 +7,7 @@ tags:
 - Hardware Architecture
 - Distributed Computing
 title: Efficient Generative LLM Inference Using Phase Splitting
+description: '논문 "Splitwise: Efficient Generative LLM Inference Using Phase Splitting"는 대형 언어 모델(LLM)의 추론을 효율적으로 수행하기 위해서 추론 단계를 분리하는 Splitwise라는 기법을 제안합니다.'
 ---
 
 논문 : https://arxiv.org/abs/2311.18677v2

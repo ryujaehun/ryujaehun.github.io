@@ -6,6 +6,7 @@ categories:
 date: "2024-11-10"
 tags: null
 title: Capital asset prices A theory of market equilibrium under conditions of risk
+description: '논문 "Capital Asset Prices: A Theory of Market Equilibrium under Conditions of Risk"를 분석한 결과, 아래와 같이 논문의 강점, 독창적인 지점, 알고리즘의 전체 과정, 그리고 한계점을 설명하겠습니다.'
 ---
 
 논문 : https://www.jstor.org/stable/2977928 

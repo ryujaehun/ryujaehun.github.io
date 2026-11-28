@@ -7,6 +7,7 @@ tags:
 - Machine Learning
 - Distributed Computing
 title: FLUX Fast Software-based Communication Overlap On GPUs Through Kernel Fusion
+description: '물론입니다. 논문의 주요 내용과 강점, 알고리즘 과정, 한계점에 대해 한국어로 설명드리겠습니다.'
 ---
 
 논문 : https://arxiv.org/abs/2406.06858

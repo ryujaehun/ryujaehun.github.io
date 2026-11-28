@@ -7,6 +7,7 @@ tags:
 - Machine Learning
 - Data Structures and Algorithms
 title: Query-Efficient Correlation Clustering with Noisy Oracle
+description: '이 논문은 Correlation Clustering 문제를 다루며, 특히 노이즈가 있는 환경에서의 효율적인 쿼리 방식을 제안합니다.'
 ---
 
 논문 : https://arxiv.org/abs/2402.01400

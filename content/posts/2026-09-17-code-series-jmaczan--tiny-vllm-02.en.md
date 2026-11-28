@@ -13,6 +13,7 @@ chapter_order: 2
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: 'In this engine, right after creating the cuBLAS handle, main() immediately does two things (src/main.cpp:557-569): it takes the weights out of…'
 ---
 In this engine, right after creating the cuBLAS handle, `main()` immediately does two things ([`src/main.cpp:557-569`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L557-L569)): it takes the weights out of `model.safetensors` and puts them on the GPU, and it preallocates the buffers that every computation from here on will use. This chapter reads both.
 

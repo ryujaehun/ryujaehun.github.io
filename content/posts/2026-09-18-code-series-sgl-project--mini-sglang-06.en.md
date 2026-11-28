@@ -13,6 +13,7 @@ chapter_order: 6
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: 'Across five chapters we have watched what the scheduler does. It receives messages, computes budgets, walks a tree, allocates pages, fills a table.'
 ---
 Across five chapters we have watched what the scheduler does. It receives
 messages, computes budgets, walks a tree, allocates pages, fills a table. All of

@@ -13,6 +13,7 @@ chapter_order: 3
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: 'In chapter 2 a request became a ledger expressed by three lengths.'
 ---
 In chapter 2 a request became a ledger expressed by three lengths. Now there is
 one question left: with several requests waiting, **what goes into this step, and

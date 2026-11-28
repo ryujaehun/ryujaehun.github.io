@@ -13,6 +13,7 @@ chapter_order: 3
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: '1편에서 prefill() 은 프롬프트 전체를 한 번에 처리하는 함수라고 했다. 17개 토큰이 한 호출 안에서 임베딩부터 다음 토큰 선택까지 통과한다. 이번 편은 그 함수의 안을 본다.'
 ---
 1편에서 `prefill()` 은 프롬프트 전체를 한 번에 처리하는 함수라고 했다. 17개 토큰이 한 호출 안에서 임베딩부터 다음 토큰 선택까지 통과한다. 이번 편은 그 함수의 안을 본다. 토큰들이 레이어 하나를 지나는 동안 어떤 커널을, 어떤 순서로 거치는지, 그리고 그 순서가 왜 그 모양인지를 각 커널 코드로 따라간다.
 

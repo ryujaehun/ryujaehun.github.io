@@ -13,6 +13,7 @@ chapter_order: 7
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: 'At the end of chapter 6 we listed the seven lines of _prepare_batch and left two of them alone: pad_batch and prepare_metadata. This chapter opens both.'
 ---
 At the end of chapter 6 we listed the seven lines of `_prepare_batch` and left two
 of them alone: `pad_batch` and `prepare_metadata`. This chapter opens both.

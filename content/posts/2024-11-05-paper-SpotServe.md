@@ -8,6 +8,7 @@ tags:
 - Natural Language Processing
 - Machine Learning
 title: SpotServe Serving Generative Large Language Models on Preemptible Instances
+description: '논문 "SpotServe: Serving Generative Large Language Models on Preemptible Instances"는 대형 언어 모델(LLM)을 경제적인 프리엠티브 인스턴스에서 효율적으로 서빙할 수 있는 새로운 분산 시스템 SpotServe를 제안합니다.'
 ---
 
 논문 : https://arxiv.org/abs/2311.15566

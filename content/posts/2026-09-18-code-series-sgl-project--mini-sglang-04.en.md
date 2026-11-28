@@ -13,6 +13,7 @@ chapter_order: 4
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: 'In chapter 3 a request "secured its space". What that space actually is, is this chapter''s subject.'
 ---
 In chapter 3 a request "secured its space". What that space actually is, is this
 chapter's subject.

@@ -15,6 +15,7 @@ tags:
 - Tau2-bench
 - SWE-bench
 cover: https://github.com/MoonshotAI/Kimi-K2/raw/main/figures/kimi-logo.png
+description: 'With a 3-stage pipeline consisting of MuonClip pretraining + large-scale agentic tool-use data + Verifiable RL alignment, Kimi K2 achieves 66.1 on τ²-Bench…'
 ---
 
 [Paper Link](https://github.com/MoonshotAI/Kimi-K2/blob/main/tech_report.pdf)

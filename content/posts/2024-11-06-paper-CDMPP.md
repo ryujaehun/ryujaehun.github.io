@@ -5,6 +5,7 @@ categories:
 date: "2024-11-06"
 tags: null
 title: CDMPP:ADevice-Model Agnostic Framework for Latency Prediction of Tensor Programs
+description: 'CDMPP의 핵심 알고리즘은 텐서 프로그램을 표현하는 Compact AST를 사용하여 장치 및 모델 불변 표현을 학습하고, 이를 통해 지연 시간을 예측하는 것입니다.'
 ---
 
 논문 : https://i.cs.hku.hk/~cwu/papers/hphu-eurosys24.pdf

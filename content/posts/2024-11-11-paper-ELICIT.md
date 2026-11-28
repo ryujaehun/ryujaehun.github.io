@@ -6,6 +6,7 @@ date: "2024-11-11"
 tags:
 - Natural Language Processing
 title: ELICIT LLM Augmentation via External In-Context Capability
+description: 'The paper titled "ELICIT: LLM Augmentation via External In-Context Capability" introduces a novel framework aimed at enhancing the adaptive capabilities of…'
 ---
 
 논문 : https://arxiv.org/abs/2410.09343

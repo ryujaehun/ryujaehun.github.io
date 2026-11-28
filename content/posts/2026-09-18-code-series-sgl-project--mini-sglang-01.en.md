@@ -13,6 +13,7 @@ chapter_order: 1
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: 'Open an LLM serving framework for the first time and you will probably go looking for the scheduler.'
 ---
 Open an LLM serving framework for the first time and you will probably go
 looking for the scheduler. But no amount of reading scheduler code answers the

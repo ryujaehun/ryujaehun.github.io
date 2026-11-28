@@ -9,6 +9,7 @@ tags:
 - Distributed Computing
 title: EPIC Efficient Position-Independent Context Caching for Serving Large Language
   Models
+description: '이 논문 "Epic: Efficient Position-Independent Context Caching for Serving Large Language Models"는 대형 언어 모델(LLM) 추론 속도를 높이기 위한 위치 독립적 컨텍스트 캐싱(Position-Independent…'
 ---
 
 논문 : https://arxiv.org/abs/2410.15332

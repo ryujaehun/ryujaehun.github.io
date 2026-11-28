@@ -13,6 +13,7 @@ chapter_order: 2
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: '이 엔진에서 main() 은 cuBLAS 핸들을 만든 뒤 곧바로 두 가지를 한다(src/main.cpp:557-569). model.safetensors 파일에서 가중치를 꺼내 GPU 메모리에 올리는 일, 그리고 앞으로 모든 계산이 쓸 버퍼를 미리 잡아 두는 일.'
 ---
 이 엔진에서 `main()` 은 cuBLAS 핸들을 만든 뒤 곧바로 두 가지를 한다([`src/main.cpp:557-569`](https://github.com/jmaczan/tiny-vllm/blob/e25bf1994efa90bc98b721ba7c527402f86fbeaf/src/main.cpp#L557-L569)). `model.safetensors` 파일에서 가중치를 꺼내 GPU 메모리에 올리는 일, 그리고 앞으로 모든 계산이 쓸 버퍼를 미리 잡아 두는 일. 이번 편은 그 둘을 읽는다.
 

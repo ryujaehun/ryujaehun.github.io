@@ -7,6 +7,7 @@ tags:
 - Gemini 2.5
 title: 'Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality, Long
   Context, and Next Generation Agentic Capabilities'
+description: '덕분에 연구·서비스 양 측면에서 1 M+ 컨텍스트 기반 에이전트, 장시간 비디오 QA, 대형 코드베이스 수정과 같은 신(新) 워크플로가 현실화될 토대를 마련하였다.'
 ---
 
 [논문 링크](https://storage.googleapis.com/deepmind-media/gemini/gemini_v2_5_report.pdf)

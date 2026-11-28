@@ -5,6 +5,7 @@ categories:
 date: "2021-02-12"
 tags: null
 title: LLVM loop unroll and jam pass and view-cfg
+description: '그래서 많은 시행착오를 끝에 알아낸것이 다음과 같은 최적화를 추가하면 수행이 된것이다.'
 ---
 ![LLVM 프로젝트 로고인 은색 와이번(용) 그림](/assets/images/llvm.jpeg)
 대학원 컴파일러 수업에서 ML을 이용하여 unroll and jam을 판별하는 모델을 학습을 하는 term project를 진행하였다. 

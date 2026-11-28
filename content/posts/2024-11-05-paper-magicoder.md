@@ -7,6 +7,7 @@ tags:
 - Natural Language Processing
 - Software Engineering
 title: Magicoder Empowering Code Generation with OSS-Instruct
+description: '논문 "Magicoder: Empowering Code Generation with OSS-INSTRUCT"는 대형 언어 모델(LLM)을 위한 오픈소스 기반 코드 생성 모델 Magicoder를 제안하며, 이를 통해 LLM의 코드 생성 성능을 크게 향상시키는 방법을 소개합니다.'
 ---
 
 논문 : https://arxiv.org/abs/2312.02120

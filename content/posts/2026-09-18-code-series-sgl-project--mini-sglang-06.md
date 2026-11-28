@@ -13,6 +13,7 @@ chapter_order: 6
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: '지금까지 다섯 편에 걸쳐 스케줄러가 하는 일을 봤다. 메시지를 받고, 예산을 계산하고, 트리를 걷고, 페이지를 잡고, 표를 채운다. 전부 CPU 일이다.'
 ---
 지금까지 다섯 편에 걸쳐 스케줄러가 하는 일을 봤다. 메시지를 받고, 예산을 계산하고,
 트리를 걷고, 페이지를 잡고, 표를 채운다. 전부 **CPU 일**이다.

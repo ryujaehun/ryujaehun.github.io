@@ -8,6 +8,7 @@ tags:
 - Machine Learning
 title: Batch Calibration Rethinking Calibration for In-Context Learning and Prompt
   Engineering
+description: '이 논문은 Batch Calibration (BC)이라는 새로운 기법을 제안하여 대형 언어 모델(LLMs)에서 In-Context Learning (ICL)과 프롬프트 엔지니어링에서 발생하는 다양한 바이어스 문제를 해결합니다.'
 ---
 
 논문 : https://arxiv.org/abs/2309.17249

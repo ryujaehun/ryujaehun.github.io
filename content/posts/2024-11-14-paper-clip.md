@@ -7,6 +7,7 @@ tags:
 - Computer Vision
 - Machine Learning
 title: Learning Transferable Visual Models From Natural Language Supervision
+description: '이 논문은 "Learning Transferable Visual Models From Natural Language Supervision"이라는 제목을 가진 CLIP (Contrastive Language-Image Pre-training) 모델에 대한 연구입니다.'
 ---
 
 논문 : https://arxiv.org/abs/2103.00020

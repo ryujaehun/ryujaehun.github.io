@@ -8,6 +8,7 @@ tags:
 - Natural Language Processing
 title: ALPINE Unveiling the Planning Capability of Autoregressive Learning in Language
   Models
+description: '이 논문 "ALPINE: Unveiling the Planning Capability of Autoregressive Learning in Language Models"에서는 Transformer 기반 언어 모델의 경로 탐색 및 계획 능력을 분석하고 확장 가능한 알고리즘을 제안합니다.'
 ---
 
 논문 : https://arxiv.org/abs/2405.09220

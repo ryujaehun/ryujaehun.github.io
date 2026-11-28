@@ -13,6 +13,7 @@ chapter_order: 2
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: '1편에서 스케줄러가 받은 것은 CPU 위의 1차원 int32 텐서였다. 그 토큰열이 답으로 자라는 동안, 시스템은 "이 요청이 어디까지 갔는가"를 어딘가에 적어 두어야 한다. 그 장부가 Req 다.'
 ---
 1편에서 스케줄러가 받은 것은 CPU 위의 1차원 int32 텐서였다. 그 토큰열이 답으로
 자라는 동안, 시스템은 "이 요청이 어디까지 갔는가"를 어딘가에 적어 두어야 한다.

@@ -7,6 +7,7 @@ tags:
 - Data Structures and Algorithms
 - Machine Learning
 title: Optimal Kernel Orchestration for Tensor Programs with Korch
+description: '업로드된 논문은 DNN(딥 뉴럴 네트워크)의 성능을 개선하기 위해 커널 오케스트레이션을 최적화하는 텐서 프로그램 최적화 도구인 Korch에 대해 다루고 있습니다. 아래는 논문의 강점, 독창성, 핵심 알고리즘 예시와 한계점에 대한 설명입니다.'
 ---
 
 논문 : https://arxiv.org/abs/2406.09465

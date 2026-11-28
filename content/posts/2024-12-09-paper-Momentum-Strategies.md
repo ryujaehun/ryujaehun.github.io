@@ -5,6 +5,7 @@ categories:
 - finance
 date: "2024-12-09"
 title: Momentum Strategies
+description: '논문 "Momentum Strategies" (1996)를 분석하고 요청하신 내용을 자세히 설명드리겠습니다.'
 ---
 
 [논문 링크](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=225438)

@@ -15,6 +15,7 @@ tags:
 - Tau2-bench
 - SWE-bench
 cover: https://github.com/MoonshotAI/Kimi-K2/raw/main/figures/kimi-logo.png
+description: '대부분의 공개 LLM은 “정적 모방 학습 → 단일 턴 생성”에 머물러 툴 사용·장기 계획·다중 턴 추론 능력이 미흡했다. 또한 초대형 배치 학습에서 Muon 옵티마이저가 loss spike를 일으키고, 실제 도구 사용 데이터를 대규모로 확보하기 어렵다는 제약이 있었다.'
 ---
 
 [논문 링크](https://github.com/MoonshotAI/Kimi-K2/blob/main/tech_report.pdf)

@@ -13,6 +13,7 @@ chapter_order: 8
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: '1편에서 스케줄러가 TP 크기만큼 뜬다는 것을 보고, 그 뒤 여섯 편은 하나의 스케줄러 안에서 일어나는 일을 읽었다. 이제 그 전부를 rank 수만큼 복제한다.'
 ---
 1편에서 스케줄러가 TP 크기만큼 뜬다는 것을 보고, 그 뒤 여섯 편은 **하나의**
 스케줄러 안에서 일어나는 일을 읽었다. 이제 그 전부를 rank 수만큼 복제한다.

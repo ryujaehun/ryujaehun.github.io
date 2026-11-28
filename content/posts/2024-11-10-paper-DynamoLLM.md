@@ -7,6 +7,7 @@ tags:
 - Hardware Architecture
 - Distributed Computing
 title: DynamoLLM Designing LLM Inference Clusters for Performance and Energy Efficiency
+description: 'DynamoLLM은 대규모 LLM 추론 시스템에서 에너지 효율성과 비용 절감을 동시에 달성하기 위한 혁신적인 접근 방식을 제시합니다. 이 시스템은 동적 재구성, 계층적 제어, 빠른 스케일링 등을 통해 변동하는 워크로드에 유연하게 대응할 수 있습니다.'
 ---
 
 논문 : https://arxiv.org/abs/2408.00741

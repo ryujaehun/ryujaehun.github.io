@@ -7,6 +7,7 @@ tags:
 - Data Structures and Algorithms
 - Machine Learning
 title: Memory Bounds for the Experts Problem
+description: '이 논문, "Memory Bounds for the Experts Problem"는 전문가 조언을 이용한 온라인 학습 문제에 대한 메모리 제약을 다루고 있습니다. 전통적으로 전문가 예측에 기반한 알고리즘은 매일 예측을 처리하고, 최고의 전문가와 비교하여 손실을 최소화하도록 설계됩니다.'
 ---
 
 논문 : https://arxiv.org/abs/2204.09837

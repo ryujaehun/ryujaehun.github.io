@@ -7,6 +7,7 @@ tags:
 - Security and Cryptography
 - Software Engineering
 title: KernelGPT Enhanced Kernel Fuzzing via Large Language Models
+description: 'KernelGPT의 접근 방식은 드라이버 탐지 → 사양 생성 → 사양 검증 및 수정의 3단계로 구성됩니다.'
 ---
 
 논문 : https://arxiv.org/abs/2401.00563

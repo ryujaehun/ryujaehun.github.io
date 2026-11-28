@@ -6,6 +6,7 @@ categories:
 date: "2025-06-05"
 title: 'SOLA: Optimizing SLO Attainment for Large Language Model Serving with State-Aware
   Scheduling'
+description: '이 SOLA 논문은 대규모 언어 모델(LLM) 서비스에서 서비스 수준 목표(SLO), 특히 첫 토큰까지의 시간(TTFT)과 출력 토큰당 시간(TPOT) 달성률을 최적화하기 위한 새로운 스케줄링 프레임워크를 제안합니다.'
 ---
 
 [논문 링크](https://openreview.net/pdf?id=ubIvpetAd6)

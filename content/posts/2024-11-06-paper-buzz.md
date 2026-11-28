@@ -7,6 +7,7 @@ tags:
 - Natural Language Processing
 title: BUZZ Beehive-structured Sparse KV Cache with Segmented Heavy Hitters for Efficient
   LLM Inference
+description: '긴 문서를 처리하는 상황에서 다음과 같은 정보가 KV 캐시에 쌓인다고 가정해 보겠습니다. - 토큰 1~100: 문서의 도입부 정보 - 토큰 101~200: 중간 내용 - 토큰 201~300: 결론부 정보'
 ---
 
 논문 : https://arxiv.org/abs/2410.23079

@@ -13,6 +13,7 @@ chapter_order: 8
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: 'Chapter 1 showed that one scheduler starts per TP rank, and the six chapters since read what happens inside one of them.'
 ---
 Chapter 1 showed that one scheduler starts per TP rank, and the six chapters since
 read what happens inside **one** of them. Now all of it gets replicated once per

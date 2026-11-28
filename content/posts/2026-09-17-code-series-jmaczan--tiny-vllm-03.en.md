@@ -13,6 +13,7 @@ chapter_order: 3
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: 'In Part 1 I said prefill() is a function that processes the entire prompt in one pass.'
 ---
 In Part 1 I said `prefill()` is a function that processes the entire prompt in one pass. All 17 tokens pass through everything from embedding to next-token selection within a single call. This part looks inside that function. We follow which kernels the tokens pass through on their way through one layer, in what order, and why that order has the shape it does, by reading each kernel's code.
 

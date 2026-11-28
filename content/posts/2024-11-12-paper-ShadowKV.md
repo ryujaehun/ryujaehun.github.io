@@ -7,6 +7,7 @@ tags:
 - Machine Learning
 - Natural Language Processing
 title: ShadowKV KV Cache in Shadows for High-Throughput Long-Context LLM Inference
+description: 'ShadowKV의 작동 방식은 크게 두 단계로 나눌 수 있습니다: Pre-filling 단계와 Decoding 단계입니다.'
 ---
 
 논문 : https://arxiv.org/abs/2410.21465 

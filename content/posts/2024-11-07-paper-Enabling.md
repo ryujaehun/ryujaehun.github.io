@@ -6,6 +6,7 @@ date: "2024-11-07"
 tags: null
 title: Enabling Tensor Language Model to Assist in Generating High-Performance Tensor
   Programs for Deep Learning
+description: '이 논문은 고성능 텐서 프로그램을 효율적으로 생성하기 위해 TLM (Tensor Language Model)을 사용하는 프레임워크를 제안하고 있습니다. TLM은 텐서 프로그램의 탐색 공간을 확장하면서도, 효율적인 최적화를 통해 컴파일 성능을 향상시키기 위한 접근 방식을 사용합니다.'
 ---
 
 논문 : https://www.usenix.org/system/files/osdi24-zhai.pdf

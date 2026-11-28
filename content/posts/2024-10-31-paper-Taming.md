@@ -7,6 +7,7 @@ tags:
 - Machine Learning
 - Distributed Computing
 title: Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve
+description: '개인의견 : 서비스를 하는 수준에서 생각하면 continuous batching같은 테크닉을 사용하면 prefill을 스케줄을 어떠한 방식으로 할지가 궁금했는데 이러한 방법으로 stall을 줄이다니 재밋는 논문이네요.'
 ---
 
 논문 : https://arxiv.org/abs/2403.02310

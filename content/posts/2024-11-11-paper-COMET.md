@@ -7,6 +7,7 @@ tags:
 - Hardware Architecture
 - Machine Learning
 title: COMET Towards Partical W4A4KV4 LLMs Serving
+description: '논문 "COMET: Towards Practical W4A4KV4 LLMs Serving"는 대형 언어 모델(LLMs)을 효과적으로 배포하기 위해 양자화(quantization) 기법을 활용하여 GPU 성능을 최적화하는 방법을 제안합니다.'
 ---
 
 논문 : https://arxiv.org/abs/2410.12168

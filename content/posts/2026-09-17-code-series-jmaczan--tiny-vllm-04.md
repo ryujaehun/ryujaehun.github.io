@@ -13,6 +13,7 @@ chapter_order: 4
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: '3편에서 Q/K/V 투영을 볼 때 이런 문장을 적어 두고 넘어갔다. "활성과 가중치는 행 우선인데 cuBLAS 는 열 우선을 가정하므로, CUBLAS_OP_T 전치 플래그와 lda/ldb/ldc 만으로 호출한다. 왜 이렇게 부르는지는 4편이 다룬다." 이 편이 그 "왜"다.'
 ---
 3편에서 Q/K/V 투영을 볼 때 이런 문장을 적어 두고 넘어갔다. "활성과 가중치는 행 우선인데 cuBLAS 는 열 우선을 가정하므로, `CUBLAS_OP_T` 전치 플래그와 lda/ldb/ldc 만으로 호출한다. 왜 이렇게 부르는지는 4편이 다룬다." 이 편이 그 "왜"다. 3편이 커널이 어떤 순서로 흐르는지를 보았다면, 이 편은 같은 cuBLAS 호출을 다시 꺼내 인자를 하나씩 읽는다.
 

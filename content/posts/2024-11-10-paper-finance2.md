@@ -6,6 +6,7 @@ categories:
 date: "2024-11-10"
 tags: null
 title: Portfolio Selection
+description: '논문 "Portfolio Selection" (Harry Markowitz, 1952)를 분석한 결과를 토대로, 논문의 주요 강점, 독창성, 핵심 알고리즘 설명 및 예시, 그리고 한계점을 정리하여 설명하겠습니다.'
 ---
 
 논문 : https://www.jstor.org/stable/2975974

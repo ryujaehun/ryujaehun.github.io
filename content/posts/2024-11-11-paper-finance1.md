@@ -6,6 +6,7 @@ categories:
 date: "2024-11-11"
 tags: null
 title: Foundations of Factor Investing
+description: '이 논문은 팩터 투자(Factor Investing)에 대한 포괄적인 기초를 제공하며, 팩터 기반 인덱스가 어떻게 시장 자본화 가중 인덱스와 비교하여 보다 투명하고 비용 효율적인 접근 방식을 제공할 수 있는지를 설명합니다. 논문의 주요 강점은 다음과 같습니다:'
 ---
 
 논문 : https://www.msci.com/documents/1296102/1336482/Foundations_of_Factor_Investing.pdf

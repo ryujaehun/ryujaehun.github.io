@@ -5,6 +5,7 @@ categories:
 date: "2024-11-12"
 tags: null
 title: LiteMoE Customizing On-device LLM Serving via Proxy Submodel Tuning
+description: '이 논문은 LiteMoE (Lightweight Mixture of Experts) 프레임워크를 제안하여, 모바일 환경에서 대형 언어 모델(LLM)을 효과적으로 맞춤화하고 배포할 수 있도록 하는 방법을 제시합니다.'
 ---
 
 논문 : https://dl.acm.org/doi/10.1145/3666025.3699355

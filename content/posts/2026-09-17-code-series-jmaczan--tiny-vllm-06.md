@@ -13,6 +13,7 @@ chapter_order: 6
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: 'decode 가 토큰을 하나 만들 때마다 어텐션은 그 시퀀스가 지금까지 쌓은 모든 K/V 를 다시 읽는다. 이 K/V 를 시퀀스마다 연속된 큰 버퍼 하나로 잡으면, 시퀀스들이 저마다 다른 시점에 끝나면서 안 쓰는 구간이 생겨 메모리가 낭비된다.'
 ---
 decode 가 토큰을 하나 만들 때마다 어텐션은 그 시퀀스가 지금까지 쌓은 **모든** K/V 를 다시 읽는다. 이 K/V 를 시퀀스마다 연속된 큰 버퍼 하나로 잡으면, 시퀀스들이 저마다 다른 시점에 끝나면서 안 쓰는 구간이 생겨 메모리가 낭비된다. vLLM 을 유명하게 만든 PagedAttention 의 답은 KV cache 를 운영체제의 페이지처럼 **작은 블록으로 쪼개** 필요할 때만 할당하고, block table 이라는 배열이 "어느 시퀀스의 어느 묶음이 어느 블록인지"를 추적하게 하는 것이다([Kwon et al., SOSP 2023](https://arxiv.org/pdf/2309.06180)). 이 저장소는 `BLOCK_SIZE = 16` 토큰짜리 블록, block table, 그리고 `pagedAttentionKernel` 커널 하나로 그 아이디어를 구현했다.
 

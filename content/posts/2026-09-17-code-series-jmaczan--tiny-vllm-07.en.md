@@ -13,6 +13,7 @@ chapter_order: 7
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: 'If the GPU processes only one sequence at a time, it sits idle while that sequence finishes prefill and moves on to decode.'
 ---
 If the GPU processes only one sequence at a time, it sits idle while that sequence finishes prefill and moves on to decode. Continuous batching is the approach of feeding the next request waiting in the queue into the spot of a request that finishes, so the GPU is never idle. This repository's README also summarizes the principle in one paragraph — "fill slots with prompts, and when any slot finishes generating, return its result and then fill the just-emptied slot with a prompt waiting in the queue."
 

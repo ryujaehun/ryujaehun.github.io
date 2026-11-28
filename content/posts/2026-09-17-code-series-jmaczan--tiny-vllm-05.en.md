@@ -13,6 +13,7 @@ chapter_order: 5
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: 'Once prefill has streamed the whole prompt through in one pass, everything after that has to produce tokens one at a time based on the tokens produced so far.'
 ---
 Once prefill has streamed the whole prompt through in one pass, everything after that has to produce tokens **one at a time** based on the tokens produced so far. That step is decode. As we saw in part 1, prefill and decode have different operation shapes — the former is matrix × matrix, the latter vector × matrix — so this repo makes separate kernels. They're the variants with `Decode` in the name, like `embeddingGatherKernelDecode`, `ropeKernelDecode`, `softmaxKernelDecode`, and one more `pagedAttentionKernel` with no prefill counterpart. This part lays those kernels next to their prefill counterparts and reads **what differs and why the shape is different**, and how a new token's K/V gets appended to the cache.
 

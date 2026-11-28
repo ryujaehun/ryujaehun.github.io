@@ -6,6 +6,7 @@ categories:
 date: "2025-06-05"
 title: 'ScaleFusion: Scalable Inference of Spatial-Temporal Diffusion Transformers
   for High-Resolution Long Video Generation'
+description: 'ScaleFusion 논문 "SCALEFUSION: SCALABLE INFERENCE OF SPATIAL-TEMPORAL DIFFUSION TRANSFORMERS FOR HIGH-RESOLUTION LONG VIDEO GENERATION"은 고해상도(예: 1080p) 및 장시간(예…'
 ---
 
 [논문 링크](https://openreview.net/pdf?id=anZWBeWnWh)

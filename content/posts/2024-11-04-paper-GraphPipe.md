@@ -8,6 +8,7 @@ tags:
 - Machine Learning
 title: GraphPipe Improving Performance and Scalability of DNN Training with Graph
   Pipeline Parallelism
+description: '개인의견 : pipeline Parallelism에 관련된 논문을 몇개 봤는데 그 중에서 가장 재밋는 논문인것 같네요. graph의 toplogy-aware Pipeline Parallelism이라는 당연한 개념을 포함하여 효과적인 결과를 내는것 같습니다.'
 ---
 
 개인의견 : pipeline Parallelism에 관련된 논문을 몇개 봤는데 그 중에서 가장 재밋는 논문인것 같네요. graph의 toplogy-aware Pipeline Parallelism이라는 당연한 개념을 포함하여 효과적인 결과를 내는것 같습니다. 다만 구현에 대한 오버헤드는 쫌 있을꺼같군요

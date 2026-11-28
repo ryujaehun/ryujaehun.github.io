@@ -5,6 +5,7 @@ categories:
 date: "2024-11-12"
 tags: null
 title: LaRS Latent Reasoning Skills for Chain-of-Thought Reasoning
+description: '이 논문은 Latent Reasoning Skills (LaRS)라는 새로운 접근법을 제안하여, Chain-of-Thought (CoT) 추론을 위한 효율적인 데모 선택 방법을 개발했습니다.'
 ---
 
 논문 : https://aclanthology.org/2024.findings-emnlp.206/

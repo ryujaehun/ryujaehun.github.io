@@ -7,6 +7,7 @@ date: "2024-11-11"
 tags: null
 title: Scientific Beta Multi-Beta Multi-Strategy Indices Implementing Multi-Factor
   Equity Portfolios with Smart Factor Indices
+description: '이 논문은 팩터 투자 전략에서 다중 팩터 접근법을 제시하며, 투자자들이 다양한 팩터에 노출됨으로써 리스크를 줄이고 성과를 극대화할 수 있는 방법을 제안합니다. 논문의 주요 강점은 다음과 같습니다:'
 ---
 
 논문 : https://conferences.pionline.com/uploads/conference_admin/ERI_Scientific_Beta_Publication_Scientific_Beta_Multi-Beta_Multi-Strategy_Indices_Equity_Portfolios.pdf

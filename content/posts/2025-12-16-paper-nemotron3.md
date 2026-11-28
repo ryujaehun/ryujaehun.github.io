@@ -9,6 +9,7 @@ tags:
 - Machine Learning
 - Mixture of Experts
 cover: https://developer-blogs.nvidia.com/wp-content/uploads/2025/12/image3-8-png.webp
+description: 'Nemotron 3가 반복해서 강조하는 축은 “에이전틱(agentic) 워크로드”에서의 추론 효율 이다.'
 ---
 [논문 링크](https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-White-Paper.pdf)
 

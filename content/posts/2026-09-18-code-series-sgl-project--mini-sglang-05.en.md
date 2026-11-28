@@ -13,6 +13,7 @@ chapter_order: 5
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: 'Chapter 4 showed how one request secures its space.'
 ---
 Chapter 4 showed how one request secures its space. But if a hundred requests
 arrive with the same system prompt and each repeats the same computation, that

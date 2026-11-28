@@ -13,6 +13,7 @@ chapter_order: 4
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: '3편에서 요청 하나가 "자리를 잡았다"고 했다. 그 자리의 정체가 이 편의 주제다.'
 ---
 3편에서 요청 하나가 "자리를 잡았다"고 했다. 그 자리의 정체가 이 편의 주제다.
 

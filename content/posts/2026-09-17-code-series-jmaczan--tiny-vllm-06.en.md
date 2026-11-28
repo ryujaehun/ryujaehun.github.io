@@ -13,6 +13,7 @@ chapter_order: 6
 chapter_count: 7
 repository: "https://github.com/jmaczan/tiny-vllm"
 pinned_commit: "e25bf1994efa90bc98b721ba7c527402f86fbeaf"
+description: 'Every time decode produces one token, attention re-reads all the K/V that the sequence has accumulated so far.'
 ---
 Every time decode produces one token, attention re-reads **all** the K/V that the sequence has accumulated so far. If that K/V is held in one large contiguous buffer per sequence, sequences that finish at different times leave unused gaps and waste memory. PagedAttention, the idea that made vLLM famous, answers by splitting the KV cache into **small blocks** — like operating system pages — allocating them only when needed, and letting an array called the block table track "which chunk of which sequence lives in which block" ([Kwon et al., SOSP 2023](https://arxiv.org/pdf/2309.06180)). This repository implements that idea with `BLOCK_SIZE = 16`-token blocks, a block table, and a single kernel, `pagedAttentionKernel`.
 

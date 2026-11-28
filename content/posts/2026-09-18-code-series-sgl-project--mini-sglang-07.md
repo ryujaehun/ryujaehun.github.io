@@ -13,6 +13,7 @@ chapter_order: 7
 chapter_count: 8
 repository: "https://github.com/sgl-project/mini-sglang"
 pinned_commit: "9a91cfafe754aa85daee49998176275667eb58f2"
+description: '6편 마지막에 _prepare_batch 의 일곱 줄을 열거하면서 마지막 두 줄을 남겨 뒀다. pad_batch 와 prepare_metadata 다. 이 편이 그 둘을 연다.'
 ---
 6편 마지막에 `_prepare_batch` 의 일곱 줄을 열거하면서 마지막 두 줄을 남겨 뒀다.
 `pad_batch` 와 `prepare_metadata` 다. 이 편이 그 둘을 연다.
