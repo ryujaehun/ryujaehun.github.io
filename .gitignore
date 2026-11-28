@@ -57,4 +57,8 @@ __pycache__/
 data/papers/raw/
 data/papers/scored/
 data/papers/tasks/
+# 품질 실험 로컬 산출물: 논문 원문 스냅샷과 1회성 검증 보고서
+data/papers/quality-corpus/
+data/papers/reports/quality-*
+data/papers/reports/*-verification-*.json
 hugo-build.log
