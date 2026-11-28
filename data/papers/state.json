@@ -4926,11 +4926,8 @@
    null
   ],
   "draft_path": "content/posts/2026-11-27-paper-2611.29897.md",
-  "failure_kind": "transient",
   "failures": 0,
   "first_seen": "2026-11-27",
-  "last_error": "summarize: 모든 모델이 실패했습니다.\nopencode-go/deepseek-v4-pro: OpenCode authoritative session messages unavailable or malformed\nopencode-go/gemini-4-argon: OpenCode authoritative session messages unavailable or malformed\nopencode/glm-5.3-flash-free: OpenCode authoritative session messages unavailable or malformed\nopencode/deepseek-v4.1-flash-free: opencode 가 600초 안에 끝나지 않았습니다.\nopencode/mimo-v2.6-flash-free: opencode 가 600초 안에 끝나지 않았습니다.",
-  "last_failed_at": "2026-11-27T23:22:09.902045+00:00",
   "matched": {
    "adjacent": [
     "attention",
@@ -4945,11 +4942,59 @@
    ]
   },
   "materialized_at": "2026-11-27",
-  "next_retry_at": "2026-11-27T23:37:09.902045+00:00",
+  "quality": {
+   "scope": "structure-and-evidence-presence",
+   "status": "passed",
+   "version": 1
+  },
+  "revision": {
+   "rounds": [
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/glm-5.3-flash",
+     "output": "2611.29897-revision-1.md",
+     "round": 1
+    },
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/minimax-m3.1-flash",
+     "output": "2611.29897-revision-2.md",
+     "round": 2
+    },
+    {
+     "cached": false,
+     "cost_usd": 0,
+     "independent_of_writer": true,
+     "model": "opencode-go/deepseek-v4.1-flash",
+     "output": "2611.29897-revision-3.md",
+     "round": 3
+    }
+   ],
+   "status": "passed"
+  },
   "score": 0.7744,
   "slug": "paper-2611-29897",
-  "status": "failed",
+  "status": "summarized",
+  "summarized_at": "2026-11-28",
+  "summary_cost_usd": 0,
+  "summary_model": "opencode-go/deepseek-v4-pro",
   "title": "Motion Mamba 2.0: Autoregressive Diffusion Mamba for Long-Horizon Humanoid Control",
-  "transient_failures": 3
+  "transient_failures": 3,
+  "translation": {
+   "completed_at": "2026-11-28",
+   "cost_usd": 0,
+   "model": "opencode-go/deepseek-v4.1-flash",
+   "quality": {
+    "scope": "structure-and-normalized-quantities",
+    "semantic_review": "disabled",
+    "version": 1
+   },
+   "status": "completed"
+  },
+  "writer_checkpoint_reused": false
  }
 }
