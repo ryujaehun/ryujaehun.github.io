@@ -246,7 +246,6 @@ summarize:
   # 카테고리(with-…)에 남으니 나중에 구분된다.
   fallback_models:
     - opencode-go/gemini-4-argon # Go 구독 한도
-    - opencode/glm-5.3-flash-free
     - opencode/deepseek-v4.1-flash-free
     - opencode/mimo-v2.6-flash-free
   # PDF 비지원 무료 모델에는 페이지 번호를 보존한 원문 텍스트를 첨부한다.
@@ -269,7 +268,6 @@ translate:
   model: opencode-go/deepseek-v4.1-flash
   fallback_models:
     - opencode-go/gemini-4-argon # Go 구독 한도
-    - opencode/glm-5.3-flash-free
     - opencode/deepseek-v4.1-flash-free
     - opencode/mimo-v2.6-flash-free
   variant: null
