@@ -6,7 +6,7 @@ date: "2024-11-03"
 tags:
 - Machine Learning
 title: MEGABYTE Predicting Million-byte Sequences with Multiscale Transformers
-description: '개인의견 : 패치 기반의 병렬 연산과 Cross-Attention을 통한 글로벌-로컬 상호작용, 그리고 토크나이저 free? 한 신기한 논문으로 보인다.'
+description: '이 논문은 MEGABYTE라는 모델을 소개하며, 기존의 Transformer 모델이 긴 시퀀스(수백만 바이트 단위)의 데이터를 효과적으로 다루기 어려운 한계를 해결하고자 합니다.'
 ---
 
 개인의견 : 패치 기반의 병렬 연산과 Cross-Attention을 통한 글로벌-로컬 상호작용, 그리고 토크나이저 free? 한 신기한 논문으로 보인다.

@@ -8,7 +8,7 @@ tags:
 - Machine Learning
 title: MInference 1.0 Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse
   Attention
-description: '논문에서 제안한 MInference 방법론은 긴 문맥을 처리하는 LLM의 Attention 계산을 최적화하기 위해 세 가지 희소 패턴을 활용합니다:'
+description: '이 논문은 긴 문맥을 처리하는 LLM의 추론 속도를 혁신적으로 개선하는 접근법을 제시했습니다. 특히, 동적 희소 Attention 기법을 통해 효율성과 정확도를 동시에 향상시킨 것은 매우 주목할 만합니다.'
 ---
 
 논문 : https://arxiv.org/abs/2407.02490

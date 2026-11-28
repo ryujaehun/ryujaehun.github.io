@@ -6,7 +6,7 @@ categories:
 date: "2021-02-12"
 tags: null
 title: 간단논문 정리 DARTS DIFFERENTIABLE ARCHITECTURE SEARCH (ICLR 2019)
-description: '위 그림과 아래 수식을 통해서 어떠한 방식을 통하여 연속적으로 연산을 정의 하는지 알 수 있다. nodei,j연산의 종류를 선택하는 방법은 아래 식처럼 \alpha의 softmax를 이용하는 것이고 이는 위 그림을 통하여 직관적으로 알 수 있다.'
+description: 'DARTS: DIFFERENTIABLE ARCHITECTURE SEARCH'
 ---
 
 ## 제목

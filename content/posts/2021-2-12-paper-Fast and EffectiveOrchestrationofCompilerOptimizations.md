@@ -9,7 +9,7 @@ tags:
 - Programming Languages
 title: 간단논문 정리 Fast and Effective Orchestration of Compiler Optimizations(Zhelong
   Pan,Rudolf Eigenmann;Purdue University ;CGO’06)
-description: 'https://arxiv.org/abs/1802.04799'
+description: '컴파일 최적화 일부가 오히려 성능을 떨어뜨리는 문제를 다루며, 프로그램마다 최적화 조합을 빠르게 고르는 방법을 제안한 Pan·Eigenmann 논문을 정리한 글입니다.'
 ---
 ## 제목
 Fast and Effective Orchestration of Compiler Optimizations

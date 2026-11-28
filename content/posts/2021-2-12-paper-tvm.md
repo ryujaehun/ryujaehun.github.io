@@ -9,6 +9,7 @@ tags:
 - Programming Languages
 title: 간단논문 정리 TVM An Automated End-to-End Optimizing Compiler for Deep Learning  (OSDI
   18)
+description: '그래프 수준 IR과 자동 튜닝으로 CPU·GPU·FPGA까지 지원하는 딥러닝용 엔드투엔드 최적화 컴파일러 TVM(OSDI 2018)을 정리한 글입니다.'
 ---
 ![TVM 스택 도식. PyTorch·CoreML·TensorFlow·ONNX·Keras·MXNet 이 High-Level Differentiable IR 로 들어오고, Tensor Expression 과 최적화 탐색 공간을 거쳐 LLVM·CUDA·Metal 과 VTA 로 내려가며, AutoTVM 이 디바이스 플릿과 주고받으며 탐색한다](/assets/images/tvm1.png)
 ## 제목

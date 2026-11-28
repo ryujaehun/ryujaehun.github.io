@@ -7,6 +7,7 @@ date: "2021-02-12"
 tags: null
 title: 논문 정리 Chameleon Adaptive Code Optimization for Expedited Deep Neural Network
   Compilation(ICLR 2020)
+description: '딥러닝 컴파일러의 스케줄 탐색이 중복 후보와 긴 컴파일 시간에 시달리는 문제를, 적응형 탐색과 샘플링으로 줄이는 Chameleon 논문을 정리한 글입니다.'
 ---
 ![CHAMELEON 의 전체 설계와 컴파일 흐름 도식의 축소판](/assets/images/chameleon1.jpg)
 ## 제목

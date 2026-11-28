@@ -9,7 +9,7 @@ tags:
 - Programming Languages
 title: 논문 정리 NeuroVectorizer End-to-End Vectorization with Deep Reinforcement Learning
   (CGO 20)
-description: 'A comprehensive data set of more than 10,000 synthetic loop examples. An end-to-end deep reinforcement learning (RL) based auto loop-vectorization method'
+description: 'NeuroVectorizer: End-to-End Vectorization with Deep Reinforcement Learning'
 ---
 ![NeuroVectorizer 프레임워크 개요 도식의 축소판](/assets/images/nv1.png)
 ## 제목

@@ -6,7 +6,7 @@ date: "2024-11-10"
 tags:
 - Programming Languages
 title: HYSYNTH Context-Free LLM Approximation for Guiding Program Synthesis
-description: 'HYSYNTH는 세 단계로 구성된 하이브리드 프로그램 합성 시스템입니다:'
+description: 'HYSYNTH는 LLM의 잠재력을 극대화하면서도 전통적인 프로그램 합성 기법의 한계를 극복하려는 혁신적인 시도로 볼 수 있습니다. 특히 복잡한 도메인에서의 효율적인 프로그램 합성에 유용하며, 다양한 응용 가능성을 보여줍니다.'
 ---
 
 논문 : https://arxiv.org/abs/2405.15880v2

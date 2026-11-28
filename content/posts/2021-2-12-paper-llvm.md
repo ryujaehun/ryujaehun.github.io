@@ -6,6 +6,7 @@ date: "2021-02-12"
 tags: null
 title: 논문 정리 LLVM A Compilation Framework for Lifelong Program Analysis & Transformation(CGO
   04)
+description: '프로그램의 전 생애에 걸친 분석과 변환을 목표로 SSA 기반 중간 표현을 제안한 LLVM 논문(CGO 2004)을 정리한 글입니다.'
 ---
 ## 제목
 LLVM: A Compilation Framework for Lifelong Program Analysis & Transformation

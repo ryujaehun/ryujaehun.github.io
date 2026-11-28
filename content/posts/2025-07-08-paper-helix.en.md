@@ -10,7 +10,7 @@ tags:
 - Long Context Inference
 title: "[Paper Review] Helix Parallelism: Rethinking Sharding Strategies for Interactive Multi-Million-Token LLM Decoding"
 cover : https://www.storagereview.com/wp-content/uploads/2025/07/image2-2-png-e1752234784623.webp
-description: 'When serving large LLMs in "real-time", two bottlenecks arise simultaneously:'
+description: 'Ultimately, existing methods were stuck in a trade-off: "Shard KV → FFN bottlenecks, shard FFN → KV duplicates."'
 ---
 
 [Paper Link](https://research.nvidia.com/publication/2025-07_helix-parallelism-rethinking-sharding-strategies-interactive-multi-million)

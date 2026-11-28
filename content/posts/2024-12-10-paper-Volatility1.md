@@ -6,7 +6,7 @@ categories:
 date: "2024-12-10"
 title: 'High Idiosyncratic Volatility and Low Returns: International and Further U.S.
   Evidence'
-description: '이 논문은 고유 변동성이 높은 주식의 낮은 미래 평균 수익률이라는 현상을 국제 시장과 미국 시장에서 종합적으로 분석합니다. 이 연구의 강점과 독창적인 지점은 다음과 같습니다:'
+description: '이 논문은 고유 변동성이 높은 주식의 낮은 미래 평균 수익률이라는 현상을 국제 시장과 미국 시장에서 종합적으로 분석합니다.'
 ---
 
 [논문 링크](https://www.sciencedirect.com/science/article/abs/pii/S0304405X08001542)

@@ -5,7 +5,7 @@ categories:
 date: "2024-11-03"
 tags: null
 title: Reasoning over Public and Private Data in Retrieval-Based Systems
-description: '개인의견 : 잘모르는 분야이지만 meta publication을 보다가 흥미로워 보여서 선택한 논문.(내가 잘몰라서 질문을 못하겠다 ㅎㅎ;)'
+description: '이 논문에서는 공개 데이터와 비공개 데이터를 동시에 활용할 수 있는 검색 기반 시스템을 개발하기 위해 "SPLIT ITERATIVE RETRIEVAL (SPIRAL)" 문제를 제안하고, 이를 연구하기 위한 벤치마크 데이터셋인 "CONCURRENTQA"를 제공합니다.'
 ---
 
 개인의견 : 잘모르는 분야이지만 meta publication을 보다가 흥미로워 보여서 선택한 논문.(내가 잘몰라서 질문을 못하겠다 ㅎㅎ;)

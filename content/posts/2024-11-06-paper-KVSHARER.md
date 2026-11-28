@@ -9,7 +9,7 @@ tags:
 - Machine Learning
 - Natural Language Processing
 title: KVSharer Efficient Inference via Layer-Wise Dissimilar KV Cache Sharing
-description: 'KVSharer의 핵심 알고리즘은 유클리드 거리 기반의 KV 캐시 공유 전략 검색으로, 주요 단계는 다음과 같습니다:'
+description: 'KVSharer는 모델 성능을 크게 저하시키지 않으면서 메모리 사용을 줄이고 속도를 높이는 혁신적인 접근으로, 대규모 언어 모델의 효율적 추론에 기여할 수 있는 잠재력을 보여줍니다.'
 ---
 
 논문 : https://arxiv.org/abs/2410.18517

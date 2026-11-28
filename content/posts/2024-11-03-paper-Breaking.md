@@ -5,7 +5,7 @@ categories:
 date: "2024-11-03"
 tags: null
 title: Breaking the Curse of Quality Saturation with User-Centric Ranking
-description: '개인의견 : 잘모르는 분야이지만 meta publication을 보다가 흥미로워 보여서 선택한 논문.(내가 잘몰라서 질문을 못하겠다 ㅎㅎ;)'
+description: '이 논문은 기존의 아이템 중심(Item-Centric) 랭킹 모델이 데이터 증가에 따른 성능 개선에 한계가 있음을 지적하고, 이를 해결하기 위한 사용자 중심(User-Centric) 랭킹 모델을 제안합니다.'
 ---
 
 개인의견 : 잘모르는 분야이지만 meta publication을 보다가 흥미로워 보여서 선택한 논문.(내가 잘몰라서 질문을 못하겠다 ㅎㅎ;)
